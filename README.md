@@ -28,7 +28,7 @@ The following commands are defined in the `scripts` section of the `package.json
 
 ### Supabase
 
-[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Database Migrations](#database-migrations)
+[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Database Migrations](#database-migrations) • [Cron Job](#cron-job)
 
 ---
 
@@ -163,3 +163,17 @@ After these two operations, you can create new migrations files under the path [
 - `supabase migration new alter_plants_table`: Create a new migration file with the name _supabase/migrations/timestamp_alter_plants_table.sql_ that changes the schema of the existing `plant` table.
 
 Once you finish to write your migrations, you can apply them on the remote database with the command `supabase db push`.
+
+#### Cron Job
+
+In the [SQL Editor](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/sql/ed98d043-877f-499e-9b9b-e5a956e91390) dashboard there are a bunch of SQL queries that manage two distinct Cron jobs, both in charge of scheduling the `telegram-notifier` function, but at different intervals:
+
+- _telegram-notifier-daily_: a cron job that schedules `telegram-notifier` once a day at 6:00 AM UTC.
+- _telegram-notifier-minutes_: a cron job that schedules `telegram-notifier` every minute; used for testing purposes.
+
+By default the _telegram-notifier-daily_ job is activated, while the _telegram-notifier-minutes_ is not. You can activate/deactivate them using the shared queries available in the SQL Editor:
+
+- [Activate Minute-based Telegram notifier scheduler](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/sql/785bb54f-964e-41d2-af70-967435d8ef27)
+- [Deactivate Minute-based telegram notifier scheduler](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/sql/e478bb04-aba7-4e59-a8f4-6ff5eddce822)
+- [Activate Daily Telegram notifier scheduler](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/sql/2c185ad2-2da7-4942-8d73-b10c1b61fbd1)
+- [Deactivate Daily Telegram notifier scheduler](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/sql/afb44759-f6f0-4e05-97f6-104a099f407d)
