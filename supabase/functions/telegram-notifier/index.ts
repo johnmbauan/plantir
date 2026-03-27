@@ -28,9 +28,9 @@ Deno.serve(async (req) => {
    */
   const QUERY = `
         SELECT
-          p.name AS plantName,
-          p."imageUrl" AS imageUrl,
-          hm."humidityPercentage" AS humidity
+          p.name AS "plantName",
+          p."imageUrl" AS "imageUrl",
+          hm."humidityPercentage" AS "humidity"
         FROM (
           SELECT DISTINCT ON (hm."deviceId")
             hm."deviceId",
