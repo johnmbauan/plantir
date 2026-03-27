@@ -11,6 +11,9 @@ Deno.serve(async (req) => {
   // SUPABASE_DB_URL is a default environment variable always provided by Supabase that contains the database connection URL, which is used to connect to your Supabase database.
   // you can't edit this variable from the Dashboard or the CLI.
   const DATABASE_URL = Deno.env.get("SUPABASE_DB_URL");
+
+  // This is an hardcoded API key used for authenticating requests from the cron job that triggers this function.
+  const CRON_API_KEY = "GhmRvI7Y3ciHcmEYDfXqLoUOE4JYZQwdxdVrXXhD9j8=";
   /**
    * SQL query for retrieving the latest humidity measurement for each device in the last 24 hours
    * where the moisture level is below the configured minimum threshold.
@@ -52,7 +55,7 @@ Deno.serve(async (req) => {
     );
   }
 
-  const isAuthorized = req.headers.get("apikey") === SERVICE_ROLE_KEY;
+  const isAuthorized = req.headers.get("apikey") === SERVICE_ROLE_KEY || req.headers.get("apikey") === CRON_API_KEY;
   if (!isAuthorized) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
