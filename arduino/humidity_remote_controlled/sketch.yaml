@@ -1,0 +1,15 @@
+default_fqbn: esp32:esp32:esp32dev
+
+# Local custom libraries (part of this repo, install manually into Arduino libraries folder):
+#   - WifiUtils
+#   - HumiditySensorUtils
+
+dependencies:
+  - name: WiFiManager
+    version: 2.0.17
+  - name: ArduinoJson
+    version: 7.4.3
+  - name: Preferences
+    version: 2.2.2
+  - name: HttpClient
+    version: 2.2.0

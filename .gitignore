@@ -29,3 +29,11 @@ dist-ssr
 # supabase
 supabase/.temp
 supabase/functions/.env
+
+
+# Arduino
+arduino/libraries/ArduinoJson/
+arduino/libraries/HttpClient/
+arduino/libraries/Preferences/
+arduino/libraries/UniversalTelegramBot/
+arduino/libraries/WiFiManager/
