@@ -129,8 +129,7 @@ To test manually the `telegram-notifier` function, once it has been deployed on 
 ```sh
 curl -L -X POST 'https://zlsmzlingdehpgglxpmk.supabase.co/functions/v1/telegram-notifier' \
   -H 'apikey: <SUPABASE_SERVICE_ROLE_KEY>' \
-  -H 'Content-Type: application/json' \
-  --data '{"name":"Functions"}' -v
+  -H 'Content-Type: application/json' -v
 ```
 
 Replace the **SUPABASE_SERVICE_ROLE_KEY** with the `default` key found at [this link](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/settings/api-keys) under the section **Secret keys**.
