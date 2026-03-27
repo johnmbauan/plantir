@@ -25,3 +25,7 @@ dist-ssr
 
 # environment files
 .env
+
+# supabase
+supabase/.temp
+supabase/functions/.env
