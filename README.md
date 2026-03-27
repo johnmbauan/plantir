@@ -28,6 +28,12 @@ The following commands are defined in the `scripts` section of the `package.json
 
 ### Supabase
 
+[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Database Migrations](#database-migrations)
+
+---
+
+#### Intro
+
 Supabase is a serverless database built on PostgreSQL, designed to integrate seamlessly with applications via APIs. It provides a RESTful interface and official clients, such as `supabase/supabase-js`, to interact with the database, manage authentication, storage, and other features.
 
 You can access the main Supabase project dashboard at [this link](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk).
@@ -65,9 +71,9 @@ cp env.sample .env
 
 Then retrieve from [this link](https://supabase.com/dashboard/project/_?showConnect=true&connectTab=frameworks&framework=react) all environment values required. Click on the project `plantir` card; this will open a modal from which you can copy the env values.
 
-#### Javascript Client
+#### SDK
 
-The frontend app uses the official Supabase client, `supabase/supabase-js`, to connect to the database via API. The following code shows an example of how the client is used to connect to the "plants" table and display the items it contains with a **SELECT** query:
+The frontend app uses the official JS Supabase SDK, `supabase/supabase-js`, to connect to the database via API. The following code shows an example of how the client is used to connect to the "plants" table and display the items it contains with a **SELECT** query:
 
 ```ts
 import { useEffect, useState } from "react";
@@ -134,7 +140,7 @@ The `telegram-notifier` code is versioned in the project, at the [supabase/funct
 1. `supabase login`: login automatically with your Supabase account; follow the instructions in the terminal to authenticate yourself.
 2. `supabase functions deploy telegram-notifier`: deploy on supabase the updated function code.
 
-#### Manage secrets
+#### Secrets
 
 In Supabase secrets are at the project level. In our case the `telegram-notifier` function requires some custom secrets to work (`TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`); you can use the Supabase CLI to fully manage them. In particular:
 
@@ -142,7 +148,7 @@ In Supabase secrets are at the project level. In our case the `telegram-notifier
 - `supabase secrets set SOME_SECRET="some-value"`: Configure a new secret or edit an existing one.
 - `supabase secrets unset SOME_SECRET`: Remove a previously created secret.
 
-#### Manage database migrations
+#### Database Migrations
 
 > [!IMPORTANT]  
 > Never delete the [20260327121111_remote_schema.sql](./supabase/migrations/20260327121111_remote_schema.sql) file; this is the initial migration created at the project bootstrap. All subsequent migrations apply from this snapshot forward.
