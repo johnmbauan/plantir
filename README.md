@@ -141,3 +141,20 @@ In Supabase secrets are at the project level. In our case the `telegram-notifier
 - `supabase secrets list`: List all the available secrets configured for your project on Supabase
 - `supabase secrets set SOME_SECRET="some-value"`: Configure a new secret or edit an existing one.
 - `supabase secrets unset SOME_SECRET`: Remove a previously created secret.
+
+#### Manage database migrations
+
+> [!IMPORTANT]  
+> Never delete the [20260327121111_remote_schema.sql](./supabase/migrations/20260327121111_remote_schema.sql) file; this is the initial migration created at the project bootstrap. All subsequent migrations apply from this snapshot forward.
+
+You can use the Supabase CLI to apply database migrations; in this case you need first to execute the following commands:
+
+1. `supabase login`: login automatically with your Supabase account; follow the instructions in the terminal to authenticate yourself.
+2. `supabase link --project-ref zlsmzlingdehpgglxpmk`: link the `plantir` project to the Supabase CLI using its _PROJECT_ID_ (zlsmzlingdehpgglxpmk); this is required when working with the database directly.
+
+After these two operations, you can create new migrations files under the path [supabase/migrations](./supabase/migrations/) containing new tables or changes to existing ones. Name your migrations files so that it is clear what they're doing, for example:
+
+- `supabase migration new create_humidity_sensors_config_table`: Create a new migration file with the name _supabase/migrations/timestamp_create_humidity_sensors_config_table.sql_ that creates a new table named `humidity_sensors_config`.
+- `supabase migration new alter_plants_table`: Create a new migration file with the name _supabase/migrations/timestamp_alter_plants_table.sql_ that changes the schema of the existing `plant` table.
+
+Once you finish to write your migrations, you can apply them on the remote database with the command `supabase db push`.
