@@ -141,7 +141,7 @@ The `telegram-notifier` code is versioned in the project, at the [supabase/funct
 
 #### Secrets
 
-In Supabase secrets are at the project level. In our case the `telegram-notifier` function requires some custom secrets to work (`TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`); you can use the Supabase CLI to fully manage them. In particular:
+In Supabase secrets are at the project level. In our case the `telegram-notifier` function requires some custom secrets to work (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` and `CRON_API_KEY`); you can use the Supabase CLI to fully manage them. In particular:
 
 - `supabase secrets list`: List all the available secrets configured for your project on Supabase
 - `supabase secrets set SOME_SECRET="some-value"`: Configure a new secret or edit an existing one.

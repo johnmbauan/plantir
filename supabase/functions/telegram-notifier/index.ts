@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
   const DATABASE_URL = Deno.env.get("SUPABASE_DB_URL");
 
   // This is an hardcoded API key used for authenticating requests from the cron job that triggers this function.
-  const CRON_API_KEY = "GhmRvI7Y3ciHcmEYDfXqLoUOE4JYZQwdxdVrXXhD9j8=";
+  const CRON_API_KEY = Deno.env.get("CRON_API_KEY");
   /**
    * SQL query for retrieving the latest humidity measurement for each device in the last 24 hours
    * where the moisture level is below the configured minimum threshold.
