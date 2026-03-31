@@ -4,6 +4,8 @@ import type { EnrichedPlant, PlantStatus } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { relativeTime } from "@/utils/time";
 import { fetchPlants } from "@/services/plantService";
+import { notifications } from "@mantine/notifications";
+import { getErrorMessage } from "@/utils/error";
 import "@/pages/Dashboard.css";
 
 export default function Dashboard() {
@@ -19,18 +21,21 @@ export default function Dashboard() {
   useEffect(() => {
     fetchPlants()
       .then(setPlants)
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err);
+        notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      })
       .finally(() => setLoading(false));
   }, []);
 
   const counts = {
-    wateringNeeded: plants.filter((p) => p.status === "WATERING_NEEDED").length,
-    offline: plants.filter((p) => p.status === "OFFLINE").length,
+    wateringNeeded: plants.filter((p) => p.statuses.includes("WATERING_NEEDED")).length,
+    offline: plants.filter((p) => p.statuses.includes("OFFLINE")).length,
   };
 
   const visible = plants.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    const matchesFilter = activeFilter === "all" || p.status === activeFilter;
+    const matchesFilter = activeFilter === "all" || p.statuses.includes(activeFilter);
     return matchesSearch && matchesFilter;
   });
 
@@ -81,7 +86,9 @@ export default function Dashboard() {
       ) : (
         <div className="leaderboard">
           {visible.map((plant, index) => {
-            const { label, color, barColor } = STATUS_CONFIG[plant.status];
+            const SEVERITY = ["OFFLINE", "WATERING_NEEDED", "HEALTHY"] as const;
+            const primaryStatus = SEVERITY.find((s) => plant.statuses.includes(s)) ?? "HEALTHY";
+            const { barColor } = STATUS_CONFIG[primaryStatus];
             const timeAgo = relativeTime(plant.lastMeasuredAt);
             return (
               <div className="leaderboard-row" key={plant.id} style={{ animationDelay: `${index * 70}ms` }}>
@@ -97,9 +104,13 @@ export default function Dashboard() {
                   </div>
                   <div className="leaderboard-name-group">
                     <span className="leaderboard-name">{plant.name}</span>
-                    <Badge color={color} variant="light" size="xs">
-                      {label}
-                    </Badge>
+                    <Group gap={4}>
+                      {plant.statuses.map((s) => (
+                        <Badge key={s} color={STATUS_CONFIG[s].color} variant="light" size="xs">
+                          {STATUS_CONFIG[s].label}
+                        </Badge>
+                      ))}
+                    </Group>
                   </div>
                 </div>
 

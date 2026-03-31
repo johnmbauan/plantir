@@ -44,8 +44,8 @@ export default function Layout() {
             <NavLink to="/" end style={navLinkStyle}>
               Dashboard
             </NavLink>
-            <NavLink to="/admin" style={navLinkStyle}>
-              Admin
+            <NavLink to="/plants-center" style={navLinkStyle}>
+              Plants Center
             </NavLink>
           </Group>
         </Group>

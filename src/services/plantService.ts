@@ -33,20 +33,21 @@ interface RawPlant {
 // Enrichment helpers
 // ---------------------------------------------------------------------------
 
-function computeStatus(
+function computeStatuses(
   latestMeasurement: RawMeasurement | null,
   minHumidityThreshold: number,
   sleepDurationSeconds: number,
-): PlantStatus {
-  if (!latestMeasurement) return "OFFLINE";
+): PlantStatus[] {
+  if (!latestMeasurement) return ["OFFLINE"];
 
   const ageMs = Date.now() - new Date(latestMeasurement.createdAt).getTime();
-  const stalenessMs = sleepDurationSeconds * 2 * 1000;
-  if (ageMs > stalenessMs) return "OFFLINE";
+  const isOffline = ageMs > sleepDurationSeconds * 2 * 1000;
+  const needsWater = latestMeasurement.humidityPercentage < minHumidityThreshold;
 
-  if (latestMeasurement.humidityPercentage < minHumidityThreshold) return "WATERING_NEEDED";
-
-  return "HEALTHY";
+  if (isOffline && needsWater) return ["OFFLINE", "WATERING_NEEDED"];
+  if (isOffline) return ["OFFLINE"];
+  if (needsWater) return ["WATERING_NEEDED"];
+  return ["HEALTHY"];
 }
 
 function enrichPlant(plant: RawPlant): EnrichedPlant {
@@ -58,7 +59,7 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
       name: plant.name,
       image_url: plant.imageUrl,
       created_at: plant.createdAt,
-      status: "OFFLINE",
+      statuses: ["OFFLINE"],
       humidityPercent: null,
       threshold: null,
       lastMeasuredAt: null,
@@ -72,14 +73,14 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
     null,
   );
 
-  const status = computeStatus(latest, config.minHumidityThreshold, config.sleepDurationSeconds);
+  const statuses = computeStatuses(latest, config.minHumidityThreshold, config.sleepDurationSeconds);
 
   return {
     id: plant.id,
     name: plant.name,
     image_url: plant.imageUrl,
     created_at: plant.createdAt,
-    status,
+    statuses,
     humidityPercent: latest?.humidityPercentage ?? null,
     threshold: config.minHumidityThreshold,
     lastMeasuredAt: latest?.createdAt ?? null,
@@ -113,5 +114,31 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
 
   if (error) throw error;
 
-  return sortPlants((data as RawPlant[]).map(enrichPlant));
+  return sortPlants((data as unknown as RawPlant[]).map(enrichPlant));
+}
+
+// ---------------------------------------------------------------------------
+// CRUD Operations for Plants Center
+// ---------------------------------------------------------------------------
+
+export async function createPlant(name: string, imageUrl: string | null) {
+  const { error } = await supabase
+    .from("plants")
+    .insert([{ name, imageUrl }]);
+
+  if (error) throw error;
+}
+
+export async function updatePlant(id: number, name: string, imageUrl: string | null) {
+  const { error } = await supabase
+    .from("plants")
+    .update({ name, imageUrl })
+    .eq("id", id);
+
+  if (error) throw error;
+}
+
+export async function deletePlant(id: number) {
+  const { error } = await supabase.from("plants").delete().eq("id", id);
+  if (error) throw error;
 }
