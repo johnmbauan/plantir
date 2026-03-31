@@ -67,4 +67,12 @@ The right side has another 15 pins:
 - `RST`: reset pin — briefly connecting it to GND reboots the board
 - `D0/RX and D1/TX`: pins for UART serial communication. RX receives data, TX transmits data. Used for communicating with GPS modules, serial sensors, or other microcontrollers.
 
+#### Humidity sensor
+
+Connections with the Board:
+
+- GND (Board) -> GND (Sensor - black cable)
+- 3.3V (Board) -> VCC (Sensor - red cable)
+- A0 (Board) -> AOUT (Sensor - yellow cable)
+
 ### Case
