@@ -21,12 +21,15 @@ const int sensorPin = A0;
 const int readsPerRun = 5; // Number of reads to make each time this program runs. The final result is the average of all the reads.
 
 void setup() {
+  
   Serial.begin(115200);
 
   // Configura il pin per alimentare il sensore (opzionale ma consigliato)
   //pinMode(powerPin, OUTPUT);
   //digitalWrite(powerPin, HIGH); // Accendi il sensore
   delay(1000); // Waiting for the sensor to stabilize.
+
+  Serial.println("I'm starting.... ");
 
   Serial.println("Device ID: " + getDeviceId());
   if (!connectToWifiAndCollectConfig()) {

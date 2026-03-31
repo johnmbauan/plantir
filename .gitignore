@@ -33,6 +33,7 @@ supabase/functions/.env
 
 # Arduino
 arduino/libraries/ArduinoJson/
+arduino/libraries/ArduinoHttpClient/
 arduino/libraries/HttpClient/
 arduino/libraries/Preferences/
 arduino/libraries/UniversalTelegramBot/
