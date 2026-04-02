@@ -1,6 +1,6 @@
 # Plantir
 
-A web dashboard to monitor the humidity level of home plants collecting data periodically from Arduino sensors. This project uses [Supabase](https://supabase.com/) as its backend. All the firmware code for the humidity sensors is located under the [arduino](./arduino/) folder. Use the [Arduino IDE](https://www.arduino.cc/en/software/) to edit and upload it on physical devices.
+A web dashboard to monitor the humidity level of home plants collecting data periodically from Arduino sensors. This project uses [Supabase](https://supabase.com/) as its backend. All the firmware code for the humidity sensors is located under the [arduino](./arduino/) folder, and it can be uploaded on physical devices using the [Arduino IDE](https://www.arduino.cc/en/software/).
 
 ## Quick Start
 
@@ -11,10 +11,6 @@ A web dashboard to monitor the humidity level of home plants collecting data per
   - Copy-paste in the `.env` file the environment variables.
 - Run the application with `npm run dev`.
 
-## VSCode Extensions
-
-Edge Functions developed in JS and deployed on Supabase require Deno to work, thus you need to install the following VSCode extension: `denoland.vscode-deno`.
-
 ## Available Commands
 
 The following commands are defined in the `scripts` section of the `package.json` file:
@@ -24,9 +20,31 @@ The following commands are defined in the `scripts` section of the `package.json
 - **`lint`**: Runs ESLint to analyze the code and find potential issues. Run the command `npm run lint`.
 - **`preview`**: Starts a preview of the production build. Run the command `npm run preview`.
 
+## VSCode Extensions
+
+Edge Functions developed in JS and deployed on Supabase require Deno to work, thus you need to install the following VSCode extension: `denoland.vscode-deno`.
+
+## Arduino IDE
+
+To edit and upload the firmware code for the humidity sensors, it's suggested to use the official Arduino IDE. Follow these steps to setup your development environment:
+
+1. Go to _Arduino IDE_ > _Preferences_ > _Settings_ and change the **Sketchbook location** folder to the [arduino](./arduino/) folder of this repository.
+
+2. Ensure to install in the Arduino IDE the correct driver for the board you are using for your devices (e.g. Nano ESP32). Go to _Tools_ > _Board_ > _Boards Manager_ and type your board name to install the driver.
+
+3. Go to `Sketchbook` in the IDE, select the project you want to work on (e.g `humidity_remote_controlled`), open its `sketch.yaml` file and manually install its dependency from the `Library Manager` of the IDE (just copy-paste each dependency name and click on _INSTALL_).
+
+#### Upload the code
+
+Double click on the board button to switch in "Bootloader" mode (stable green light), then Upload the code from the IDE by clicking _Sketch_ > _Upload_ in the toolbar.
+
+#### Execute the code
+
+Remove the USB cable from your board and then plug it again, the code will run automatically.
+
 ## Technical Documentation
 
-[Supabase](./docs/supabase.md) • [Arduino](./docs/arduino.md) • [Electronics](./docs/electronics.md)
+[Supabase](./docs/supabase.md) • [Electronics](./docs/electronics.md)
 
 ## Roadmap
 
