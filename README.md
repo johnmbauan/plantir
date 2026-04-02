@@ -24,6 +24,10 @@ The following commands are defined in the `scripts` section of the `package.json
 - **`lint`**: Runs ESLint to analyze the code and find potential issues. Run the command `npm run lint`.
 - **`preview`**: Starts a preview of the production build. Run the command `npm run preview`.
 
-## Documentation
+## Technical Documentation
 
 [Supabase](./docs/supabase.md) • [Arduino](./docs/arduino.md) • [Electronics](./docs/electronics.md)
+
+## Roadmap
+
+[Plan Center plan](./docs/roadmap/plant-center-plan.md)

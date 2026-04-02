@@ -106,7 +106,7 @@ curl -L -X POST 'https://zlsmzlingdehpgglxpmk.supabase.co/functions/v1/telegram-
 
 Replace the **SUPABASE_SERVICE_ROLE_KEY** with the `default` key found at [this link](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/settings/api-keys) under the section **Secret keys**.
 
-The `telegram-notifier` code is versioned in the project, at the [supabase/functions/telegram-notifier](./supabase/functions/telegram-notifier/) path. If you need to deploy a new version, type these commands using the [Supabase CLI](#install-the-cli):
+The `telegram-notifier` code is versioned in the project, at the [supabase/functions/telegram-notifier](../supabase/functions/telegram-notifier) path. If you need to deploy a new version, type these commands using the [Supabase CLI](#install-the-cli):
 
 1. `supabase login`: login automatically with your Supabase account; follow the instructions in the terminal to authenticate yourself.
 2. `supabase functions deploy telegram-notifier`: deploy on supabase the updated function code.
@@ -129,7 +129,7 @@ You can use the Supabase CLI to apply database migrations; in this case you need
 1. `supabase login`: login automatically with your Supabase account; follow the instructions in the terminal to authenticate yourself.
 2. `supabase link --project-ref zlsmzlingdehpgglxpmk`: link the `plantir` project to the Supabase CLI using its _PROJECT_ID_ (zlsmzlingdehpgglxpmk); this is required when working with the database directly.
 
-After these two operations, you can create new migrations files under the path [supabase/migrations](./supabase/migrations/) containing new tables or changes to existing ones. Name your migrations files so that it is clear what they're doing, for example:
+After these two operations, you can create new migrations files under the path [supabase/migrations](../supabase/migrations/) containing new tables or changes to existing ones. Name your migrations files so that it is clear what they're doing, for example:
 
 - `supabase migration new create_humidity_sensors_config_table`: Create a new migration file with the name _supabase/migrations/timestamp_create_humidity_sensors_config_table.sql_ that creates a new table named `humidity_sensors_config`.
 - `supabase migration new alter_plants_table`: Create a new migration file with the name _supabase/migrations/timestamp_alter_plants_table.sql_ that changes the schema of the existing `plant` table.
