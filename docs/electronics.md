@@ -55,7 +55,7 @@ Looking at the board with USB-C facing up, the left side has 15 pins:
 - `VBUS`: provides 5V but only when the board is powered via USB-C
 - `BOOT1`: like BOOT0, used for reset
 - `GND`: ground, the negative pole of the circuit. All external components must have their negative terminal connected here
-  VIN: input for external power from 6V to 21V.
+- `VIN`: input for external power from 6V to 21V.
 
 #### Pins: digital side
 
