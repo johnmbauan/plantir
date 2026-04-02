@@ -42,10 +42,6 @@ Double click on the board button to switch in "Bootloader" mode (stable green li
 
 Remove the USB cable from your board and then plug it again, the code will run automatically.
 
-## Technical Documentation
+## Documentation
 
-[Supabase](./docs/supabase.md) • [Electronics](./docs/electronics.md)
-
-## Roadmap
-
-[Plan Center plan](./docs/roadmap/plant-center-plan.md)
+[Supabase](./docs/supabase.md) • [Electronics](./docs/electronics.md) • [Roadmap](./docs/roadmap/index.md)
