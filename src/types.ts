@@ -29,4 +29,6 @@ export interface EnrichedPlant {
   humidityPercent: number | null;
   threshold: number | null;
   lastMeasuredAt: string | null;
+  deviceId: number | null;
+  sleepDurationSeconds: number | null;
 }

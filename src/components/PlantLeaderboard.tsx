@@ -2,20 +2,22 @@ import { Skeleton, Stack, Text, Group, Badge } from "@mantine/core";
 import type { EnrichedPlant } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { relativeTime } from "@/utils/time";
+import HumidityBar from "@/components/HumidityBar";
 
 interface PlantLeaderboardProps {
   plants: EnrichedPlant[];
   loading: boolean;
+  onPlantClick?: (plant: EnrichedPlant) => void;
 }
 
-function PlantLeaderboardRow({ plant, index }: { plant: EnrichedPlant; index: number }) {
+function PlantLeaderboardRow({ plant, index, onClick }: { plant: EnrichedPlant; index: number; onClick?: () => void }) {
   const SEVERITY = ["OFFLINE", "WATERING_NEEDED", "HEALTHY"] as const;
   const primaryStatus = SEVERITY.find((s) => plant.statuses.includes(s)) ?? "HEALTHY";
   const { barColor } = STATUS_CONFIG[primaryStatus];
   const timeAgo = relativeTime(plant.lastMeasuredAt);
 
   return (
-    <div className="leaderboard-row" key={plant.id} style={{ animationDelay: `${index * 70}ms` }}>
+    <div className="leaderboard-row" key={plant.id} style={{ animationDelay: `${index * 70}ms`, cursor: onClick ? "pointer" : undefined }} onClick={onClick}>
       <span className="leaderboard-rank">{index + 1}</span>
 
       <div className="leaderboard-info">
@@ -39,22 +41,13 @@ function PlantLeaderboardRow({ plant, index }: { plant: EnrichedPlant; index: nu
       </div>
 
       <div className="leaderboard-track-wrapper">
-        <div className="leaderboard-track">
-          <div
-            className="leaderboard-fill"
-            style={{ width: `${plant.humidityPercent ?? 0}%`, background: barColor, animationDelay: `${index * 70}ms` }}
-          />
-          {plant.threshold != null && (
-            <div
-              className="leaderboard-threshold"
-              style={{ left: `${plant.threshold}%` }}
-            >
-              <span className="leaderboard-threshold-label">
-                {plant.threshold}%
-              </span>
-            </div>
-          )}
-        </div>
+        <HumidityBar
+          humidityPercent={plant.humidityPercent}
+          threshold={plant.threshold}
+          barColor={barColor}
+          animationDelay={`${index * 70}ms`}
+          style={{ flex: 1 }}
+        />
         <div className="leaderboard-meta">
           <span className="leaderboard-pct">
             {plant.humidityPercent != null ? `${plant.humidityPercent}%` : "—"}
@@ -68,7 +61,7 @@ function PlantLeaderboardRow({ plant, index }: { plant: EnrichedPlant; index: nu
   );
 }
 
-export default function PlantLeaderboard({ plants, loading }: PlantLeaderboardProps) {
+export default function PlantLeaderboard({ plants, loading, onPlantClick }: PlantLeaderboardProps) {
   if (loading) {
     return (
       <Stack gap="sm">
@@ -90,7 +83,7 @@ export default function PlantLeaderboard({ plants, loading }: PlantLeaderboardPr
   return (
     <div className="leaderboard">
       {plants.map((plant, index) => (
-        <PlantLeaderboardRow key={plant.id} plant={plant} index={index} />
+        <PlantLeaderboardRow key={plant.id} plant={plant} index={index} onClick={onPlantClick ? () => onPlantClick(plant) : undefined} />
       ))}
     </div>
   );

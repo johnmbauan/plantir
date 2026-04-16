@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Table,
   Button,
@@ -21,6 +22,7 @@ import PlantFormModal from "@/components/PlantFormModal";
 import PlantDeleteModal from "@/components/PlantDeleteModal";
 
 export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,6 +49,21 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
     loadData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadKey]);
+
+  useEffect(() => {
+    const editPlantId = searchParams.get("plantId");
+    if (!editPlantId || loading || plants.length === 0) return;
+    const plant = plants.find((p) => p.id === Number(editPlantId));
+    if (plant) {
+      handleOpenEdit(plant);
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("plantId");
+        return next;
+      }, { replace: true });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, plants]);
 
   const handleOpenEdit = (plant?: EnrichedPlant) => {
     setEditingPlant(plant ?? null);

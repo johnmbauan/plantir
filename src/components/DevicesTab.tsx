@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Table,
   Button,
@@ -19,6 +20,7 @@ import DeviceFormModal from "@/components/DeviceFormModal";
 import DeviceDeleteModal from "@/components/DeviceDeleteModal";
 
 export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [devices, setDevices] = useState<Device[]>([]);
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +49,21 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
     loadData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadKey]);
+
+  useEffect(() => {
+    const editDeviceId = searchParams.get("deviceId");
+    if (!editDeviceId || loading || devices.length === 0) return;
+    const device = devices.find((d) => d.id === Number(editDeviceId));
+    if (device) {
+      handleOpenEdit(device);
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("deviceId");
+        return next;
+      }, { replace: true });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, devices]);
 
   const plantOptions = plants.map((p) => ({ value: String(p.id), label: p.name }));
 

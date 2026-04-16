@@ -63,6 +63,8 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
       humidityPercent: null,
       threshold: null,
       lastMeasuredAt: null,
+      deviceId: null,
+      sleepDurationSeconds: null,
     };
   }
 
@@ -84,6 +86,8 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
     humidityPercent: latest?.humidityPercentage ?? null,
     threshold: config.minHumidityThreshold,
     lastMeasuredAt: latest?.createdAt ?? null,
+    deviceId: humidityDevice.id,
+    sleepDurationSeconds: config.sleepDurationSeconds,
   };
 }
 
