@@ -76,3 +76,18 @@ Connections with the Board:
 - A0 (Board) -> AOUT (Sensor - yellow cable)
 
 ### Case
+
+
+## Using [DIYMore ESP32 board](https://www.amazon.it/dp/B0CJNMRG37?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_1&th=1)  with Arduino IDE
+- Open the Arduino IDE
+- Install the "esp32 by Espressif" board drivers, if you haven't already
+- Connect the board
+- In the "Select Other Board and Port" modal that appears when selecting the board, select "WEMOS D1 MINI"; then select the correct port where you've connected the board; hit the "OK" button.
+- Under "Tools -> Upload Speed", select 460800
+- Under "Serial Monitor" tab, select the correct "Baud" (whatever you set in the sketch, like `Serial.begin(115200);`; `115200` is the baud you have to choose)
+
+### Connecting [DIYMore ESP32 board](https://www.amazon.it/dp/B0CJNMRG37?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_1&th=1) to the humidity sensor.
+- You can see the name of the pins on the back side of the sensor
+- Connect the `VCC` pin of the sensor to the 3.3V pin of the board
+- Connect the GND of the sensor to the GND of the board
+- Connect the AOUT pin of the sensor to the SVP pin (corresponds to pin n. 36 in the sketch: `analogRead(36)`)
