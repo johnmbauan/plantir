@@ -10,6 +10,7 @@ import {
   Badge,
   Avatar,
   Skeleton,
+  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconTrash, IconPlus } from "@tabler/icons-react";
@@ -25,6 +26,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
   const [searchParams, setSearchParams] = useSearchParams();
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const [editingPlant, setEditingPlant] = useState<EnrichedPlant | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
@@ -75,6 +77,10 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
     openDelete();
   };
 
+  const visible = plants.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <Stack gap="md" pos="relative">
       <Group justify="space-between">
@@ -85,6 +91,13 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
           Add Plant
         </Button>
       </Group>
+
+      <TextInput
+        placeholder="Search plants…"
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+        style={{ maxWidth: 320 }}
+      />
 
       <Table.ScrollContainer minWidth={500}>
         <Table verticalSpacing="sm">
@@ -106,14 +119,14 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
                   <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
                 </Table.Tr>
               ))
-            ) : plants.length === 0 ? (
+            ) : visible.length === 0 ? (
               <Table.Tr>
                 <Table.Td colSpan={4} ta="center">
                   No plants found
                 </Table.Td>
               </Table.Tr>
             ) : (
-              plants.map((plant) => (
+              visible.map((plant) => (
                 <Table.Tr key={plant.id}>
                   <Table.Td fw={500}>{plant.name}</Table.Td>
                   <Table.Td>

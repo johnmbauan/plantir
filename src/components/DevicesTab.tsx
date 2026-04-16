@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   Skeleton,
+  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconTrash, IconPlus } from "@tabler/icons-react";
@@ -24,6 +25,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
   const [devices, setDevices] = useState<Device[]>([]);
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const [editingDevice, setEditingDevice] = useState<Device | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
@@ -77,6 +79,14 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
     openDelete();
   };
 
+  const visible = devices.filter((d) => {
+    const q = search.toLowerCase();
+    return (
+      d.serialNumber.toLowerCase().includes(q) ||
+      (d.plantName ?? "").toLowerCase().includes(q)
+    );
+  });
+
   return (
     <Stack gap="md">
       <Group justify="space-between">
@@ -87,6 +97,13 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
           Add Device
         </Button>
       </Group>
+
+      <TextInput
+        placeholder="Search by serial number or plant…"
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+        style={{ maxWidth: 320 }}
+      />
 
       <Table.ScrollContainer minWidth={550}>
         <Table verticalSpacing="sm">
@@ -112,14 +129,14 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                   <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
                 </Table.Tr>
               ))
-            ) : devices.length === 0 ? (
+            ) : visible.length === 0 ? (
               <Table.Tr>
                 <Table.Td colSpan={6} ta="center">
                   No devices found
                 </Table.Td>
               </Table.Tr>
             ) : (
-              devices.map((device) => (
+              visible.map((device) => (
                 <Table.Tr key={device.id}>
                   <Table.Td fw={500}>{device.serialNumber}</Table.Td>
                   <Table.Td>{device.plantName ?? <Text size="sm" c="dimmed">Unassigned</Text>}</Table.Td>
