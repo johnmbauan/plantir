@@ -7,8 +7,8 @@
 #include <Preferences.h>
 
 
-#define DEFAULT_SLEEP_DURATION  21600  // 6 hours in seconds
-#define uS_TO_S_FACTOR 1000000ULL  // Conversion factor for microseconds to seconds
+#define DEFAULT_SLEEP_DURATION 21600  // 6 hours in seconds
+#define uS_TO_S_FACTOR 1000000ULL     // Conversion factor for microseconds to seconds
 
 // -- Remote server configuration ---
 String remoteServerBaseUrl;
@@ -17,7 +17,7 @@ String supabaseApiKey;
 WiFiClientSecure client;
 
 //const int powerPin = 14; // Pin opzionale per alimentare il sensore solo quando serve
-const int sensorPin = A0;
+const int sensorPin = 36;
 const int readsPerRun = 5; // Number of reads to make each time this program runs. The final result is the average of all the reads.
 
 void setup() {
@@ -102,7 +102,7 @@ void checkHumidity(const DynamicJsonDocument& config) {
   int airValue = config["airValue"];
   int waterValue = config["waterValue"];
 
-  if (airValue == 0 || waterValue == 0) {
+  if (airValue == waterValue) {
     Serial.println("Invalid sensor calibration values. Check the configuration.");
     return;
   }
@@ -111,7 +111,6 @@ void checkHumidity(const DynamicJsonDocument& config) {
   float avgHumidity = readAvgHumidityPercent(sensorPin, airValue, waterValue, readsPerRun);
   sendHumidityReading(avgHumidity, deviceId);
   //digitalWrite(powerPin, LOW); // Spegni subito il sensore per risparmiare energia e corrosione
-
 }
 
 String getDeviceId() {
@@ -143,14 +142,14 @@ bool connectToWifiAndCollectConfig() {
   String newUrl = String(paramUrl.getValue());
   String newKey = String(paramKey.getValue());
 
-  if (!newUrl.isEmpty()){
+  if (!newUrl.isEmpty()) {
     remoteServerBaseUrl = newUrl;
     prefs.putString("serverUrl", remoteServerBaseUrl);
   }
 
-  if (!newKey.isEmpty()){
-      supabaseApiKey = newKey;
-      prefs.putString("apiKey", supabaseApiKey);
+  if (!newKey.isEmpty()) {
+    supabaseApiKey = newKey;
+    prefs.putString("apiKey", supabaseApiKey);
   }
 
   Serial.println("Saved server URL: " + remoteServerBaseUrl);
@@ -166,6 +165,3 @@ bool connectToWifiAndCollectConfig() {
   Serial.println("Connected to Wi-Fi 😁!");
   return true;
 }
-
-
-
