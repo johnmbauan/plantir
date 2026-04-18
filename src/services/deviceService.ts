@@ -23,11 +23,28 @@ function enrichDevice(raw: RawDevice): Device {
 }
 
 export async function fetchDevices(): Promise<Device[]> {
-  const { data, error } = await supabase.from("devices").select(
-    `id, serialNumber, plantId, type,
-     plants(name),
-     humidity_sensors_config(id, minHumidityThreshold, airValue, waterValue, sleepDurationSeconds)`,
-  );
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  // Resolve the current user's plant IDs so we only surface their devices.
+  const { data: plants, error: plantsError } = await supabase
+    .from("plants")
+    .select("id")
+    .eq("user_id", user.id);
+
+  if (plantsError) throw plantsError;
+  if (!plants.length) return [];
+
+  const plantIds = plants.map((p: { id: number }) => p.id);
+
+  const { data, error } = await supabase
+    .from("devices")
+    .select(
+      `id, serialNumber, plantId, type,
+       plants(name),
+       humidity_sensors_config(id, minHumidityThreshold, airValue, waterValue, sleepDurationSeconds)`,
+    )
+    .in("plantId", plantIds);
 
   if (error) throw error;
 

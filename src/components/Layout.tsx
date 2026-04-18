@@ -1,6 +1,7 @@
-import { AppShell, Group, Text } from "@mantine/core";
+import { AppShell, Group, Text, Button } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import supabase from "@/supabase";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -14,6 +15,12 @@ const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
 
 export default function Layout() {
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate("/login", { replace: true });
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -47,6 +54,18 @@ export default function Layout() {
             <NavLink to="/plants-center" style={navLinkStyle}>
               Plants Center
             </NavLink>
+            <NavLink to="/settings" style={navLinkStyle}>
+              Settings
+            </NavLink>
+            <Button
+              size="xs"
+              variant="subtle"
+              color="gray"
+              onClick={handleSignOut}
+              style={{ color: "var(--green-500)" }}
+            >
+              Sign out
+            </Button>
           </Group>
         </Group>
       </AppShell.Header>

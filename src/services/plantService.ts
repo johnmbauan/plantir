@@ -107,6 +107,9 @@ function sortPlants(plants: EnrichedPlant[]): EnrichedPlant[] {
 // ---------------------------------------------------------------------------
 
 export async function fetchPlants(): Promise<EnrichedPlant[]> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { data, error } = await supabase.from("plants").select(
     `id, name, imageUrl, createdAt,
      devices(
@@ -114,7 +117,7 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
        humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds),
        humidity_measurements(humidityPercentage, createdAt)
      )`,
-  );
+  ).eq("user_id", user.id);
 
   if (error) throw error;
 
@@ -126,9 +129,12 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
 // ---------------------------------------------------------------------------
 
 export async function createPlant(name: string, imageUrl: string | null) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { error } = await supabase
     .from("plants")
-    .insert([{ name, imageUrl }]);
+    .insert([{ name, imageUrl, user_id: user.id }]);
 
   if (error) throw error;
 }

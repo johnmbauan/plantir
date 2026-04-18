@@ -1,18 +1,28 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/context/AuthContext";
+import AuthGuard from "@/components/AuthGuard";
 import Layout from "@/components/Layout";
 import Dashboard from "@/pages/Dashboard";
 import PlantCenter from "@/pages/PlantCenter";
+import SettingsPage from "@/pages/SettingsPage";
+import LoginPage from "@/pages/LoginPage";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="plants-center" element={<PlantCenter />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<AuthGuard />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="plants-center" element={<PlantCenter />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
