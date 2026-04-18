@@ -41,6 +41,8 @@ const WATERING_QUERY = `
   JOIN humidity_sensors_config hsc ON hsc."deviceId" = d.id
   JOIN notification_settings ns   ON ns.user_id = p.user_id
   WHERE hm."humidityPercentage" <= hsc."minHumidityThreshold"
+    AND ns.telegram_chat_id <> ''
+    AND EXTRACT(HOUR FROM NOW() AT TIME ZONE ns.notification_timezone)::smallint = ns.notification_hour
 `;
 
 const OFFLINE_QUERY = `
@@ -53,10 +55,14 @@ const OFFLINE_QUERY = `
   JOIN humidity_sensors_config hsc ON hsc."deviceId" = d.id
   JOIN notification_settings ns   ON ns.user_id = p.user_id
   LEFT JOIN humidity_measurements hm ON hm."deviceId" = d.id
-  GROUP BY d.id, p.name, hsc."sleepDurationSeconds", ns.telegram_chat_id
+  WHERE ns.telegram_chat_id <> ''
+  GROUP BY d.id, p.name, hsc."sleepDurationSeconds", ns.telegram_chat_id, ns.notification_timezone, ns.notification_hour
   HAVING
-    MAX(hm."createdAt") IS NULL
-    OR MAX(hm."createdAt") < NOW() - (hsc."sleepDurationSeconds" * 2 * INTERVAL '1 second')
+    (
+      MAX(hm."createdAt") IS NULL
+      OR MAX(hm."createdAt") < NOW() - (hsc."sleepDurationSeconds" * 2 * INTERVAL '1 second')
+    )
+    AND EXTRACT(HOUR FROM NOW() AT TIME ZONE ns.notification_timezone)::smallint = ns.notification_hour
 `;
 
 // ---------------------------------------------------------------------------
@@ -184,6 +190,8 @@ Deno.serve(async (req) => {
   try {
     const connection = await pool.connect();
     try {
+      // Currently, we run 2 big queries (1 for watering alerts and 1 for offline alerts) that each return all relevant records.
+      // If the user base grows a lot, we might want to optimize this by processing records by user.
       const [wateringAlerts, offlineAlerts] = await Promise.all([
         sendWateringAlerts(connection, BOT_TOKEN),
         sendOfflineAlerts(connection, BOT_TOKEN),
