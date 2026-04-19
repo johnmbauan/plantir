@@ -26,17 +26,6 @@ export async function fetchDevices(): Promise<Device[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
-  // Resolve the current user's plant IDs so we only surface their devices.
-  const { data: plants, error: plantsError } = await supabase
-    .from("plants")
-    .select("id")
-    .eq("user_id", user.id);
-
-  if (plantsError) throw plantsError;
-  if (!plants.length) return [];
-
-  const plantIds = plants.map((p: { id: number }) => p.id);
-
   const { data, error } = await supabase
     .from("devices")
     .select(
@@ -44,7 +33,7 @@ export async function fetchDevices(): Promise<Device[]> {
        plants(name),
        humidity_sensors_config(id, minHumidityThreshold, airValue, waterValue, sleepDurationSeconds)`,
     )
-    .in("plantId", plantIds);
+    .eq("user_id", user.id);
 
   if (error) throw error;
 
@@ -59,9 +48,12 @@ export interface DeviceFormValues {
 }
 
 export async function createDevice(values: DeviceFormValues): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { data: device, error: deviceError } = await supabase
     .from("devices")
-    .insert([{ serialNumber: values.serialNumber, plantId: values.plantId ?? null, type: values.type }])
+    .insert([{ serialNumber: values.serialNumber, plantId: values.plantId ?? null, type: values.type, user_id: user.id }])
     .select("id")
     .single();
 

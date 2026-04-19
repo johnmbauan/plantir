@@ -39,7 +39,7 @@ const WATERING_QUERY = `
   JOIN devices d                  ON d.id  = hm."deviceId"
   JOIN plants p                   ON p.id  = d."plantId"
   JOIN humidity_sensors_config hsc ON hsc."deviceId" = d.id
-  JOIN notification_settings ns   ON ns.user_id = p.user_id
+  JOIN notification_settings ns   ON ns.user_id = d.user_id
   WHERE hm."humidityPercentage" <= hsc."minHumidityThreshold"
     AND ns.telegram_chat_id <> ''
     AND EXTRACT(HOUR FROM NOW() AT TIME ZONE ns.notification_timezone)::smallint = ns.notification_hour
@@ -53,7 +53,7 @@ const OFFLINE_QUERY = `
   FROM devices d
   JOIN plants p                   ON p.id  = d."plantId"
   JOIN humidity_sensors_config hsc ON hsc."deviceId" = d.id
-  JOIN notification_settings ns   ON ns.user_id = p.user_id
+  JOIN notification_settings ns   ON ns.user_id = d.user_id
   LEFT JOIN humidity_measurements hm ON hm."deviceId" = d.id
   WHERE ns.telegram_chat_id <> ''
   GROUP BY d.id, p.name, hsc."sleepDurationSeconds", ns.telegram_chat_id, ns.notification_timezone, ns.notification_hour
