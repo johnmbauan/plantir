@@ -27,17 +27,17 @@ export default function PlantCenter() {
         Plants Center
       </Title>
 
-      <Tabs orientation="vertical" value={activeTab} onChange={handleTabChange}>
-        <Tabs.List>
+      <Tabs value={activeTab} onChange={handleTabChange}>
+        <Tabs.List mb="md">
           <Tabs.Tab value="plants">Plants</Tabs.Tab>
           <Tabs.Tab value="devices">Devices</Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="plants" pl="md">
+        <Tabs.Panel value="plants">
           <PlantsTab reloadKey={mutationCount} onMutated={handleMutated} />
         </Tabs.Panel>
 
-        <Tabs.Panel value="devices" pl="md">
+        <Tabs.Panel value="devices">
           <DevicesTab reloadKey={mutationCount} onMutated={handleMutated} />
         </Tabs.Panel>
       </Tabs>

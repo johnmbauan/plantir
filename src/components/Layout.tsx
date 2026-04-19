@@ -1,7 +1,9 @@
-import { AppShell, Group, Text, Button } from "@mantine/core";
+import { AppShell, Burger, Group, Text, Button } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import supabase from "@/supabase";
+import NavDrawer from "@/components/NavDrawer";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -15,6 +17,7 @@ const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
 
 export default function Layout() {
   const [scrolled, setScrolled] = useState(false);
+  const [drawerOpened, { open: openDrawer, close: closeDrawer }] = useDisclosure(false);
   const navigate = useNavigate();
 
   async function handleSignOut() {
@@ -42,12 +45,14 @@ export default function Layout() {
         },
       }}
     >
+      <NavDrawer opened={drawerOpened} onClose={closeDrawer} onSignOut={handleSignOut} />
+
       <AppShell.Header>
         <Group h="100%" px="lg" justify="space-between">
           <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
             🪴 Plantir
           </Text>
-          <Group gap="lg">
+          <Group gap="lg" visibleFrom="sm">
             <NavLink to="/" end style={navLinkStyle}>
               Dashboard
             </NavLink>
@@ -67,6 +72,13 @@ export default function Layout() {
               Sign out
             </Button>
           </Group>
+          <Burger
+            opened={drawerOpened}
+            onClick={openDrawer}
+            hiddenFrom="sm"
+            aria-label="Toggle navigation"
+            color="var(--green-700)"
+          />
         </Group>
       </AppShell.Header>
 

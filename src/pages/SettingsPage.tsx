@@ -108,7 +108,7 @@ export default function SettingsPage() {
               allowDeselect={false}
               required
             />
-            <Button type="submit" loading={saving} disabled={loading} w="fit-content">
+            <Button type="submit" loading={saving} disabled={loading} w={{ base: "100%", sm: "fit-content" }}>
               Save
             </Button>
           </Stack>

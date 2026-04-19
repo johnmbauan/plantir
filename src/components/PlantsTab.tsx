@@ -96,7 +96,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
         placeholder="Search plants…"
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
-        style={{ maxWidth: 320 }}
+        style={{ maxWidth: 320, width: "100%" }}
       />
 
       <Table.ScrollContainer minWidth={500}>
@@ -105,7 +105,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
             <Table.Tr>
               <Table.Th>Name</Table.Th>
               <Table.Th>Status</Table.Th>
-              <Table.Th>Image URL</Table.Th>
+              <Table.Th className="col-hide-mobile">Image URL</Table.Th>
               <Table.Th w={100}>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -115,7 +115,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
                 <Table.Tr key={i}>
                   <Table.Td><Skeleton height={16} radius="sm" /></Table.Td>
                   <Table.Td><Skeleton height={16} radius="sm" width={80} /></Table.Td>
-                  <Table.Td><Skeleton height={16} radius="sm" /></Table.Td>
+                  <Table.Td className="col-hide-mobile"><Skeleton height={16} radius="sm" /></Table.Td>
                   <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
                 </Table.Tr>
               ))
@@ -138,7 +138,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
                       ))}
                     </Group>
                   </Table.Td>
-                  <Table.Td>
+                  <Table.Td className="col-hide-mobile">
                     <Group gap="xs" wrap="nowrap">
                       <Avatar
                         src={plant.image_url ?? undefined}

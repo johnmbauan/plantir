@@ -102,7 +102,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
         placeholder="Search by serial number or plant…"
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
-        style={{ maxWidth: 320 }}
+        style={{ maxWidth: 320, width: "100%" }}
       />
 
       <Table.ScrollContainer minWidth={550}>
@@ -111,9 +111,9 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
             <Table.Tr>
               <Table.Th>Serial Number</Table.Th>
               <Table.Th>Plant</Table.Th>
-              <Table.Th>Type</Table.Th>
+              <Table.Th className="col-hide-mobile">Type</Table.Th>
               <Table.Th>Threshold</Table.Th>
-              <Table.Th>Interval (s)</Table.Th>
+              <Table.Th className="col-hide-mobile">Interval (s)</Table.Th>
               <Table.Th w={100}>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -123,9 +123,9 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                 <Table.Tr key={i}>
                   <Table.Td><Skeleton height={16} radius="sm" /></Table.Td>
                   <Table.Td><Skeleton height={16} radius="sm" width={80} /></Table.Td>
-                  <Table.Td><Skeleton height={16} radius="sm" width={120} /></Table.Td>
+                  <Table.Td className="col-hide-mobile"><Skeleton height={16} radius="sm" width={120} /></Table.Td>
                   <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
-                  <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
+                  <Table.Td className="col-hide-mobile"><Skeleton height={16} radius="sm" width={60} /></Table.Td>
                   <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
                 </Table.Tr>
               ))
@@ -140,13 +140,13 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                 <Table.Tr key={device.id}>
                   <Table.Td fw={500}>{device.serialNumber}</Table.Td>
                   <Table.Td>{device.plantName ?? <Text size="sm" c="dimmed">Unassigned</Text>}</Table.Td>
-                  <Table.Td style={{ textTransform: "capitalize" }}>{device.type}</Table.Td>
+                  <Table.Td className="col-hide-mobile" style={{ textTransform: "capitalize" }}>{device.type}</Table.Td>
                   <Table.Td>
                     {device.humidityConfig
                       ? `${device.humidityConfig.minHumidityThreshold}%`
                       : <Text size="sm" c="dimmed">—</Text>}
                   </Table.Td>
-                  <Table.Td>
+                  <Table.Td className="col-hide-mobile">
                     {device.humidityConfig
                       ? device.humidityConfig.sleepDurationSeconds
                       : <Text size="sm" c="dimmed">—</Text>}
