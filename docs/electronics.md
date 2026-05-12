@@ -91,3 +91,35 @@ Connections with the Board:
 - Connect the `VCC` pin of the sensor to the 3.3V pin of the board
 - Connect the GND of the sensor to the GND of the board
 - Connect the AOUT pin of the sensor to the SVP pin (corresponds to pin n. 36 in the sketch: `analogRead(36)`)
+- To put the board in boot mode (so it can pick up new sketches), press the BOOT button and then then RST button.
+
+## Using [FireBeetle 2 ESP32-C5](https://www.dfrobot.com/product-2771.html) with Arduino IDE
+
+### Installing drivers
+
+1. Open the Arduino IDE
+2. Go to **Tools → Board → Boards Manager**, search for `esp32 by Espressif Systems` and install it (version 3.x or later is required for C5 support)
+3. Connect the board via USB-C
+4. Go to **Tools → Board → esp32** and select `ESP32C5 Dev Module`
+5. Select the correct port under **Tools → Port**
+
+### Required board settings
+
+- **Tools → USB CDC On Boot**: `Enabled` — **critical**. The FireBeetle 2 ESP32-C5 uses the chip's built-in USB (not a separate USB-to-serial chip). Without this, `Serial` maps to UART0 and nothing appears in the Serial Monitor
+- **Tools → PSRAM**: `Disabled` (default) — the FireBeetle 2 ESP32-C5 has no PSRAM; this should already be disabled
+- **Tools → Flash Mode**: `QIO` — required for the C5; using DIO causes a checksum failure at boot (`Checksum failure. Calculated 0xa0 stored 0xff`) and the sketch won't run
+- **Tools → Upload Speed**: `460800`
+- **Tools → Flash Size**: `4MB`
+
+### Serial Monitor
+
+- Set the baud rate to match the sketch (e.g. `115200` if the sketch uses `Serial.begin(115200)`)
+- Open the Serial Monitor **before** pressing RST, otherwise you'll miss the early boot logs since the board boots quickly
+
+### Known harmless warnings
+
+These messages appear in the Serial Monitor on every boot and can be safely ignored:
+
+- `MSPI Timing: Failed to allocate dummy cacheline for PSRAM memory barrier!` — the ROM bootloader runs MSPI timing calibration and prints this because there is no PSRAM; it does not affect execution
+- `SPI mode:DIO` — printed by the first-stage ROM bootloader and does not reflect the actual flash mode used by the application
+- `wifi:CCMP mgmt frame from XX:XX:XX:XX:XX:XX used non-zero reserved bit` — emitted by the router, not the chip; it is a minor RFC violation common in consumer routers and does not cause connection failures

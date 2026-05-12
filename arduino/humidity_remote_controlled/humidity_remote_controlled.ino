@@ -1,4 +1,5 @@
 #include <HumiditySensorUtils.h>
+#include <BatteryUtils.h>
 #include <WifiUtils.h>
 #include <WiFiClientSecure.h>
 #include <WiFiManager.h>
@@ -17,11 +18,11 @@ String supabaseApiKey;
 WiFiClientSecure client;
 
 //const int powerPin = 14; // Pin opzionale per alimentare il sensore solo quando serve
-const int sensorPin = 36;
+const int sensorPin = 3;  // GPIO3 (A2) on FireBeetle 2 ESP32-C5.
+//const int sensorPin = 36; // GPIO36 (SVP) on ESP32 from DIYmore.
 const int readsPerRun = 5; // Number of reads to make each time this program runs. The final result is the average of all the reads.
 
 void setup() {
-  
   Serial.begin(115200);
 
   // Configura il pin per alimentare il sensore (opzionale ma consigliato)
@@ -97,6 +98,29 @@ void sendHumidityReading(float humidity, int deviceId) {
   http.end();
 }
 
+void sendBatteryReading(int deviceId) {
+  HTTPClient http;
+
+  int batteryPct = readBatteryPercent();
+  float batteryVoltage = readBatteryVoltage();
+  Serial.println("Battery: " + String(batteryPct) + "% (" + String(batteryVoltage, 2) + "V)");
+
+  http.begin(client, remoteServerBaseUrl + "/rest/v1/battery_measurements");
+  http.addHeader("apikey", supabaseApiKey);
+  http.addHeader("Content-Type", "application/json");
+
+  String body = "{\"batteryPercent\":" + String(batteryPct) + ",\"deviceId\":" + String(deviceId) + "}";
+  int httpCode = http.POST(body);
+
+  if (httpCode == HTTP_CODE_CREATED) {
+    Serial.println("Battery sent successfully ✅");
+  } else {
+    Serial.println("Failed to send battery 😖. HTTP error: " + String(httpCode));
+  }
+
+  http.end();
+}
+
 void checkHumidity(const DynamicJsonDocument& config) {
   int minHumidityThreshold = config["minHumidityThreshold"] | 5; // Default to 5%
   int airValue = config["airValue"];
@@ -110,7 +134,7 @@ void checkHumidity(const DynamicJsonDocument& config) {
   int deviceId = config["deviceId"];
   float avgHumidity = readAvgHumidityPercent(sensorPin, airValue, waterValue, readsPerRun);
   sendHumidityReading(avgHumidity, deviceId);
-  //digitalWrite(powerPin, LOW); // Spegni subito il sensore per risparmiare energia e corrosione
+  sendBatteryReading(deviceId);
 }
 
 String getDeviceId() {
