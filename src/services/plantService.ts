@@ -15,10 +15,20 @@ interface RawSensorConfig {
   sleepDurationSeconds: number;
 }
 
+interface RawBatteryMeasurement {
+  batteryPercent: number;
+  createdAt: string;
+}
+
+interface RawDeviceMeasurements {
+  id: number;
+  humidity_measurements: RawMeasurement[];
+  battery_measurements: RawBatteryMeasurement[];
+}
+
 interface RawDevice {
   id: number;
   humidity_sensors_config: RawSensorConfig[];
-  humidity_measurements: RawMeasurement[];
 }
 
 interface RawPlant {
@@ -50,7 +60,11 @@ function computeStatuses(
   return ["HEALTHY"];
 }
 
-function enrichPlant(plant: RawPlant): EnrichedPlant {
+function enrichPlant(
+  plant: RawPlant,
+  humidityByDevice: Record<number, RawMeasurement>,
+  batteryByDevice: Record<number, RawBatteryMeasurement>,
+): EnrichedPlant {
   const humidityDevice = plant.devices?.find((d) => d.humidity_sensors_config?.length > 0);
 
   if (!humidityDevice) {
@@ -65,15 +79,13 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
       lastMeasuredAt: null,
       deviceId: null,
       sleepDurationSeconds: null,
+      batteryPercent: null,
     };
   }
 
   const config = humidityDevice.humidity_sensors_config[0];
-  const measurements = humidityDevice.humidity_measurements ?? [];
-  const latest = measurements.reduce<RawMeasurement | null>(
-    (best, m) => (!best || new Date(m.createdAt) > new Date(best.createdAt) ? m : best),
-    null,
-  );
+  const latest = humidityByDevice[humidityDevice.id] ?? null;
+  const latestBattery = batteryByDevice[humidityDevice.id] ?? null;
 
   const statuses = computeStatuses(latest, config.minHumidityThreshold, config.sleepDurationSeconds);
 
@@ -88,6 +100,7 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
     lastMeasuredAt: latest?.createdAt ?? null,
     deviceId: humidityDevice.id,
     sleepDurationSeconds: config.sleepDurationSeconds,
+    batteryPercent: latestBattery?.batteryPercent ?? null,
   };
 }
 
@@ -110,18 +123,43 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
-  const { data, error } = await supabase.from("plants").select(
-    `id, name, imageUrl, createdAt,
-     devices(
-       id,
-       humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds),
-       humidity_measurements(humidityPercentage, createdAt)
-     )`,
-  ).eq("user_id", user.id);
+  // Query 1: plant structure and device config — no measurements
+  const { data: plantsData, error: plantsError } = await supabase
+    .from("plants")
+    .select(
+      `id, name, imageUrl, createdAt,
+       devices(id, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
+    )
+    .eq("user_id", user.id);
 
-  if (error) throw error;
+  if (plantsError) throw plantsError;
 
-  return sortPlants((data as unknown as RawPlant[]).map(enrichPlant));
+  const plants = plantsData as unknown as RawPlant[];
+  const deviceIds = plants.flatMap((p) => (p.devices ?? []).map((d) => d.id));
+
+  const humidityByDevice: Record<number, RawMeasurement> = {};
+  const batteryByDevice: Record<number, RawBatteryMeasurement> = {};
+
+  if (deviceIds.length > 0) {
+    // Query 2: only the single latest measurement per device for each type
+    const { data: devicesData, error: devicesError } = await supabase
+      .from("devices")
+      .select(`id, humidity_measurements(humidityPercentage, createdAt), battery_measurements(batteryPercent, createdAt)`)
+      .in("id", deviceIds)
+      .order("createdAt", { referencedTable: "humidity_measurements", ascending: false })
+      .limit(1, { referencedTable: "humidity_measurements" })
+      .order("createdAt", { referencedTable: "battery_measurements", ascending: false })
+      .limit(1, { referencedTable: "battery_measurements" });
+
+    if (devicesError) throw devicesError;
+
+    for (const device of devicesData as unknown as RawDeviceMeasurements[]) {
+      if (device.humidity_measurements?.[0]) humidityByDevice[device.id] = device.humidity_measurements[0];
+      if (device.battery_measurements?.[0]) batteryByDevice[device.id] = device.battery_measurements[0];
+    }
+  }
+
+  return sortPlants(plants.map((p) => enrichPlant(p, humidityByDevice, batteryByDevice)));
 }
 
 // ---------------------------------------------------------------------------

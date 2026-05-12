@@ -165,6 +165,12 @@
   line-height: 1;
 }
 
+.leaderboard-battery {
+  font-size: 13px;
+  color: var(--green-400);
+  line-height: 1;
+}
+
 /* Animations */
 @keyframes fade-in {
   from { opacity: 0; }

@@ -26,9 +26,10 @@ export interface EnrichedPlant {
   image_url: string | null;
   created_at: string;
   statuses: PlantStatus[];
-  humidityPercent: number | null;
   threshold: number | null;
   lastMeasuredAt: string | null;
   deviceId: number | null;
   sleepDurationSeconds: number | null;
+  humidityPercent: number | null;
+  batteryPercent: number | null;
 }

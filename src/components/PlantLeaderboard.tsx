@@ -37,6 +37,21 @@ function PlantLeaderboardRow({ plant, index, onClick }: { plant: EnrichedPlant; 
               </Badge>
             ))}
           </Group>
+          {plant.batteryPercent != null && (
+            <span
+              className="leaderboard-battery"
+              style={{
+                color:
+                  plant.batteryPercent < 20
+                    ? "var(--mantine-color-red-6)"
+                    : plant.batteryPercent < 50
+                      ? "var(--mantine-color-orange-6)"
+                      : undefined,
+              }}
+            >
+              🔋 {plant.batteryPercent}%
+            </span>
+          )}
         </div>
       </div>
 

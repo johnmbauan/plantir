@@ -60,6 +60,20 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
           </Group>
         )}
 
+        {/* Battery */}
+        {plant.batteryPercent != null && (
+          <Group justify="space-between">
+            <Text size="sm" c="dimmed">Battery</Text>
+            <Text
+              size="sm"
+              fw={600}
+              c={plant.batteryPercent < 20 ? "red" : plant.batteryPercent < 50 ? "orange" : undefined}
+            >
+              🔋 {plant.batteryPercent}%
+            </Text>
+          </Group>
+        )}
+
         {/* Action links */}
         <Group gap="lg" mt="xs">
           <Anchor component={Link} size="sm" to={`/plants-center?tab=plants&plantId=${plant.id}`} onClick={onClose}>
