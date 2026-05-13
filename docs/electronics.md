@@ -123,3 +123,13 @@ These messages appear in the Serial Monitor on every boot and can be safely igno
 - `MSPI Timing: Failed to allocate dummy cacheline for PSRAM memory barrier!` — the ROM bootloader runs MSPI timing calibration and prints this because there is no PSRAM; it does not affect execution
 - `SPI mode:DIO` — printed by the first-stage ROM bootloader and does not reflect the actual flash mode used by the application
 - `wifi:CCMP mgmt frame from XX:XX:XX:XX:XX:XX used non-zero reserved bit` — emitted by the router, not the chip; it is a minor RFC violation common in consumer routers and does not cause connection failures
+
+### Pin notes
+
+#### 3V3_C
+The `3V3_C` pin is a "controllable 3.3V output", for use cases optimized battery consumption is needed. Hence, it needs to be turned on and off explicitly.
+```
+digitalWrite(powerPin, HIGH);
+....
+digitalWrite(powerPin, LOW);
+```

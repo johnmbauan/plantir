@@ -18,16 +18,17 @@ String supabaseApiKey;
 WiFiClientSecure client;
 
 //const int powerPin = 14; // Pin opzionale per alimentare il sensore solo quando serve
-const int sensorPin = 3;  // GPIO3 (A2) on FireBeetle 2 ESP32-C5.
+const int sensorPin = A1;  // GPIO2 (A1) on FireBeetle 2 ESP32-C5.
 //const int sensorPin = 36; // GPIO36 (SVP) on ESP32 from DIYmore.
+const int powerPin = 0;    // GPIO controlling the 3V3_C switched supply — verify against your board's schematic.
 const int readsPerRun = 5; // Number of reads to make each time this program runs. The final result is the average of all the reads.
 
 void setup() {
   Serial.begin(115200);
 
-  // Configura il pin per alimentare il sensore (opzionale ma consigliato)
-  //pinMode(powerPin, OUTPUT);
-  //digitalWrite(powerPin, HIGH); // Accendi il sensore
+  // Power on the sensor via the 3V3_C switched supply
+  pinMode(powerPin, OUTPUT);
+  digitalWrite(powerPin, HIGH);
   delay(1000); // Waiting for the sensor to stabilize.
 
   Serial.println("I'm starting.... ");
@@ -43,6 +44,10 @@ void setup() {
   const int sleepDurationSeconds = config["sleepDurationSeconds"] | DEFAULT_SLEEP_DURATION; // Default to DEFAULT_SLEEP_DURATION if not specified in config
 
   Serial.println("Entering in deep sleep for " + String(sleepDurationSeconds) + " seconds... 😴");
+
+  // Power off the sensor before sleeping to avoid draining the battery
+  digitalWrite(powerPin, LOW);
+
   esp_sleep_enable_timer_wakeup(sleepDurationSeconds * uS_TO_S_FACTOR);
   Serial.flush();
 
@@ -139,9 +144,9 @@ void checkHumidity(const DynamicJsonDocument& config) {
 
 String getDeviceId() {
   uint64_t mac = ESP.getEfuseMac();
-  char id[13];
-  snprintf(id, sizeof(id), "%04X%08X",
-           (uint16_t)(mac >> 32), (uint32_t)mac);
+  char id[17];
+  snprintf(id, sizeof(id), "%04X%04X%08X",
+           (uint16_t)(mac >> 48), (uint16_t)(mac >> 32), (uint32_t)mac);
   return String(id);
 }
 
