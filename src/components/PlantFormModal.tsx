@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { Modal, Stack, TextInput, Image, Button, Group } from "@mantine/core";
+import { useEffect, useRef, useState } from "react";
+import { Modal, Stack, TextInput, Image, Button, Group, FileButton, Text } from "@mantine/core";
 import type { EnrichedPlant } from "@/types";
-import { createPlant, updatePlant } from "@/services/plantService";
+import { createPlant, deletePlantImage, updatePlant, uploadPlantImage } from "@/services/plantService";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/error";
 
@@ -14,26 +14,43 @@ interface Props {
 
 export default function PlantFormModal({ opened, onClose, editingPlant, onSaved }: Props) {
   const [name, setName] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const resetFileRef = useRef<() => void>(null);
 
   useEffect(() => {
     if (!opened) return;
     if (editingPlant) {
       setName(editingPlant.name);
-      setImageUrl(editingPlant.image_url ?? "");
+      setExistingImageUrl(editingPlant.image_url);
     } else {
       setName("");
-      setImageUrl("");
+      setExistingImageUrl(null);
     }
+    setImageFile(null);
+    resetFileRef.current?.();
   }, [opened, editingPlant]);
 
+  const previewSrc = imageFile ? URL.createObjectURL(imageFile) : existingImageUrl;
+
   const handleSave = async () => {
+    setSaving(true);
     try {
-      if (editingPlant) {
-        await updatePlant(editingPlant.id, name, imageUrl || null);
-      } else {
-        await createPlant(name, imageUrl || null);
+      let resolvedUrl = existingImageUrl;
+
+      if (imageFile) {
+        // Delete the old stored image before uploading the new one
+        await deletePlantImage(existingImageUrl);
+        resolvedUrl = await uploadPlantImage(imageFile);
       }
+
+      if (editingPlant) {
+        await updatePlant(editingPlant.id, name, resolvedUrl);
+      } else {
+        await createPlant(name, resolvedUrl);
+      }
+
       notifications.show({
         color: "green",
         title: "Saved",
@@ -44,6 +61,8 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
     } catch (err) {
       console.error(err);
       notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -57,15 +76,9 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <TextInput
-          label="Image URL"
-          placeholder="https://..."
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-        />
-        {imageUrl && (
+        {previewSrc && (
           <Image
-            src={imageUrl}
+            src={previewSrc}
             alt="Plant preview"
             radius="md"
             h={120}
@@ -73,11 +86,25 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
             fallbackSrc="https://placehold.co/120x120?text=No+image"
           />
         )}
+        <Group gap="sm" align="center">
+          <FileButton resetRef={resetFileRef} onChange={setImageFile} accept="image/*">
+            {(props) => (
+              <Button variant="default" {...props}>
+                {previewSrc ? "Change photo" : "Upload photo"}
+              </Button>
+            )}
+          </FileButton>
+          {imageFile && (
+            <Text size="sm" c="dimmed" truncate>
+              {imageFile.name}
+            </Text>
+          )}
+        </Group>
         <Group justify="flex-end" mt="md">
           <Button variant="default" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!name}>
+          <Button onClick={handleSave} disabled={!name} loading={saving}>
             Save
           </Button>
         </Group>
