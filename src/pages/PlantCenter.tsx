@@ -33,12 +33,12 @@ export default function PlantCenter() {
           <Tabs.Tab value="devices">Devices</Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="plants">
-          <PlantsTab reloadKey={mutationCount} onMutated={handleMutated} />
+        <Tabs.Panel value="plants" keepMounted={false}>
+          {activeTab === "plants" && <PlantsTab reloadKey={mutationCount} onMutated={handleMutated} />}
         </Tabs.Panel>
 
-        <Tabs.Panel value="devices">
-          <DevicesTab reloadKey={mutationCount} onMutated={handleMutated} />
+        <Tabs.Panel value="devices" keepMounted={false}>
+          {activeTab === "devices" && <DevicesTab reloadKey={mutationCount} onMutated={handleMutated} />}
         </Tabs.Panel>
       </Tabs>
     </Box>
