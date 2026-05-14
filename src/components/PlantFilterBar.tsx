@@ -4,6 +4,7 @@ import type { PlantStatus } from "@/types";
 interface PlantCounts {
   wateringNeeded: number;
   offline: number;
+  rechargeNeeded: number;
 }
 
 interface PlantFilterBarProps {
@@ -41,6 +42,15 @@ export default function PlantFilterBar({
           onClick={() => onToggleFilter("OFFLINE")}
         >
           ⚠️ {counts.offline} offline
+        </Badge>
+        <Badge
+          color="red"
+          variant={activeFilter === "RECHARGE_NEEDED" ? "filled" : "light"}
+          size="lg"
+          className={`dashboard-filter-badge${activeFilter === "RECHARGE_NEEDED" ? " dashboard-filter-badge--active" : ""}`}
+          onClick={() => onToggleFilter("RECHARGE_NEEDED")}
+        >
+          🔋 {counts.rechargeNeeded} need recharge
         </Badge>
       </Group>
 

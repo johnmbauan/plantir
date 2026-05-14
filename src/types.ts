@@ -1,4 +1,4 @@
-export type PlantStatus = "HEALTHY" | "WATERING_NEEDED" | "OFFLINE";
+export type PlantStatus = "HEALTHY" | "WATERING_NEEDED" | "OFFLINE" | "RECHARGE_NEEDED";
 
 export type DeviceType = "humidity";
 

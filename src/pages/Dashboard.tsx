@@ -33,6 +33,7 @@ export default function Dashboard() {
   const counts = {
     wateringNeeded: plants.filter((p) => p.statuses.includes("WATERING_NEEDED")).length,
     offline: plants.filter((p) => p.statuses.includes("OFFLINE")).length,
+    rechargeNeeded: plants.filter((p) => p.statuses.includes("RECHARGE_NEEDED")).length,
   };
 
   const visible = plants.filter((p) => {

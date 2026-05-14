@@ -39,6 +39,9 @@ interface RawPlant {
   devices: RawDevice[];
 }
 
+const BATTERY_WARNING_THRESHOLD = 10; // Percent below which we consider the battery needs recharge
+const OFFLINE_SLEEP_MULTIPLIER = 2; // How many sleep cycles without measurements before considering the plant offline
+
 // ---------------------------------------------------------------------------
 // Enrichment helpers
 // ---------------------------------------------------------------------------
@@ -51,7 +54,7 @@ function computeStatuses(
   if (!latestMeasurement) return ["OFFLINE"];
 
   const ageMs = Date.now() - new Date(latestMeasurement.createdAt).getTime();
-  const isOffline = ageMs > sleepDurationSeconds * 2 * 1000;
+  const isOffline = ageMs > sleepDurationSeconds * OFFLINE_SLEEP_MULTIPLIER * 1000;
   const needsWater = latestMeasurement.humidityPercentage < minHumidityThreshold;
 
   if (isOffline && needsWater) return ["OFFLINE", "WATERING_NEEDED"];
@@ -88,6 +91,9 @@ function enrichPlant(
   const latestBattery = batteryByDevice[humidityDevice.id] ?? null;
 
   const statuses = computeStatuses(latest, config.minHumidityThreshold, config.sleepDurationSeconds);
+  if (latestBattery !== null && latestBattery.batteryPercent < BATTERY_WARNING_THRESHOLD) {
+    statuses.push("RECHARGE_NEEDED");
+  }
 
   return {
     id: plant.id,
