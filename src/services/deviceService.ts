@@ -73,10 +73,14 @@ export async function createDevice(values: DeviceFormValues): Promise<void> {
 }
 
 export async function updateDevice(id: number, values: DeviceFormValues): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { error: deviceError } = await supabase
     .from("devices")
     .update({ serialNumber: values.serialNumber, plantId: values.plantId ?? null, type: values.type })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (deviceError) throw deviceError;
 
@@ -105,6 +109,9 @@ export async function updateDevice(id: number, values: DeviceFormValues): Promis
 }
 
 export async function deleteDevice(id: number): Promise<void> {
-  const { error } = await supabase.from("devices").delete().eq("id", id);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase.from("devices").delete().eq("id", id).eq("user_id", user.id);
   if (error) throw error;
 }

@@ -119,6 +119,32 @@ In Supabase secrets are at the project level. In our case the `telegram-notifier
 - `supabase secrets set SOME_SECRET="some-value"`: Configure a new secret or edit an existing one.
 - `supabase secrets unset SOME_SECRET`: Remove a previously created secret.
 
+## Row Level Security
+
+Access is split between two roles:
+
+| Role | Purpose |
+|------|---------|
+| `anon` | Arduino devices (publishable key) |
+| `authenticated` | Web dashboard (signed-in users) |
+
+### Device access (`anon`)
+
+Devices may only:
+
+- **SELECT** `devices` and `humidity_sensors_config` (fetch config by `serialNumber`)
+- **INSERT** `humidity_measurements` and `battery_measurements` (readings must reference a valid `deviceId`)
+
+Devices have **no** access to `plants`, `notification_settings`, or any other table.
+
+### Dashboard access (`authenticated`)
+
+Signed-in users may only read and write rows they own (`user_id = auth.uid()` on `plants`, `devices`, and `notification_settings`). Measurement tables are readable (and deletable on cascade) only for devices belonging to the current user.
+
+Policies are defined in migration [20260628000000_scoped_rls_policies.sql](../supabase/migrations/20260628000000_scoped_rls_policies.sql).
+
+> **Note:** The `telegram-notifier` edge function connects with the service role and bypasses RLS, so scheduled alerts continue to work across all users.
+
 ## Database Migrations
 
 > [!IMPORTANT]  

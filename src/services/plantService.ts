@@ -184,16 +184,23 @@ export async function createPlant(name: string, imageUrl: string | null) {
 }
 
 export async function updatePlant(id: number, name: string, imageUrl: string | null) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { error } = await supabase
     .from("plants")
     .update({ name, imageUrl })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) throw error;
 }
 
 export async function deletePlant(id: number) {
-  const { error } = await supabase.from("plants").delete().eq("id", id);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase.from("plants").delete().eq("id", id).eq("user_id", user.id);
   if (error) throw error;
 }
 
