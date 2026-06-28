@@ -58,8 +58,8 @@ void checkHumidity() {
   if (avgHumidity < minHumidityThreshold) {
     bool isConnected = connectToWifi(ssid, password, "Humidity Sensor = " + WiFi.macAddress());
     if (isConnected) {
-      String messaggio = "🪴 '" + plantName + "'  ha bisogno d'acqua!💦 \n";
-      messaggio += "Umidità attuale: " + String(avgHumidity) + "% 🥀";
+      String messaggio = "🪴 '" + plantName + "' needs water!💦 \n";
+      messaggio += "Current humidity: " + String(avgHumidity) + "% 🥀";
       if (bot.sendPhoto(CHAT_ID, plantPicLink , messaggio)) {
         Serial.println("Message sent to Telegram!");
       }

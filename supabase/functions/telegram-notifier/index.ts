@@ -16,6 +16,7 @@ interface OfflineRow {
   chatId: string;
   plantName: string;
   lastSeenAt: string | null;
+  notificationTimezone: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -49,7 +50,8 @@ const OFFLINE_QUERY = `
   SELECT
     ns.telegram_chat_id AS "chatId",
     p.name              AS "plantName",
-    MAX(hm."createdAt") AS "lastSeenAt"
+    MAX(hm."createdAt") AS "lastSeenAt",
+    ns.notification_timezone AS "notificationTimezone"
   FROM devices d
   JOIN plants p                   ON p.id  = d."plantId"
   JOIN humidity_sensors_config hsc ON hsc."deviceId" = d.id
@@ -110,7 +112,7 @@ async function sendWateringAlerts(
   const alerts: { chatId: string; plant: string; humidity: number; success: boolean }[] = [];
 
   for (const row of rows) {
-    const caption = `⚠️ Attenzione! La pianta ${row.plantName} ha bisogno di acqua! Umidità rilevata del ${row.humidity}%`;
+    const caption = `⚠️ Warning! Plant ${row.plantName} needs water! Humidity reading: ${row.humidity}%`;
     try {
       if (row.imageUrl) {
         await sendTelegramPhoto(botToken, row.chatId, row.imageUrl, caption);
@@ -146,13 +148,13 @@ async function sendOfflineAlerts(
   for (const [chatId, plants] of byChatId) {
     const lines = plants.map((r) => {
       const lastSeen = r.lastSeenAt
-        ? `ultima lettura ${new Date(r.lastSeenAt).toLocaleString("it-IT", { timeZone: "Europe/Rome" })}`
-        : "mai visto";
+        ? `last reading ${new Date(r.lastSeenAt).toLocaleString("en-US", { timeZone: r.notificationTimezone })}`
+        : "never seen";
       return `• ${r.plantName} (${lastSeen})`;
     });
 
     const text =
-      `🔴 Attenzione! I dispositivi delle seguenti piante non inviano dati da troppo tempo (possibile batteria scarica o malfunzionamento):\n\n` +
+      `🔴 Warning! The devices for the following plants haven't sent data in too long (possible low battery or malfunction):\n\n` +
       lines.join("\n");
 
     await sendTelegramMessage(botToken, chatId, text);
