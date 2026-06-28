@@ -11,8 +11,9 @@
 #define BAT_ADC_PIN  1
 #define BAT_CTRL_PIN 0
 #define BATTERY_VOLTAGE_DIVIDER_RATIO 2.0f
-#define BATTERY_VOLTAGE_MIN 3.0f  // LiPo ~0%
-#define BATTERY_VOLTAGE_MAX 4.2f  // LiPo ~100%
+#define BATTERY_ADC_SAMPLES 6
+#define BATTERY_VOLTAGE_MIN 3.4f  // Practical empty for ESP32 + WiFi (not cell protection cutoff)
+#define BATTERY_VOLTAGE_MAX 4.2f  // LiPo full charge
 
 // Returns the battery voltage in volts (e.g. 3.7).
 // Drives CTRL (GPIO0) HIGH to enable the measurement circuit, then LOW after reading.
@@ -21,9 +22,12 @@ inline float readBatteryVoltage() {
   pinMode(BAT_CTRL_PIN, OUTPUT);
   digitalWrite(BAT_CTRL_PIN, HIGH);
   delay(500);  // RC settle time: R19+R20=2MΩ, C18=100nF → τ=200ms, wait 2.5τ
-  uint32_t mv = analogReadMilliVolts(BAT_ADC_PIN);
+  uint32_t mvSum = 0;
+  for (int i = 0; i < BATTERY_ADC_SAMPLES; i++) {
+    mvSum += analogReadMilliVolts(BAT_ADC_PIN);
+  }
   digitalWrite(BAT_CTRL_PIN, LOW);
-  return (mv / 1000.0f) * BATTERY_VOLTAGE_DIVIDER_RATIO;
+  return (mvSum / (float)BATTERY_ADC_SAMPLES / 1000.0f) * BATTERY_VOLTAGE_DIVIDER_RATIO;
 }
 
 // Returns the estimated battery charge level as a percentage (0-100).

@@ -4,6 +4,7 @@
 #include <UniversalTelegramBot.h>
 #include <ArduinoJson.h>
 
+// !!WARNING!! This sketch has not been tested with FireBeetle 2 ESP32-C5 and is very much outdated
 
 const String plantName = "Pothos - Salone";
 const String plantPicLink = "https://photos.app.goo.gl/hfw8fVBE2hGxkENx9";
