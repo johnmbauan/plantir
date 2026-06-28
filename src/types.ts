@@ -1,4 +1,5 @@
 export type PlantStatus = "HEALTHY" | "WATERING_NEEDED" | "OFFLINE" | "RECHARGE_NEEDED";
+export type HistoryRange = "24h" | "7d" | "30d";
 
 export type DeviceType = "humidity";
 
@@ -32,4 +33,14 @@ export interface EnrichedPlant {
   sleepDurationSeconds: number | null;
   humidityPercent: number | null;
   batteryPercent: number | null;
+}
+
+export interface MeasurementPoint {
+  value: number;
+  createdAt: string;
+}
+
+export interface PlantHistory {
+  humidity: MeasurementPoint[];
+  battery: MeasurementPoint[];
 }

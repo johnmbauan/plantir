@@ -1,46 +1,152 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Stack } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 import type { EnrichedPlant, PlantStatus } from "@/types";
 import { fetchPlants } from "@/services/plantService";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/error";
+import supabase from "@/supabase";
 import PlantFilterBar from "@/components/PlantFilterBar";
 import PlantLeaderboard from "@/components/PlantLeaderboard";
 import PlantDetailModal from "@/components/PlantDetailModal";
 import "@/pages/Dashboard.css";
 
+type DashboardFilter = PlantStatus | "all";
+type DashboardSort = "humidity-low" | "humidity-high" | "name" | "last-seen";
+
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
-  const [activeFilter, setActiveFilter] = useState<PlantStatus | "all">("all");
+  const [activeFilter, setActiveFilter] = useState<DashboardFilter>("all");
+  const [sortBy, setSortBy] = useState<DashboardSort>("humidity-low");
   const [selectedPlant, setSelectedPlant] = useState<EnrichedPlant | null>(null);
 
   function toggleFilter(status: PlantStatus) {
     setActiveFilter((prev) => (prev === status ? "all" : status));
   }
 
-  useEffect(() => {
-    fetchPlants()
-      .then(setPlants)
-      .catch((err) => {
-        console.error(err);
-        notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
-      })
-      .finally(() => setLoading(false));
+  const reloadPlants = useCallback(async (source: "initial" | "manual" | "realtime" = "manual") => {
+    if (source === "initial") setLoading(true);
+    if (source !== "initial") setRefreshing(true);
+
+    try {
+      const data = await fetchPlants();
+      setPlants(data);
+      setSelectedPlant((prev) => {
+        if (!prev) return null;
+        return data.find((p) => p.id === prev.id) ?? prev;
+      });
+    } catch (err) {
+      console.error(err);
+      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+    } finally {
+      if (source === "initial") setLoading(false);
+      if (source !== "initial") setRefreshing(false);
+    }
   }, []);
 
-  const counts = {
+  useEffect(() => {
+    void reloadPlants("initial");
+  }, [reloadPlants]);
+
+  useEffect(() => {
+    let debounceTimer: number | undefined;
+    let warned = false;
+    const triggerReload = () => {
+      if (debounceTimer) return;
+      debounceTimer = window.setTimeout(() => {
+        debounceTimer = undefined;
+        void reloadPlants("realtime");
+      }, 800);
+    };
+
+    const channel = supabase
+      .channel("dashboard-measurements")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "humidity_measurements" }, triggerReload)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "battery_measurements" }, triggerReload)
+      .subscribe((status) => {
+        if (status === "CHANNEL_ERROR" && !warned) {
+          warned = true;
+          notifications.show({
+            color: "yellow",
+            title: "Realtime unavailable",
+            message: "Live updates are temporarily unavailable. You can still use manual refresh.",
+          });
+        }
+      });
+
+    return () => {
+      if (debounceTimer) window.clearTimeout(debounceTimer);
+      void supabase.removeChannel(channel);
+    };
+  }, [reloadPlants]);
+
+  const counts = useMemo(() => ({
+    healthy: plants.filter((p) => p.statuses.includes("HEALTHY")).length,
     wateringNeeded: plants.filter((p) => p.statuses.includes("WATERING_NEEDED")).length,
     offline: plants.filter((p) => p.statuses.includes("OFFLINE")).length,
     rechargeNeeded: plants.filter((p) => p.statuses.includes("RECHARGE_NEEDED")).length,
-  };
+  }), [plants]);
 
-  const visible = plants.filter((p) => {
-    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    const matchesFilter = activeFilter === "all" || p.statuses.includes(activeFilter);
-    return matchesSearch && matchesFilter;
-  });
+  const visible = useMemo(() => {
+    const filtered = plants.filter((p) => {
+      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+      const matchesFilter = activeFilter === "all" || p.statuses.includes(activeFilter);
+      return matchesSearch && matchesFilter;
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+
+      if (sortBy === "last-seen") {
+        const aTime = a.lastMeasuredAt ? new Date(a.lastMeasuredAt).getTime() : 0;
+        const bTime = b.lastMeasuredAt ? new Date(b.lastMeasuredAt).getTime() : 0;
+        if (bTime !== aTime) return bTime - aTime;
+        return a.name.localeCompare(b.name);
+      }
+
+      if (sortBy === "humidity-high") {
+        const aHumidity = a.humidityPercent ?? Number.NEGATIVE_INFINITY;
+        const bHumidity = b.humidityPercent ?? Number.NEGATIVE_INFINITY;
+        if (bHumidity !== aHumidity) return bHumidity - aHumidity;
+        return a.name.localeCompare(b.name);
+      }
+
+      const aHumidity = a.humidityPercent ?? Number.POSITIVE_INFINITY;
+      const bHumidity = b.humidityPercent ?? Number.POSITIVE_INFINITY;
+      if (aHumidity !== bHumidity) return aHumidity - bHumidity;
+      return a.name.localeCompare(b.name);
+    });
+  }, [plants, search, activeFilter, sortBy]);
+
+  const emptyState = useMemo(() => {
+    if (plants.length === 0) {
+      return {
+        title: "No plants yet",
+        description: "Start by creating your first plant in Plants Center.",
+        actionLabel: "Add first plant",
+        onAction: () => navigate("/plants-center?tab=plants"),
+      };
+    }
+
+    if (visible.length === 0) {
+      return {
+        title: "No plants match your filters",
+        description: "Try clearing search and filters to see all plants.",
+        actionLabel: "Reset filters",
+        onAction: () => {
+          setSearch("");
+          setActiveFilter("all");
+          setSortBy("humidity-low");
+        },
+      };
+    }
+
+    return undefined;
+  }, [plants.length, visible.length, navigate]);
 
   return (
     <Stack gap="lg">
@@ -48,10 +154,19 @@ export default function Dashboard() {
         counts={counts}
         activeFilter={activeFilter}
         search={search}
+        sortBy={sortBy}
+        refreshing={refreshing}
         onToggleFilter={toggleFilter}
         onSearchChange={setSearch}
+        onSortChange={setSortBy}
+        onRefresh={() => void reloadPlants("manual")}
       />
-      <PlantLeaderboard plants={visible} loading={loading} onPlantClick={setSelectedPlant} />
+      <PlantLeaderboard
+        plants={visible}
+        loading={loading}
+        onPlantClick={setSelectedPlant}
+        emptyState={emptyState}
+      />
       <PlantDetailModal
         plant={selectedPlant}
         opened={selectedPlant !== null}

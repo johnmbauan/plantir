@@ -1,5 +1,5 @@
 import supabase from "@/supabase";
-import type { EnrichedPlant, PlantStatus } from "@/types";
+import type { EnrichedPlant, HistoryRange, MeasurementPoint, PlantHistory, PlantStatus } from "@/types";
 
 // ---------------------------------------------------------------------------
 // Raw DB shapes (reflect actual Supabase column names after migrations)
@@ -18,6 +18,10 @@ interface RawSensorConfig {
 interface RawBatteryMeasurement {
   batteryPercent: number;
   createdAt: string;
+}
+
+interface RawPlantDevice {
+  id: number;
 }
 
 interface RawDeviceMeasurements {
@@ -41,6 +45,11 @@ interface RawPlant {
 
 const BATTERY_WARNING_THRESHOLD = 10; // Percent below which we consider the battery needs recharge
 const OFFLINE_SLEEP_MULTIPLIER = 2; // How many sleep cycles without measurements before considering the plant offline
+const HISTORY_RANGE_HOURS: Record<HistoryRange, number> = {
+  "24h": 24,
+  "7d": 24 * 7,
+  "30d": 24 * 30,
+};
 
 // ---------------------------------------------------------------------------
 // Enrichment helpers
@@ -166,6 +175,64 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
   }
 
   return sortPlants(plants.map((p) => enrichPlant(p, humidityByDevice, batteryByDevice)));
+}
+
+function rangeStartIso(range: HistoryRange): string {
+  const nowMs = Date.now();
+  const rangeMs = HISTORY_RANGE_HOURS[range] * 60 * 60 * 1000;
+  return new Date(nowMs - rangeMs).toISOString();
+}
+
+function toHumidityPoints(rows: RawMeasurement[]): MeasurementPoint[] {
+  return rows.map((row) => ({ value: row.humidityPercentage, createdAt: row.createdAt }));
+}
+
+function toBatteryPoints(rows: RawBatteryMeasurement[]): MeasurementPoint[] {
+  return rows.map((row) => ({ value: row.batteryPercent, createdAt: row.createdAt }));
+}
+
+export async function fetchPlantHistory(plantId: number, range: HistoryRange): Promise<PlantHistory> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { data: plantData, error: plantError } = await supabase
+    .from("plants")
+    .select("devices(id)")
+    .eq("id", plantId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (plantError) throw plantError;
+
+  const devices = (plantData?.devices ?? []) as RawPlantDevice[];
+  if (devices.length === 0) return { humidity: [], battery: [] };
+
+  const since = rangeStartIso(range);
+  const deviceIds = devices.map((d) => d.id);
+
+  const [{ data: humidityRows, error: humidityError }, { data: batteryRows, error: batteryError }] =
+    await Promise.all([
+      supabase
+        .from("humidity_measurements")
+        .select("humidityPercentage, createdAt")
+        .in("deviceId", deviceIds)
+        .gte("createdAt", since)
+        .order("createdAt", { ascending: true }),
+      supabase
+        .from("battery_measurements")
+        .select("batteryPercent, createdAt")
+        .in("deviceId", deviceIds)
+        .gte("createdAt", since)
+        .order("createdAt", { ascending: true }),
+    ]);
+
+  if (humidityError) throw humidityError;
+  if (batteryError) throw batteryError;
+
+  return {
+    humidity: toHumidityPoints((humidityRows ?? []) as RawMeasurement[]),
+    battery: toBatteryPoints((batteryRows ?? []) as RawBatteryMeasurement[]),
+  };
 }
 
 // ---------------------------------------------------------------------------

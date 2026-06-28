@@ -1,4 +1,4 @@
-import { Skeleton, Stack, Text, Group, Badge } from "@mantine/core";
+import { Skeleton, Stack, Text, Group, Badge, Button } from "@mantine/core";
 import type { EnrichedPlant } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { relativeTime } from "@/utils/time";
@@ -8,6 +8,12 @@ interface PlantLeaderboardProps {
   plants: EnrichedPlant[];
   loading: boolean;
   onPlantClick?: (plant: EnrichedPlant) => void;
+  emptyState?: {
+    title: string;
+    description?: string;
+    actionLabel?: string;
+    onAction?: () => void;
+  };
 }
 
 function PlantLeaderboardRow({ plant, index, onClick }: { plant: EnrichedPlant; index: number; onClick?: () => void }) {
@@ -76,7 +82,7 @@ function PlantLeaderboardRow({ plant, index, onClick }: { plant: EnrichedPlant; 
   );
 }
 
-export default function PlantLeaderboard({ plants, loading, onPlantClick }: PlantLeaderboardProps) {
+export default function PlantLeaderboard({ plants, loading, onPlantClick, emptyState }: PlantLeaderboardProps) {
   if (loading) {
     return (
       <Stack gap="sm">
@@ -89,9 +95,21 @@ export default function PlantLeaderboard({ plants, loading, onPlantClick }: Plan
 
   if (plants.length === 0) {
     return (
-      <Text ta="center" c="var(--green-400)" mt="xl">
-        No plants found.
-      </Text>
+      <Stack align="center" gap={4} mt="xl">
+        <Text ta="center" c="var(--green-700)" fw={600}>
+          {emptyState?.title ?? "No plants found."}
+        </Text>
+        {emptyState?.description && (
+          <Text ta="center" c="dimmed" size="sm">
+            {emptyState.description}
+          </Text>
+        )}
+        {emptyState?.actionLabel && emptyState.onAction && (
+          <Button variant="subtle" onClick={emptyState.onAction}>
+            {emptyState.actionLabel}
+          </Button>
+        )}
+      </Stack>
     );
   }
 
