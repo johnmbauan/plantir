@@ -5,7 +5,7 @@ import {
   IconCheck,
   IconLeaf,
   IconCpu,
-  IconBrandTelegram,
+  IconBell,
   IconX,
   IconChevronRight,
 } from "@tabler/icons-react";
@@ -28,7 +28,7 @@ export default function OnboardingChecklist() {
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
   const [hasPlants, setHasPlants] = useState(false);
   const [hasDevices, setHasDevices] = useState(false);
-  const [hasTelegram, setHasTelegram] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function OnboardingChecklist() {
       ]);
       setHasPlants((plantsRes.data?.length ?? 0) > 0);
       setHasDevices((devicesRes.data?.length ?? 0) > 0);
-      setHasTelegram(!!settings?.telegram_chat_id?.trim());
+      setHasNotifications(settings !== null);
       setLoaded(true);
     }
 
@@ -70,16 +70,16 @@ export default function OnboardingChecklist() {
       done: hasDevices,
     },
     {
-      key: "telegram",
-      icon: <IconBrandTelegram size={15} />,
-      label: "Set up Telegram notifications",
-      description: "Get watering and offline alerts sent directly to your phone.",
+      key: "notifications",
+      icon: <IconBell size={15} />,
+      label: "Review notification settings",
+      description: "Choose when to receive watering and offline alerts in the app.",
       href: "/settings",
-      done: hasTelegram,
+      done: hasNotifications,
     },
   ];
 
-  const allDone = hasPlants && hasDevices && hasTelegram;
+  const allDone = hasPlants && hasDevices && hasNotifications;
 
   if (dismissed || !loaded || allDone) return null;
 

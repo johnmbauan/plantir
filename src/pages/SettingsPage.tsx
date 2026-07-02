@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
-import { Box, Title, Paper, Stack, TextInput, Button, Text, Select } from "@mantine/core";
+import {
+  Box,
+  Title,
+  Paper,
+  Stack,
+  TextInput,
+  Button,
+  Text,
+  Select,
+  Switch,
+  Divider,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import TelegramSetupAccordion from "@/components/TelegramSetupAccordion";
 import { fetchSettings, upsertSettings } from "@/services/notificationService";
@@ -17,6 +28,7 @@ const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => ({
 const DEFAULT_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export default function SettingsPage() {
+  const [browserEnabled, setBrowserEnabled] = useState(true);
   const [chatId, setChatId] = useState("");
   const [notificationHour, setNotificationHour] = useState(8);
   const [notificationTimezone, setNotificationTimezone] = useState(DEFAULT_TIMEZONE);
@@ -27,6 +39,7 @@ export default function SettingsPage() {
     fetchSettings()
       .then((s) => {
         if (s) {
+          setBrowserEnabled(s.browser_notifications_enabled);
           setChatId(s.telegram_chat_id);
           setNotificationHour(s.notification_hour);
           setNotificationTimezone(s.notification_timezone);
@@ -42,7 +55,7 @@ export default function SettingsPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await upsertSettings(chatId.trim(), notificationHour, notificationTimezone);
+      await upsertSettings(chatId.trim(), notificationHour, notificationTimezone, browserEnabled);
       notifications.show({ color: "green", title: "Saved", message: "Notification settings updated." });
     } catch (err) {
       notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
@@ -64,24 +77,24 @@ export default function SettingsPage() {
         style={{ border: "1px solid var(--terracotta-100)" }}
       >
         <Stack gap="xs" mb="lg">
-          <Text fw={600} c="var(--green-700)">Telegram Notifications</Text>
+          <Text fw={600} c="var(--green-700)">Notifications</Text>
           <Text size="sm" c="dimmed">
-            Receive watering reminders and offline alerts via Telegram at the time you choose.
+            Get watering reminders and offline alerts in the app and optionally via Telegram.
           </Text>
         </Stack>
 
-        <TelegramSetupAccordion />
-
         <form onSubmit={handleSubmit}>
-          <Stack gap="md">
-            <TextInput
-              label="Telegram Chat ID"
-              placeholder="e.g. 123456789"
-              value={chatId}
-              onChange={(e) => setChatId(e.currentTarget.value)}
+          <Stack gap="lg">
+            <Switch
+              label="Browser notifications"
+              description="Show alerts in the notification bell while you are signed in."
+              checked={browserEnabled}
+              onChange={(e) => setBrowserEnabled(e.currentTarget.checked)}
               disabled={loading}
-              required
             />
+
+            <Divider label="Schedule" labelPosition="left" />
+
             <Select
               label="Notification Time"
               description="The hour at which you will receive daily alerts."
@@ -103,6 +116,20 @@ export default function SettingsPage() {
               allowDeselect={false}
               required
             />
+
+            <Divider label="Telegram (optional)" labelPosition="left" />
+
+            <TelegramSetupAccordion />
+
+            <TextInput
+              label="Telegram Chat ID"
+              placeholder="e.g. 123456789"
+              description="Leave blank to receive alerts in the app only."
+              value={chatId}
+              onChange={(e) => setChatId(e.currentTarget.value)}
+              disabled={loading}
+            />
+
             <Button type="submit" loading={saving} disabled={loading} w={{ base: "100%", sm: "fit-content" }}>
               Save
             </Button>

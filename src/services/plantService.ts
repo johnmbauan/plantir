@@ -177,6 +177,11 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
   return sortPlants(plants.map((p) => enrichPlant(p, humidityByDevice, batteryByDevice)));
 }
 
+export async function fetchPlantStatusById(): Promise<Map<number, PlantStatus[]>> {
+  const plants = await fetchPlants();
+  return new Map(plants.map((plant) => [plant.id, plant.statuses]));
+}
+
 function rangeStartIso(range: HistoryRange): string {
   const nowMs = Date.now();
   const rangeMs = HISTORY_RANGE_HOURS[range] * 60 * 60 * 1000;
