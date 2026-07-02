@@ -1,5 +1,5 @@
 import supabase from "@/supabase";
-import { fetchPlantStatusById } from "@/services/plantService";
+import { fetchPlantStatusesByIds } from "@/services/plantService";
 import type { PlantStatus } from "@/types";
 
 export interface NotificationSettings {
@@ -123,10 +123,29 @@ export async function fetchUnreadNotifications(): Promise<AppNotification[]> {
   return autoResolveNotifications(notifications);
 }
 
+function collectPlantIdsFromNotifications(notifications: AppNotification[]): number[] {
+  const ids = new Set<number>();
+
+  for (const notification of notifications) {
+    if (notification.type === "watering" && isWateringPayload(notification.payload)) {
+      ids.add(notification.payload.plantId);
+    } else if (notification.type === "offline" && isOfflinePayload(notification.payload)) {
+      for (const plant of notification.payload.plants) {
+        ids.add(plant.plantId);
+      }
+    }
+  }
+
+  return [...ids];
+}
+
 async function autoResolveNotifications(notifications: AppNotification[]): Promise<AppNotification[]> {
   if (notifications.length === 0) return [];
 
-  const statusByPlantId = await fetchPlantStatusById();
+  const plantIds = collectPlantIdsFromNotifications(notifications);
+  const statusByPlantId = plantIds.length > 0
+    ? await fetchPlantStatusesByIds(plantIds)
+    : new Map<number, PlantStatus[]>();
   const toResolve = notifications.filter((n) => shouldResolveNotification(n, statusByPlantId));
 
   if (toResolve.length > 0) {
@@ -170,5 +189,8 @@ export async function markAllNotificationsRead(): Promise<void> {
 
 export function getNotificationHref(notification: AppNotification): string {
   if (notification.type === "offline") return "/plants-center?tab=devices";
+  if (isWateringPayload(notification.payload)) {
+    return `/?highlightPlant=${notification.payload.plantId}`;
+  }
   return "/";
 }

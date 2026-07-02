@@ -28,7 +28,7 @@ const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => ({
 const DEFAULT_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export default function SettingsPage() {
-  const [browserEnabled, setBrowserEnabled] = useState(true);
+  const [inAppEnabled, setInAppEnabled] = useState(true);
   const [chatId, setChatId] = useState("");
   const [notificationHour, setNotificationHour] = useState(8);
   const [notificationTimezone, setNotificationTimezone] = useState(DEFAULT_TIMEZONE);
@@ -43,7 +43,7 @@ export default function SettingsPage() {
     fetchSettings()
       .then((s) => {
         if (s) {
-          setBrowserEnabled(s.browser_notifications_enabled);
+          setInAppEnabled(s.browser_notifications_enabled);
           setChatId(s.telegram_chat_id);
           setNotificationHour(s.notification_hour);
           setNotificationTimezone(s.notification_timezone);
@@ -59,7 +59,7 @@ export default function SettingsPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await upsertSettings(chatId.trim(), notificationHour, notificationTimezone, browserEnabled);
+      await upsertSettings(chatId.trim(), notificationHour, notificationTimezone, inAppEnabled);
       notifications.show({ color: "green", title: "Saved", message: "Notification settings updated." });
     } catch (err) {
       notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
@@ -90,10 +90,10 @@ export default function SettingsPage() {
         <form onSubmit={handleSubmit}>
           <Stack gap="lg">
             <Switch
-              label="Browser notifications"
+              label="In-app notifications"
               description="Show alerts in the notification bell while you are signed in."
-              checked={browserEnabled}
-              onChange={(e) => setBrowserEnabled(e.currentTarget.checked)}
+              checked={inAppEnabled}
+              onChange={(e) => setInAppEnabled(e.currentTarget.checked)}
               disabled={loading}
               styles={{
                 track: { cursor: loading ? undefined : "pointer" },

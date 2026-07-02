@@ -7,6 +7,7 @@ import HumidityBar from "@/components/HumidityBar";
 interface PlantLeaderboardProps {
   plants: EnrichedPlant[];
   loading: boolean;
+  highlightedPlantId?: number | null;
   onPlantClick?: (plant: EnrichedPlant) => void;
   emptyState?: {
     title: string;
@@ -16,14 +17,29 @@ interface PlantLeaderboardProps {
   };
 }
 
-function PlantLeaderboardRow({ plant, index, onClick }: { plant: EnrichedPlant; index: number; onClick?: () => void }) {
+function PlantLeaderboardRow({
+  plant,
+  index,
+  highlighted,
+  onClick,
+}: {
+  plant: EnrichedPlant;
+  index: number;
+  highlighted: boolean;
+  onClick?: () => void;
+}) {
   const SEVERITY = ["OFFLINE", "WATERING_NEEDED", "HEALTHY"] as const;
   const primaryStatus = SEVERITY.find((s) => plant.statuses.includes(s)) ?? "HEALTHY";
   const { barColor } = STATUS_CONFIG[primaryStatus];
   const timeAgo = relativeTime(plant.lastMeasuredAt);
 
   return (
-    <div className="leaderboard-row" key={plant.id} style={{ animationDelay: `${index * 70}ms`, cursor: onClick ? "pointer" : undefined }} onClick={onClick}>
+    <div
+      id={`plant-row-${plant.id}`}
+      className={`leaderboard-row${highlighted ? " leaderboard-row--highlighted" : ""}`}
+      style={{ animationDelay: `${index * 70}ms`, cursor: onClick ? "pointer" : undefined }}
+      onClick={onClick}
+    >
       <span className="leaderboard-rank">{index + 1}</span>
 
       <div className="leaderboard-info">
@@ -82,7 +98,13 @@ function PlantLeaderboardRow({ plant, index, onClick }: { plant: EnrichedPlant; 
   );
 }
 
-export default function PlantLeaderboard({ plants, loading, onPlantClick, emptyState }: PlantLeaderboardProps) {
+export default function PlantLeaderboard({
+  plants,
+  loading,
+  highlightedPlantId = null,
+  onPlantClick,
+  emptyState,
+}: PlantLeaderboardProps) {
   if (loading) {
     return (
       <Stack gap="sm">
@@ -116,7 +138,13 @@ export default function PlantLeaderboard({ plants, loading, onPlantClick, emptyS
   return (
     <div className="leaderboard">
       {plants.map((plant, index) => (
-        <PlantLeaderboardRow key={plant.id} plant={plant} index={index} onClick={onPlantClick ? () => onPlantClick(plant) : undefined} />
+        <PlantLeaderboardRow
+          key={plant.id}
+          plant={plant}
+          index={index}
+          highlighted={plant.id === highlightedPlantId}
+          onClick={onPlantClick ? () => onPlantClick(plant) : undefined}
+        />
       ))}
     </div>
   );
