@@ -10,6 +10,7 @@ import PlantFilterBar from "@/components/PlantFilterBar";
 import PlantLeaderboard from "@/components/PlantLeaderboard";
 import PlantDetailModal from "@/components/PlantDetailModal";
 import WeatherWidget from "@/components/WeatherWidget";
+import OnboardingChecklist from "@/components/OnboardingChecklist";
 import "@/pages/Dashboard.css";
 
 type DashboardFilter = PlantStatus | "all";
@@ -152,6 +153,7 @@ export default function Dashboard() {
   return (
     <Stack gap="lg">
       <WeatherWidget />
+      <OnboardingChecklist />
       <PlantFilterBar
         counts={counts}
         activeFilter={activeFilter}

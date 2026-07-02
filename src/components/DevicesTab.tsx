@@ -131,8 +131,27 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
               ))
             ) : visible.length === 0 ? (
               <Table.Tr>
-                <Table.Td colSpan={6} ta="center">
-                  No devices found
+                <Table.Td colSpan={6}>
+                  <Stack align="center" gap="xs" py="xl">
+                    {devices.length === 0 ? (
+                      <>
+                        <Text fw={500}>No devices yet</Text>
+                        <Text size="sm" c="dimmed" ta="center" maw={360}>
+                          A device is an Arduino-based humidity sensor assigned to a plant. Add its serial number and configure the sensor thresholds to start receiving readings.
+                        </Text>
+                        <Button
+                          size="sm"
+                          mt="xs"
+                          leftSection={<IconPlus size={14} />}
+                          onClick={() => handleOpenEdit()}
+                        >
+                          Add your first device
+                        </Button>
+                      </>
+                    ) : (
+                      <Text size="sm" c="dimmed">No devices match your search.</Text>
+                    )}
+                  </Stack>
                 </Table.Td>
               </Table.Tr>
             ) : (

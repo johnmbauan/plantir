@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Box, Title, Paper, Stack, TextInput, Button, Text, Anchor, Select } from "@mantine/core";
+import { Box, Title, Paper, Stack, TextInput, Button, Text, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import TelegramSetupAccordion from "@/components/TelegramSetupAccordion";
 import { fetchSettings, upsertSettings } from "@/services/notificationService";
 import { getErrorMessage } from "@/utils/error";
 
@@ -65,17 +66,11 @@ export default function SettingsPage() {
         <Stack gap="xs" mb="lg">
           <Text fw={600} c="var(--green-700)">Telegram Notifications</Text>
           <Text size="sm" c="dimmed">
-            Enter your Telegram chat ID to receive watering and offline alerts.{" "}
-            <Anchor
-              href="https://t.me/userinfobot"
-              target="_blank"
-              rel="noopener noreferrer"
-              size="sm"
-            >
-              How to find your chat ID
-            </Anchor>
+            Receive watering reminders and offline alerts via Telegram at the time you choose.
           </Text>
         </Stack>
+
+        <TelegramSetupAccordion />
 
         <form onSubmit={handleSubmit}>
           <Stack gap="md">

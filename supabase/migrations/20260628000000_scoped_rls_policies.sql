@@ -1,4 +1,4 @@
--- Option A: narrow anon access for device firmware; scope authenticated access by user_id.
+-- Narrow anon access for device firmware; scope authenticated access by user_id.
 --
 -- Devices (anon role) may only:
 --   SELECT devices + humidity_sensors_config  (fetch config by serialNumber)
@@ -6,6 +6,20 @@
 --
 -- Dashboard users (authenticated role) may only access their own rows (user_id = auth.uid()),
 -- or child rows linked to their devices.
+--
+-- IMPORTANT — intentional RLS trade-offs:
+--
+-- The anon SELECT policies on `devices` and `humidity_sensors_config` use USING (true) with no
+-- user-scoping. Any holder of the publishable anon key can therefore read all device records and
+-- sensor configurations across all users. This is deliberate: firmware identifies itself only by
+-- serial number and must look itself up in `devices` to obtain its deviceId and sensor config.
+-- Scoping these reads per user would require device-level authentication, which is not implemented.
+--
+-- The anon INSERT policies on `humidity_measurements` and `battery_measurements` only check that
+-- the target deviceId exists — they do not authenticate the device. Any anon client that knows a
+-- valid deviceId can submit readings for it. For a private home deployment this is an acceptable
+-- trade-off. If stronger guarantees are needed, consider per-device JWTs or a dedicated device
+-- auth scheme.
 
 -- ============================================================
 -- Drop broad policies from prior migrations

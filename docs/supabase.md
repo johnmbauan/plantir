@@ -137,6 +137,12 @@ Devices may only:
 
 Devices have **no** access to `plants`, `notification_settings`, or any other table.
 
+> **Important — intentional RLS trade-offs for device access:**
+>
+> The `anon` SELECT policies on `devices` and `humidity_sensors_config` use `USING (true)` with **no user-scoping**. This means any client that holds the publishable anon key can read all device records and sensor configurations across all users. This is a deliberate trade-off: firmware only knows its own serial number and needs to look itself up in `devices` to retrieve its `deviceId` and then fetch the matching row in `humidity_sensors_config`. Scoping these reads to a specific user is not feasible without authenticating the device itself.
+>
+> Similarly, the `anon` INSERT policies on `humidity_measurements` and `battery_measurements` only verify that the target `deviceId` exists — they do not authenticate the device. This means any anon client that knows a valid `deviceId` can submit readings for it. For a home deployment this is an acceptable trade-off; if stronger guarantees are needed, consider issuing per-device JWT tokens or using a dedicated device-auth scheme.
+
 ### Dashboard access (`authenticated`)
 
 Signed-in users may only read and write rows they own (`user_id = auth.uid()` on `plants`, `devices`, and `notification_settings`). Measurement tables are readable (and deletable on cascade) only for devices belonging to the current user.

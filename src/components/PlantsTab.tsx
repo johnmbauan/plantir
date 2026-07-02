@@ -121,8 +121,27 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
               ))
             ) : visible.length === 0 ? (
               <Table.Tr>
-                <Table.Td colSpan={4} ta="center">
-                  No plants found
+                <Table.Td colSpan={4}>
+                  <Stack align="center" gap="xs" py="xl">
+                    {plants.length === 0 ? (
+                      <>
+                        <Text fw={500}>No plants yet</Text>
+                        <Text size="sm" c="dimmed" ta="center" maw={320}>
+                          Add a plant to start tracking its humidity. Give it a name and optionally a photo.
+                        </Text>
+                        <Button
+                          size="sm"
+                          mt="xs"
+                          leftSection={<IconPlus size={14} />}
+                          onClick={() => handleOpenEdit()}
+                        >
+                          Add your first plant
+                        </Button>
+                      </>
+                    ) : (
+                      <Text size="sm" c="dimmed">No plants match your search.</Text>
+                    )}
+                  </Stack>
                 </Table.Td>
               </Table.Tr>
             ) : (
