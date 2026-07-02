@@ -92,6 +92,14 @@ const OFFLINE_QUERY = `
 `;
 
 // ---------------------------------------------------------------------------
+// Serialization helpers — postgres bigint columns arrive as JS BigInt
+// ---------------------------------------------------------------------------
+
+function jsonStringify(value: unknown): string {
+  return JSON.stringify(value, (_key, v) => (typeof v === "bigint" ? Number(v) : v));
+}
+
+// ---------------------------------------------------------------------------
 // Telegram helpers
 // ---------------------------------------------------------------------------
 
@@ -141,7 +149,7 @@ async function broadcastNotification(
       Authorization: `Bearer ${serviceRoleKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
+    body: jsonStringify({
       messages: [{
         topic: `user:${userId}`,
         event: "notification_created",
@@ -170,7 +178,7 @@ async function createBrowserNotification(
     `INSERT INTO notifications (user_id, type, title, body, payload)
      VALUES ($1, $2, $3, $4, $5::jsonb)
      RETURNING id, created_at`,
-    [userId, type, title, body, JSON.stringify(payload)],
+    [userId, type, title, body, jsonStringify(payload)],
   );
 
   const row = rows[0];
@@ -223,7 +231,7 @@ async function sendWateringAlerts(
       const title = `${row.plantName} needs water`;
       const body = `Humidity reading: ${row.humidity}%`;
       const payload = {
-        plantId: row.plantId,
+        plantId: Number(row.plantId),
         plantName: row.plantName,
         humidity: Number(row.humidity),
         imageUrl: row.imageUrl,
@@ -314,7 +322,7 @@ async function sendOfflineAlerts(
 
     const payload = {
       plants: plants.map((r) => ({
-        plantId: r.plantId,
+        plantId: Number(r.plantId),
         plantName: r.plantName,
         lastSeenAt: r.lastSeenAt,
       })),

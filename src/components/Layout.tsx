@@ -54,6 +54,7 @@ export default function Layout() {
             🪴 Plantir
           </Text>
           <Group gap="md">
+            <NotificationBell />
             <Group gap="lg" visibleFrom="sm">
               <NavLink to="/" end style={navLinkStyle}>
                 Dashboard
@@ -65,7 +66,6 @@ export default function Layout() {
                 Settings
               </NavLink>
             </Group>
-            <NotificationBell />
             <Button
               size="xs"
               variant="subtle"

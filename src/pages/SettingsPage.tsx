@@ -36,6 +36,10 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    localStorage.setItem("settings_visited", "true");
+  }, []);
+
+  useEffect(() => {
     fetchSettings()
       .then((s) => {
         if (s) {
@@ -91,6 +95,10 @@ export default function SettingsPage() {
               checked={browserEnabled}
               onChange={(e) => setBrowserEnabled(e.currentTarget.checked)}
               disabled={loading}
+              styles={{
+                track: { cursor: loading ? undefined : "pointer" },
+                label: { cursor: loading ? undefined : "pointer" },
+              }}
             />
 
             <Divider label="Schedule" labelPosition="left" />

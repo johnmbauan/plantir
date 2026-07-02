@@ -55,8 +55,6 @@ export function useNotifications() {
       return;
     }
 
-    let pollTimer: number | undefined;
-
     void refresh();
 
     const userId = session.user.id;
@@ -81,7 +79,6 @@ export function useNotifications() {
       });
 
     return () => {
-      if (pollTimer) window.clearInterval(pollTimer);
       void supabase.removeChannel(channel);
     };
   }, [session, refresh, handleIncoming]);
