@@ -177,6 +177,54 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
   return sortPlants(plants.map((p) => enrichPlant(p, humidityByDevice, batteryByDevice)));
 }
 
+export async function fetchPlantStatusesByIds(plantIds: number[]): Promise<Map<number, PlantStatus[]>> {
+  if (plantIds.length === 0) return new Map();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const uniqueIds = [...new Set(plantIds)];
+
+  const { data: plantsData, error: plantsError } = await supabase
+    .from("plants")
+    .select(
+      `id, name, imageUrl, createdAt,
+       devices(id, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
+    )
+    .in("id", uniqueIds)
+    .eq("user_id", user.id);
+
+  if (plantsError) throw plantsError;
+
+  const plants = plantsData as unknown as RawPlant[];
+  const deviceIds = plants.flatMap((p) => (p.devices ?? []).map((d) => d.id));
+
+  const humidityByDevice: Record<number, RawMeasurement> = {};
+  const batteryByDevice: Record<number, RawBatteryMeasurement> = {};
+
+  if (deviceIds.length > 0) {
+    const { data: devicesData, error: devicesError } = await supabase
+      .from("devices")
+      .select(`id, humidity_measurements(humidityPercentage, createdAt), battery_measurements(batteryPercent, createdAt)`)
+      .in("id", deviceIds)
+      .order("createdAt", { referencedTable: "humidity_measurements", ascending: false })
+      .limit(1, { referencedTable: "humidity_measurements" })
+      .order("createdAt", { referencedTable: "battery_measurements", ascending: false })
+      .limit(1, { referencedTable: "battery_measurements" });
+
+    if (devicesError) throw devicesError;
+
+    for (const device of devicesData as unknown as RawDeviceMeasurements[]) {
+      if (device.humidity_measurements?.[0]) humidityByDevice[device.id] = device.humidity_measurements[0];
+      if (device.battery_measurements?.[0]) batteryByDevice[device.id] = device.battery_measurements[0];
+    }
+  }
+
+  return new Map(
+    plants.map((plant) => [plant.id, enrichPlant(plant, humidityByDevice, batteryByDevice).statuses]),
+  );
+}
+
 function rangeStartIso(range: HistoryRange): string {
   const nowMs = Date.now();
   const rangeMs = HISTORY_RANGE_HOURS[range] * 60 * 60 * 1000;

@@ -5,14 +5,15 @@ import {
   IconCheck,
   IconLeaf,
   IconCpu,
-  IconBrandTelegram,
+  IconBell,
   IconX,
   IconChevronRight,
 } from "@tabler/icons-react";
 import supabase from "@/supabase";
-import { fetchSettings } from "@/services/notificationService";
 
 const DISMISSED_KEY = "onboarding_dismissed";
+const SETTINGS_VISITED_KEY = "settings_visited";
+const SETTINGS_IMPLICIT_DAYS = 3;
 
 interface ChecklistStep {
   key: string;
@@ -28,7 +29,7 @@ export default function OnboardingChecklist() {
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
   const [hasPlants, setHasPlants] = useState(false);
   const [hasDevices, setHasDevices] = useState(false);
-  const [hasTelegram, setHasTelegram] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -38,14 +39,23 @@ export default function OnboardingChecklist() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const [plantsRes, devicesRes, settings] = await Promise.all([
-        supabase.from("plants").select("id").eq("user_id", user.id).limit(1),
+      const [plantsRes, devicesRes] = await Promise.all([
+        supabase.from("plants").select("id, createdAt").eq("user_id", user.id).order("createdAt", { ascending: true }).limit(1),
         supabase.from("devices").select("id").eq("user_id", user.id).limit(1),
-        fetchSettings().catch(() => null),
       ]);
-      setHasPlants((plantsRes.data?.length ?? 0) > 0);
-      setHasDevices((devicesRes.data?.length ?? 0) > 0);
-      setHasTelegram(!!settings?.telegram_chat_id?.trim());
+
+      const plantCount = plantsRes.data?.length ?? 0;
+      const deviceCount = devicesRes.data?.length ?? 0;
+      setHasPlants(plantCount > 0);
+      setHasDevices(deviceCount > 0);
+
+      const explicitlyVisited = localStorage.getItem(SETTINGS_VISITED_KEY) === "true";
+      const oldestPlantDate = plantsRes.data?.[0]?.createdAt;
+      const plantIsOldEnough = oldestPlantDate
+        ? Date.now() - new Date(oldestPlantDate).getTime() >= SETTINGS_IMPLICIT_DAYS * 24 * 60 * 60 * 1000
+        : false;
+      setHasNotifications(explicitlyVisited || (plantCount > 0 && deviceCount > 0 && plantIsOldEnough));
+
       setLoaded(true);
     }
 
@@ -70,16 +80,16 @@ export default function OnboardingChecklist() {
       done: hasDevices,
     },
     {
-      key: "telegram",
-      icon: <IconBrandTelegram size={15} />,
-      label: "Set up Telegram notifications",
-      description: "Get watering and offline alerts sent directly to your phone.",
+      key: "notifications",
+      icon: <IconBell size={15} />,
+      label: "Review notification settings",
+      description: "Choose when to receive watering and offline alerts in the app.",
       href: "/settings",
-      done: hasTelegram,
+      done: hasNotifications,
     },
   ];
 
-  const allDone = hasPlants && hasDevices && hasTelegram;
+  const allDone = hasPlants && hasDevices && hasNotifications;
 
   if (dismissed || !loaded || allDone) return null;
 

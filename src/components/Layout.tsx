@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import supabase from "@/supabase";
 import NavDrawer from "@/components/NavDrawer";
+import NotificationBell from "@/components/NotificationBell";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -52,33 +53,37 @@ export default function Layout() {
           <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
             🪴 Plantir
           </Text>
-          <Group gap="lg" visibleFrom="sm">
-            <NavLink to="/" end style={navLinkStyle}>
-              Dashboard
-            </NavLink>
-            <NavLink to="/plants-center" style={navLinkStyle}>
-              Plants Center
-            </NavLink>
-            <NavLink to="/settings" style={navLinkStyle}>
-              Settings
-            </NavLink>
+          <Group gap="md">
+            <NotificationBell />
+            <Group gap="lg" visibleFrom="sm">
+              <NavLink to="/" end style={navLinkStyle}>
+                Dashboard
+              </NavLink>
+              <NavLink to="/plants-center" style={navLinkStyle}>
+                Plants Center
+              </NavLink>
+              <NavLink to="/settings" style={navLinkStyle}>
+                Settings
+              </NavLink>
+            </Group>
             <Button
               size="xs"
               variant="subtle"
               color="gray"
               onClick={handleSignOut}
               style={{ color: "var(--green-500)" }}
+              visibleFrom="sm"
             >
               Sign out
             </Button>
+            <Burger
+              opened={drawerOpened}
+              onClick={openDrawer}
+              hiddenFrom="sm"
+              aria-label="Toggle navigation"
+              color="var(--green-700)"
+            />
           </Group>
-          <Burger
-            opened={drawerOpened}
-            onClick={openDrawer}
-            hiddenFrom="sm"
-            aria-label="Toggle navigation"
-            color="var(--green-700)"
-          />
         </Group>
       </AppShell.Header>
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Stack } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type { EnrichedPlant, PlantStatus } from "@/types";
 import { fetchPlants } from "@/services/plantService";
 import { notifications } from "@mantine/notifications";
@@ -18,6 +18,7 @@ type DashboardSort = "humidity-low" | "humidity-high" | "name" | "last-seen";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -25,6 +26,7 @@ export default function Dashboard() {
   const [activeFilter, setActiveFilter] = useState<DashboardFilter>("all");
   const [sortBy, setSortBy] = useState<DashboardSort>("humidity-low");
   const [selectedPlant, setSelectedPlant] = useState<EnrichedPlant | null>(null);
+  const [highlightedPlantId, setHighlightedPlantId] = useState<number | null>(null);
 
   function toggleFilter(status: PlantStatus) {
     setActiveFilter((prev) => (prev === status ? "all" : status));
@@ -53,6 +55,40 @@ export default function Dashboard() {
   useEffect(() => {
     void reloadPlants("initial");
   }, [reloadPlants]);
+
+  useEffect(() => {
+    const highlightParam = searchParams.get("highlightPlant");
+    if (!highlightParam) return;
+
+    const plantId = Number(highlightParam);
+    if (!Number.isFinite(plantId)) return;
+
+    setHighlightedPlantId(plantId);
+    setActiveFilter("all");
+    setSearch("");
+    setSearchParams({}, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (!highlightedPlantId || loading) return;
+
+    const plantExists = plants.some((plant) => plant.id === highlightedPlantId);
+    if (!plantExists) return;
+
+    const scrollTimer = window.setTimeout(() => {
+      document.getElementById(`plant-row-${highlightedPlantId}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 100);
+
+    const clearTimer = window.setTimeout(() => setHighlightedPlantId(null), 4000);
+
+    return () => {
+      window.clearTimeout(scrollTimer);
+      window.clearTimeout(clearTimer);
+    };
+  }, [highlightedPlantId, loading, plants]);
 
   useEffect(() => {
     let debounceTimer: number | undefined;
@@ -168,6 +204,7 @@ export default function Dashboard() {
       <PlantLeaderboard
         plants={visible}
         loading={loading}
+        highlightedPlantId={highlightedPlantId}
         onPlantClick={setSelectedPlant}
         emptyState={emptyState}
       />

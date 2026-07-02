@@ -47,6 +47,21 @@
   transform: translateX(3px);
 }
 
+.leaderboard-row--highlighted {
+  border-color: var(--terracotta-500);
+  box-shadow: 0 0 0 2px rgba(196, 112, 75, 0.25);
+  animation: row-enter 0.4s ease both, highlight-pulse 1.5s ease-in-out 2;
+}
+
+@keyframes highlight-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2px rgba(196, 112, 75, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(196, 112, 75, 0.4);
+  }
+}
+
 .leaderboard-rank {
   font-size: 12px;
   font-weight: 700;
