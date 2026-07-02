@@ -9,6 +9,7 @@ import supabase from "@/supabase";
 import PlantFilterBar from "@/components/PlantFilterBar";
 import PlantLeaderboard from "@/components/PlantLeaderboard";
 import PlantDetailModal from "@/components/PlantDetailModal";
+import WeatherWidget from "@/components/WeatherWidget";
 import "@/pages/Dashboard.css";
 
 type DashboardFilter = PlantStatus | "all";
@@ -150,6 +151,7 @@ export default function Dashboard() {
 
   return (
     <Stack gap="lg">
+      <WeatherWidget />
       <PlantFilterBar
         counts={counts}
         activeFilter={activeFilter}
