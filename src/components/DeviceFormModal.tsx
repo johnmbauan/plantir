@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import type { Device, DeviceType } from "@/types";
 import { createDevice, updateDevice, type DeviceFormValues } from "@/services/deviceService";
+import { DEFAULT_HUMIDITY_CONFIG } from "@/constants/deviceDefaults";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/error";
 
@@ -19,10 +20,7 @@ const DEVICE_TYPES: { value: DeviceType; label: string }[] = [
 ];
 
 const DEFAULT_HUMIDITY: DeviceFormValues["humidityConfig"] = {
-  minHumidityThreshold: 10,
-  airValue: 520,
-  waterValue: 260,
-  sleepDurationSeconds: 3600,
+  ...DEFAULT_HUMIDITY_CONFIG,
 };
 
 function defaultFormValues(): DeviceFormValues {

@@ -1,5 +1,7 @@
 import supabase from "@/supabase";
-import type { Device, DeviceType, HumidityConfig } from "@/types";
+import type { Device, DeviceType, HumidityConfig, PairingBundle, PairingPollResult } from "@/types";
+
+export { DEFAULT_HUMIDITY_CONFIG } from "@/constants/deviceDefaults";
 
 interface RawDevice {
   id: number;
@@ -114,4 +116,51 @@ export async function deleteDevice(id: number): Promise<void> {
 
   const { error } = await supabase.from("devices").delete().eq("id", id).eq("user_id", user.id);
   if (error) throw error;
+}
+
+export async function createPairingBundle(plantId?: number | null): Promise<PairingBundle> {
+  const { data, error } = await supabase.functions.invoke("create-device-pairing", {
+    body: { plantId: plantId ?? null },
+  });
+
+  if (error) throw error;
+  if (!data || typeof data !== "object" || !("bundle" in data)) {
+    throw new Error("Failed to create pairing bundle");
+  }
+
+  const result = data as PairingBundle;
+  if (!result.tokenId || !result.bundle || !result.expiresAt) {
+    throw new Error("Invalid pairing bundle response");
+  }
+
+  return result;
+}
+
+export async function pollPairingToken(tokenId: string): Promise<PairingPollResult> {
+  const { data, error } = await supabase
+    .from("device_pairing_tokens")
+    .select("used_at, registered_device_id, registered_serial_number, failed_at, failure_reason")
+    .eq("id", tokenId)
+    .single();
+
+  if (error) throw error;
+
+  if (data.used_at) {
+    return {
+      used: true,
+      failed: false,
+      deviceId: data.registered_device_id ?? undefined,
+      serialNumber: data.registered_serial_number ?? undefined,
+    };
+  }
+
+  if (data.failed_at) {
+    return {
+      used: false,
+      failed: true,
+      failureReason: data.failure_reason ?? undefined,
+    };
+  }
+
+  return { used: false, failed: false };
 }

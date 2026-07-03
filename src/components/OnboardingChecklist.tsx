@@ -74,9 +74,9 @@ export default function OnboardingChecklist() {
     {
       key: "devices",
       icon: <IconCpu size={15} />,
-      label: "Add your first device",
-      description: "Register an Arduino humidity sensor and assign it to a plant.",
-      href: "/plants-center?tab=devices",
+      label: "Register your first device",
+      description: "Use the guided wizard to link a Plantir sensor to your account.",
+      href: "/plants-center?tab=devices&register=1",
       done: hasDevices,
     },
     {

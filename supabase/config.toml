@@ -393,3 +393,15 @@ entrypoint = "./functions/telegram-notifier/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/telegram-notifier/*.html" ]
+
+[functions.create-device-pairing]
+enabled = true
+verify_jwt = true
+import_map = "./functions/create-device-pairing/deno.json"
+entrypoint = "./functions/create-device-pairing/index.ts"
+
+[functions.register-device]
+enabled = true
+verify_jwt = false
+import_map = "./functions/register-device/deno.json"
+entrypoint = "./functions/register-device/index.ts"

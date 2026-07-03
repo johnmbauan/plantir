@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconEdit, IconTrash, IconPlus } from "@tabler/icons-react";
+import { IconEdit, IconTrash, IconCpu } from "@tabler/icons-react";
 import { fetchDevices } from "@/services/deviceService";
 import { notifications } from "@mantine/notifications";
 import { fetchPlants } from "@/services/plantService";
@@ -19,6 +19,7 @@ import type { Device, EnrichedPlant } from "@/types";
 import { getErrorMessage } from "@/utils/error";
 import DeviceFormModal from "@/components/DeviceFormModal";
 import DeviceDeleteModal from "@/components/DeviceDeleteModal";
+import DeviceRegistrationWizard from "@/components/DeviceRegistrationWizard";
 
 export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,6 +30,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
 
   const [editingDevice, setEditingDevice] = useState<Device | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
+  const [wizardOpened, { open: openWizard, close: closeWizard }] = useDisclosure(false);
 
   const [deviceToDelete, setDeviceToDelete] = useState<Device | null>(null);
   const [deleteOpened, { open: openDelete, close: closeDelete }] = useDisclosure(false);
@@ -67,6 +69,16 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, devices]);
 
+  useEffect(() => {
+    if (searchParams.get("register") !== "1" || loading) return;
+    openWizard();
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete("register");
+      return next;
+    }, { replace: true });
+  }, [loading, searchParams, openWizard, setSearchParams]);
+
   const plantOptions = plants.map((p) => ({ value: String(p.id), label: p.name }));
 
   const handleOpenEdit = (device?: Device) => {
@@ -93,9 +105,14 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
         <Text size="lg" fw={600}>
           Devices
         </Text>
-        <Button leftSection={<IconPlus size={16} />} onClick={() => handleOpenEdit()}>
-          Add Device
-        </Button>
+        <Group gap="xs">
+          <Button variant="subtle" onClick={() => handleOpenEdit()}>
+            Add manually
+          </Button>
+          <Button leftSection={<IconCpu size={16} />} onClick={openWizard}>
+            Register new device
+          </Button>
+        </Group>
       </Group>
 
       <TextInput
@@ -137,15 +154,15 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                       <>
                         <Text fw={500}>No devices yet</Text>
                         <Text size="sm" c="dimmed" ta="center" maw={360}>
-                          A device is an Arduino-based humidity sensor assigned to a plant. Add its serial number and configure the sensor thresholds to start receiving readings.
+                          Register a Plantir sensor with the guided setup wizard, or add a device manually if you already have its serial number.
                         </Text>
                         <Button
                           size="sm"
                           mt="xs"
-                          leftSection={<IconPlus size={14} />}
-                          onClick={() => handleOpenEdit()}
+                          leftSection={<IconCpu size={14} />}
+                          onClick={openWizard}
                         >
-                          Add your first device
+                          Register your first device
                         </Button>
                       </>
                     ) : (
@@ -186,6 +203,13 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
+
+      <DeviceRegistrationWizard
+        opened={wizardOpened}
+        onClose={closeWizard}
+        plantOptions={plantOptions}
+        onRegistered={onMutated}
+      />
 
       <DeviceFormModal
         opened={opened}

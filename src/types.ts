@@ -44,3 +44,25 @@ export interface PlantHistory {
   humidity: MeasurementPoint[];
   battery: MeasurementPoint[];
 }
+
+export interface DevicePairingToken {
+  id: string;
+  expiresAt: string;
+  usedAt: string | null;
+  registeredSerialNumber: string | null;
+  registeredDeviceId: number | null;
+}
+
+export interface PairingBundle {
+  tokenId: string;
+  bundle: string;
+  expiresAt: string;
+}
+
+export interface PairingPollResult {
+  used: boolean;
+  failed: boolean;
+  failureReason?: string;
+  deviceId?: number;
+  serialNumber?: string;
+}

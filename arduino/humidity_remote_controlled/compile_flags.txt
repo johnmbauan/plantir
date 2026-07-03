@@ -1,0 +1,8 @@
+-std=gnu++17
+-DARDUINO=10607
+-DARDUINO_ARCH_ESP32
+-DESP32
+-I/Users/john/Library/Arduino15/packages/esp32/hardware/esp32/3.3.10/cores/esp32
+-I/Users/john/Library/Arduino15/packages/esp32/hardware/esp32/3.3.10/variants/dfrobot_firebeetle2_esp32c6
+-I/Users/john/Library/Arduino15/packages/esp32/tools/esp-rv32/2601/riscv32-esp-elf/include
+-I/Users/john/Library/Arduino15/packages/esp32/tools/esp-rv32/2601/lib/gcc/riscv32-esp-elf/14.2.0/include
