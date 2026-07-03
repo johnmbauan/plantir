@@ -10,6 +10,8 @@
 
 #define DEFAULT_SLEEP_DURATION 21600  // 6 hours in seconds
 #define uS_TO_S_FACTOR 1000000ULL     // Conversion factor for microseconds to seconds
+#define BOOT_BUTTON_PIN 9             // BOOT button on FireBeetle 2 ESP32-C6
+#define FACTORY_RESET_HOLD_MS 3000
 
 // -- Remote server configuration ---
 String remoteServerBaseUrl;
@@ -150,7 +152,37 @@ String getDeviceId() {
   return String(id);
 }
 
+void clearAppPreferences() {
+  Preferences prefs;
+  prefs.begin("app", false);
+  prefs.clear();
+  prefs.end();
+}
+
+bool isFactoryResetRequested() {
+  pinMode(BOOT_BUTTON_PIN, INPUT_PULLUP);
+  if (digitalRead(BOOT_BUTTON_PIN) != LOW) {
+    return false;
+  }
+
+  Serial.println("Hold BOOT for 3 seconds to factory reset...");
+  const unsigned long holdStart = millis();
+  while (millis() - holdStart < FACTORY_RESET_HOLD_MS) {
+    if (digitalRead(BOOT_BUTTON_PIN) != LOW) {
+      return false;
+    }
+    delay(100);
+  }
+  return true;
+}
+
 bool connectToWifiAndCollectConfig() {
+  const bool factoryReset = isFactoryResetRequested();
+  if (factoryReset) {
+    Serial.println("Factory reset: clearing WiFi and Supabase credentials");
+    clearAppPreferences();
+  }
+
   Preferences prefs;
   prefs.begin("app", false);
 
@@ -159,6 +191,10 @@ bool connectToWifiAndCollectConfig() {
 
   WiFiManager wm;
   wm.setConfigPortalTimeout(600);
+  if (factoryReset) {
+    wm.resetSettings();
+  }
+  wm.setConfigResetCallback(clearAppPreferences);
 
   // The last parameter (250) is only the HTML input field max length, not a storage buffer
   WiFiManagerParameter paramUrl("serverUrl", "Supabase URL", remoteServerBaseUrl.c_str(), 250);
@@ -171,13 +207,17 @@ bool connectToWifiAndCollectConfig() {
   String newUrl = String(paramUrl.getValue());
   String newKey = String(paramKey.getValue());
 
-  if (!newUrl.isEmpty()) {
-    remoteServerBaseUrl = newUrl;
+  remoteServerBaseUrl = newUrl;
+  if (newUrl.isEmpty()) {
+    prefs.remove("serverUrl");
+  } else {
     prefs.putString("serverUrl", remoteServerBaseUrl);
   }
 
-  if (!newKey.isEmpty()) {
-    supabaseApiKey = newKey;
+  supabaseApiKey = newKey;
+  if (newKey.isEmpty()) {
+    prefs.remove("apiKey");
+  } else {
     prefs.putString("apiKey", supabaseApiKey);
   }
 

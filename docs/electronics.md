@@ -133,3 +133,14 @@ digitalWrite(powerPin, HIGH);
 ....
 digitalWrite(powerPin, LOW);
 ```
+
+### Factory reset
+
+To factory-reset saved WiFi and Supabase settings: press **RST**, then within a few seconds hold **BOOT** for 3 seconds until the `HumiditySensor-Setup` WiFi network appears. Do not hold BOOT while pressing RST (that enters flash mode for uploading sketches).
+
+## Using [FireBeetle 2 ESP32-C6](https://wiki.dfrobot.com/dfr1075/) with Arduino IDE
+
+### Factory reset
+
+To factory-reset saved WiFi and Supabase settings: press **RST**, then within a few seconds hold **BOOT** for 3 seconds until the `HumiditySensor-Setup` WiFi network appears. Do not hold BOOT while pressing RST (that enters flash mode for uploading sketches).
+
