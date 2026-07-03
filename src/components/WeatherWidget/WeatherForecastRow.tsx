@@ -17,7 +17,7 @@ export function WeatherForecastRow({ forecast, loading, error, style }: WeatherF
 
   if (loading) {
     return (
-      <Group gap="md" wrap="nowrap" style={{ flex: 1, ...style }}>
+      <Group gap="md" wrap="nowrap" className="weather-forecast-row" style={{ flex: 1, ...style }}>
         <Skeleton height={32} radius="sm" style={{ flex: 1 }} />
         <Skeleton height={32} radius="sm" style={{ flex: 1 }} />
         <Skeleton height={32} radius="sm" style={{ flex: 1 }} />
@@ -28,7 +28,7 @@ export function WeatherForecastRow({ forecast, loading, error, style }: WeatherF
   if (!forecast) return null;
 
   return (
-    <Group gap="md" wrap="nowrap" style={{ flex: 1, ...style }}>
+    <Group gap="md" wrap="nowrap" className="weather-forecast-row" style={{ flex: 1, ...style }}>
       {forecast.map((day, i) => (
         <WeatherDaySlot key={day.date} day={day} index={i} />
       ))}

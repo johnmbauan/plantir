@@ -21,7 +21,7 @@ export default function WeatherWidget() {
 
   return (
     <Paper className="weather-widget" px="md" py="xs" radius="md" withBorder>
-      <Group gap="sm" wrap="nowrap" align="center">
+      <Group gap="sm" wrap="nowrap" align="center" className="weather-widget-row">
         <WeatherCityHeader
           city={city}
           locationSource={locationSource}
@@ -30,7 +30,7 @@ export default function WeatherWidget() {
         />
         {city && (
           <>
-            <Divider orientation="vertical" color="var(--green-100)" style={{ height: 32, alignSelf: "center" }} />
+            <Divider orientation="vertical" color="var(--green-100)" className="weather-widget-divider" style={{ height: 32, alignSelf: "center" }} />
             <WeatherForecastRow forecast={forecast} loading={loading} error={error} style={{ flex: 1 }} />
           </>
         )}
