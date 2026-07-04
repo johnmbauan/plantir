@@ -15,11 +15,23 @@
 #define FACTORY_RESET_HOLD_MS  3000
 #define PLANTIR_BUNDLE_MAX_LEN 1024
 #define BUNDLE_DELIMITER       "###"
+#define BOOT_LED_BLINK_COUNT   3
+#define BOOT_LED_ON_MS         150
+#define BOOT_LED_OFF_MS        150
 
 //const int sensorPin = 36;  // GPIO36 (SVP) on ESP32 from DIYmore.
-const int sensorPin   = A1;  // GPIO2 (A1) on FireBeetle 2 ESP32-C5
+const int sensorPin   = A1;  // Maps to GPIO2 on ESP32-C5; Arduino resolves the alias per board.
 
-//const int powerPin = 14;   // Optional pin to power the sensor only when needed.
-const int powerPin    = 0;   // GPIO controlling the 3V3_C switched supply — verify against your board's schematic.
+// On the FireBeetle 2 ESP32-C5, GPIO0 gates a MOSFET (Q5) that controls the 3V3_C switched
+// supply powering the moisture sensor. Pulling it LOW during deep sleep eliminates sensor
+// quiescent current.
+// On the FireBeetle 2 ESP32-C6, the 3.3 V rail is always on (HM6245 LDO / TPS62A02); there
+// is no software-controllable power switch. GPIO0 on the C6 is the battery ADC pin and must
+// never be driven as a digital output. Use -1 to signal "no power pin".
+#if defined(CONFIG_IDF_TARGET_ESP32C5)
+  const int powerPin = 0;
+#elif defined(CONFIG_IDF_TARGET_ESP32C6)
+  const int powerPin = -1;
+#endif
 
 const int readsPerRun = 5;   // Number of reads per run; the final result is their average.

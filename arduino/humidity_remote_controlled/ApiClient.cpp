@@ -79,9 +79,11 @@ void sendHumidityReading(float humidity, int deviceId, const AppConfig& config) 
 }
 
 void sendBatteryReading(int deviceId, const AppConfig& config) {
-  const int   batteryPct     = readBatteryPercent();
-  const float batteryVoltage = readBatteryVoltage();
-  Serial.println("Battery: " + String(batteryPct) + "% (" + String(batteryVoltage, 2) + "V)");
+  const uint32_t adcPinMv      = readBatteryAdcPinMilliVolts();
+  const float    batteryVoltage = adcPinMv / 1000.0f * BATTERY_VOLTAGE_DIVIDER_RATIO;
+  const int      batteryPct     = batteryPercentFromVoltage(batteryVoltage);
+  Serial.println("Battery ADC pin: " + String(adcPinMv) + " mV → "
+                 + String(batteryVoltage, 2) + " V → " + String(batteryPct) + "%");
 
   const String body = "{\"batteryPercent\":" + String(batteryPct)
                     + ",\"deviceId\":"        + String(deviceId) + "}";
