@@ -5,6 +5,7 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import supabase from "@/supabase";
 import NavDrawer from "@/components/NavDrawer";
 import NotificationBell from "@/components/NotificationBell";
+import { useAuth } from "@/context/AuthContext";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -20,6 +21,8 @@ export default function Layout() {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] = useDisclosure(false);
   const navigate = useNavigate();
+  const { session } = useAuth();
+  const isAdmin = session?.user.app_metadata?.role === "admin";
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -46,7 +49,7 @@ export default function Layout() {
         },
       }}
     >
-      <NavDrawer opened={drawerOpened} onClose={closeDrawer} onSignOut={handleSignOut} />
+      <NavDrawer opened={drawerOpened} onClose={closeDrawer} onSignOut={handleSignOut} isAdmin={isAdmin} />
 
       <AppShell.Header>
         <Group h="100%" px="lg" justify="space-between">
@@ -65,6 +68,11 @@ export default function Layout() {
               <NavLink to="/settings" style={navLinkStyle}>
                 Settings
               </NavLink>
+              {isAdmin && (
+                <NavLink to="/admin" style={navLinkStyle}>
+                  Admin
+                </NavLink>
+              )}
             </Group>
             <Button
               size="xs"

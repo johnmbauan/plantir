@@ -6,6 +6,20 @@
 #include "SensorRunner.h"
 #include "CalibrationRunner.h"
 
+// Logs the reason to Serial (and to the server when config is available), powers
+// off the sensor, and enters deep sleep for ERROR_SLEEP_SEC seconds.
+// Marked [[noreturn]] so the compiler knows execution never continues past this call.
+[[noreturn]] static void goToSleep(const String& reason, const AppConfig* config = nullptr) {
+  Serial.println("[ERROR] " + reason);
+  if (config != nullptr) {
+    sendDeviceLog("error", reason, *config);
+  }
+  digitalWrite(powerPin, LOW);
+  esp_sleep_enable_timer_wakeup((uint64_t)ERROR_SLEEP_SEC * uS_TO_S_FACTOR);
+  Serial.flush();
+  esp_deep_sleep_start();
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -20,20 +34,19 @@ void setup() {
   AppConfig config;
   String pairingToken;
   if (!connectAndProvision(config, pairingToken)) {
-    return;
+    // No network — can't log remotely; just sleep and retry later.
+    goToSleep("WiFi or provisioning failed.");
   }
 
   if (!pairingToken.isEmpty()) {
     if (!registerDevice(pairingToken, config)) {
-      Serial.println("Device registration failed. Fix the setup code and try again.");
-      return;
+      goToSleep("Device registration failed. Fix the setup and try again.", &config);
     }
   }
 
   DynamicJsonDocument remoteConfig = fetchRemoteConfig(config);
   if (remoteConfig.isNull() || !remoteConfig.containsKey("deviceId")) {
-    Serial.println("No remote configuration found for this device.");
-    return;
+    goToSleep("No remote configuration found for this device.", &config);
   }
 
   const bool inCalibrationMode = !remoteConfig["calibrationModeStartedAt"].isNull();
@@ -49,8 +62,7 @@ void setup() {
     // Re-fetch so checkHumidity uses the newly saved airValue/waterValue.
     remoteConfig = fetchRemoteConfig(config);
     if (remoteConfig.isNull() || !remoteConfig.containsKey("deviceId")) {
-      Serial.println("Failed to re-fetch config after calibration.");
-      return;
+      goToSleep("Failed to re-fetch config after calibration.", &config);
     }
   }
 
@@ -68,5 +80,5 @@ void setup() {
 }
 
 void loop() {
-  // Empty — device sleeps between runs via deep sleep.
+  // Empty — device always sleeps at the end of setup() via deep sleep.
 }

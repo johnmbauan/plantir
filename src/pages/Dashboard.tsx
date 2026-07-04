@@ -24,7 +24,11 @@ export default function Dashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<DashboardFilter>("all");
-  const [sortBy, setSortBy] = useState<DashboardSort>("humidity-low");
+  const [sortBy, setSortBy] = useState<DashboardSort>(() => {
+    const stored = localStorage.getItem("plantir_dashboard_sort");
+    const valid: DashboardSort[] = ["humidity-low", "humidity-high", "name", "last-seen"];
+    return valid.includes(stored as DashboardSort) ? (stored as DashboardSort) : "humidity-low";
+  });
   const [selectedPlant, setSelectedPlant] = useState<EnrichedPlant | null>(null);
   const [highlightedPlantId, setHighlightedPlantId] = useState<number | null>(null);
 
@@ -55,6 +59,10 @@ export default function Dashboard() {
   useEffect(() => {
     void reloadPlants("initial");
   }, [reloadPlants]);
+
+  useEffect(() => {
+    localStorage.setItem("plantir_dashboard_sort", sortBy);
+  }, [sortBy]);
 
   useEffect(() => {
     const highlightParam = searchParams.get("highlightPlant");

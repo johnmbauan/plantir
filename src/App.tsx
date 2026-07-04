@@ -6,6 +6,8 @@ import Dashboard from "@/pages/Dashboard";
 import PlantCenter from "@/pages/PlantCenter";
 import SettingsPage from "@/pages/SettingsPage";
 import LoginPage from "@/pages/LoginPage";
+import AdminGuard from "@/admin/AdminGuard";
+import AdminPage from "@/admin/AdminPage";
 
 function App() {
   return (
@@ -18,6 +20,9 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="plants-center" element={<PlantCenter />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route element={<AdminGuard />}>
+                <Route path="admin" element={<AdminPage />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

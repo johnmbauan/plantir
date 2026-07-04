@@ -15,9 +15,10 @@ interface Props {
   opened: boolean;
   onClose: () => void;
   onSignOut: () => void;
+  isAdmin?: boolean;
 }
 
-export default function NavDrawer({ opened, onClose, onSignOut }: Props) {
+export default function NavDrawer({ opened, onClose, onSignOut, isAdmin }: Props) {
   return (
     <Drawer
       opened={opened}
@@ -40,6 +41,11 @@ export default function NavDrawer({ opened, onClose, onSignOut }: Props) {
         <NavLink to="/settings" style={navLinkStyle} onClick={onClose}>
           Settings
         </NavLink>
+        {isAdmin && (
+          <NavLink to="/admin" style={navLinkStyle} onClick={onClose}>
+            Admin
+          </NavLink>
+        )}
         <Button
           variant="subtle"
           color="gray"

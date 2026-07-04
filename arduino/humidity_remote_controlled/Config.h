@@ -1,7 +1,10 @@
 #pragma once
 
 #define DEFAULT_SLEEP_DURATION 21600  // 6 hours in seconds
+#define ERROR_SLEEP_SEC        300    // 5 minutes — retry window after any fatal error
 #define uS_TO_S_FACTOR         1000000ULL
+#define MAX_API_RETRIES        3
+#define RETRY_DELAY_MS         2000
 #if defined(CONFIG_IDF_TARGET_ESP32C5)
   #define BOOT_BUTTON_PIN      28     // GPIO28 — BOOT button on FireBeetle 2 ESP32-C5
 #elif defined(CONFIG_IDF_TARGET_ESP32C6)
