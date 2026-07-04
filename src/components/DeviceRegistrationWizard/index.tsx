@@ -10,6 +10,7 @@ import SetupCodeStep from "./steps/SetupCodeStep";
 import ConnectStep from "./steps/ConnectStep";
 import WaitingStep from "./steps/WaitingStep";
 import CompletedStep from "./steps/CompletedStep";
+import DeviceCalibrationWizard from "@/components/DeviceCalibrationWizard";
 
 const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 3 * 60 * 1000;
@@ -32,6 +33,10 @@ export default function DeviceRegistrationWizard({
   const [pairing, setPairing] = useState<PairingBundle | null>(null);
   const [pairingLoading, setPairingLoading] = useState(false);
   const [registeredSerial, setRegisteredSerial] = useState<string | null>(null);
+  const [registeredDeviceId, setRegisteredDeviceId] = useState<number | null>(null);
+  // Kept outside resetState so the calibration wizard can open after registration closes.
+  const [calibrationWizardOpen, setCalibrationWizardOpen] = useState(false);
+  const [calibrationTargetDeviceId, setCalibrationTargetDeviceId] = useState<number | null>(null);
   const [waitingTimedOut, setWaitingTimedOut] = useState(false);
   const [waitingError, setWaitingError] = useState<string | null>(null);
   const [pollGeneration, setPollGeneration] = useState(0);
@@ -43,6 +48,7 @@ export default function DeviceRegistrationWizard({
     setPairing(null);
     setPairingLoading(false);
     setRegisteredSerial(null);
+    setRegisteredDeviceId(null);
     setWaitingTimedOut(false);
     setWaitingError(null);
     pollStartedAtRef.current = null;
@@ -95,6 +101,7 @@ export default function DeviceRegistrationWizard({
         if (result.used) {
           window.clearInterval(intervalId);
           setRegisteredSerial(result.serialNumber ?? null);
+          setRegisteredDeviceId(result.deviceId ?? null);
           setActive(5);
           onRegistered();
         } else if (result.failed) {
@@ -119,6 +126,7 @@ export default function DeviceRegistrationWizard({
   const prevStep = () => setActive((current) => Math.max(current - 1, 0));
 
   return (
+    <>
     <Modal
       opened={opened}
       onClose={handleClose}
@@ -171,11 +179,40 @@ export default function DeviceRegistrationWizard({
             </Button>
           </>
         ) : (
-          <Button fullWidth onClick={handleClose}>
-            Done
-          </Button>
+          <Group justify="space-between" w="100%">
+            <Button variant="default" onClick={handleClose}>
+              Skip for now
+            </Button>
+            <Button
+              onClick={() => {
+                // Capture ID before resetState clears it, then open calibration wizard.
+                const id = registeredDeviceId;
+                resetState();
+                onClose();
+                if (id) {
+                  setCalibrationTargetDeviceId(id);
+                  setCalibrationWizardOpen(true);
+                }
+              }}
+              disabled={!registeredDeviceId}
+            >
+              Calibrate sensor
+            </Button>
+          </Group>
         )}
       </Group>
+
     </Modal>
+
+    <DeviceCalibrationWizard
+      opened={calibrationWizardOpen}
+      onClose={() => {
+        setCalibrationWizardOpen(false);
+        setCalibrationTargetDeviceId(null);
+      }}
+      deviceId={calibrationTargetDeviceId}
+      onCalibrated={onRegistered}
+    />
+    </>
   );
 }

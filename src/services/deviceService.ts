@@ -1,5 +1,5 @@
 import supabase from "@/supabase";
-import type { Device, DeviceType, HumidityConfig, PairingBundle, PairingPollResult } from "@/types";
+import type { CalibrationReading, Device, DeviceType, HumidityConfig, PairingBundle, PairingPollResult } from "@/types";
 
 export { DEFAULT_HUMIDITY_CONFIG } from "@/constants/deviceDefaults";
 
@@ -134,6 +134,61 @@ export async function createPairingBundle(plantId?: number | null): Promise<Pair
   }
 
   return result;
+}
+
+export async function startCalibrationMode(deviceId: number): Promise<void> {
+  const { error } = await supabase
+    .from("humidity_sensors_config")
+    .update({ calibrationModeStartedAt: new Date().toISOString() })
+    .eq("deviceId", deviceId);
+
+  if (error) throw error;
+}
+
+export async function clearCalibrationMode(deviceId: number): Promise<void> {
+  const { error } = await supabase
+    .from("humidity_sensors_config")
+    .update({ calibrationModeStartedAt: null })
+    .eq("deviceId", deviceId);
+
+  if (error) throw error;
+}
+
+export async function getLatestCalibrationReading(
+  deviceId: number,
+  since: string,
+): Promise<CalibrationReading | null> {
+  const { data, error } = await supabase
+    .from("calibration_readings")
+    .select("id, deviceId, rawValue, createdAt")
+    .eq("deviceId", deviceId)
+    .gt("createdAt", since)
+    .order("createdAt", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data as CalibrationReading | null;
+}
+
+export async function saveCalibrationValues(
+  deviceId: number,
+  airValue: number,
+  waterValue: number,
+): Promise<void> {
+  const { error: configError } = await supabase
+    .from("humidity_sensors_config")
+    .update({ airValue, waterValue, calibrationModeStartedAt: null })
+    .eq("deviceId", deviceId);
+
+  if (configError) throw configError;
+
+  const { error: deleteError } = await supabase
+    .from("calibration_readings")
+    .delete()
+    .eq("deviceId", deviceId);
+
+  if (deleteError) throw deleteError;
 }
 
 export async function pollPairingToken(tokenId: string): Promise<PairingPollResult> {

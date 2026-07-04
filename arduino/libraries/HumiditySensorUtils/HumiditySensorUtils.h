@@ -1,16 +1,23 @@
 #ifndef HUMIDITY_SENSOR_UTILS_H
 #define HUMIDITY_SENSOR_UTILS_H
 
+inline int readAvgRawValue(const uint8_t sensorPin, const int samples = 5) {
+  long total = 0;
+  for (int i = 0; i < samples; i++) {
+    total += analogRead(sensorPin);
+    delay(250);
+  }
+  return total / samples;
+}
 
-int readAvgHumidityPercent(const uint8_t sensorPin, const int airValue, const int waterValue, const int samples = 5) {
+inline int readAvgHumidityPercent(const uint8_t sensorPin, const int airValue, const int waterValue, const int samples = 5) {
   long totalValue = 0;
-
 
   for (int i = 0; i < samples; i++) {
     int sensorValue = analogRead(sensorPin);
     Serial.println("Sensor value: " + String(sensorValue));
     totalValue += sensorValue;
-    delay(500); // Short delay between samples
+    delay(250);
   }
 
   int avgValue = totalValue / samples;

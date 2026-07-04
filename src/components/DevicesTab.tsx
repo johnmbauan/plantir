@@ -9,9 +9,10 @@ import {
   Text,
   Skeleton,
   TextInput,
+  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconEdit, IconTrash, IconCpu } from "@tabler/icons-react";
+import { IconEdit, IconTrash, IconCpu, IconAdjustments } from "@tabler/icons-react";
 import { fetchDevices } from "@/services/deviceService";
 import { notifications } from "@mantine/notifications";
 import { fetchPlants } from "@/services/plantService";
@@ -20,6 +21,7 @@ import { getErrorMessage } from "@/utils/error";
 import DeviceFormModal from "@/components/DeviceFormModal";
 import DeviceDeleteModal from "@/components/DeviceDeleteModal";
 import DeviceRegistrationWizard from "@/components/DeviceRegistrationWizard";
+import DeviceCalibrationWizard from "@/components/DeviceCalibrationWizard";
 
 export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -34,6 +36,9 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
 
   const [deviceToDelete, setDeviceToDelete] = useState<Device | null>(null);
   const [deleteOpened, { open: openDelete, close: closeDelete }] = useDisclosure(false);
+
+  const [calibratingDevice, setCalibratingDevice] = useState<Device | null>(null);
+  const [calibrationOpened, { open: openCalibration, close: closeCalibration }] = useDisclosure(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -89,6 +94,11 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
   const handleDeletePrompt = (device: Device) => {
     setDeviceToDelete(device);
     openDelete();
+  };
+
+  const handleOpenCalibration = (device: Device) => {
+    setCalibratingDevice(device);
+    openCalibration();
   };
 
   const visible = devices.filter((d) => {
@@ -189,12 +199,23 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                   </Table.Td>
                   <Table.Td>
                     <Group gap="xs" wrap="nowrap">
-                      <ActionIcon variant="subtle" color="blue" aria-label="Edit device" onClick={() => handleOpenEdit(device)}>
-                        <IconEdit size={16} />
-                      </ActionIcon>
-                      <ActionIcon variant="subtle" color="red" aria-label="Delete device" onClick={() => handleDeletePrompt(device)}>
-                        <IconTrash size={16} />
-                      </ActionIcon>
+                      {device.type === "humidity" && (
+                        <Tooltip label="Calibrate sensor" withArrow>
+                          <ActionIcon variant="subtle" color="green" aria-label="Calibrate sensor" onClick={() => handleOpenCalibration(device)}>
+                            <IconAdjustments size={16} />
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                      <Tooltip label="Edit device" withArrow>
+                        <ActionIcon variant="subtle" color="blue" aria-label="Edit device" onClick={() => handleOpenEdit(device)}>
+                          <IconEdit size={16} />
+                        </ActionIcon>
+                      </Tooltip>
+                      <Tooltip label="Delete device" withArrow>
+                        <ActionIcon variant="subtle" color="red" aria-label="Delete device" onClick={() => handleDeletePrompt(device)}>
+                          <IconTrash size={16} />
+                        </ActionIcon>
+                      </Tooltip>
                     </Group>
                   </Table.Td>
                 </Table.Tr>
@@ -224,6 +245,16 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
         onClose={closeDelete}
         device={deviceToDelete}
         onDeleted={onMutated}
+      />
+
+      <DeviceCalibrationWizard
+        opened={calibrationOpened}
+        onClose={() => {
+          closeCalibration();
+          setCalibratingDevice(null);
+        }}
+        deviceId={calibratingDevice?.id ?? null}
+        onCalibrated={onMutated}
       />
     </Stack>
   );

@@ -73,6 +73,43 @@ void sendBatteryReading(int deviceId, const AppConfig& config) {
   http.end();
 }
 
+void sendCalibrationReading(int rawValue, int deviceId, const AppConfig& config) {
+  HTTPClient http;
+
+  http.begin(client, config.serverUrl + "/rest/v1/calibration_readings");
+  http.addHeader("apikey", config.apiKey);
+  http.addHeader("Content-Type", "application/json");
+
+  const String body = "{\"rawValue\":" + String(rawValue)
+                    + ",\"deviceId\":"  + String(deviceId) + "}";
+  const int httpCode = http.POST(body);
+
+  if (httpCode == HTTP_CODE_CREATED) {
+    Serial.println("Calibration reading sent: " + String(rawValue));
+  } else {
+    Serial.println("Failed to send calibration reading. HTTP error: " + String(httpCode));
+  }
+  http.end();
+}
+
+void clearCalibrationMode(int deviceId, const AppConfig& config) {
+  HTTPClient http;
+
+  http.begin(client, config.serverUrl + "/rest/v1/rpc/clear_calibration_mode");
+  http.addHeader("apikey", config.apiKey);
+  http.addHeader("Content-Type", "application/json");
+
+  const String body = "{\"p_device_id\":" + String(deviceId) + "}";
+  const int httpCode = http.POST(body);
+
+  if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_NO_CONTENT) {
+    Serial.println("Calibration mode cleared ✅");
+  } else {
+    Serial.println("Failed to clear calibration mode. HTTP error: " + String(httpCode));
+  }
+  http.end();
+}
+
 bool registerDevice(const String& token, const AppConfig& config) {
   HTTPClient http;
 

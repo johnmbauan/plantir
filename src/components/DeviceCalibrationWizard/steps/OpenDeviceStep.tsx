@@ -4,7 +4,7 @@ import { IconCpu } from "@tabler/icons-react";
 export default function OpenDeviceStep() {
   return (
     <Stack gap="sm" mt="md">
-      <Text fw={600}>Open device</Text>
+      <Text fw={600}>Open the device</Text>
       <List spacing="sm" size="sm" center>
         <List.Item
           icon={

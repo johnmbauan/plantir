@@ -18,7 +18,7 @@ export default function CompletedStep({ registeredSerial }: Props) {
         </Text>
       )}
       <Text size="sm" c="dimmed" ta="center">
-        Calibration can be configured later from the device settings.
+        Your device is registered and will start sending readings shortly.
       </Text>
     </Stack>
   );

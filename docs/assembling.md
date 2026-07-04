@@ -8,6 +8,14 @@ Connect the humidity sensor to the ESP32 board. Please follow the specific instr
 ## Step 2: Firmware Upload
 Upload the Arduino sketch to the ESP32 board. Pay close attention during this step: make sure to read the README file located inside the Plantir repository for notes and guidance on how to properly use the specific ESP32 model you are currently deploying.
 
+> **ESP32-C6 — entering download mode:**
+> Before the Arduino IDE can flash the sketch, the board must be put into download mode manually.
+> 1. Press and **hold** the **Boot** button.
+> 2. Press and release the **Reset** button.
+> 3. Release the **Boot** button.
+>
+> The board is now in download mode. Start the upload from the Arduino IDE immediately.
+
 ## Step 3: Portal Registration
 Register the device on the Plantir portal under the **Plants Center** section. For the Device ID, use the unique identifier that is printed in the Arduino IDE serial logs when the sketch runs after the upload of the sketch itself.
 

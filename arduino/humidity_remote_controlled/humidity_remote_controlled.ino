@@ -4,6 +4,7 @@
 #include "WifiProvisioner.h"
 #include "ApiClient.h"
 #include "SensorRunner.h"
+#include "CalibrationRunner.h"
 
 void setup() {
   Serial.begin(115200);
@@ -29,15 +30,34 @@ void setup() {
     }
   }
 
-  const DynamicJsonDocument remoteConfig = fetchRemoteConfig(config);
+  DynamicJsonDocument remoteConfig = fetchRemoteConfig(config);
   if (remoteConfig.isNull() || !remoteConfig.containsKey("deviceId")) {
     Serial.println("No remote configuration found for this device.");
     return;
   }
 
+  const bool inCalibrationMode = !remoteConfig["calibrationModeStartedAt"].isNull();
+  if (inCalibrationMode) {
+    runCalibrationLoop(remoteConfig, config);
+    // Clear the flag immediately so stale state can never re-trigger calibration
+    // on the next wake, even if the web app fails to clear it.
+    clearCalibrationMode(remoteConfig["deviceId"], config);
+    // Give the user 60 seconds to place the device back in the soil before
+    // taking the first real reading post-calibration.
+    Serial.println("Calibration complete. Waiting 60 s for device to be re-planted...");
+    delay(60000);
+    // Re-fetch so checkHumidity uses the newly saved airValue/waterValue.
+    remoteConfig = fetchRemoteConfig(config);
+    if (remoteConfig.isNull() || !remoteConfig.containsKey("deviceId")) {
+      Serial.println("Failed to re-fetch config after calibration.");
+      return;
+    }
+  }
+
+  // Always take a normal reading: first soil reading after calibration, or regular periodic reading.
   checkHumidity(remoteConfig, config);
 
-  const int sleepDurationSeconds = remoteConfig["sleepDurationSeconds"] | DEFAULT_SLEEP_DURATION; // Default to DEFAULT_SLEEP_DURATION if not specified in config
+  const int sleepDurationSeconds = remoteConfig["sleepDurationSeconds"] | DEFAULT_SLEEP_DURATION;
   Serial.println("Entering in deep sleep for " + String(sleepDurationSeconds) + " seconds... 😴");
 
   // Power off the sensor before sleeping to avoid draining the battery.

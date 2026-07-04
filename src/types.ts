@@ -10,6 +10,14 @@ export interface HumidityConfig {
   airValue: number;
   waterValue: number;
   sleepDurationSeconds: number;
+  calibrationModeStartedAt: string | null;
+}
+
+export interface CalibrationReading {
+  id: number;
+  deviceId: number;
+  rawValue: number;
+  createdAt: string;
 }
 
 export interface Device {
