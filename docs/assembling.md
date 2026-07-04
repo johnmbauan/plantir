@@ -10,9 +10,7 @@ Upload the Arduino sketch to the ESP32 board. Pay close attention during this st
 
 > **ESP32-C6 — entering download mode:**
 > Before the Arduino IDE can flash the sketch, the board must be put into download mode manually.
-> 1. Press and **hold** the **Boot** button.
-> 2. Press and release the **Reset** button.
-> 3. Release the **Boot** button.
+> 1. Press boot and reset button together and release them immediately
 >
 > The board is now in download mode. Start the upload from the Arduino IDE immediately.
 

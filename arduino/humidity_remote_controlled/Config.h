@@ -2,7 +2,13 @@
 
 #define DEFAULT_SLEEP_DURATION 21600  // 6 hours in seconds
 #define uS_TO_S_FACTOR         1000000ULL
-#define BOOT_BUTTON_PIN        9      // BOOT button on FireBeetle 2 ESP32-C6
+#if defined(CONFIG_IDF_TARGET_ESP32C5)
+  #define BOOT_BUTTON_PIN      28     // GPIO28 — BOOT button on FireBeetle 2 ESP32-C5
+#elif defined(CONFIG_IDF_TARGET_ESP32C6)
+  #define BOOT_BUTTON_PIN      9      // GPIO9  — BOOT button on FireBeetle 2 ESP32-C6
+#else
+  #error "Unsupported target: set the board to FireBeetle 2 ESP32-C5 or ESP32-C6 in Arduino IDE."
+#endif
 #define FACTORY_RESET_HOLD_MS  3000
 #define PLANTIR_BUNDLE_MAX_LEN 1024
 #define BUNDLE_DELIMITER       "###"
