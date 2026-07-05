@@ -18,6 +18,7 @@ import { notifications } from "@mantine/notifications";
 import { fetchPlants } from "@/services/plantService";
 import type { Device, EnrichedPlant } from "@/types";
 import { getErrorMessage } from "@/utils/error";
+import { formatInterval } from "@/utils/time";
 import DeviceFormModal from "@/components/DeviceFormModal";
 import DeviceDeleteModal from "@/components/DeviceDeleteModal";
 import DeviceRegistrationWizard from "@/components/DeviceRegistrationWizard";
@@ -140,7 +141,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
               <Table.Th>Plant</Table.Th>
               <Table.Th className="col-hide-mobile">Type</Table.Th>
               <Table.Th>Threshold</Table.Th>
-              <Table.Th className="col-hide-mobile">Interval (s)</Table.Th>
+              <Table.Th className="col-hide-mobile">Interval</Table.Th>
               <Table.Th w={100}>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -194,7 +195,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                   </Table.Td>
                   <Table.Td className="col-hide-mobile">
                     {device.humidityConfig
-                      ? device.humidityConfig.sleepDurationSeconds
+                      ? formatInterval(device.humidityConfig.sleepDurationSeconds)
                       : <Text size="sm" c="dimmed">—</Text>}
                   </Table.Td>
                   <Table.Td>
@@ -238,6 +239,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
         editingDevice={editingDevice}
         plantOptions={plantOptions}
         onSaved={onMutated}
+        onOpenCalibration={handleOpenCalibration}
       />
 
       <DeviceDeleteModal

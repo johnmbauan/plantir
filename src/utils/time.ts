@@ -18,3 +18,18 @@ export function formatInterval(seconds: number): string {
   const remMins = mins % 60;
   return remMins > 0 ? `${hrs}h ${remMins}min` : `${hrs}h`;
 }
+
+export const INTERVAL_PRESET_SECONDS = [3600, 14400, 28800, 43200, 86400] as const;
+
+export const INTERVAL_PRESET_OPTIONS: { value: string; label: string }[] = [
+  ...INTERVAL_PRESET_SECONDS.map((s) => ({ value: String(s), label: formatInterval(s) })),
+  { value: "custom", label: "Custom…" },
+];
+
+export function isIntervalPreset(seconds: number): boolean {
+  return (INTERVAL_PRESET_SECONDS as readonly number[]).includes(seconds);
+}
+
+export function intervalPresetSelectValue(seconds: number): string {
+  return isIntervalPreset(seconds) ? String(seconds) : "custom";
+}

@@ -46,10 +46,10 @@ export interface DeviceFormValues {
   serialNumber: string;
   plantId: number | null;
   type: DeviceType;
-  humidityConfig: Omit<HumidityConfig, "id" | "deviceId">;
+  humidityConfig: Omit<HumidityConfig, "id" | "deviceId" | "calibrationModeStartedAt">;
 }
 
-export async function createDevice(values: DeviceFormValues): Promise<void> {
+export async function createDevice(values: DeviceFormValues): Promise<{ id: number }> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
@@ -72,6 +72,8 @@ export async function createDevice(values: DeviceFormValues): Promise<void> {
       throw configError;
     }
   }
+
+  return { id: device.id };
 }
 
 export async function updateDevice(id: number, values: DeviceFormValues): Promise<void> {
