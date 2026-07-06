@@ -49,7 +49,6 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
 
   useEffect(() => {
     loadData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadKey]);
 
   useEffect(() => {
