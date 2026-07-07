@@ -1,5 +1,12 @@
 import supabase from "@/supabase";
-import type { EnrichedPlant, HistoryRange, MeasurementPoint, PlantHistory, PlantStatus } from "@/types";
+import type {
+  EnrichedPlant,
+  HistoryRange,
+  MeasurementPoint,
+  PlantHistory,
+  PlantSpeciesSummary,
+  PlantStatus,
+} from "@/types";
 
 // ---------------------------------------------------------------------------
 // Raw DB shapes (reflect actual Supabase column names after migrations)
@@ -40,7 +47,27 @@ interface RawPlant {
   name: string;
   imageUrl: string | null;
   createdAt: string;
+  species_id?: number | null;
+  plant_species?: RawPlantSpeciesSummary | null;
   devices: RawDevice[];
+}
+
+interface RawPlantSpeciesSummary {
+  id: number;
+  source: string;
+  sourceSpeciesId: string;
+  scientificName: string | null;
+  displayName: string | null;
+  imageUrl: string | null;
+  minSoilMoisture: number | null;
+  maxSoilMoisture: number | null;
+  minTemperatureCelsius: number | null;
+  maxTemperatureCelsius: number | null;
+  sunlight: string | null;
+  soil: string | null;
+  watering: string | null;
+  fertilization: string | null;
+  pruning: string | null;
 }
 
 const BATTERY_WARNING_THRESHOLD = 10; // Percent below which we consider the battery needs recharge
@@ -77,6 +104,26 @@ function enrichPlant(
   humidityByDevice: Record<number, RawMeasurement>,
   batteryByDevice: Record<number, RawBatteryMeasurement>,
 ): EnrichedPlant {
+  const species: PlantSpeciesSummary | null = plant.plant_species
+    ? {
+        id: plant.plant_species.id,
+        source: plant.plant_species.source,
+        sourceSpeciesId: plant.plant_species.sourceSpeciesId,
+        scientificName: plant.plant_species.scientificName,
+        displayName: plant.plant_species.displayName,
+        imageUrl: plant.plant_species.imageUrl,
+        minSoilMoisture: plant.plant_species.minSoilMoisture,
+        maxSoilMoisture: plant.plant_species.maxSoilMoisture,
+        minTemperatureCelsius: plant.plant_species.minTemperatureCelsius,
+        maxTemperatureCelsius: plant.plant_species.maxTemperatureCelsius,
+        sunlight: plant.plant_species.sunlight,
+        soil: plant.plant_species.soil,
+        watering: plant.plant_species.watering,
+        fertilization: plant.plant_species.fertilization,
+        pruning: plant.plant_species.pruning,
+      }
+    : null;
+
   const humidityDevice = plant.devices?.find((d) => d.humidity_sensors_config?.length > 0);
 
   if (!humidityDevice) {
@@ -85,6 +132,8 @@ function enrichPlant(
       name: plant.name,
       image_url: plant.imageUrl,
       created_at: plant.createdAt,
+      speciesId: plant.species_id ?? null,
+      species,
       statuses: ["OFFLINE"],
       humidityPercent: null,
       threshold: null,
@@ -109,6 +158,8 @@ function enrichPlant(
     name: plant.name,
     image_url: plant.imageUrl,
     created_at: plant.createdAt,
+    speciesId: plant.species_id ?? null,
+    species,
     statuses,
     humidityPercent: latest?.humidityPercentage ?? null,
     threshold: config.minHumidityThreshold,
@@ -142,7 +193,8 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
   const { data: plantsData, error: plantsError } = await supabase
     .from("plants")
     .select(
-      `id, name, imageUrl, createdAt,
+      `id, name, imageUrl, createdAt, species_id,
+       plant_species(id, source, sourceSpeciesId, scientificName, displayName, imageUrl, minSoilMoisture, maxSoilMoisture, minTemperatureCelsius, maxTemperatureCelsius, sunlight, soil, watering, fertilization, pruning),
        devices(id, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
     )
     .eq("user_id", user.id);
@@ -188,7 +240,8 @@ export async function fetchPlantStatusesByIds(plantIds: number[]): Promise<Map<n
   const { data: plantsData, error: plantsError } = await supabase
     .from("plants")
     .select(
-      `id, name, imageUrl, createdAt,
+      `id, name, imageUrl, createdAt, species_id,
+       plant_species(id, source, sourceSpeciesId, scientificName, displayName, imageUrl, minSoilMoisture, maxSoilMoisture, minTemperatureCelsius, maxTemperatureCelsius, sunlight, soil, watering, fertilization, pruning),
        devices(id, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
     )
     .in("id", uniqueIds)
@@ -287,24 +340,29 @@ export async function fetchPlantHistory(plantId: number, range: HistoryRange): P
 // CRUD Operations for Plants Center
 // ---------------------------------------------------------------------------
 
-export async function createPlant(name: string, imageUrl: string | null) {
+export async function createPlant(name: string, imageUrl: string | null, speciesId?: number | null) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
   const { error } = await supabase
     .from("plants")
-    .insert([{ name, imageUrl, user_id: user.id }]);
+    .insert([{ name, imageUrl, species_id: speciesId ?? null, user_id: user.id }]);
 
   if (error) throw error;
 }
 
-export async function updatePlant(id: number, name: string, imageUrl: string | null) {
+export async function updatePlant(
+  id: number,
+  name: string,
+  imageUrl: string | null,
+  speciesId?: number | null,
+) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
   const { error } = await supabase
     .from("plants")
-    .update({ name, imageUrl })
+    .update({ name, imageUrl, species_id: speciesId ?? null })
     .eq("id", id)
     .eq("user_id", user.id);
 

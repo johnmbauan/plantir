@@ -34,6 +34,8 @@ export interface EnrichedPlant {
   name: string;
   image_url: string | null;
   created_at: string;
+  speciesId?: number | null;
+  species?: PlantSpeciesSummary | null;
   statuses: PlantStatus[];
   threshold: number | null;
   lastMeasuredAt: string | null;
@@ -41,6 +43,40 @@ export interface EnrichedPlant {
   sleepDurationSeconds: number | null;
   humidityPercent: number | null;
   batteryPercent: number | null;
+}
+
+export interface PlantSpeciesSummary {
+  id: number;
+  source: string;
+  sourceSpeciesId: string;
+  scientificName: string | null;
+  displayName: string | null;
+  imageUrl: string | null;
+  minSoilMoisture: number | null;
+  maxSoilMoisture: number | null;
+  minTemperatureCelsius: number | null;
+  maxTemperatureCelsius: number | null;
+  sunlight?: string | null;
+  soil?: string | null;
+  watering?: string | null;
+  fertilization?: string | null;
+  pruning?: string | null;
+}
+
+export interface PlantSpecies extends PlantSpeciesSummary {
+  commonNames: string[];
+  minEnvHumidity: number | null;
+  maxEnvHumidity: number | null;
+  minTemperatureCelsius: number | null;
+  maxTemperatureCelsius: number | null;
+  sunlight: string | null;
+  soil: string | null;
+  watering: string | null;
+  fertilization: string | null;
+  pruning: string | null;
+  sourceUpdatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface MeasurementPoint {

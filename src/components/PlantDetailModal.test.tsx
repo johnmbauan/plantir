@@ -49,6 +49,69 @@ describe('PlantDetailModal', () => {
     expect(screen.queryByText('Measurement history')).not.toBeInTheDocument()
   })
 
+  it('renders species guidance when species data is available', () => {
+    const plant = buildPlant({
+      species: {
+        id: 7,
+        source: 'openplantbook',
+        sourceSpeciesId: 'monstera_deliciosa',
+        scientificName: 'Monstera deliciosa',
+        displayName: 'Monstera',
+        imageUrl: null,
+        minSoilMoisture: 35,
+        maxSoilMoisture: 60,
+        minTemperatureCelsius: 18,
+        maxTemperatureCelsius: 30,
+        soil: 'Well draining',
+        sunlight: 'Bright indirect',
+        watering: 'Keep slightly moist',
+        fertilization: 'Monthly',
+        pruning: 'Spring',
+      },
+      deviceId: null,
+    })
+
+    renderWithProviders(
+      <PlantDetailModal plant={plant} opened onClose={onClose} />,
+    )
+
+    expect(screen.getByText('Scientific name: Monstera deliciosa')).toBeInTheDocument()
+    expect(screen.getByText(/Recommended soil moisture 💧:/)).toBeInTheDocument()
+    expect(screen.getByText('35% - 60%')).toBeInTheDocument()
+    expect(screen.getByText(/Recommended temperature 🌡️:/)).toBeInTheDocument()
+    expect(screen.getByText('18°C - 30°C')).toBeInTheDocument()
+    expect(screen.getByText('Soil 🌱:')).toBeInTheDocument()
+    expect(screen.getByText('Well draining')).toBeInTheDocument()
+    expect(screen.getByText('Sunlight ☀️:')).toBeInTheDocument()
+    expect(screen.getByText('Bright indirect')).toBeInTheDocument()
+    expect(screen.getByText('Watering 🚿:')).toBeInTheDocument()
+    expect(screen.getByText('Keep slightly moist')).toBeInTheDocument()
+  })
+
+  it('does not duplicate scientific name when it matches primary species name', () => {
+    const plant = buildPlant({
+      species: {
+        id: 8,
+        source: 'openplantbook',
+        sourceSpeciesId: 'ficus_lyrata',
+        scientificName: 'Ficus lyrata',
+        displayName: 'Ficus lyrata',
+        imageUrl: null,
+        minSoilMoisture: 30,
+        maxSoilMoisture: 55,
+        minTemperatureCelsius: null,
+        maxTemperatureCelsius: null,
+      },
+      deviceId: null,
+    })
+
+    renderWithProviders(
+      <PlantDetailModal plant={plant} opened onClose={onClose} />,
+    )
+
+    expect(screen.queryByText('Scientific name: Ficus lyrata')).not.toBeInTheDocument()
+  })
+
   it('loads and displays measurement history when device is assigned', async () => {
     const plant = buildPlant({ id: 3, deviceId: 10 })
 

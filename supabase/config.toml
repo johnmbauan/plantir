@@ -405,3 +405,15 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/register-device/deno.json"
 entrypoint = "./functions/register-device/index.ts"
+
+[functions.plant-species-search]
+enabled = true
+verify_jwt = true
+import_map = "./functions/plant-species-search/deno.json"
+entrypoint = "./functions/plant-species-search/index.ts"
+
+[functions.plant-species-detail]
+enabled = true
+verify_jwt = true
+import_map = "./functions/plant-species-detail/deno.json"
+entrypoint = "./functions/plant-species-detail/index.ts"

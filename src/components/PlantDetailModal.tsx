@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Modal, Image, Group, Text, Stack, Anchor, Box, Badge, SegmentedControl, Alert, Loader, Skeleton, LoadingOverlay } from "@mantine/core";
+import { Modal, Image, Group, Text, Stack, Anchor, Box, Badge, SegmentedControl, Alert, Loader, Skeleton, LoadingOverlay, Divider, Paper } from "@mantine/core";
 import { Link } from "react-router-dom";
 import type { EnrichedPlant, HistoryRange, PlantHistory } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
@@ -37,6 +37,8 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
 
   useEffect(() => {
     if (!opened || !plant?.deviceId) return;
+    // Loading depends on runtime plant/range state and is intentionally effect-driven.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadHistory(plant.id, range);
   }, [opened, plant?.id, plant?.deviceId, range, loadHistory]);
 
@@ -45,6 +47,12 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
   const SEVERITY = ["OFFLINE", "WATERING_NEEDED", "HEALTHY"] as const;
   const primaryStatus = SEVERITY.find((s) => plant.statuses.includes(s)) ?? "HEALTHY";
   const { barColor } = STATUS_CONFIG[primaryStatus];
+  const primarySpeciesName = plant.species?.displayName
+    ?? plant.species?.scientificName
+    ?? plant.species?.sourceSpeciesId
+    ?? "";
+  const scientificName = plant.species?.scientificName?.trim() ?? null;
+  const showScientificName = scientificName != null && scientificName.toLowerCase() !== primarySpeciesName.toLowerCase();
 
   return (
     <Modal opened={opened} onClose={onClose} title={<Text fw={700}>{plant.name}</Text>} size="md">
@@ -100,6 +108,32 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
               🔋 {plant.batteryPercent}%
             </Text>
           </Group>
+        )}
+
+        {/* Species guidance */}
+        {plant.species && (
+          <>
+            <Divider />
+            <Paper withBorder p="sm" radius="md" style={{ borderColor: "var(--mantine-color-gray-3)" }}>
+              <Stack gap={8}>
+                <Text size="sm" tt="capitalize" fw={600}>{primarySpeciesName}</Text>
+                {showScientificName && (
+                  <Text size="sm">Scientific name: {scientificName}</Text>
+                )}
+                <Text size="sm">
+                  Recommended soil moisture 💧: <Text span fw={100}>{plant.species.minSoilMoisture ?? "?"}% - {plant.species.maxSoilMoisture ?? "?"}%</Text>
+                </Text>
+                <Text size="sm">
+                  Recommended temperature 🌡️: <Text span fw={100}>{plant.species.minTemperatureCelsius ?? "?"}°C - {plant.species.maxTemperatureCelsius ?? "?"}°C</Text>
+                </Text>
+                {plant.species.soil && <Text size="sm">Soil 🌱: <Text span fw={100}>{plant.species.soil}</Text></Text>}
+                {plant.species.sunlight && <Text size="sm">Sunlight ☀️: <Text span fw={100}>{plant.species.sunlight}</Text></Text>}
+                {plant.species.watering && <Text size="sm">Watering 🚿: <Text span fw={100}>{plant.species.watering}</Text></Text>}
+                {plant.species.fertilization && <Text size="sm">Fertilization 🧪: <Text span fw={100}>{plant.species.fertilization}</Text></Text>}
+                {plant.species.pruning && <Text size="sm">Pruning ✂️: <Text span fw={100}>{plant.species.pruning}</Text></Text>}
+              </Stack>
+            </Paper>
+          </>
         )}
 
         {/* Action links */}

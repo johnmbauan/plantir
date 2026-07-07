@@ -1,13 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import userEvent from '@testing-library/user-event'
-import { renderWithProviders, screen, within } from '@/test/render'
+import { renderWithProviders, screen, waitFor, within } from '@/test/render'
 import { buildPlant } from '@/test/builders/plant'
 import PlantFormModal from './PlantFormModal'
+import type { PlantSpecies } from '@/types'
 
 const createPlant = vi.fn()
 const updatePlant = vi.fn()
 const uploadPlantImage = vi.fn()
 const deletePlantImage = vi.fn()
+const searchPlantSpecies = vi.fn()
+const fetchPlantSpeciesDetail = vi.fn()
 const onClose = vi.fn()
 const onSaved = vi.fn()
 
@@ -16,6 +19,11 @@ vi.mock('@/services/plantService', () => ({
   updatePlant: (...args: unknown[]) => updatePlant(...args),
   uploadPlantImage: (...args: unknown[]) => uploadPlantImage(...args),
   deletePlantImage: (...args: unknown[]) => deletePlantImage(...args),
+}))
+
+vi.mock('@/services/plantSpeciesService', () => ({
+  searchPlantSpecies: (...args: unknown[]) => searchPlantSpecies(...args),
+  fetchPlantSpeciesDetail: (...args: unknown[]) => fetchPlantSpeciesDetail(...args),
 }))
 
 vi.mock('@mantine/notifications', () => ({
@@ -27,10 +35,36 @@ function getDialog() {
 }
 
 describe('PlantFormModal', () => {
+  const speciesDetail: PlantSpecies = {
+    id: 7,
+    source: 'openplantbook',
+    sourceSpeciesId: 'monstera_deliciosa',
+    scientificName: 'Monstera deliciosa',
+    displayName: 'Monstera',
+    imageUrl: 'https://cdn/monstera.jpg',
+    minSoilMoisture: 35,
+    maxSoilMoisture: 60,
+    commonNames: ['Monstera'],
+    minEnvHumidity: 40,
+    maxEnvHumidity: 70,
+    minTemperatureCelsius: 18,
+    maxTemperatureCelsius: 30,
+    sunlight: 'Bright indirect light',
+    soil: 'Well draining',
+    watering: 'Keep slightly moist',
+    fertilization: 'Monthly',
+    pruning: 'As needed',
+    sourceUpdatedAt: null,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
+  }
+
   beforeEach(() => {
     vi.clearAllMocks()
     createPlant.mockResolvedValue({ id: 1 })
     updatePlant.mockResolvedValue(undefined)
+    searchPlantSpecies.mockResolvedValue([])
+    fetchPlantSpeciesDetail.mockResolvedValue(speciesDetail)
   })
 
   it('renders add plant form when not editing', () => {
@@ -66,7 +100,7 @@ describe('PlantFormModal', () => {
     await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Ficus')
     await user.click(within(dialog).getByRole('button', { name: 'Save' }))
 
-    expect(createPlant).toHaveBeenCalledWith('Ficus', null)
+    expect(createPlant).toHaveBeenCalledWith('Ficus', null, null)
     expect(onClose).toHaveBeenCalledTimes(1)
     expect(onSaved).toHaveBeenCalledTimes(1)
   })
@@ -85,7 +119,7 @@ describe('PlantFormModal', () => {
     await user.type(nameInput, 'Big Monstera')
     await user.click(within(dialog).getByRole('button', { name: 'Save' }))
 
-    expect(updatePlant).toHaveBeenCalledWith(5, 'Big Monstera', null)
+    expect(updatePlant).toHaveBeenCalledWith(5, 'Big Monstera', null, null)
     expect(onClose).toHaveBeenCalledTimes(1)
     expect(onSaved).toHaveBeenCalledTimes(1)
   })
@@ -142,6 +176,117 @@ describe('PlantFormModal', () => {
 
     expect(deletePlantImage).toHaveBeenCalledWith(null)
     expect(uploadPlantImage).toHaveBeenCalledWith(file)
-    expect(createPlant).toHaveBeenCalledWith('Ficus', 'https://cdn/plant.jpg')
+    expect(createPlant).toHaveBeenCalledWith('Ficus', 'https://cdn/plant.jpg', null)
+  })
+
+  it('saves selected species without extra confirmation step', async () => {
+    const user = userEvent.setup()
+    searchPlantSpecies.mockResolvedValue([
+      {
+        source: 'openplantbook',
+        sourceSpeciesId: 'monstera_deliciosa',
+        scientificName: 'Monstera deliciosa',
+        displayName: 'Monstera',
+        imageUrl: null,
+      },
+    ])
+
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={null} onClose={onClose} onSaved={onSaved} />,
+    )
+
+    const dialog = getDialog()
+    await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'My Plant')
+    const speciesInput = within(dialog).getByRole('textbox', { name: 'Plant species (optional)' })
+    await user.type(speciesInput, 'mons')
+
+    await waitFor(() => {
+      expect(searchPlantSpecies).toHaveBeenCalledWith('mons')
+    })
+
+    await user.type(speciesInput, '{ArrowDown}{Enter}')
+
+    await waitFor(() => {
+      expect(fetchPlantSpeciesDetail).toHaveBeenCalledWith('monstera_deliciosa')
+    })
+    expect(within(dialog).getByText(/Recommended temperature 🌡️:/)).toBeInTheDocument()
+    expect(within(dialog).getByText('18°C - 30°C')).toBeInTheDocument()
+
+    const saveButton = within(dialog).getByRole('button', { name: 'Save' })
+    expect(saveButton).toBeEnabled()
+
+    await user.click(saveButton)
+    expect(createPlant).toHaveBeenCalledWith('My Plant', null, 7)
+  })
+
+  it('clears selected species when user rejects suggestion', async () => {
+    const user = userEvent.setup()
+    searchPlantSpecies.mockResolvedValue([
+      {
+        source: 'openplantbook',
+        sourceSpeciesId: 'monstera_deliciosa',
+        scientificName: 'Monstera deliciosa',
+        displayName: 'Monstera',
+        imageUrl: null,
+      },
+    ])
+
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={null} onClose={onClose} onSaved={onSaved} />,
+    )
+
+    const dialog = getDialog()
+    await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'My Plant')
+    const speciesInput = within(dialog).getByRole('textbox', { name: 'Plant species (optional)' })
+    await user.type(speciesInput, 'mons')
+    await waitFor(() => {
+      expect(searchPlantSpecies).toHaveBeenCalledWith('mons')
+    })
+    await user.type(speciesInput, '{ArrowDown}{Enter}')
+    await waitFor(() => {
+      expect(fetchPlantSpeciesDetail).toHaveBeenCalledWith('monstera_deliciosa')
+    })
+    expect(within(dialog).getByText('Matched')).toBeInTheDocument()
+
+    await user.click(within(dialog).getByRole('button', { name: 'Not this plant' }))
+    expect(within(dialog).queryByText('Matched')).not.toBeInTheDocument()
+
+    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    expect(createPlant).toHaveBeenCalledWith('My Plant', null, null)
+  })
+
+  it('allows using confirmed species image without custom upload', async () => {
+    const user = userEvent.setup()
+    searchPlantSpecies.mockResolvedValue([
+      {
+        source: 'openplantbook',
+        sourceSpeciesId: 'monstera_deliciosa',
+        scientificName: 'Monstera deliciosa',
+        displayName: 'Monstera',
+        imageUrl: 'https://cdn/monstera.jpg',
+      },
+    ])
+
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={null} onClose={onClose} onSaved={onSaved} />,
+    )
+
+    const dialog = getDialog()
+    await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'My Plant')
+    const speciesInput = within(dialog).getByRole('textbox', { name: 'Plant species (optional)' })
+    await user.type(speciesInput, 'mons')
+    await waitFor(() => {
+      expect(searchPlantSpecies).toHaveBeenCalledWith('mons')
+    })
+    await user.type(speciesInput, '{ArrowDown}{Enter}')
+    await waitFor(() => {
+      expect(fetchPlantSpeciesDetail).toHaveBeenCalledWith('monstera_deliciosa')
+    })
+
+    await user.click(within(dialog).getByRole('button', { name: 'Use species image' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+
+    expect(uploadPlantImage).not.toHaveBeenCalled()
+    expect(createPlant).toHaveBeenCalledWith('My Plant', 'https://cdn/monstera.jpg', 7)
   })
 })

@@ -57,6 +57,8 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    // Initial dashboard hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void reloadPlants("initial");
   }, [reloadPlants]);
 
@@ -71,6 +73,8 @@ export default function Dashboard() {
     const plantId = Number(highlightParam);
     if (!Number.isFinite(plantId)) return;
 
+    // Apply deep-link focus state and clear query params.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHighlightedPlantId(plantId);
     setActiveFilter("all");
     setSearch("");

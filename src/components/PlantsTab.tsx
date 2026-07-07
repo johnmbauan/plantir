@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   Table,
@@ -47,8 +47,14 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
     }
   };
 
+  const handleOpenEdit = (plant?: EnrichedPlant) => {
+    setEditingPlant(plant ?? null);
+    open();
+  };
+
   useEffect(() => {
-    loadData();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadData();
   }, [reloadKey]);
 
   useEffect(() => {
@@ -56,6 +62,8 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
     if (!editPlantId || loading || plants.length === 0) return;
     const plant = plants.find((p) => p.id === Number(editPlantId));
     if (plant) {
+      // Open edit modal from URL deep-link once data is ready.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       handleOpenEdit(plant);
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
@@ -66,19 +74,16 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, plants]);
 
-  const handleOpenEdit = (plant?: EnrichedPlant) => {
-    setEditingPlant(plant ?? null);
-    open();
-  };
-
   const handleDeletePrompt = (plant: EnrichedPlant) => {
     setPlantToDelete(plant);
     openDelete();
   };
 
-  const visible = plants.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const visible = useMemo(() => {
+    return plants
+      .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [plants, search]);
 
   return (
     <Stack gap="md" pos="relative">

@@ -17,6 +17,7 @@ import { fetchDevices } from "@/services/deviceService";
 import { notifications } from "@mantine/notifications";
 import { fetchPlants } from "@/services/plantService";
 import type { Device, EnrichedPlant } from "@/types";
+import type { PlantOption } from "@/components/DeviceFormModal/types";
 import { getErrorMessage } from "@/utils/error";
 import { formatInterval } from "@/utils/time";
 import DeviceFormModal from "@/components/DeviceFormModal";
@@ -55,8 +56,14 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
     }
   };
 
+  const handleOpenEdit = (device?: Device) => {
+    setEditingDevice(device ?? null);
+    open();
+  };
+
   useEffect(() => {
-    loadData();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadData();
   }, [reloadKey]);
 
   useEffect(() => {
@@ -64,6 +71,8 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
     if (!editDeviceId || loading || devices.length === 0) return;
     const device = devices.find((d) => d.id === Number(editDeviceId));
     if (device) {
+      // Open edit modal from URL deep-link once data is ready.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       handleOpenEdit(device);
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
@@ -84,12 +93,11 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
     }, { replace: true });
   }, [loading, searchParams, openWizard, setSearchParams]);
 
-  const plantOptions = plants.map((p) => ({ value: String(p.id), label: p.name }));
-
-  const handleOpenEdit = (device?: Device) => {
-    setEditingDevice(device ?? null);
-    open();
-  };
+  const plantOptions: PlantOption[] = plants.map((p) => ({
+    value: String(p.id),
+    label: p.name,
+    recommendedThreshold: p.species?.minSoilMoisture ?? null,
+  }));
 
   const handleDeletePrompt = (device: Device) => {
     setDeviceToDelete(device);

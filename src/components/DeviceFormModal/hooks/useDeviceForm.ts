@@ -4,13 +4,13 @@ import { createDevice, updateDevice, type DeviceFormValues } from "@/services/de
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/error";
 import { intervalPresetSelectValue } from "@/utils/time";
-import type { DeviceFormValidationErrors } from "@/components/DeviceFormModal/types";
+import type { DeviceFormValidationErrors, PlantOption } from "@/components/DeviceFormModal/types";
 import { DEFAULT_HUMIDITY, defaultFormValues, formValuesFromDevice } from "@/components/DeviceFormModal/utils";
 
 interface UseDeviceFormOptions {
   opened: boolean;
   editingDevice: Device | null;
-  plantOptions: { value: string; label: string }[];
+  plantOptions: PlantOption[];
   onClose: () => void;
   onSaved: () => void;
   onOpenCalibration?: (device: Device) => void;
@@ -28,12 +28,15 @@ export function useDeviceForm({
   const [intervalPreset, setIntervalPreset] = useState(String(DEFAULT_HUMIDITY.sleepDurationSeconds));
   const [saving, setSaving] = useState(false);
   const [createdDevice, setCreatedDevice] = useState<Device | null>(null);
+  const [thresholdTouched, setThresholdTouched] = useState(false);
 
   const isEditing = editingDevice != null;
 
   useEffect(() => {
     if (!opened) return;
+    /* eslint-disable react-hooks/set-state-in-effect */
     setCreatedDevice(null);
+    setThresholdTouched(false);
     if (editingDevice) {
       const values = formValuesFromDevice(editingDevice);
       setForm(values);
@@ -42,14 +45,38 @@ export function useDeviceForm({
       setForm(defaultFormValues());
       setIntervalPreset(String(DEFAULT_HUMIDITY.sleepDurationSeconds));
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [opened, editingDevice]);
 
-  const setHumidityField = (field: keyof typeof DEFAULT_HUMIDITY, value: string | number) => {
+  const setHumidityField = (
+    field: keyof typeof DEFAULT_HUMIDITY,
+    value: string | number,
+    options?: { markTouched?: boolean },
+  ) => {
     if (typeof value !== "number") return;
+    const markTouched = options?.markTouched ?? true;
+    if (field === "minHumidityThreshold" && markTouched) {
+      setThresholdTouched(true);
+    }
     setForm((prev) => ({
       ...prev,
       humidityConfig: { ...prev.humidityConfig, [field]: value },
     }));
+  };
+
+  const recommendedThreshold = useMemo(() => {
+    if (form.plantId == null) return null;
+    const selectedPlant = plantOptions.find((option) => String(option.value) === String(form.plantId));
+    return selectedPlant?.recommendedThreshold ?? null;
+  }, [form.plantId, plantOptions]);
+
+  const handlePlantChange = (plantId: number | null) => {
+    setForm((prev) => ({ ...prev, plantId }));
+    if (isEditing || thresholdTouched || plantId == null) return;
+    const selectedPlant = plantOptions.find((option) => String(option.value) === String(plantId));
+    const suggested = selectedPlant?.recommendedThreshold ?? null;
+    if (suggested == null) return;
+    setHumidityField("minHumidityThreshold", suggested, { markTouched: false });
   };
 
   const handleCustomIntervalChange = (value: string | number) => {
@@ -146,9 +173,11 @@ export function useDeviceForm({
     saving,
     createdDevice,
     isEditing,
+    recommendedThreshold,
     validation,
     isValid,
     setHumidityField,
+    handlePlantChange,
     handleCustomIntervalChange,
     handleIntervalPresetChange,
     handleSave,

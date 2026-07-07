@@ -28,4 +28,17 @@ describe('WateringAlertsSection', () => {
 
     expect(screen.getByText('Threshold must be between 0 and 100')).toBeInTheDocument()
   })
+
+  it('shows suggested threshold from species when available', () => {
+    renderWithProviders(
+      <WateringAlertsSection
+        threshold={42}
+        recommendedThreshold={42}
+        validation={{}}
+        onThresholdChange={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Suggested from species: 42%')).toBeInTheDocument()
+  })
 })

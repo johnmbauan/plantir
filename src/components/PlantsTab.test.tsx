@@ -62,6 +62,20 @@ describe('PlantsTab', () => {
     expect(screen.getByText('Fern')).toBeInTheDocument()
   })
 
+  it('sorts plants by name ascending', async () => {
+    vi.mocked(fetchPlants).mockResolvedValue([
+      buildPlant({ id: 2, name: 'Zebra' }),
+      buildPlant({ id: 1, name: 'Apple' }),
+    ])
+
+    renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />)
+    await screen.findByText('Apple')
+
+    const rows = screen.getAllByRole('row')
+    expect(rows[1]).toHaveTextContent('Apple')
+    expect(rows[2]).toHaveTextContent('Zebra')
+  })
+
   it('shows no search results message when filter matches nothing', async () => {
     const user = userEvent.setup()
 

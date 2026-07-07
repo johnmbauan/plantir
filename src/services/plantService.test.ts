@@ -69,6 +69,53 @@ describe('plantService', () => {
       })
     })
 
+    it('maps species summary when available', async () => {
+      mockAuthenticatedUser()
+      setupFromMocks({
+        plants: {
+          data: [{
+            id: 1,
+            name: 'Ficus',
+            imageUrl: null,
+            createdAt: '2026-01-01',
+            species_id: 7,
+            plant_species: {
+              id: 7,
+              source: 'openplantbook',
+              sourceSpeciesId: 'ficus_lyrata',
+              scientificName: 'Ficus lyrata',
+              displayName: 'Fiddle leaf fig',
+              imageUrl: null,
+              minSoilMoisture: 30,
+              maxSoilMoisture: 55,
+              minTemperatureCelsius: 18,
+              maxTemperatureCelsius: 27,
+              sunlight: 'Bright indirect',
+              soil: 'Well draining',
+              watering: 'Keep slightly moist',
+              fertilization: 'Monthly',
+              pruning: 'Spring',
+            },
+            devices: [],
+          }],
+          error: null,
+        },
+      })
+
+      const plants = await fetchPlants()
+
+      expect(plants[0]).toMatchObject({
+        speciesId: 7,
+        species: expect.objectContaining({
+          id: 7,
+          sourceSpeciesId: 'ficus_lyrata',
+          minSoilMoisture: 30,
+          minTemperatureCelsius: 18,
+          sunlight: 'Bright indirect',
+        }),
+      })
+    })
+
     it('marks plants needing water and offline', async () => {
       mockAuthenticatedUser()
       setupFromMocks({
@@ -197,6 +244,13 @@ describe('plantService', () => {
       setupFromMocks({ plants: { data: null, error: null } })
       await expect(createPlant('New Plant', null)).resolves.toBeUndefined()
     })
+
+    it('inserts a plant with species id when provided', async () => {
+      mockAuthenticatedUser()
+      setupFromMocks({ plants: { data: null, error: null } })
+
+      await expect(createPlant('New Plant', null, 7)).resolves.toBeUndefined()
+    })
   })
 
   describe('updatePlant', () => {
@@ -204,6 +258,13 @@ describe('plantService', () => {
       mockAuthenticatedUser()
       setupFromMocks({ plants: { data: null, error: null } })
       await expect(updatePlant(1, 'Renamed', 'http://img')).resolves.toBeUndefined()
+    })
+
+    it('updates plant species id when provided', async () => {
+      mockAuthenticatedUser()
+      setupFromMocks({ plants: { data: null, error: null } })
+
+      await expect(updatePlant(1, 'Renamed', 'http://img', 7)).resolves.toBeUndefined()
     })
   })
 

@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Modal, Stack, TextInput, Image, Button, Group, FileButton, Text } from "@mantine/core";
+import { Modal, Stack, TextInput, Button, Group, Divider } from "@mantine/core";
 import type { EnrichedPlant } from "@/types";
 import { createPlant, deletePlantImage, updatePlant, uploadPlantImage } from "@/services/plantService";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/error";
+import { SpeciesSection } from "@/components/plant-form/SpeciesSection";
+import { PhotoSection } from "@/components/plant-form/PhotoSection";
+import { usePlantSpeciesSelection } from "@/components/plant-form/usePlantSpeciesSelection";
+import { usePlantPreviewSource } from "@/components/plant-form/usePlantPreviewSource";
 
 interface Props {
   opened: boolean;
@@ -17,38 +21,72 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
-  const resetFileRef = useRef<() => void>(null);
+  const resetFileRef = useRef<(() => void) | null>(null);
+
+  const {
+    speciesQuery,
+    speciesResults,
+    selectedSpeciesId,
+    selectedSpecies,
+    useSpeciesImage,
+    speciesSearchLoading,
+    speciesDetailLoading,
+    speciesError,
+    setUseSpeciesImage,
+    clearSpeciesSelection,
+    initializeSpecies,
+    handleSpeciesSearchChange,
+    handleSpeciesSelect,
+  } = usePlantSpeciesSelection({ opened });
+
+  const previewSrc = usePlantPreviewSource({
+    existingImageUrl,
+    imageFile,
+    useSpeciesImage,
+    speciesImageUrl: selectedSpecies?.imageUrl,
+  });
+  const canSave = Boolean(name.trim());
+  const speciesImageAvailable = Boolean(selectedSpecies?.imageUrl);
 
   useEffect(() => {
     if (!opened) return;
+    // Form state is reset/hydrated when modal opens or edit target changes.
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (editingPlant) {
       setName(editingPlant.name);
       setExistingImageUrl(editingPlant.image_url);
+      initializeSpecies(editingPlant);
     } else {
       setName("");
       setExistingImageUrl(null);
+      initializeSpecies(null);
     }
     setImageFile(null);
     resetFileRef.current?.();
-  }, [opened, editingPlant]);
-
-  const previewSrc = imageFile ? URL.createObjectURL(imageFile) : existingImageUrl;
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [opened, editingPlant, initializeSpecies]);
 
   const handleSave = async () => {
+    if (!canSave) return;
     setSaving(true);
     try {
       let resolvedUrl = existingImageUrl;
 
-      if (imageFile) {
+      if (useSpeciesImage && selectedSpecies?.imageUrl) {
+        if (existingImageUrl && existingImageUrl !== selectedSpecies.imageUrl) {
+          await deletePlantImage(existingImageUrl);
+        }
+        resolvedUrl = selectedSpecies.imageUrl;
+      } else if (imageFile) {
         // Delete the old stored image before uploading the new one
         await deletePlantImage(existingImageUrl);
         resolvedUrl = await uploadPlantImage(imageFile);
       }
 
       if (editingPlant) {
-        await updatePlant(editingPlant.id, name, resolvedUrl);
+        await updatePlant(editingPlant.id, name, resolvedUrl, selectedSpecies?.id ?? null);
       } else {
-        await createPlant(name, resolvedUrl);
+        await createPlant(name, resolvedUrl, selectedSpecies?.id ?? null);
       }
 
       notifications.show({
@@ -67,8 +105,9 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title={editingPlant ? "Edit Plant" : "Add Plant"}>
-      <Stack gap="sm">
+    <Modal opened={opened} onClose={onClose} title={editingPlant ? "Edit Plant" : "Add Plant"} size="lg">
+      <Stack gap="md">
+        <Divider label="Plant" labelPosition="left" />
         <TextInput
           label="Plant Name"
           placeholder="e.g. Ficus"
@@ -76,35 +115,46 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
           onChange={(e) => setName(e.target.value)}
           required
         />
-        {previewSrc && (
-          <Image
-            src={previewSrc}
-            alt="Plant preview"
-            radius="md"
-            h={120}
-            fit="contain"
-            fallbackSrc="https://placehold.co/120x120?text=No+image"
-          />
-        )}
-        <Group gap="sm" align="center">
-          <FileButton resetRef={resetFileRef} onChange={setImageFile} accept="image/*">
-            {(props) => (
-              <Button variant="default" {...props}>
-                {previewSrc ? "Change photo" : "Upload photo"}
-              </Button>
-            )}
-          </FileButton>
-          {imageFile && (
-            <Text size="sm" c="dimmed" truncate>
-              {imageFile.name}
-            </Text>
-          )}
-        </Group>
+
+        <Divider label="Species (optional)" labelPosition="left" />
+        <SpeciesSection
+          speciesQuery={speciesQuery}
+          speciesResults={speciesResults}
+          selectedSpeciesId={selectedSpeciesId}
+          selectedSpecies={selectedSpecies}
+          speciesSearchLoading={speciesSearchLoading}
+          speciesDetailLoading={speciesDetailLoading}
+          speciesError={speciesError}
+          saving={saving}
+          onSearchChange={handleSpeciesSearchChange}
+          onSelect={handleSpeciesSelect}
+          onRejectSpecies={clearSpeciesSelection}
+        />
+
+        <Divider label="Photo" labelPosition="left" />
+        <PhotoSection
+          previewSrc={previewSrc}
+          useSpeciesImage={useSpeciesImage}
+          speciesImageAvailable={speciesImageAvailable}
+          imageFile={imageFile}
+          resetFileRef={resetFileRef}
+          onToggleUseSpeciesImage={() => {
+            setUseSpeciesImage((prev) => !prev);
+            if (!useSpeciesImage) {
+              setImageFile(null);
+              resetFileRef.current?.();
+            }
+          }}
+          onFileChange={(file) => {
+            setUseSpeciesImage(false);
+            setImageFile(file);
+          }}
+        />
         <Group justify="flex-end" mt="md">
           <Button variant="default" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!name} loading={saving}>
+          <Button onClick={handleSave} disabled={!canSave} loading={saving}>
             Save
           </Button>
         </Group>
