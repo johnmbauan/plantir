@@ -74,7 +74,7 @@ describe('PlantFormModal', () => {
 
     const dialog = getDialog()
     expect(within(dialog).getByPlaceholderText('e.g. Ficus')).toHaveValue('')
-    expect(within(dialog).getByRole('button', { name: 'Save' })).toBeDisabled()
+    expect(within(dialog).getByRole('button', { name: 'Add plant' })).toBeDisabled()
   })
 
   it('prefills fields when editing a plant', () => {
@@ -86,7 +86,7 @@ describe('PlantFormModal', () => {
 
     const dialog = getDialog()
     expect(within(dialog).getByPlaceholderText('e.g. Ficus')).toHaveValue('Monstera')
-    expect(within(dialog).getByRole('button', { name: 'Save' })).toBeEnabled()
+    expect(within(dialog).getByRole('button', { name: 'Save changes' })).toBeDisabled()
   })
 
   it('creates a new plant on save', async () => {
@@ -98,7 +98,7 @@ describe('PlantFormModal', () => {
 
     const dialog = getDialog()
     await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Ficus')
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add plant' }))
 
     expect(createPlant).toHaveBeenCalledWith('Ficus', null, null)
     expect(onClose).toHaveBeenCalledTimes(1)
@@ -117,11 +117,50 @@ describe('PlantFormModal', () => {
     const nameInput = within(dialog).getByPlaceholderText('e.g. Ficus')
     await user.clear(nameInput)
     await user.type(nameInput, 'Big Monstera')
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Save changes' }))
 
     expect(updatePlant).toHaveBeenCalledWith(5, 'Big Monstera', null, null)
     expect(onClose).toHaveBeenCalledTimes(1)
     expect(onSaved).toHaveBeenCalledTimes(1)
+  })
+
+  it('enables save changes when editing a plant and selecting its first species', async () => {
+    const user = userEvent.setup()
+    const plant = buildPlant({ id: 5, name: 'Monstera', speciesId: null, species: null })
+    searchPlantSpecies.mockResolvedValue([
+      {
+        source: 'openplantbook',
+        sourceSpeciesId: 'monstera_deliciosa',
+        scientificName: 'Monstera deliciosa',
+        displayName: 'Monstera',
+        imageUrl: null,
+      },
+    ])
+
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={plant} onClose={onClose} onSaved={onSaved} />,
+    )
+
+    const dialog = getDialog()
+    const saveButton = within(dialog).getByRole('button', { name: 'Save changes' })
+    expect(saveButton).toBeDisabled()
+
+    const speciesInput = within(dialog).getByRole('textbox', { name: 'Plant species (optional)' })
+    await user.type(speciesInput, 'mons')
+    await waitFor(() => {
+      expect(searchPlantSpecies).toHaveBeenCalledWith('mons')
+    })
+
+    await user.type(speciesInput, '{ArrowDown}{Enter}')
+    await waitFor(() => {
+      expect(fetchPlantSpeciesDetail).toHaveBeenCalledWith('monstera_deliciosa')
+    })
+    await waitFor(() => {
+      expect(saveButton).toBeEnabled()
+    })
+
+    await user.click(saveButton)
+    expect(updatePlant).toHaveBeenCalledWith(5, 'Monstera', null, 7)
   })
 
   it('calls onClose when cancel is clicked', async () => {
@@ -147,7 +186,7 @@ describe('PlantFormModal', () => {
 
     const dialog = getDialog()
     await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Ficus')
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add plant' }))
 
     expect(notifications.show).toHaveBeenCalledWith(
       expect.objectContaining({ title: 'Error', message: 'Save failed' }),
@@ -165,14 +204,13 @@ describe('PlantFormModal', () => {
 
     const dialog = getDialog()
     const file = new File(['img'], 'plant.jpg', { type: 'image/jpeg' })
-    // Mantine FileButton nests a hidden file input.
     // eslint-disable-next-line testing-library/no-node-access
     const input = document.querySelector('input[type="file"]') as HTMLInputElement
     expect(input).toBeTruthy()
 
     await user.upload(input, file)
     await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Ficus')
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add plant' }))
 
     expect(deletePlantImage).toHaveBeenCalledWith(null)
     expect(uploadPlantImage).toHaveBeenCalledWith(file)
@@ -209,10 +247,10 @@ describe('PlantFormModal', () => {
     await waitFor(() => {
       expect(fetchPlantSpeciesDetail).toHaveBeenCalledWith('monstera_deliciosa')
     })
-    expect(within(dialog).getByText(/Recommended temperature 🌡️:/)).toBeInTheDocument()
+    await user.click(within(dialog).getByRole('button', { name: 'View care guidance' }))
     expect(within(dialog).getByText('18°C - 30°C')).toBeInTheDocument()
 
-    const saveButton = within(dialog).getByRole('button', { name: 'Save' })
+    const saveButton = within(dialog).getByRole('button', { name: 'Add plant' })
     expect(saveButton).toBeEnabled()
 
     await user.click(saveButton)
@@ -246,12 +284,12 @@ describe('PlantFormModal', () => {
     await waitFor(() => {
       expect(fetchPlantSpeciesDetail).toHaveBeenCalledWith('monstera_deliciosa')
     })
-    expect(within(dialog).getByText('Matched')).toBeInTheDocument()
+    expect(within(dialog).getByText('Care guidance')).toBeInTheDocument()
 
-    await user.click(within(dialog).getByRole('button', { name: 'Not this plant' }))
-    expect(within(dialog).queryByText('Matched')).not.toBeInTheDocument()
+    await user.click(within(dialog).getByRole('button', { name: 'Clear species' }))
+    expect(within(dialog).queryByText('Care guidance')).not.toBeInTheDocument()
 
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add plant' }))
     expect(createPlant).toHaveBeenCalledWith('My Plant', null, null)
   })
 
@@ -283,8 +321,8 @@ describe('PlantFormModal', () => {
       expect(fetchPlantSpeciesDetail).toHaveBeenCalledWith('monstera_deliciosa')
     })
 
-    await user.click(within(dialog).getByRole('button', { name: 'Use species image' }))
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('radio', { name: 'Use species photo' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add plant' }))
 
     expect(uploadPlantImage).not.toHaveBeenCalled()
     expect(createPlant).toHaveBeenCalledWith('My Plant', 'https://cdn/monstera.jpg', 7)

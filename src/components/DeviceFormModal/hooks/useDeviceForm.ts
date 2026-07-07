@@ -16,6 +16,10 @@ interface UseDeviceFormOptions {
   onOpenCalibration?: (device: Device) => void;
 }
 
+function serializeFormState(form: DeviceFormValues, intervalPreset: string): string {
+  return JSON.stringify({ form, intervalPreset });
+}
+
 export function useDeviceForm({
   opened,
   editingDevice,
@@ -29,6 +33,7 @@ export function useDeviceForm({
   const [saving, setSaving] = useState(false);
   const [createdDevice, setCreatedDevice] = useState<Device | null>(null);
   const [thresholdTouched, setThresholdTouched] = useState(false);
+  const [initialSnapshot, setInitialSnapshot] = useState<string | null>(null);
 
   const isEditing = editingDevice != null;
 
@@ -39,11 +44,16 @@ export function useDeviceForm({
     setThresholdTouched(false);
     if (editingDevice) {
       const values = formValuesFromDevice(editingDevice);
+      const preset = intervalPresetSelectValue(values.humidityConfig.sleepDurationSeconds);
       setForm(values);
-      setIntervalPreset(intervalPresetSelectValue(values.humidityConfig.sleepDurationSeconds));
+      setIntervalPreset(preset);
+      setInitialSnapshot(serializeFormState(values, preset));
     } else {
-      setForm(defaultFormValues());
-      setIntervalPreset(String(DEFAULT_HUMIDITY.sleepDurationSeconds));
+      const values = defaultFormValues();
+      const preset = String(DEFAULT_HUMIDITY.sleepDurationSeconds);
+      setForm(values);
+      setIntervalPreset(preset);
+      setInitialSnapshot(serializeFormState(values, preset));
     }
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [opened, editingDevice]);
@@ -104,6 +114,8 @@ export function useDeviceForm({
   }, [form, isEditing]);
 
   const isValid = Object.keys(validation).length === 0;
+  const isDirty = initialSnapshot != null && serializeFormState(form, intervalPreset) !== initialSnapshot;
+  const helperText = validation.serial ?? validation.threshold ?? validation.interval;
 
   const handleIntervalPresetChange = (value: string | null) => {
     if (!value) return;
@@ -123,7 +135,7 @@ export function useDeviceForm({
   );
 
   const handleSave = async () => {
-    if (!isValid) return;
+    if (!isValid || !isDirty) return;
     setSaving(true);
     try {
       if (editingDevice) {
@@ -162,6 +174,9 @@ export function useDeviceForm({
   };
 
   const handleClose = () => {
+    if (isDirty && !window.confirm("Discard unsaved changes?")) {
+      return;
+    }
     setCreatedDevice(null);
     onClose();
   };
@@ -176,6 +191,8 @@ export function useDeviceForm({
     recommendedThreshold,
     validation,
     isValid,
+    isDirty,
+    helperText,
     setHumidityField,
     handlePlantChange,
     handleCustomIntervalChange,

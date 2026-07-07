@@ -115,7 +115,7 @@ describe('SettingsPage', () => {
       expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled()
     })
 
-    await user.click(screen.getByRole('textbox', { name: 'Notification Time' }))
+    await user.click(screen.getByRole('textbox', { name: 'Notification time' }))
     await user.click(await screen.findByText('10:00'))
 
     await user.click(screen.getByRole('textbox', { name: 'Timezone' }))

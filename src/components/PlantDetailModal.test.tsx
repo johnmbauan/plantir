@@ -45,11 +45,12 @@ describe('PlantDetailModal', () => {
     expect(screen.getByText('Healthy')).toBeInTheDocument()
     expect(screen.getByText('Needs recharge')).toBeInTheDocument()
     expect(screen.getByText('55%')).toBeInTheDocument()
-    expect(screen.getByText(/🔋 80%/)).toBeInTheDocument()
+    expect(screen.getByText('80%')).toBeInTheDocument()
     expect(screen.queryByText('Measurement history')).not.toBeInTheDocument()
   })
 
-  it('renders species guidance when species data is available', () => {
+  it('renders species guidance when species data is available', async () => {
+    const user = userEvent.setup()
     const plant = buildPlant({
       species: {
         id: 7,
@@ -76,15 +77,17 @@ describe('PlantDetailModal', () => {
     )
 
     expect(screen.getByText('Scientific name: Monstera deliciosa')).toBeInTheDocument()
-    expect(screen.getByText(/Recommended soil moisture 💧:/)).toBeInTheDocument()
+    expect(screen.getByText('Recommended soil moisture')).toBeInTheDocument()
     expect(screen.getByText('35% - 60%')).toBeInTheDocument()
-    expect(screen.getByText(/Recommended temperature 🌡️:/)).toBeInTheDocument()
+    expect(screen.getByText('Recommended temperature')).toBeInTheDocument()
     expect(screen.getByText('18°C - 30°C')).toBeInTheDocument()
-    expect(screen.getByText('Soil 🌱:')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'View care guidance' }))
+    expect(screen.getByText('Soil:')).toBeInTheDocument()
     expect(screen.getByText('Well draining')).toBeInTheDocument()
-    expect(screen.getByText('Sunlight ☀️:')).toBeInTheDocument()
+    expect(screen.getByText('Sunlight:')).toBeInTheDocument()
     expect(screen.getByText('Bright indirect')).toBeInTheDocument()
-    expect(screen.getByText('Watering 🚿:')).toBeInTheDocument()
+    expect(screen.getByText('Watering:')).toBeInTheDocument()
     expect(screen.getByText('Keep slightly moist')).toBeInTheDocument()
   })
 
@@ -110,6 +113,25 @@ describe('PlantDetailModal', () => {
     )
 
     expect(screen.queryByText('Scientific name: Ficus lyrata')).not.toBeInTheDocument()
+  })
+
+  it('opens a full size image view when the plant photo is clicked', async () => {
+    const user = userEvent.setup()
+    const plant = buildPlant({
+      name: 'Monstera',
+      image_url: 'https://example.com/plant.jpg',
+      deviceId: null,
+    })
+
+    renderWithProviders(
+      <PlantDetailModal plant={plant} opened onClose={onClose} />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'View full size photo of Monstera' }))
+
+    expect(screen.getByRole('dialog', { name: 'Full size photo of Monstera' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Close full size photo' })).toBeInTheDocument()
+    expect(screen.getAllByAltText('Monstera')).toHaveLength(2)
   })
 
   it('loads and displays measurement history when device is assigned', async () => {

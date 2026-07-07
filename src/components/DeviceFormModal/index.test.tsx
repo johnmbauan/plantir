@@ -41,7 +41,7 @@ describe('DeviceFormModal', () => {
     const dialog = getDialog()
     expect(within(dialog).getByText(/Register new device/i)).toBeInTheDocument()
     expect(within(dialog).getByText('Assignment')).toBeInTheDocument()
-    expect(within(dialog).getByRole('button', { name: 'Save' })).toBeInTheDocument()
+    expect(within(dialog).getByRole('button', { name: 'Add device' })).toBeInTheDocument()
   })
 
   it('renders edit device title with serial number', () => {
@@ -79,7 +79,7 @@ describe('DeviceFormModal', () => {
 
     const dialog = getDialog()
     await user.type(within(dialog).getByPlaceholderText('e.g. SN-001'), 'SN-NEW')
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add device' }))
 
     expect(await within(dialog).findByRole('button', { name: 'Calibrate now' })).toBeInTheDocument()
   })
@@ -99,7 +99,7 @@ describe('DeviceFormModal', () => {
 
     const dialog = getDialog()
     await user.type(within(dialog).getByPlaceholderText('e.g. SN-001'), 'SN-CALLBACK')
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add device' }))
 
     expect(createDevice).toHaveBeenCalledWith(
       expect.objectContaining({ serialNumber: 'SN-CALLBACK' }),
@@ -126,7 +126,7 @@ describe('DeviceFormModal', () => {
     await user.type(within(dialog).getByPlaceholderText('e.g. SN-001'), 'SN-PLANT')
     await user.click(within(dialog).getByRole('textbox', { name: 'Plant' }))
     await user.click(await screen.findByText('Ficus'))
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add device' }))
 
     expect(createDevice).toHaveBeenCalledWith(
       expect.objectContaining({ serialNumber: 'SN-PLANT', plantId: 20 }),
@@ -152,7 +152,7 @@ describe('DeviceFormModal', () => {
     await user.type(within(dialog).getByPlaceholderText('e.g. SN-001'), 'SN-RECO')
     await user.click(within(dialog).getByRole('textbox', { name: 'Plant' }))
     await user.click(await screen.findByText('Monstera'))
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add device' }))
 
     expect(createDevice).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -184,7 +184,7 @@ describe('DeviceFormModal', () => {
     slider.focus()
     await user.keyboard('{ArrowRight>5}')
 
-    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+    await user.click(within(dialog).getByRole('button', { name: 'Add device' }))
 
     expect(createDevice).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -212,7 +212,12 @@ describe('DeviceFormModal', () => {
       />,
     )
 
-    await user.click(within(getDialog()).getByRole('button', { name: 'Save' }))
+    const dialog = getDialog()
+    const slider = within(dialog).getByRole('slider')
+    await user.click(slider)
+    slider.focus()
+    await user.keyboard('{ArrowRight>3}')
+    await user.click(within(dialog).getByRole('button', { name: 'Save changes' }))
 
     expect(updateDevice).toHaveBeenCalledWith(7, expect.any(Object))
     expect(onClose).toHaveBeenCalled()

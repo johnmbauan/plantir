@@ -26,7 +26,7 @@ export default function DeviceDeleteModal({ opened, onClose, device, onDeleted }
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Delete Device" size="sm">
+    <Modal opened={opened} onClose={onClose} title="Delete device" size="sm">
       <Text size="sm" mb="lg">
         Are you sure you want to delete device <b>{device?.serialNumber}</b>?
         <br />
