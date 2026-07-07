@@ -3,11 +3,17 @@ import type { DeviceFormValidationErrors } from "@/components/DeviceFormModal/ty
 
 interface Props {
   threshold: number;
+  recommendedThreshold?: number | null;
   validation: DeviceFormValidationErrors;
   onThresholdChange: (value: number) => void;
 }
 
-export default function WateringAlertsSection({ threshold, validation, onThresholdChange }: Props) {
+export default function WateringAlertsSection({
+  threshold,
+  recommendedThreshold,
+  validation,
+  onThresholdChange,
+}: Props) {
   return (
     <Stack gap="xs">
       <Group justify="space-between" align="center">
@@ -19,6 +25,11 @@ export default function WateringAlertsSection({ threshold, validation, onThresho
       <Text size="sm" c="dimmed">
         Alert when humidity drops below this value
       </Text>
+      {recommendedThreshold != null && (
+        <Text size="xs" c="dimmed">
+          Suggested from species: {recommendedThreshold}%
+        </Text>
+      )}
       <Box pb="lg">
         <Slider
           min={0}

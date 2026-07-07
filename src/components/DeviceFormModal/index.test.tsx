@@ -133,6 +133,36 @@ describe('DeviceFormModal', () => {
     )
   })
 
+  it('prefills threshold from selected plant recommendation', async () => {
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <DeviceFormModal
+        opened
+        onClose={vi.fn()}
+        editingDevice={null}
+        plantOptions={[
+          { value: '10', label: 'Monstera', recommendedThreshold: 42 },
+        ]}
+        onSaved={vi.fn()}
+      />,
+    )
+
+    const dialog = getDialog()
+    await user.type(within(dialog).getByPlaceholderText('e.g. SN-001'), 'SN-RECO')
+    await user.click(within(dialog).getByRole('textbox', { name: 'Plant' }))
+    await user.click(await screen.findByText('Monstera'))
+    await user.click(within(dialog).getByRole('button', { name: 'Save' }))
+
+    expect(createDevice).toHaveBeenCalledWith(
+      expect.objectContaining({
+        serialNumber: 'SN-RECO',
+        plantId: 10,
+        humidityConfig: expect.objectContaining({ minHumidityThreshold: 42 }),
+      }),
+    )
+  })
+
   it('updates humidity threshold through slider', async () => {
     const user = userEvent.setup()
 
@@ -187,5 +217,21 @@ describe('DeviceFormModal', () => {
     expect(updateDevice).toHaveBeenCalledWith(7, expect.any(Object))
     expect(onClose).toHaveBeenCalled()
     expect(onSaved).toHaveBeenCalled()
+  })
+
+  it('shows suggested threshold text in edit mode when recommendation exists', () => {
+    const device = buildDevice({ id: 7, serialNumber: 'SN-EDIT', plantId: 10 })
+
+    renderWithProviders(
+      <DeviceFormModal
+        opened
+        onClose={vi.fn()}
+        editingDevice={device}
+        plantOptions={[{ value: '10', label: 'Monstera', recommendedThreshold: 15 }]}
+        onSaved={vi.fn()}
+      />,
+    )
+
+    expect(within(getDialog()).getByText('Suggested from species: 15%')).toBeInTheDocument()
   })
 })

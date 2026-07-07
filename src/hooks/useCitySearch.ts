@@ -39,6 +39,8 @@ export function useCitySearch(): UseCitySearchReturn {
   useEffect(() => {
     const query = searchQuery.trim();
     if (!query) {
+      // Reset suggestion state when query is empty.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearchResults([]);
       setNoResults(false);
       return;

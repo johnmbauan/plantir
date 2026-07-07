@@ -18,7 +18,7 @@ import { createDevice, updateDevice } from '@/services/deviceService'
 const baseOptions = {
   opened: true,
   editingDevice: null,
-  plantOptions: [{ value: '10', label: 'Monstera' }],
+  plantOptions: [{ value: '10', label: 'Monstera', recommendedThreshold: 42 }],
   onClose: vi.fn(),
   onSaved: vi.fn(),
 }
@@ -141,6 +141,45 @@ describe('useDeviceForm', () => {
 
     expect(result.current.intervalPreset).toBe('3600')
     expect(result.current.form.humidityConfig.sleepDurationSeconds).toBe(3600)
+  })
+
+  it('prefills threshold from selected plant recommended moisture', () => {
+    const { result } = renderHook(() => useDeviceForm(baseOptions))
+
+    act(() => {
+      result.current.handlePlantChange(10)
+    })
+
+    expect(result.current.form.humidityConfig.minHumidityThreshold).toBe(42)
+    expect(result.current.recommendedThreshold).toBe(42)
+  })
+
+  it('does not overwrite threshold after manual user adjustment', () => {
+    const { result } = renderHook(() =>
+      useDeviceForm({
+        ...baseOptions,
+        plantOptions: [
+          { value: '10', label: 'Monstera', recommendedThreshold: 42 },
+          { value: '20', label: 'Ficus', recommendedThreshold: 30 },
+        ],
+      }),
+    )
+
+    act(() => {
+      result.current.handlePlantChange(10)
+    })
+    expect(result.current.form.humidityConfig.minHumidityThreshold).toBe(42)
+
+    act(() => {
+      result.current.setHumidityField('minHumidityThreshold', 55)
+    })
+    expect(result.current.form.humidityConfig.minHumidityThreshold).toBe(55)
+
+    act(() => {
+      result.current.handlePlantChange(20)
+    })
+    expect(result.current.form.humidityConfig.minHumidityThreshold).toBe(55)
+    expect(result.current.recommendedThreshold).toBe(30)
   })
 
   it('shows error notification when save fails', async () => {

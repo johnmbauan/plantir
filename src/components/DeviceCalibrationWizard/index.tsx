@@ -86,8 +86,10 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
     if (step < 2 || step > 4) return;
 
     readingArrivedAtRef.current = Date.now();
-    setTimedOut(false);
-    setPendingReading(null);
+    const resetTimer = window.setTimeout(() => {
+      setTimedOut(false);
+      setPendingReading(null);
+    }, 0);
 
     const intervalId = window.setInterval(async () => {
       if (
@@ -116,7 +118,10 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
       }
     }, POLL_INTERVAL_MS);
 
-    return () => window.clearInterval(intervalId);
+    return () => {
+      window.clearTimeout(resetTimer);
+      window.clearInterval(intervalId);
+    };
   }, [opened, deviceId, step, pollingSince]);
 
   // ── Dry reading actions ───────────────────────────────────────────────────

@@ -1,11 +1,12 @@
 import { Badge, Select, Stack, TextInput, Title } from "@mantine/core";
 import type { DeviceFormValues } from "@/services/deviceService";
 import type { DeviceFormValidationErrors } from "@/components/DeviceFormModal/types";
+import type { PlantOption } from "@/components/DeviceFormModal/types";
 
 interface Props {
   isEditing: boolean;
   form: DeviceFormValues;
-  plantOptions: { value: string; label: string }[];
+  plantOptions: PlantOption[];
   validation: DeviceFormValidationErrors;
   onSerialChange: (serialNumber: string) => void;
   onPlantChange: (plantId: number | null) => void;

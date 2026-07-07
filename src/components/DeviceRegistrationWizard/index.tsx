@@ -78,6 +78,8 @@ export default function DeviceRegistrationWizard({
   useEffect(() => {
     if (!opened) return;
     if (active === 2 && !pairing && !pairingLoading) {
+      // Trigger one bundle generation when setup-code step is first reached.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       void generateBundle();
     }
   }, [opened, active, pairing, pairingLoading, generateBundle]);
@@ -85,6 +87,7 @@ export default function DeviceRegistrationWizard({
   useEffect(() => {
     if (!opened || active !== 4 || !pairing) return;
 
+    /* eslint-disable react-hooks/set-state-in-effect */
     pollStartedAtRef.current = Date.now();
     setWaitingTimedOut(false);
     setWaitingError(null);
@@ -119,7 +122,10 @@ export default function DeviceRegistrationWizard({
       }
     }, POLL_INTERVAL_MS);
 
-    return () => window.clearInterval(intervalId);
+    return () => {
+      /* eslint-enable react-hooks/set-state-in-effect */
+      window.clearInterval(intervalId);
+    };
   }, [opened, active, pairing, onRegistered, pollGeneration]);
 
   const nextStep = () => setActive((current) => Math.min(current + 1, 5));

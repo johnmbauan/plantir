@@ -81,6 +81,33 @@ describe('Dashboard', () => {
     })
   })
 
+  it('renders species label in leaderboard when available', async () => {
+    fetchPlants.mockResolvedValue([
+      buildPlant({
+        id: 1,
+        name: 'Monstera',
+        species: {
+          id: 7,
+          source: 'openplantbook',
+          sourceSpeciesId: 'monstera_deliciosa',
+          scientificName: 'Monstera deliciosa',
+          displayName: 'Monstera deliciosa',
+          imageUrl: null,
+          minSoilMoisture: 35,
+          maxSoilMoisture: 60,
+          minTemperatureCelsius: 18,
+          maxTemperatureCelsius: 30,
+        },
+      }),
+    ])
+
+    renderWithProviders(<Dashboard />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Monstera deliciosa')).toBeInTheDocument()
+    })
+  })
+
   it('shows empty state when no plants exist', async () => {
     fetchPlants.mockResolvedValue([])
 

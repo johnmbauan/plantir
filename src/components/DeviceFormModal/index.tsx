@@ -24,9 +24,11 @@ export default function DeviceFormModal({
     saving,
     createdDevice,
     isEditing,
+    recommendedThreshold,
     validation,
     isValid,
     setHumidityField,
+    handlePlantChange,
     handleCustomIntervalChange,
     handleIntervalPresetChange,
     handleSave,
@@ -81,13 +83,14 @@ export default function DeviceFormModal({
               plantOptions={plantOptions}
               validation={validation}
               onSerialChange={(serialNumber) => setForm((prev) => ({ ...prev, serialNumber }))}
-              onPlantChange={(plantId) => setForm((prev) => ({ ...prev, plantId }))}
+              onPlantChange={handlePlantChange}
             />
 
             <Divider />
 
             <WateringAlertsSection
               threshold={form.humidityConfig.minHumidityThreshold}
+              recommendedThreshold={recommendedThreshold}
               validation={validation}
               onThresholdChange={(value) => setHumidityField("minHumidityThreshold", value)}
             />

@@ -52,6 +52,11 @@ function PlantLeaderboardRow({
         </div>
         <div className="leaderboard-name-group">
           <span className="leaderboard-name">{plant.name}</span>
+          {plant.species && (
+            <Text size="xs" c="dimmed">
+              {plant.species.displayName ?? plant.species.scientificName ?? plant.species.sourceSpeciesId}
+            </Text>
+          )}
           <Group gap={4}>
             {plant.statuses.map((s) => (
               <Badge key={s} color={STATUS_CONFIG[s].color} variant="light" size="xs">
