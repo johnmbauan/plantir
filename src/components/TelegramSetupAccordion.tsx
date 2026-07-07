@@ -3,7 +3,7 @@ import { IconBrandTelegram, IconDeviceFloppy, IconSend, IconUser } from "@tabler
 
 export default function TelegramSetupAccordion() {
   return (
-    <Accordion variant="contained" radius="md" mb="lg">
+    <Accordion variant="contained" radius="md">
       <Accordion.Item value="setup">
         <Accordion.Control icon={<IconBrandTelegram size={18} />}>
           <Text size="sm" fw={500}>How to set up Telegram notifications</Text>

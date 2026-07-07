@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import {
+  Badge,
   Box,
-  Title,
-  Paper,
-  Stack,
-  TextInput,
   Button,
-  Text,
+  Group,
+  Paper,
   Select,
+  SimpleGrid,
+  Stack,
   Switch,
-  Divider,
+  Text,
+  TextInput,
+  Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import TelegramSetupAccordion from "@/components/TelegramSetupAccordion";
@@ -26,6 +28,17 @@ const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => ({
 }));
 
 const DEFAULT_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+const cardStyle = { border: "1px solid var(--terracotta-100)" };
+
+const stickyFooterStyle = {
+  position: "sticky" as const,
+  bottom: 0,
+  zIndex: 2,
+  border: "1px solid var(--terracotta-100)",
+  background: "var(--terracotta-50)",
+  boxShadow: "0 -4px 16px rgba(74, 43, 28, 0.06)",
+};
 
 export default function SettingsPage() {
   const [inAppEnabled, setInAppEnabled] = useState(true);
@@ -69,81 +82,108 @@ export default function SettingsPage() {
   }
 
   return (
-    <Box p="md" maw={560}>
+    <Box p="md" maw={720} mx="auto" w="100%">
       <Title order={2} c="var(--green-700)" mb="md">
         Settings
       </Title>
 
-      <Paper
-        shadow="xs"
-        radius="md"
-        p="lg"
-        style={{ border: "1px solid var(--terracotta-100)" }}
-      >
-        <Stack gap="xs" mb="lg">
-          <Text fw={600} c="var(--green-700)">Notifications</Text>
-          <Text size="sm" c="dimmed">
-            Get watering reminders and offline alerts in the app and optionally via Telegram.
-          </Text>
+      <form onSubmit={handleSubmit}>
+        <Stack gap="md">
+          <Paper shadow="xs" radius="md" p="lg" style={cardStyle}>
+            <Stack gap="lg">
+              <Stack gap="xs">
+                <Text fw={600} c="var(--green-700)">
+                  Notifications
+                </Text>
+                <Text size="sm" c="dimmed">
+                  Get watering reminders and offline alerts in the app.
+                </Text>
+              </Stack>
+
+              <Switch
+                label="In-app notifications"
+                checked={inAppEnabled}
+                onChange={(e) => setInAppEnabled(e.currentTarget.checked)}
+                disabled={loading}
+                styles={{
+                  track: { cursor: loading ? undefined : "pointer" },
+                  label: { cursor: loading ? undefined : "pointer" },
+                }}
+              />
+
+              <Stack gap="xs">
+                <Text fw={500} size="sm" c="var(--green-700)">
+                  Schedule
+                </Text>
+                <Text size="sm" c="dimmed">
+                  Daily alerts are sent at the chosen hour in your local timezone.
+                </Text>
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                  <Select
+                    label="Notification time"
+                    data={HOUR_OPTIONS}
+                    value={String(notificationHour)}
+                    onChange={(v) => setNotificationHour(Number(v))}
+                    disabled={loading}
+                    allowDeselect={false}
+                    required
+                  />
+                  <Select
+                    label="Timezone"
+                    data={TIMEZONE_OPTIONS}
+                    value={notificationTimezone}
+                    onChange={(v) => setNotificationTimezone(v ?? DEFAULT_TIMEZONE)}
+                    disabled={loading}
+                    searchable
+                    allowDeselect={false}
+                    required
+                  />
+                </SimpleGrid>
+              </Stack>
+            </Stack>
+          </Paper>
+
+          <Paper shadow="xs" radius="md" p="lg" style={cardStyle}>
+            <Stack gap="lg">
+              <Group justify="space-between" align="flex-start" wrap="nowrap">
+                <Stack gap="xs">
+                  <Text fw={600} c="var(--green-700)">
+                    Telegram
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Receive alerts on Telegram in addition to the app.
+                  </Text>
+                </Stack>
+                <Badge variant="light" color="gray" style={{ flexShrink: 0 }}>
+                  Optional
+                </Badge>
+              </Group>
+
+              <TelegramSetupAccordion />
+
+              <TextInput
+                label="Telegram Chat ID"
+                placeholder="e.g. 123456789"
+                description="Leave blank to receive alerts in the app only."
+                value={chatId}
+                onChange={(e) => setChatId(e.currentTarget.value)}
+                disabled={loading}
+              />
+            </Stack>
+          </Paper>
+
+          <Paper shadow="xs" radius="md" p="lg" style={stickyFooterStyle}>
+            <Group justify="space-between" align="center" wrap="nowrap" gap="md">
+              <Text size="sm" c="dimmed">
+                Changes apply to all your devices.
+              </Text>
+              <Button type="submit" loading={saving} disabled={loading} style={{ flexShrink: 0 }}>
+                Save
+              </Button>
+            </Group>
+          </Paper>
         </Stack>
-
-        <form onSubmit={handleSubmit}>
-          <Stack gap="lg">
-            <Switch
-              label="In-app notifications"
-              description="Show alerts in the notification bell while you are signed in."
-              checked={inAppEnabled}
-              onChange={(e) => setInAppEnabled(e.currentTarget.checked)}
-              disabled={loading}
-              styles={{
-                track: { cursor: loading ? undefined : "pointer" },
-                label: { cursor: loading ? undefined : "pointer" },
-              }}
-            />
-
-            <Divider label="Schedule" labelPosition="left" />
-
-            <Select
-              label="Notification Time"
-              description="The hour at which you will receive daily alerts."
-              data={HOUR_OPTIONS}
-              value={String(notificationHour)}
-              onChange={(v) => setNotificationHour(Number(v))}
-              disabled={loading}
-              allowDeselect={false}
-              required
-            />
-            <Select
-              label="Timezone"
-              description="Your local timezone for the notification time above."
-              data={TIMEZONE_OPTIONS}
-              value={notificationTimezone}
-              onChange={(v) => setNotificationTimezone(v ?? DEFAULT_TIMEZONE)}
-              disabled={loading}
-              searchable
-              allowDeselect={false}
-              required
-            />
-
-            <Divider label="Telegram (optional)" labelPosition="left" />
-
-            <TelegramSetupAccordion />
-
-            <TextInput
-              label="Telegram Chat ID"
-              placeholder="e.g. 123456789"
-              description="Leave blank to receive alerts in the app only."
-              value={chatId}
-              onChange={(e) => setChatId(e.currentTarget.value)}
-              disabled={loading}
-            />
-
-            <Button type="submit" loading={saving} disabled={loading} w={{ base: "100%", sm: "fit-content" }}>
-              Save
-            </Button>
-          </Stack>
-        </form>
-      </Paper>
+      </form>
     </Box>
   );
 }
