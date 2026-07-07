@@ -1,4 +1,4 @@
-import { Button, FileButton, Group, Image, Text } from "@mantine/core";
+import { Button, FileButton, Group, Image, SegmentedControl, Stack, Text } from "@mantine/core";
 import type { MutableRefObject } from "react";
 
 interface PhotoSectionProps {
@@ -7,7 +7,8 @@ interface PhotoSectionProps {
   speciesImageAvailable: boolean;
   imageFile: File | null;
   resetFileRef: MutableRefObject<(() => void) | null>;
-  onToggleUseSpeciesImage: () => void;
+  saving: boolean;
+  onPhotoSourceChange: (source: "species" | "custom") => void;
   onFileChange: (file: File | null) => void;
 }
 
@@ -17,33 +18,40 @@ export function PhotoSection({
   speciesImageAvailable,
   imageFile,
   resetFileRef,
-  onToggleUseSpeciesImage,
+  saving,
+  onPhotoSourceChange,
   onFileChange,
 }: PhotoSectionProps) {
+  const selectedPhotoSource = useSpeciesImage ? "species" : "custom";
+
   return (
-    <>
+    <Stack gap="sm">
+      <SegmentedControl
+        value={selectedPhotoSource}
+        onChange={(value) => onPhotoSourceChange(value as "species" | "custom")}
+        data={[
+          { label: "Use species photo", value: "species", disabled: !speciesImageAvailable },
+          { label: "Use custom photo", value: "custom" },
+        ]}
+        disabled={saving}
+        fullWidth
+      />
       {previewSrc && (
         <Image
           src={previewSrc}
           alt="Plant preview"
           radius="md"
-          h={120}
-          fit="contain"
-          fallbackSrc="https://placehold.co/120x120?text=No+image"
+          h={160}
+          w={160}
+          fit="cover"
+          fallbackSrc="https://placehold.co/160x160?text=No+image"
         />
       )}
       <Group gap="sm" align="center">
-        <Button
-          variant={useSpeciesImage ? "filled" : "default"}
-          disabled={!speciesImageAvailable}
-          onClick={onToggleUseSpeciesImage}
-        >
-          Use species image
-        </Button>
         <FileButton resetRef={resetFileRef} onChange={onFileChange} accept="image/*">
           {(props) => (
-            <Button variant="default" {...props}>
-              {imageFile || (!useSpeciesImage && previewSrc) ? "Change custom photo" : "Upload custom photo"}
+            <Button variant="default" disabled={saving} {...props}>
+              {imageFile || (!useSpeciesImage && previewSrc) ? "Replace custom photo" : "Upload custom photo"}
             </Button>
           )}
         </FileButton>
@@ -54,10 +62,10 @@ export function PhotoSection({
         )}
         {useSpeciesImage && speciesImageAvailable && (
           <Text size="sm" c="dimmed">
-            Using species image
+            Using species photo
           </Text>
         )}
       </Group>
-    </>
+    </Stack>
   );
 }

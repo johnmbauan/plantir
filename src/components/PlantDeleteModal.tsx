@@ -26,7 +26,7 @@ export default function PlantDeleteModal({ opened, onClose, plant, onDeleted }: 
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Delete Plant" size="sm">
+    <Modal opened={opened} onClose={onClose} title="Delete plant" size="sm">
       <Text size="sm" mb="lg">
         Are you sure you want to delete <b>{plant?.name}</b>?
         <br />

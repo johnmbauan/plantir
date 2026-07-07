@@ -1,4 +1,4 @@
-import { Divider, Modal, Stack, Text } from "@mantine/core";
+import { Modal, Stack, Text } from "@mantine/core";
 import { useDeviceForm } from "@/components/DeviceFormModal/hooks/useDeviceForm";
 import type { DeviceFormModalProps } from "@/components/DeviceFormModal/types";
 import AddManualIntro from "@/components/DeviceFormModal/sections/AddManualIntro";
@@ -27,6 +27,8 @@ export default function DeviceFormModal({
     recommendedThreshold,
     validation,
     isValid,
+    isDirty,
+    helperText,
     setHumidityField,
     handlePlantChange,
     handleCustomIntervalChange,
@@ -62,7 +64,8 @@ export default function DeviceFormModal({
           "Add device manually"
         )
       }
-      size="md"
+      size="lg"
+      styles={{ body: { paddingBottom: 0 } }}
     >
       <Stack gap="md">
         {!isEditing && !createdDevice && <AddManualIntro />}
@@ -86,16 +89,12 @@ export default function DeviceFormModal({
               onPlantChange={handlePlantChange}
             />
 
-            <Divider />
-
             <WateringAlertsSection
               threshold={form.humidityConfig.minHumidityThreshold}
               recommendedThreshold={recommendedThreshold}
               validation={validation}
               onThresholdChange={(value) => setHumidityField("minHumidityThreshold", value)}
             />
-
-            <Divider />
 
             <ReportingSection
               intervalPreset={intervalPreset}
@@ -106,19 +105,19 @@ export default function DeviceFormModal({
             />
 
             {isEditing && editingDevice && (
-              <>
-                <Divider />
-                <CalibrationSection
-                  calibration={form.humidityConfig}
-                  editingDevice={editingDevice}
-                  onRecalibrate={handleOpenCalibration}
-                />
-              </>
+              <CalibrationSection
+                calibration={form.humidityConfig}
+                editingDevice={editingDevice}
+                onRecalibrate={handleOpenCalibration}
+              />
             )}
 
             <FormFooter
               isValid={isValid}
+              isDirty={isDirty}
               saving={saving}
+              submitLabel={isEditing ? "Save changes" : "Add device"}
+              helperText={helperText}
               onCancel={handleClose}
               onSave={handleSave}
             />

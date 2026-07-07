@@ -26,6 +26,7 @@ const baseOptions = {
 describe('useDeviceForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
   })
 
   it('requires serial number when creating a device', () => {
@@ -116,10 +117,15 @@ describe('useDeviceForm', () => {
     const device = buildDevice()
     const onClose = vi.fn()
     const onSaved = vi.fn()
+    vi.mocked(updateDevice).mockResolvedValue(undefined)
 
     const { result } = renderHook(() =>
       useDeviceForm({ ...baseOptions, editingDevice: device, onClose, onSaved }),
     )
+
+    act(() => {
+      result.current.setHumidityField('minHumidityThreshold', 45)
+    })
 
     await act(async () => {
       await result.current.handleSave()
@@ -130,6 +136,22 @@ describe('useDeviceForm', () => {
     })
     expect(onClose).toHaveBeenCalled()
     expect(onSaved).toHaveBeenCalled()
+  })
+
+  it('does not save when editing without changes', async () => {
+    const device = buildDevice()
+
+    const { result } = renderHook(() =>
+      useDeviceForm({ ...baseOptions, editingDevice: device }),
+    )
+
+    expect(result.current.isDirty).toBe(false)
+
+    await act(async () => {
+      await result.current.handleSave()
+    })
+
+    expect(updateDevice).not.toHaveBeenCalled()
   })
 
   it('applies interval preset changes', () => {
@@ -265,7 +287,25 @@ describe('useDeviceForm', () => {
       result.current.handleClose()
     })
 
+    expect(window.confirm).toHaveBeenCalled()
     expect(onClose).toHaveBeenCalled()
     expect(result.current.createdDevice).toBeNull()
+  })
+
+  it('does not close when discard is cancelled', () => {
+    vi.mocked(window.confirm).mockReturnValue(false)
+    const onClose = vi.fn()
+
+    const { result } = renderHook(() => useDeviceForm({ ...baseOptions, onClose }))
+
+    act(() => {
+      result.current.setForm((prev) => ({ ...prev, serialNumber: 'SN-NEW' }))
+    })
+
+    act(() => {
+      result.current.handleClose()
+    })
+
+    expect(onClose).not.toHaveBeenCalled()
   })
 })
