@@ -54,7 +54,7 @@ function PlantLeaderboardRow({
         <div className="leaderboard-name-group">
           <span className="leaderboard-name">{plant.name}</span>
           {plant.species && (
-            <Text size="xs" c="dimmed">
+            <Text size="xs" c="dimmed" tt="capitalize">
               {plant.species.displayName ?? plant.species.scientificName ?? plant.species.sourceSpeciesId}
             </Text>
           )}
