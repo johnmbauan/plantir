@@ -1,16 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
-import { fetchAdminLogs, type AdminLog } from "@/admin/adminService";
+import {
+  fetchAdminLogsPage,
+  type AdminLogsQuery,
+  type AdminLog,
+} from "@/admin/adminService";
 import { getErrorMessage } from "@/utils/error";
 
-export function useAdminLogs(serialNumber: string | null) {
-  const [logs, setLogs] = useState<AdminLog[]>([]);
+export function useAdminLogsPage(query: AdminLogsQuery) {
+  const [items, setItems] = useState<AdminLog[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      setLogs(await fetchAdminLogs(serialNumber ?? undefined));
+      const result = await fetchAdminLogsPage(query);
+      setItems(result.items);
+      setTotalCount(result.totalCount);
     } catch (err) {
       notifications.show({
         color: "red",
@@ -20,7 +27,7 @@ export function useAdminLogs(serialNumber: string | null) {
     } finally {
       setLoading(false);
     }
-  }, [serialNumber]);
+  }, [query]);
 
   useEffect(() => {
     // Intentionally trigger initial load for current dependencies.
@@ -28,5 +35,5 @@ export function useAdminLogs(serialNumber: string | null) {
     void refresh();
   }, [refresh]);
 
-  return { logs, loading, refresh };
+  return { items, totalCount, loading, refresh };
 }

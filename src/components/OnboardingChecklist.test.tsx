@@ -60,8 +60,9 @@ describe('OnboardingChecklist', () => {
   })
 
   it('marks completed steps when user has plants and devices', async () => {
+    const recentDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
     setupFromMocks({
-      plants: { data: [{ id: 1, createdAt: '2026-07-06T08:00:00Z' }], error: null },
+      plants: { data: [{ id: 1, createdAt: recentDate }], error: null },
       devices: { data: [{ id: 1 }], error: null },
     })
 

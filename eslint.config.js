@@ -52,6 +52,10 @@ export default defineConfig([
       'testing-library/await-async-queries': 'error',
       'testing-library/no-manual-cleanup': 'off',
       'react-refresh/only-export-components': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
 ])

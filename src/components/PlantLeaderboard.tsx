@@ -1,6 +1,7 @@
 import { Skeleton, Stack, Text, Group, Badge, Button } from "@mantine/core";
 import type { EnrichedPlant } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
+import { batteryCssColor } from "@/utils/color-utils";
 import { relativeTime } from "@/utils/time";
 import HumidityBar from "@/components/HumidityBar";
 
@@ -67,14 +68,7 @@ function PlantLeaderboardRow({
           {plant.batteryPercent != null && (
             <span
               className="leaderboard-battery"
-              style={{
-                color:
-                  plant.batteryPercent < 20
-                    ? "var(--mantine-color-red-6)"
-                    : plant.batteryPercent < 50
-                      ? "var(--mantine-color-orange-6)"
-                      : undefined,
-              }}
+              style={{ color: batteryCssColor(plant.batteryPercent) }}
             >
               🔋 {plant.batteryPercent}%
             </span>
