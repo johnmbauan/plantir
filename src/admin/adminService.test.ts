@@ -1,20 +1,20 @@
-import '@/test/mocks/supabase'
-import { describe, it, expect, beforeEach } from 'vitest'
+import '@/test/mocks/supabase';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   resetSupabaseMocks,
   mockRpc,
-} from '@/test/mocks/supabase'
+} from '@/test/mocks/supabase';
 import {
   fetchAdminFilterOptions,
   fetchAdminDevicesPage,
   fetchAdminLogsPage,
-} from './adminService'
-import { ADMIN_PAGE_SIZE } from './constants'
+} from './adminService';
+import { ADMIN_PAGE_SIZE } from './constants';
 
 describe('adminService', () => {
   beforeEach(() => {
-    resetSupabaseMocks()
-  })
+    resetSupabaseMocks();
+  });
 
   describe('fetchAdminFilterOptions', () => {
     it('returns filter options from the admin RPC', async () => {
@@ -24,8 +24,8 @@ describe('adminService', () => {
         plants: ['Monstera'],
         has_unassigned_owner: false,
         has_unassigned_plant: true,
-      }
-      mockRpc.mockResolvedValue({ data: options, error: null })
+      };
+      mockRpc.mockResolvedValue({ data: options, error: null });
 
       await expect(fetchAdminFilterOptions()).resolves.toEqual({
         serials: ['SN-1'],
@@ -33,23 +33,23 @@ describe('adminService', () => {
         plants: ['Monstera'],
         hasUnassignedOwner: false,
         hasUnassignedPlant: true,
-      })
-      expect(mockRpc).toHaveBeenCalledWith('get_admin_device_filter_options')
-    })
+      });
+      expect(mockRpc).toHaveBeenCalledWith('get_admin_device_filter_options');
+    });
 
     it('throws when the RPC fails', async () => {
-      mockRpc.mockResolvedValue({ data: null, error: new Error('forbidden') })
-      await expect(fetchAdminFilterOptions()).rejects.toThrow('forbidden')
-    })
-  })
+      mockRpc.mockResolvedValue({ data: null, error: new Error('forbidden') });
+      await expect(fetchAdminFilterOptions()).rejects.toThrow('forbidden');
+    });
+  });
 
   describe('fetchAdminDevicesPage', () => {
     it('returns a paginated result from the admin RPC', async () => {
       const page = {
         items: [{ id: 1, serialNumber: 'SN-1', type: 'humidity' }],
         total_count: 42,
-      }
-      mockRpc.mockResolvedValue({ data: page, error: null })
+      };
+      mockRpc.mockResolvedValue({ data: page, error: null });
 
       await expect(fetchAdminDevicesPage({
         serialNumber: 'SN-1',
@@ -62,7 +62,7 @@ describe('adminService', () => {
       })).resolves.toEqual({
         items: page.items,
         totalCount: 42,
-      })
+      });
 
       expect(mockRpc).toHaveBeenCalledWith('get_admin_devices_page', {
         p_serial: 'SN-1',
@@ -72,17 +72,17 @@ describe('adminService', () => {
         p_sort_asc: true,
         p_page: 2,
         p_page_size: ADMIN_PAGE_SIZE,
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('fetchAdminLogsPage', () => {
     it('returns a paginated result from the admin RPC', async () => {
       const page = {
         items: [{ id: 1, serialNumber: 'SN-1', level: 'info', message: 'ok', createdAt: '2026-01-01' }],
         total_count: 10,
-      }
-      mockRpc.mockResolvedValue({ data: page, error: null })
+      };
+      mockRpc.mockResolvedValue({ data: page, error: null });
 
       await expect(fetchAdminLogsPage({
         serialNumber: 'SN-1',
@@ -95,7 +95,7 @@ describe('adminService', () => {
       })).resolves.toEqual({
         items: page.items,
         totalCount: 10,
-      })
+      });
 
       expect(mockRpc).toHaveBeenCalledWith('get_admin_logs_page', {
         p_serial: 'SN-1',
@@ -105,7 +105,7 @@ describe('adminService', () => {
         p_sort_asc: false,
         p_page: 1,
         p_page_size: ADMIN_PAGE_SIZE,
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});

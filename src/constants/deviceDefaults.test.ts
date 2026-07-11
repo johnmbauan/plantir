@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { DEFAULT_HUMIDITY_CONFIG } from './deviceDefaults'
+import { describe, it, expect } from 'vitest';
+import { DEFAULT_HUMIDITY_CONFIG } from './deviceDefaults';
 
 describe('DEFAULT_HUMIDITY_CONFIG', () => {
   it('has expected default values', () => {
@@ -8,6 +8,6 @@ describe('DEFAULT_HUMIDITY_CONFIG', () => {
       airValue: 2400,
       waterValue: 850,
       sleepDurationSeconds: 28800,
-    })
-  })
-})
+    });
+  });
+});

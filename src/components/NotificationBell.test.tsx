@@ -1,43 +1,43 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import userEvent from '@testing-library/user-event'
-import { Notifications } from '@mantine/notifications'
-import { renderWithProviders, screen, waitFor } from '@/test/render'
-import NotificationBell from '@/components/NotificationBell'
-import type { AppNotification } from '@/services/notificationService'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { Notifications } from '@mantine/notifications';
+import { renderWithProviders, screen, waitFor } from '@/test/render';
+import NotificationBell from '@/components/NotificationBell';
+import type { AppNotification } from '@/services/notificationService';
 
-const mockRefresh = vi.fn()
-const mockRemoveItem = vi.fn()
-const mockClearAll = vi.fn()
-const mockNotificationsShow = vi.fn()
+const mockRefresh = vi.fn();
+const mockRemoveItem = vi.fn();
+const mockClearAll = vi.fn();
+const mockNotificationsShow = vi.fn();
 
 vi.mock('@/hooks/useNotifications', () => ({
   useNotifications: vi.fn(),
-}))
+}));
 
 vi.mock('@mantine/notifications', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@mantine/notifications')>()
+  const actual = await importOriginal<typeof import('@mantine/notifications')>();
   return {
     ...actual,
     notifications: {
       ...actual.notifications,
       show: (...args: unknown[]) => mockNotificationsShow(...args),
     },
-  }
-})
+  };
+});
 
 vi.mock('@/services/notificationService', () => ({
   markNotificationRead: vi.fn().mockResolvedValue(undefined),
   markAllNotificationsRead: vi.fn().mockResolvedValue(undefined),
   getNotificationHref: vi.fn(() => '/'),
-}))
+}));
 
-import { markNotificationRead, markAllNotificationsRead, getNotificationHref } from '@/services/notificationService'
+import { markNotificationRead, markAllNotificationsRead, getNotificationHref } from '@/services/notificationService';
 
-const mockedMarkRead = vi.mocked(markNotificationRead)
-const mockedMarkAll = vi.mocked(markAllNotificationsRead)
-const mockedGetHref = vi.mocked(getNotificationHref)
+const mockedMarkRead = vi.mocked(markNotificationRead);
+const mockedMarkAll = vi.mocked(markAllNotificationsRead);
+const mockedGetHref = vi.mocked(getNotificationHref);
 
-import { useNotifications } from '@/hooks/useNotifications'
+import { useNotifications } from '@/hooks/useNotifications';
 
 const sampleNotification: AppNotification = {
   id: 'n-1',
@@ -46,7 +46,7 @@ const sampleNotification: AppNotification = {
   body: 'Humidity dropped below threshold.',
   payload: { plantId: 1, plantName: 'Monstera', humidity: 10, imageUrl: null },
   created_at: new Date().toISOString(),
-}
+};
 
 function renderBell() {
   return renderWithProviders(
@@ -54,13 +54,13 @@ function renderBell() {
       <Notifications />
       <NotificationBell />
     </>,
-  )
+  );
 }
 
 describe('NotificationBell', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockedGetHref.mockReturnValue('/?highlightPlant=1')
+    vi.clearAllMocks();
+    mockedGetHref.mockReturnValue('/?highlightPlant=1');
     vi.mocked(useNotifications).mockReturnValue({
       items: [],
       loading: false,
@@ -68,14 +68,14 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
-  })
+    });
+  });
 
   it('renders notifications button', () => {
-    renderBell()
+    renderBell();
 
-    expect(screen.getByRole('button', { name: 'Notifications' })).toBeInTheDocument()
-  })
+    expect(screen.getByRole('button', { name: 'Notifications' })).toBeInTheDocument();
+  });
 
   it('shows unread count on the indicator', () => {
     vi.mocked(useNotifications).mockReturnValue({
@@ -85,23 +85,23 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
+    });
 
-    renderBell()
+    renderBell();
 
-    expect(screen.getByText('3')).toBeInTheDocument()
-  })
+    expect(screen.getByText('3')).toBeInTheDocument();
+  });
 
   it('calls refresh when the menu opens', async () => {
-    const user = userEvent.setup({ pointerEventsCheck: 0 })
-    renderBell()
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    renderBell();
 
-    await user.click(screen.getByRole('button', { name: 'Notifications' }))
-    expect(mockRefresh).toHaveBeenCalled()
-  })
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    expect(mockRefresh).toHaveBeenCalled();
+  });
 
   it('shows notification items in the menu', async () => {
-    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
     vi.mocked(useNotifications).mockReturnValue({
       items: [sampleNotification],
       loading: false,
@@ -109,16 +109,16 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
+    });
 
-    renderBell()
-    await user.click(screen.getByRole('button', { name: 'Notifications' }))
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
 
-    expect(await screen.findByText('Monstera needs water')).toBeInTheDocument()
-  })
+    expect(await screen.findByText('Monstera needs water')).toBeInTheDocument();
+  });
 
   it('marks a notification read when selected', async () => {
-    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
     vi.mocked(useNotifications).mockReturnValue({
       items: [sampleNotification],
       loading: false,
@@ -126,20 +126,20 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
+    });
 
-    renderBell()
-    await user.click(screen.getByRole('button', { name: 'Notifications' }))
-    await user.click(await screen.findByText('Monstera needs water'))
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    await user.click(await screen.findByText('Monstera needs water'));
 
     await waitFor(() => {
-      expect(mockedMarkRead).toHaveBeenCalledWith('n-1')
-    })
-    expect(mockRemoveItem).toHaveBeenCalledWith('n-1')
-  })
+      expect(mockedMarkRead).toHaveBeenCalledWith('n-1');
+    });
+    expect(mockRemoveItem).toHaveBeenCalledWith('n-1');
+  });
 
   it('marks all notifications read from the menu', async () => {
-    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
     vi.mocked(useNotifications).mockReturnValue({
       items: [sampleNotification],
       loading: false,
@@ -147,28 +147,28 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
+    });
 
-    renderBell()
-    await user.click(screen.getByRole('button', { name: 'Notifications' }))
-    await user.click(await screen.findByRole('button', { name: 'Mark all as read' }))
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    await user.click(await screen.findByRole('button', { name: 'Mark all as read' }));
 
-    expect(mockedMarkAll).toHaveBeenCalled()
-    expect(mockClearAll).toHaveBeenCalled()
-  })
+    expect(mockedMarkAll).toHaveBeenCalled();
+    expect(mockClearAll).toHaveBeenCalled();
+  });
 
   it('shows empty state when menu has no notifications', async () => {
-    const user = userEvent.setup({ pointerEventsCheck: 0 })
-    renderBell()
-    await user.click(screen.getByRole('button', { name: 'Notifications' }))
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
 
-    expect(await screen.findByText('No new notifications')).toBeInTheDocument()
-  })
+    expect(await screen.findByText('No new notifications')).toBeInTheDocument();
+  });
 
   it('shows error when marking a notification read fails', async () => {
-    const user = userEvent.setup({ pointerEventsCheck: 0 })
-    mockNotificationsShow.mockClear()
-    mockedMarkRead.mockRejectedValueOnce(new Error('Read failed'))
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    mockNotificationsShow.mockClear();
+    mockedMarkRead.mockRejectedValueOnce(new Error('Read failed'));
 
     vi.mocked(useNotifications).mockReturnValue({
       items: [sampleNotification],
@@ -177,23 +177,23 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
+    });
 
-    renderBell()
-    await user.click(screen.getByRole('button', { name: 'Notifications' }))
-    await user.click(await screen.findByText('Monstera needs water'))
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    await user.click(await screen.findByText('Monstera needs water'));
 
     await waitFor(() => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({ title: 'Error', message: 'Read failed' }),
-      )
-    })
-  })
+      );
+    });
+  });
 
   it('shows error when mark all read fails', async () => {
-    const user = userEvent.setup({ pointerEventsCheck: 0 })
-    mockNotificationsShow.mockClear()
-    mockedMarkAll.mockRejectedValueOnce(new Error('Bulk read failed'))
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    mockNotificationsShow.mockClear();
+    mockedMarkAll.mockRejectedValueOnce(new Error('Bulk read failed'));
 
     vi.mocked(useNotifications).mockReturnValue({
       items: [sampleNotification],
@@ -202,21 +202,21 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
+    });
 
-    renderBell()
-    await user.click(screen.getByRole('button', { name: 'Notifications' }))
-    await user.click(await screen.findByRole('button', { name: 'Mark all as read' }))
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    await user.click(await screen.findByRole('button', { name: 'Mark all as read' }));
 
     await waitFor(() => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({ title: 'Error', message: 'Bulk read failed' }),
-      )
-    })
-  })
+      );
+    });
+  });
 
   it('renders offline notification with fallback avatar', async () => {
-    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
     const offlineNotification: AppNotification = {
       id: 'n-offline',
       type: 'offline',
@@ -224,7 +224,7 @@ describe('NotificationBell', () => {
       body: 'Monstera sensor is offline',
       payload: { plants: [{ plantId: 1, plantName: 'Monstera', lastSeenAt: null }] },
       created_at: new Date().toISOString(),
-    }
+    };
 
     vi.mocked(useNotifications).mockReturnValue({
       items: [offlineNotification],
@@ -233,14 +233,14 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
+    });
 
-    renderBell()
-    await user.click(screen.getByRole('button', { name: 'Notifications' }))
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
 
-    expect(await screen.findByText('Device offline')).toBeInTheDocument()
-    expect(screen.getByText('📡')).toBeInTheDocument()
-  })
+    expect(await screen.findByText('Device offline')).toBeInTheDocument();
+    expect(screen.getByText('📡')).toBeInTheDocument();
+  });
 
   it('shows 9+ label when unread count exceeds nine', () => {
     vi.mocked(useNotifications).mockReturnValue({
@@ -250,10 +250,10 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
-    })
+    });
 
-    renderBell()
+    renderBell();
 
-    expect(screen.getByText('9+')).toBeInTheDocument()
-  })
-})
+    expect(screen.getByText('9+')).toBeInTheDocument();
+  });
+});

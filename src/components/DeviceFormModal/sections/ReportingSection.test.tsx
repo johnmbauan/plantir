@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { renderWithProviders, screen } from '@/test/render'
-import ReportingSection from './ReportingSection'
+import { describe, it, expect, vi } from 'vitest';
+import { renderWithProviders, screen } from '@/test/render';
+import ReportingSection from './ReportingSection';
 
 describe('ReportingSection', () => {
   it('renders reporting interval preset select', () => {
@@ -12,11 +12,11 @@ describe('ReportingSection', () => {
         onPresetChange={vi.fn()}
         onCustomIntervalChange={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Reporting')).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: /Reporting interval/i })).toBeInTheDocument()
-  })
+    expect(screen.getByText('Reporting')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /Reporting interval/i })).toBeInTheDocument();
+  });
 
   it('shows custom interval input when custom preset is selected', () => {
     renderWithProviders(
@@ -27,11 +27,11 @@ describe('ReportingSection', () => {
         onPresetChange={vi.fn()}
         onCustomIntervalChange={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByLabelText('Custom interval (seconds)')).toBeInTheDocument()
-    expect(screen.getByText(/Short intervals drain the battery faster/i)).toBeInTheDocument()
-  })
+    expect(screen.getByLabelText('Custom interval (seconds)')).toBeInTheDocument();
+    expect(screen.getByText(/Short intervals drain the battery faster/i)).toBeInTheDocument();
+  });
 
   it('shows interval validation error', () => {
     renderWithProviders(
@@ -42,8 +42,8 @@ describe('ReportingSection', () => {
         onPresetChange={vi.fn()}
         onCustomIntervalChange={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getAllByText('Interval must be at least 1 second').length).toBeGreaterThan(0)
-  })
-})
+    expect(screen.getAllByText('Interval must be at least 1 second').length).toBeGreaterThan(0);
+  });
+});

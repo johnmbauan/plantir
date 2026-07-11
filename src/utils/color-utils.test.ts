@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from 'vitest';
 import {
   batteryMantineColor,
   batteryCssColor,
   humidityMantineColor,
-} from './color-utils'
+} from './color-utils';
 
 describe('batteryMantineColor', () => {
   it.each([
@@ -15,9 +15,9 @@ describe('batteryMantineColor', () => {
     [14, 'red'],
     [10, 'red'],
   ] as const)('returns %s for %s%% battery', (pct, expected) => {
-    expect(batteryMantineColor(pct)).toBe(expected)
-  })
-})
+    expect(batteryMantineColor(pct)).toBe(expected);
+  });
+});
 
 describe('batteryCssColor', () => {
   it.each([
@@ -27,9 +27,9 @@ describe('batteryCssColor', () => {
     [20, 'var(--mantine-color-orange-6)'],
     [10, 'var(--mantine-color-red-6)'],
   ] as const)('returns %s for %s%% battery', (pct, expected) => {
-    expect(batteryCssColor(pct)).toBe(expected)
-  })
-})
+    expect(batteryCssColor(pct)).toBe(expected);
+  });
+});
 
 describe('humidityMantineColor', () => {
   it.each([
@@ -39,6 +39,6 @@ describe('humidityMantineColor', () => {
     [30, 'yellow'],
     [10, 'red'],
   ] as const)('returns %s for %s%% humidity', (pct, expected) => {
-    expect(humidityMantineColor(pct)).toBe(expected)
-  })
-})
+    expect(humidityMantineColor(pct)).toBe(expected);
+  });
+});

@@ -1,11 +1,11 @@
-import '@/test/mocks/supabase'
-import { describe, it, expect, beforeEach } from 'vitest'
+import '@/test/mocks/supabase';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   resetSupabaseMocks,
   mockAuthenticatedUser,
   mockUnauthenticated,
   setupFromMocks,
-} from '@/test/mocks/supabase'
+} from '@/test/mocks/supabase';
 import {
   fetchDevices,
   createDevice,
@@ -18,30 +18,30 @@ import {
   getLatestCalibrationReading,
   saveCalibrationValues,
   type DeviceFormValues,
-} from './deviceService'
-import { mockInvoke } from '@/test/mocks/supabase'
-import { DEFAULT_HUMIDITY_CONFIG } from '@/constants/deviceDefaults'
+} from './deviceService';
+import { mockInvoke } from '@/test/mocks/supabase';
+import { DEFAULT_HUMIDITY_CONFIG } from '@/constants/deviceDefaults';
 
 const formValues: DeviceFormValues = {
   serialNumber: 'SN-NEW',
   plantId: 1,
   type: 'humidity',
   humidityConfig: { ...DEFAULT_HUMIDITY_CONFIG },
-}
+};
 
 describe('deviceService', () => {
   beforeEach(() => {
-    resetSupabaseMocks()
-  })
+    resetSupabaseMocks();
+  });
 
   describe('fetchDevices', () => {
     it('throws when not authenticated', async () => {
-      mockUnauthenticated()
-      await expect(fetchDevices()).rejects.toThrow('Not authenticated')
-    })
+      mockUnauthenticated();
+      await expect(fetchDevices()).rejects.toThrow('Not authenticated');
+    });
 
     it('returns enriched devices for the current user', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         devices: {
           data: [{
@@ -60,126 +60,126 @@ describe('deviceService', () => {
           }],
           error: null,
         },
-      })
+      });
 
-      const devices = await fetchDevices()
+      const devices = await fetchDevices();
       expect(devices[0]).toMatchObject({
         id: 1,
         serialNumber: 'SN-1',
         plantName: 'Fern',
         humidityConfig: expect.objectContaining({ deviceId: 1 }),
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('createDevice', () => {
     it('creates a device and humidity config', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         devices: [
           { data: { id: 42 }, error: null },
           { data: null, error: null },
         ],
         humidity_sensors_config: { data: null, error: null },
-      })
+      });
 
-      await expect(createDevice(formValues)).resolves.toEqual({ id: 42 })
-    })
+      await expect(createDevice(formValues)).resolves.toEqual({ id: 42 });
+    });
 
     it('removes the device when humidity config insert fails', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         devices: [
           { data: { id: 42 }, error: null },
           { data: null, error: null },
         ],
         humidity_sensors_config: { data: null, error: new Error('config failed') },
-      })
+      });
 
-      await expect(createDevice(formValues)).rejects.toThrow('config failed')
-    })
-  })
+      await expect(createDevice(formValues)).rejects.toThrow('config failed');
+    });
+  });
 
   describe('deleteDevice', () => {
     it('throws when not authenticated', async () => {
-      mockUnauthenticated()
-      await expect(deleteDevice(1)).rejects.toThrow('Not authenticated')
-    })
+      mockUnauthenticated();
+      await expect(deleteDevice(1)).rejects.toThrow('Not authenticated');
+    });
 
     it('deletes device for authenticated user', async () => {
-      mockAuthenticatedUser()
-      setupFromMocks({ devices: { data: null, error: null } })
-      await expect(deleteDevice(1)).resolves.toBeUndefined()
-    })
-  })
+      mockAuthenticatedUser();
+      setupFromMocks({ devices: { data: null, error: null } });
+      await expect(deleteDevice(1)).resolves.toBeUndefined();
+    });
+  });
 
   describe('updateDevice', () => {
     it('updates device and existing humidity config', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         devices: { data: null, error: null },
         humidity_sensors_config: [
           { data: { id: 1 }, error: null },
           { data: null, error: null },
         ],
-      })
+      });
 
-      await expect(updateDevice(1, formValues)).resolves.toBeUndefined()
-    })
+      await expect(updateDevice(1, formValues)).resolves.toBeUndefined();
+    });
 
     it('inserts humidity config when missing', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         devices: { data: null, error: null },
         humidity_sensors_config: [
           { data: null, error: null },
           { data: null, error: null },
         ],
-      })
+      });
 
-      await expect(updateDevice(1, formValues)).resolves.toBeUndefined()
-    })
-  })
+      await expect(updateDevice(1, formValues)).resolves.toBeUndefined();
+    });
+  });
 
   describe('createPairingBundle', () => {
     it('returns pairing bundle from edge function', async () => {
-      const bundle = { tokenId: 't1', bundle: 'code', expiresAt: '2026-01-01' }
-      mockInvoke.mockResolvedValue({ data: bundle, error: null })
+      const bundle = { tokenId: 't1', bundle: 'code', expiresAt: '2026-01-01' };
+      mockInvoke.mockResolvedValue({ data: bundle, error: null });
 
-      await expect(createPairingBundle(1)).resolves.toEqual(bundle)
-    })
+      await expect(createPairingBundle(1)).resolves.toEqual(bundle);
+    });
 
     it('throws on invalid response', async () => {
-      mockInvoke.mockResolvedValue({ data: {}, error: null })
-      await expect(createPairingBundle()).rejects.toThrow('Failed to create pairing bundle')
-    })
-  })
+      mockInvoke.mockResolvedValue({ data: {}, error: null });
+      await expect(createPairingBundle()).rejects.toThrow('Failed to create pairing bundle');
+    });
+  });
 
   describe('calibration', () => {
     it('starts calibration mode', async () => {
-      setupFromMocks({ humidity_sensors_config: { data: null, error: null } })
-      await expect(startCalibrationMode(1)).resolves.toBeUndefined()
-    })
+      setupFromMocks({ humidity_sensors_config: { data: null, error: null } });
+      await expect(startCalibrationMode(1)).resolves.toBeUndefined();
+    });
 
     it('clears calibration mode', async () => {
-      setupFromMocks({ humidity_sensors_config: { data: null, error: null } })
-      await expect(clearCalibrationMode(1)).resolves.toBeUndefined()
-    })
+      setupFromMocks({ humidity_sensors_config: { data: null, error: null } });
+      await expect(clearCalibrationMode(1)).resolves.toBeUndefined();
+    });
 
     it('returns latest calibration reading', async () => {
-      const reading = { id: 1, deviceId: 1, rawValue: 100, createdAt: '2026-01-01' }
-      setupFromMocks({ calibration_readings: { data: reading, error: null } })
-      await expect(getLatestCalibrationReading(1, '2026-01-01')).resolves.toEqual(reading)
-    })
+      const reading = { id: 1, deviceId: 1, rawValue: 100, createdAt: '2026-01-01' };
+      setupFromMocks({ calibration_readings: { data: reading, error: null } });
+      await expect(getLatestCalibrationReading(1, '2026-01-01')).resolves.toEqual(reading);
+    });
 
     it('saves calibration values and clears readings', async () => {
       setupFromMocks({
         humidity_sensors_config: { data: null, error: null },
         calibration_readings: { data: null, error: null },
-      })
-      await expect(saveCalibrationValues(1, 2400, 850)).resolves.toBeUndefined()
-    })
-  })
+      });
+      await expect(saveCalibrationValues(1, 2400, 850)).resolves.toBeUndefined();
+    });
+  });
 
   describe('pollPairingToken', () => {
     it('returns used result when token is consumed', async () => {
@@ -194,15 +194,15 @@ describe('deviceService', () => {
           },
           error: null,
         },
-      })
+      });
 
       await expect(pollPairingToken('token-1')).resolves.toEqual({
         used: true,
         failed: false,
         deviceId: 5,
         serialNumber: 'SN-5',
-      })
-    })
+      });
+    });
 
     it('returns failed result when pairing failed', async () => {
       setupFromMocks({
@@ -216,14 +216,14 @@ describe('deviceService', () => {
           },
           error: null,
         },
-      })
+      });
 
       await expect(pollPairingToken('token-1')).resolves.toEqual({
         used: false,
         failed: true,
         failureReason: 'timeout',
-      })
-    })
+      });
+    });
 
     it('returns pending result when token is still open', async () => {
       setupFromMocks({
@@ -237,12 +237,12 @@ describe('deviceService', () => {
           },
           error: null,
         },
-      })
+      });
 
       await expect(pollPairingToken('token-1')).resolves.toEqual({
         used: false,
         failed: false,
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});

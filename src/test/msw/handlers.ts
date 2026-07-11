@@ -1,8 +1,8 @@
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw';
 
-const GEOCODING_BASE = 'https://geocoding-api.open-meteo.com/v1'
-const OPEN_METEO_BASE = 'https://api.open-meteo.com/v1'
-const NOMINATIM_BASE = 'https://nominatim.openstreetmap.org'
+const GEOCODING_BASE = 'https://geocoding-api.open-meteo.com/v1';
+const OPEN_METEO_BASE = 'https://api.open-meteo.com/v1';
+const NOMINATIM_BASE = 'https://nominatim.openstreetmap.org';
 
 export const mockGeocodingResults = [
   {
@@ -13,7 +13,7 @@ export const mockGeocodingResults = [
     country: 'Italy',
     admin1: 'Lazio',
   },
-]
+];
 
 export const mockForecastResponse = {
   daily: {
@@ -22,18 +22,18 @@ export const mockForecastResponse = {
     temperature_2m_min: [18.2, 19.5, 18.8],
     weather_code: [0, 2, 61],
   },
-}
+};
 
 export const handlers = [
   http.get(`${GEOCODING_BASE}/search`, () => {
-    return HttpResponse.json({ results: mockGeocodingResults })
+    return HttpResponse.json({ results: mockGeocodingResults });
   }),
   http.get(`${OPEN_METEO_BASE}/forecast`, () => {
-    return HttpResponse.json(mockForecastResponse)
+    return HttpResponse.json(mockForecastResponse);
   }),
   http.get(`${NOMINATIM_BASE}/reverse`, () => {
     return HttpResponse.json({
       address: { city: 'Rome' },
-    })
+    });
   }),
-]
+];

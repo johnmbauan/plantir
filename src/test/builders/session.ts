@@ -1,4 +1,4 @@
-import type { Session, User } from '@supabase/supabase-js'
+import type { Session, User } from '@supabase/supabase-js';
 
 export function buildUser(overrides: Partial<User> = {}): User {
   return {
@@ -9,11 +9,11 @@ export function buildUser(overrides: Partial<User> = {}): User {
     aud: 'authenticated',
     created_at: '2026-01-01T00:00:00Z',
     ...overrides,
-  } as User
+  } as User;
 }
 
 export function buildSession(overrides: Partial<Session> = {}): Session {
-  const user = buildUser(overrides.user ?? {})
+  const user = buildUser(overrides.user ?? {});
   return {
     access_token: 'access-token',
     refresh_token: 'refresh-token',
@@ -21,5 +21,5 @@ export function buildSession(overrides: Partial<Session> = {}): Session {
     token_type: 'bearer',
     user,
     ...overrides,
-  }
+  };
 }

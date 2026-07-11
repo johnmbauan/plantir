@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Table,
   Text,
@@ -56,12 +56,18 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
     [selectedSerial, selectedOwner, selectedPlant, sortKey, sortDir, page],
   );
 
-  const { items, totalCount, loading, refresh } = useAdminDevicesPage(query);
+  const { items, totalCount, loading, refresh, currentPage } = useAdminDevicesPage(query);
 
   const pagination = useMemo(
     () => paginationMeta(totalCount, page, ADMIN_PAGE_SIZE),
     [totalCount, page],
   );
+
+  useEffect(() => {
+    if (page !== currentPage) {
+      setPage(currentPage);
+    }
+  }, [page, currentPage]);
 
   const serialOptions = buildSerialOptions(filterOptions);
   const ownerOptions = buildOwnerOptions(filterOptions);
@@ -109,7 +115,7 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
 
   const footer = (
     <TablePagination
-      page={page}
+      page={currentPage}
       totalPages={pagination.totalPages}
       rangeStart={pagination.rangeStart}
       rangeEnd={pagination.rangeEnd}

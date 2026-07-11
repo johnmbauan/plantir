@@ -1,10 +1,10 @@
-import { render, type RenderOptions } from '@testing-library/react'
-import { MantineProvider } from '@mantine/core'
-import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom'
-import type { ReactElement, ReactNode } from 'react'
-import { AuthProvider } from '@/context/AuthContext'
+import { render, type RenderOptions } from '@testing-library/react';
+import { MantineProvider } from '@mantine/core';
+import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom';
+import type { ReactElement, ReactNode } from 'react';
+import { AuthProvider } from '@/context/AuthContext';
 
-export { screen, waitFor, within } from '@testing-library/react'
+export { screen, waitFor, within } from '@testing-library/react';
 
 interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
   route?: string
@@ -26,7 +26,7 @@ function AllProviders({
         <AuthProvider>{children}</AuthProvider>
       </MemoryRouter>
     </MantineProvider>
-  )
+  );
 }
 
 export function renderWithProviders(
@@ -40,5 +40,5 @@ export function renderWithProviders(
       </AllProviders>
     ),
     ...options,
-  })
+  });
 }

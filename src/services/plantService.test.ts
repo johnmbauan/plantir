@@ -1,12 +1,12 @@
-import '@/test/mocks/supabase'
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import '@/test/mocks/supabase';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   resetSupabaseMocks,
   mockAuthenticatedUser,
   mockUnauthenticated,
   setupFromMocks,
   mockStorageFrom,
-} from '@/test/mocks/supabase'
+} from '@/test/mocks/supabase';
 import {
   fetchPlants,
   createPlant,
@@ -16,27 +16,27 @@ import {
   fetchPlantStatusesByIds,
   uploadPlantImage,
   deletePlantImage,
-} from './plantService'
+} from './plantService';
 
 describe('plantService', () => {
   beforeEach(() => {
-    resetSupabaseMocks()
-    vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-07-06T12:00:00Z'))
-  })
+    resetSupabaseMocks();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-06T12:00:00Z'));
+  });
 
   afterEach(() => {
-    vi.useRealTimers()
-  })
+    vi.useRealTimers();
+  });
 
   describe('fetchPlants', () => {
     it('throws when not authenticated', async () => {
-      mockUnauthenticated()
-      await expect(fetchPlants()).rejects.toThrow('Not authenticated')
-    })
+      mockUnauthenticated();
+      await expect(fetchPlants()).rejects.toThrow('Not authenticated');
+    });
 
     it('returns enriched plants sorted by humidity', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: {
           data: [{
@@ -59,18 +59,18 @@ describe('plantService', () => {
           }],
           error: null,
         },
-      })
+      });
 
-      const plants = await fetchPlants()
+      const plants = await fetchPlants();
       expect(plants[0]).toMatchObject({
         name: 'B',
         humidityPercent: 40,
         statuses: ['HEALTHY'],
-      })
-    })
+      });
+    });
 
     it('maps species summary when available', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: {
           data: [{
@@ -100,9 +100,9 @@ describe('plantService', () => {
           }],
           error: null,
         },
-      })
+      });
 
-      const plants = await fetchPlants()
+      const plants = await fetchPlants();
 
       expect(plants[0]).toMatchObject({
         speciesId: 7,
@@ -113,11 +113,11 @@ describe('plantService', () => {
           minTemperatureCelsius: 18,
           sunlight: 'Bright indirect',
         }),
-      })
-    })
+      });
+    });
 
     it('marks plants needing water and offline', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: {
           data: [{
@@ -140,14 +140,14 @@ describe('plantService', () => {
           }],
           error: null,
         },
-      })
+      });
 
-      const plants = await fetchPlants()
-      expect(plants[0].statuses).toEqual(expect.arrayContaining(['OFFLINE', 'WATERING_NEEDED', 'RECHARGE_NEEDED']))
-    })
+      const plants = await fetchPlants();
+      expect(plants[0].statuses).toEqual(expect.arrayContaining(['OFFLINE', 'WATERING_NEEDED', 'RECHARGE_NEEDED']));
+    });
 
     it('returns offline plant without humidity device', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: {
           data: [{
@@ -159,14 +159,14 @@ describe('plantService', () => {
           }],
           error: null,
         },
-      })
+      });
 
-      const plants = await fetchPlants()
-      expect(plants[0].statuses).toEqual(['OFFLINE'])
-    })
+      const plants = await fetchPlants();
+      expect(plants[0].statuses).toEqual(['OFFLINE']);
+    });
 
     it('sorts plants with null humidity after those with readings', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: {
           data: [
@@ -215,14 +215,14 @@ describe('plantService', () => {
           ],
           error: null,
         },
-      })
+      });
 
-      const plants = await fetchPlants()
-      expect(plants.map((p) => p.name)).toEqual(['Beta', 'Alpha', 'Gamma'])
-    })
+      const plants = await fetchPlants();
+      expect(plants.map((p) => p.name)).toEqual(['Beta', 'Alpha', 'Gamma']);
+    });
 
     it('sorts two null-humidity plants alphabetically', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: {
           data: [
@@ -231,63 +231,63 @@ describe('plantService', () => {
           ],
           error: null,
         },
-      })
+      });
 
-      const plants = await fetchPlants()
-      expect(plants.map((p) => p.name)).toEqual(['Apple', 'Zebra'])
-    })
-  })
+      const plants = await fetchPlants();
+      expect(plants.map((p) => p.name)).toEqual(['Apple', 'Zebra']);
+    });
+  });
 
   describe('createPlant', () => {
     it('inserts a plant for the authenticated user', async () => {
-      mockAuthenticatedUser()
-      setupFromMocks({ plants: { data: null, error: null } })
-      await expect(createPlant('New Plant', null)).resolves.toBeUndefined()
-    })
+      mockAuthenticatedUser();
+      setupFromMocks({ plants: { data: null, error: null } });
+      await expect(createPlant('New Plant', null)).resolves.toBeUndefined();
+    });
 
     it('inserts a plant with species id when provided', async () => {
-      mockAuthenticatedUser()
-      setupFromMocks({ plants: { data: null, error: null } })
+      mockAuthenticatedUser();
+      setupFromMocks({ plants: { data: null, error: null } });
 
-      await expect(createPlant('New Plant', null, 7)).resolves.toBeUndefined()
-    })
-  })
+      await expect(createPlant('New Plant', null, 7)).resolves.toBeUndefined();
+    });
+  });
 
   describe('updatePlant', () => {
     it('updates plant for authenticated user', async () => {
-      mockAuthenticatedUser()
-      setupFromMocks({ plants: { data: null, error: null } })
-      await expect(updatePlant(1, 'Renamed', 'http://img')).resolves.toBeUndefined()
-    })
+      mockAuthenticatedUser();
+      setupFromMocks({ plants: { data: null, error: null } });
+      await expect(updatePlant(1, 'Renamed', 'http://img')).resolves.toBeUndefined();
+    });
 
     it('updates plant species id when provided', async () => {
-      mockAuthenticatedUser()
-      setupFromMocks({ plants: { data: null, error: null } })
+      mockAuthenticatedUser();
+      setupFromMocks({ plants: { data: null, error: null } });
 
-      await expect(updatePlant(1, 'Renamed', 'http://img', 7)).resolves.toBeUndefined()
-    })
-  })
+      await expect(updatePlant(1, 'Renamed', 'http://img', 7)).resolves.toBeUndefined();
+    });
+  });
 
   describe('deletePlant', () => {
     it('throws when not authenticated', async () => {
-      mockUnauthenticated()
-      await expect(deletePlant(1)).rejects.toThrow('Not authenticated')
-    })
+      mockUnauthenticated();
+      await expect(deletePlant(1)).rejects.toThrow('Not authenticated');
+    });
 
     it('deletes plant for authenticated user', async () => {
-      mockAuthenticatedUser()
-      setupFromMocks({ plants: { data: null, error: null } })
-      await expect(deletePlant(1)).resolves.toBeUndefined()
-    })
-  })
+      mockAuthenticatedUser();
+      setupFromMocks({ plants: { data: null, error: null } });
+      await expect(deletePlant(1)).resolves.toBeUndefined();
+    });
+  });
 
   describe('fetchPlantStatusesByIds', () => {
     it('returns empty map for empty input', async () => {
-      await expect(fetchPlantStatusesByIds([])).resolves.toEqual(new Map())
-    })
+      await expect(fetchPlantStatusesByIds([])).resolves.toEqual(new Map());
+    });
 
     it('returns statuses with device measurements for requested plants', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: {
           data: [{
@@ -310,28 +310,28 @@ describe('plantService', () => {
           }],
           error: null,
         },
-      })
+      });
 
-      const statuses = await fetchPlantStatusesByIds([3])
-      expect(statuses.get(3)).toEqual(['HEALTHY'])
-    })
-  })
+      const statuses = await fetchPlantStatusesByIds([3]);
+      expect(statuses.get(3)).toEqual(['HEALTHY']);
+    });
+  });
 
   describe('fetchPlantHistory', () => {
     it('returns empty history when plant has no devices', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: { data: { devices: [] }, error: null },
-      })
+      });
 
       await expect(fetchPlantHistory(1, '24h')).resolves.toEqual({
         humidity: [],
         battery: [],
-      })
-    })
+      });
+    });
 
     it('returns measurement history for plant devices', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       setupFromMocks({
         plants: { data: { devices: [{ id: 10 }] }, error: null },
         humidity_measurements: {
@@ -342,40 +342,40 @@ describe('plantService', () => {
           data: [{ batteryPercent: 88, createdAt: '2026-07-06T10:00:00Z' }],
           error: null,
         },
-      })
+      });
 
       await expect(fetchPlantHistory(1, '7d')).resolves.toEqual({
         humidity: [{ value: 42, createdAt: '2026-07-06T10:00:00Z' }],
         battery: [{ value: 88, createdAt: '2026-07-06T10:00:00Z' }],
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('plant images', () => {
     it('uploads image and returns public URL', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       mockStorageFrom.mockReturnValue({
         upload: vi.fn().mockResolvedValue({ error: null }),
         getPublicUrl: vi.fn().mockReturnValue({ data: { publicUrl: 'https://cdn/plant.jpg' } }),
-      })
+      });
 
-      const file = new File(['x'], 'plant.jpg', { type: 'image/jpeg' })
-      await expect(uploadPlantImage(file)).resolves.toBe('https://cdn/plant.jpg')
-    })
+      const file = new File(['x'], 'plant.jpg', { type: 'image/jpeg' });
+      await expect(uploadPlantImage(file)).resolves.toBe('https://cdn/plant.jpg');
+    });
 
     it('skips delete for non-storage URLs', async () => {
-      mockAuthenticatedUser()
-      await expect(deletePlantImage('https://example.com/img.jpg')).resolves.toBeUndefined()
-    })
+      mockAuthenticatedUser();
+      await expect(deletePlantImage('https://example.com/img.jpg')).resolves.toBeUndefined();
+    });
 
     it('deletes image from storage when URL matches bucket', async () => {
-      mockAuthenticatedUser()
+      mockAuthenticatedUser();
       mockStorageFrom.mockReturnValue({
         remove: vi.fn().mockResolvedValue({ error: null }),
-      })
+      });
 
-      const url = 'https://x.supabase.co/storage/v1/object/public/plant-images/user-1/abc.jpg'
-      await expect(deletePlantImage(url)).resolves.toBeUndefined()
-    })
-  })
-})
+      const url = 'https://x.supabase.co/storage/v1/object/public/plant-images/user-1/abc.jpg';
+      await expect(deletePlantImage(url)).resolves.toBeUndefined();
+    });
+  });
+});

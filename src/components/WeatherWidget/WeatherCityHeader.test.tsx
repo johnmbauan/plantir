@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import userEvent from '@testing-library/user-event'
-import { renderWithProviders, screen } from '@/test/render'
-import { WeatherCityHeader } from '@/components/WeatherWidget/WeatherCityHeader'
+import { describe, it, expect, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders, screen } from '@/test/render';
+import { WeatherCityHeader } from '@/components/WeatherWidget/WeatherCityHeader';
 
 describe('WeatherCityHeader', () => {
   it('prompts user to select a city when location source is none', () => {
@@ -12,10 +12,10 @@ describe('WeatherCityHeader', () => {
         editMode={false}
         onToggleEdit={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Select a city…')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Select a city…')).toBeInTheDocument();
+  });
 
   it('shows city name when location is set', () => {
     renderWithProviders(
@@ -25,15 +25,15 @@ describe('WeatherCityHeader', () => {
         editMode={false}
         onToggleEdit={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Rome, Lazio, Italy')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Change city' })).toBeInTheDocument()
-  })
+    expect(screen.getByText('Rome, Lazio, Italy')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Change city' })).toBeInTheDocument();
+  });
 
   it('calls onToggleEdit when edit button is clicked', async () => {
-    const user = userEvent.setup()
-    const onToggleEdit = vi.fn()
+    const user = userEvent.setup();
+    const onToggleEdit = vi.fn();
 
     renderWithProviders(
       <WeatherCityHeader
@@ -42,9 +42,9 @@ describe('WeatherCityHeader', () => {
         editMode={false}
         onToggleEdit={onToggleEdit}
       />,
-    )
+    );
 
-    await user.click(screen.getByRole('button', { name: 'Change city' }))
-    expect(onToggleEdit).toHaveBeenCalledOnce()
-  })
-})
+    await user.click(screen.getByRole('button', { name: 'Change city' }));
+    expect(onToggleEdit).toHaveBeenCalledOnce();
+  });
+});

@@ -1,18 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Route, Routes } from 'react-router-dom'
-import { renderWithProviders, screen } from '@/test/render'
-import { buildSession, buildUser } from '@/test/builders/session'
-import AdminGuard from '@/admin/AdminGuard'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { Route, Routes } from 'react-router-dom';
+import { renderWithProviders, screen } from '@/test/render';
+import { buildSession, buildUser } from '@/test/builders/session';
+import AdminGuard from '@/admin/AdminGuard';
 
 vi.mock('@/context/AuthContext', async () => {
-  const actual = await vi.importActual<typeof import('@/context/AuthContext')>('@/context/AuthContext')
+  const actual = await vi.importActual<typeof import('@/context/AuthContext')>('@/context/AuthContext');
   return {
     ...actual,
     useAuth: vi.fn(),
-  }
-})
+  };
+});
 
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/context/AuthContext';
 
 function renderGuard() {
   return renderWithProviders(
@@ -23,24 +23,24 @@ function renderGuard() {
       <Route path="/" element={<div>Home page</div>} />
     </Routes>,
     { route: '/admin' },
-  )
+  );
 }
 
 describe('AdminGuard', () => {
   beforeEach(() => {
-    vi.mocked(useAuth).mockReturnValue({ session: null, loading: false })
-  })
+    vi.mocked(useAuth).mockReturnValue({ session: null, loading: false });
+  });
 
   it('redirects non-admin users to home', () => {
     vi.mocked(useAuth).mockReturnValue({
       session: buildSession(),
       loading: false,
-    })
-    renderGuard()
+    });
+    renderGuard();
 
-    expect(screen.getByText('Home page')).toBeInTheDocument()
-    expect(screen.queryByText('Admin panel')).not.toBeInTheDocument()
-  })
+    expect(screen.getByText('Home page')).toBeInTheDocument();
+    expect(screen.queryByText('Admin panel')).not.toBeInTheDocument();
+  });
 
   it('renders child routes for admin users', () => {
     vi.mocked(useAuth).mockReturnValue({
@@ -48,10 +48,10 @@ describe('AdminGuard', () => {
         user: buildUser({ app_metadata: { role: 'admin' } }),
       }),
       loading: false,
-    })
-    renderGuard()
+    });
+    renderGuard();
 
-    expect(screen.getByText('Admin panel')).toBeInTheDocument()
-    expect(screen.queryByText('Home page')).not.toBeInTheDocument()
-  })
-})
+    expect(screen.getByText('Admin panel')).toBeInTheDocument();
+    expect(screen.queryByText('Home page')).not.toBeInTheDocument();
+  });
+});

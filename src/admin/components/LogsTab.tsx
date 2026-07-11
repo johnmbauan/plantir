@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Table,
   Text,
@@ -52,12 +52,18 @@ export function LogsTab({ filterOptions, onRefreshFilters }: LogsTabProps) {
     [selectedSerial, selectedOwner, selectedLevel, sortKey, sortDir, page],
   );
 
-  const { items, totalCount, loading, refresh } = useAdminLogsPage(query);
+  const { items, totalCount, loading, refresh, currentPage } = useAdminLogsPage(query);
 
   const pagination = useMemo(
     () => paginationMeta(totalCount, page, ADMIN_PAGE_SIZE),
     [totalCount, page],
   );
+
+  useEffect(() => {
+    if (page !== currentPage) {
+      setPage(currentPage);
+    }
+  }, [page, currentPage]);
 
   const serialOptions = buildSerialOptions(filterOptions);
   const ownerOptions = buildOwnerOptions(filterOptions);
@@ -103,7 +109,7 @@ export function LogsTab({ filterOptions, onRefreshFilters }: LogsTabProps) {
 
   const footer = (
     <TablePagination
-      page={page}
+      page={currentPage}
       totalPages={pagination.totalPages}
       rangeStart={pagination.rangeStart}
       rangeEnd={pagination.rangeEnd}

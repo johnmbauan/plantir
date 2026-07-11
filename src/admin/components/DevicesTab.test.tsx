@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import userEvent from '@testing-library/user-event'
-import { renderWithProviders, screen } from '@/test/render'
-import { DevicesTab } from '@/admin/components/DevicesTab'
-import type { AdminDevice, AdminFilterOptions } from '@/admin/adminService'
-import { ADMIN_PAGE_SIZE } from '@/admin/constants'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders, screen } from '@/test/render';
+import { DevicesTab } from '@/admin/components/DevicesTab';
+import type { AdminDevice, AdminFilterOptions } from '@/admin/adminService';
+import { ADMIN_PAGE_SIZE } from '@/admin/constants';
 
-const mockRefresh = vi.fn()
-const mockUseAdminDevicesPage = vi.fn()
+const mockRefresh = vi.fn();
+const mockUseAdminDevicesPage = vi.fn();
 
 vi.mock('@/admin/hooks/useAdminDevicesPage', () => ({
   useAdminDevicesPage: (...args: unknown[]) => mockUseAdminDevicesPage(...args),
-}))
+}));
 
 const filterOptions: AdminFilterOptions = {
   serials: ['SN-001', 'SN-002'],
@@ -18,7 +18,7 @@ const filterOptions: AdminFilterOptions = {
   plants: ['Monstera', 'Fern'],
   hasUnassignedOwner: false,
   hasUnassignedPlant: false,
-}
+};
 
 const devices: AdminDevice[] = [
   {
@@ -43,12 +43,12 @@ const devices: AdminDevice[] = [
     lastBattery: 60,
     lastSeenAt: '2026-07-05T08:00:00Z',
   },
-]
+];
 
 const sampleDevice = (overrides: Partial<AdminDevice> = {}): AdminDevice => ({
   ...devices[0],
   ...overrides,
-})
+});
 
 function makeDevices(count: number): AdminDevice[] {
   return Array.from({ length: count }, (_, i) =>
@@ -59,7 +59,7 @@ function makeDevices(count: number): AdminDevice[] {
       plantName: `Plant ${i + 1}`,
       lastSeenAt: new Date(2026, 0, count - i).toISOString(),
     }),
-  )
+  );
 }
 
 async function selectComboboxOption(
@@ -67,70 +67,71 @@ async function selectComboboxOption(
   index: number,
   value: string,
 ) {
-  const inputs = screen.getAllByRole('textbox')
-  await user.click(inputs[index])
+  const inputs = screen.getAllByRole('textbox');
+  await user.click(inputs[index]);
   // Mantine keeps combobox options in a hidden portal until layout completes in jsdom.
   // eslint-disable-next-line testing-library/no-node-access
-  const option = document.querySelector(`[data-combobox-option][value="${value}"]`)
-  expect(option).toBeTruthy()
-  await user.click(option!)
+  const option = document.querySelector(`[data-combobox-option][value="${value}"]`);
+  expect(option).toBeTruthy();
+  await user.click(option!);
 }
 
 describe('Admin DevicesTab', () => {
   beforeEach(() => {
-    mockUseAdminDevicesPage.mockReturnValue({
+    mockUseAdminDevicesPage.mockImplementation((query: { page: number }) => ({
       items: [sampleDevice()],
       totalCount: 1,
       loading: false,
       refresh: mockRefresh,
-    })
-  })
+      currentPage: query.page,
+    }));
+  });
 
   it('renders device rows', () => {
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    expect(screen.getByText('All Devices')).toBeInTheDocument()
-    expect(screen.getByRole('cell', { name: 'SN-001' })).toBeInTheDocument()
-    expect(screen.getByRole('cell', { name: 'alice@example.com' })).toBeInTheDocument()
-    expect(screen.getByRole('cell', { name: 'Monstera' })).toBeInTheDocument()
-  })
+    expect(screen.getByText('All Devices')).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'SN-001' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'alice@example.com' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Monstera' })).toBeInTheDocument();
+  });
 
   it('requests devices filtered by serial', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    const user = userEvent.setup();
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
     expect(mockUseAdminDevicesPage).toHaveBeenCalledWith(
       expect.objectContaining({ serialNumber: null }),
-    )
+    );
 
-    await selectComboboxOption(user, 0, 'SN-001')
+    await selectComboboxOption(user, 0, 'SN-001');
 
     expect(mockUseAdminDevicesPage).toHaveBeenLastCalledWith(
       expect.objectContaining({ serialNumber: 'SN-001', page: 1 }),
-    )
-  })
+    );
+  });
 
   it('requests devices filtered by owner', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    const user = userEvent.setup();
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    await selectComboboxOption(user, 1, 'alice@example.com')
+    await selectComboboxOption(user, 1, 'alice@example.com');
 
     expect(mockUseAdminDevicesPage).toHaveBeenLastCalledWith(
       expect.objectContaining({ ownerEmail: 'alice@example.com', page: 1 }),
-    )
-  })
+    );
+  });
 
   it('requests devices filtered by plant', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    const user = userEvent.setup();
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    await selectComboboxOption(user, 2, 'Fern')
+    await selectComboboxOption(user, 2, 'Fern');
 
     expect(mockUseAdminDevicesPage).toHaveBeenLastCalledWith(
       expect.objectContaining({ plantName: 'Fern', page: 1 }),
-    )
-  })
+    );
+  });
 
   it('shows empty state when no devices exist', () => {
     mockUseAdminDevicesPage.mockReturnValue({
@@ -138,24 +139,25 @@ describe('Admin DevicesTab', () => {
       totalCount: 0,
       loading: false,
       refresh: mockRefresh,
-    })
+      currentPage: 1,
+    });
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    expect(screen.getByText('No devices registered.')).toBeInTheDocument()
-  })
+    expect(screen.getByText('No devices registered.')).toBeInTheDocument();
+  });
 
   it('calls refresh when refresh button is clicked', async () => {
-    const user = userEvent.setup()
-    const mockRefreshFilters = vi.fn()
+    const user = userEvent.setup();
+    const mockRefreshFilters = vi.fn();
     renderWithProviders(
       <DevicesTab filterOptions={filterOptions} onRefreshFilters={mockRefreshFilters} />,
-    )
+    );
 
-    await user.click(screen.getByRole('button', { name: 'Refresh devices' }))
-    expect(mockRefresh).toHaveBeenCalledOnce()
-    expect(mockRefreshFilters).toHaveBeenCalledOnce()
-  })
+    await user.click(screen.getByRole('button', { name: 'Refresh devices' }));
+    expect(mockRefresh).toHaveBeenCalledOnce();
+    expect(mockRefreshFilters).toHaveBeenCalledOnce();
+  });
 
   it('shows loading skeletons', () => {
     mockUseAdminDevicesPage.mockReturnValue({
@@ -163,30 +165,32 @@ describe('Admin DevicesTab', () => {
       totalCount: 0,
       loading: true,
       refresh: mockRefresh,
-    })
+      currentPage: 1,
+    });
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    expect(screen.queryByRole('cell', { name: 'SN-001' })).not.toBeInTheDocument()
-    expect(screen.getByText('Loading…')).toBeInTheDocument()
-  })
+    expect(screen.queryByRole('cell', { name: 'SN-001' })).not.toBeInTheDocument();
+    expect(screen.getByText('Loading…')).toBeInTheDocument();
+  });
 
   it('shows no filter match message when filters exclude all devices', async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup();
 
-    mockUseAdminDevicesPage.mockImplementation((query: { plantName: string | null }) => ({
+    mockUseAdminDevicesPage.mockImplementation((query: { plantName: string | null; page: number }) => ({
       items: query.plantName === 'Fern' ? [] : [sampleDevice()],
       totalCount: query.plantName === 'Fern' ? 0 : 1,
       loading: false,
       refresh: mockRefresh,
-    }))
+      currentPage: query.page,
+    }));
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    await selectComboboxOption(user, 2, 'Fern')
+    await selectComboboxOption(user, 2, 'Fern');
 
-    expect(screen.getByText('No devices match your filters.')).toBeInTheDocument()
-  })
+    expect(screen.getByText('No devices match your filters.')).toBeInTheDocument();
+  });
 
   it('renders placeholders for missing owner and readings', () => {
     mockUseAdminDevicesPage.mockReturnValue({
@@ -201,47 +205,50 @@ describe('Admin DevicesTab', () => {
       totalCount: 1,
       loading: false,
       refresh: mockRefresh,
-    })
+      currentPage: 1,
+    });
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    expect(screen.getByText('Unassigned')).toBeInTheDocument()
-    expect(screen.getAllByText('—').length).toBeGreaterThan(0)
-  })
+    expect(screen.getByText('Unassigned')).toBeInTheDocument();
+    expect(screen.getAllByText('—').length).toBeGreaterThan(0);
+  });
 
   it('shows server-side pagination summary', () => {
-    mockUseAdminDevicesPage.mockReturnValue({
+    mockUseAdminDevicesPage.mockImplementation((query: { page: number }) => ({
       items: makeDevices(ADMIN_PAGE_SIZE),
       totalCount: ADMIN_PAGE_SIZE + 5,
       loading: false,
       refresh: mockRefresh,
-    })
+      currentPage: query.page,
+    }));
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    expect(screen.getByText(`Showing 1–${ADMIN_PAGE_SIZE} of ${ADMIN_PAGE_SIZE + 5}`)).toBeInTheDocument()
-  })
+    expect(screen.getByText(`Showing 1–${ADMIN_PAGE_SIZE} of ${ADMIN_PAGE_SIZE + 5}`)).toBeInTheDocument();
+  });
 
   it('requests the next page when pagination is clicked', async () => {
-    const user = userEvent.setup()
-    mockUseAdminDevicesPage.mockReturnValue({
+    const user = userEvent.setup();
+    mockUseAdminDevicesPage.mockImplementation((query: { page: number }) => ({
       items: makeDevices(ADMIN_PAGE_SIZE),
       totalCount: ADMIN_PAGE_SIZE + 5,
       loading: false,
       refresh: mockRefresh,
-    })
+      currentPage: query.page,
+    }));
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    await user.click(screen.getByRole('button', { name: '2' }))
+    await user.click(screen.getByRole('button', { name: '2' }));
 
     expect(mockUseAdminDevicesPage).toHaveBeenLastCalledWith(
       expect.objectContaining({ page: 2 }),
-    )
-  })
+    );
+  });
 
   it('requests sort changes from the server', async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup();
     mockUseAdminDevicesPage.mockReturnValue({
       items: [
         sampleDevice({ serialNumber: 'SN-B' }),
@@ -250,14 +257,15 @@ describe('Admin DevicesTab', () => {
       totalCount: 2,
       loading: false,
       refresh: mockRefresh,
-    })
+      currentPage: 1,
+    });
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />)
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
 
-    await user.click(screen.getByRole('button', { name: 'Sort by Serial Number' }))
+    await user.click(screen.getByRole('button', { name: 'Sort by Serial Number' }));
 
     expect(mockUseAdminDevicesPage).toHaveBeenLastCalledWith(
       expect.objectContaining({ sortKey: 'serialNumber', sortDir: 'asc', page: 1 }),
-    )
-  })
-})
+    );
+  });
+});

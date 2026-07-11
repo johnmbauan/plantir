@@ -1,5 +1,5 @@
-import type { Device, HumidityConfig } from '@/types'
-import { DEFAULT_HUMIDITY_CONFIG } from '@/constants/deviceDefaults'
+import type { Device, HumidityConfig } from '@/types';
+import { DEFAULT_HUMIDITY_CONFIG } from '@/constants/deviceDefaults';
 
 export function buildHumidityConfig(overrides: Partial<HumidityConfig> = {}): HumidityConfig {
   return {
@@ -11,7 +11,7 @@ export function buildHumidityConfig(overrides: Partial<HumidityConfig> = {}): Hu
     sleepDurationSeconds: DEFAULT_HUMIDITY_CONFIG.sleepDurationSeconds,
     calibrationModeStartedAt: null,
     ...overrides,
-  }
+  };
 }
 
 export function buildDevice(overrides: Partial<Device> = {}): Device {
@@ -23,5 +23,5 @@ export function buildDevice(overrides: Partial<Device> = {}): Device {
     type: 'humidity',
     humidityConfig: buildHumidityConfig(),
     ...overrides,
-  }
+  };
 }

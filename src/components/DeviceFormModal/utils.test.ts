@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest'
-import { defaultFormValues, formValuesFromDevice } from './utils'
-import { buildDevice } from '@/test/builders/device'
-import { DEFAULT_HUMIDITY_CONFIG } from '@/constants/deviceDefaults'
+import { describe, it, expect } from 'vitest';
+import { defaultFormValues, formValuesFromDevice } from './utils';
+import { buildDevice } from '@/test/builders/device';
+import { DEFAULT_HUMIDITY_CONFIG } from '@/constants/deviceDefaults';
 
 describe('defaultFormValues', () => {
   it('returns empty serial and default humidity config', () => {
@@ -10,13 +10,13 @@ describe('defaultFormValues', () => {
       plantId: null,
       type: 'humidity',
       humidityConfig: { ...DEFAULT_HUMIDITY_CONFIG },
-    })
-  })
-})
+    });
+  });
+});
 
 describe('formValuesFromDevice', () => {
   it('maps device fields to form values', () => {
-    const device = buildDevice()
+    const device = buildDevice();
     expect(formValuesFromDevice(device)).toEqual({
       serialNumber: 'SN-001',
       plantId: 10,
@@ -27,11 +27,11 @@ describe('formValuesFromDevice', () => {
         waterValue: DEFAULT_HUMIDITY_CONFIG.waterValue,
         sleepDurationSeconds: DEFAULT_HUMIDITY_CONFIG.sleepDurationSeconds,
       },
-    })
-  })
+    });
+  });
 
   it('falls back to defaults when humidity config is missing', () => {
-    const device = buildDevice({ humidityConfig: null })
-    expect(formValuesFromDevice(device).humidityConfig).toEqual({ ...DEFAULT_HUMIDITY_CONFIG })
-  })
-})
+    const device = buildDevice({ humidityConfig: null });
+    expect(formValuesFromDevice(device).humidityConfig).toEqual({ ...DEFAULT_HUMIDITY_CONFIG });
+  });
+});

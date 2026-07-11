@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import userEvent from '@testing-library/user-event'
-import { renderWithProviders, screen } from '@/test/render'
-import { WeatherCitySearch } from '@/components/WeatherWidget/WeatherCitySearch'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders, screen } from '@/test/render';
+import { WeatherCitySearch } from '@/components/WeatherWidget/WeatherCitySearch';
 
-const mockSetSearchQuery = vi.fn()
-const mockHandleSearch = vi.fn()
+const mockSetSearchQuery = vi.fn();
+const mockHandleSearch = vi.fn();
 
 vi.mock('@/hooks/useCitySearch', () => ({
   useCitySearch: vi.fn(),
-}))
+}));
 
-import { useCitySearch } from '@/hooks/useCitySearch'
+import { useCitySearch } from '@/hooks/useCitySearch';
 
 describe('WeatherCitySearch', () => {
   beforeEach(() => {
@@ -22,23 +22,23 @@ describe('WeatherCitySearch', () => {
       noResults: false,
       handleSearch: mockHandleSearch,
       resetSearch: vi.fn(),
-    })
-  })
+    });
+  });
 
   it('renders search input and button', () => {
-    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />)
+    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    expect(screen.getByPlaceholderText('Search for a city…')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Search city' })).toBeInTheDocument()
-  })
+    expect(screen.getByPlaceholderText('Search for a city…')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search city' })).toBeInTheDocument();
+  });
 
   it('calls setSearchQuery when typing', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />)
+    const user = userEvent.setup();
+    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    await user.type(screen.getByPlaceholderText('Search for a city…'), 'Rome')
-    expect(mockSetSearchQuery).toHaveBeenCalled()
-  })
+    await user.type(screen.getByPlaceholderText('Search for a city…'), 'Rome');
+    expect(mockSetSearchQuery).toHaveBeenCalled();
+  });
 
   it('shows no-results message', () => {
     vi.mocked(useCitySearch).mockReturnValue({
@@ -49,16 +49,16 @@ describe('WeatherCitySearch', () => {
       noResults: true,
       handleSearch: mockHandleSearch,
       resetSearch: vi.fn(),
-    })
+    });
 
-    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />)
+    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    expect(screen.getByText('No cities found. Try a different name.')).toBeInTheDocument()
-  })
+    expect(screen.getByText('No cities found. Try a different name.')).toBeInTheDocument();
+  });
 
   it('calls onCitySelect when a result is clicked', async () => {
-    const user = userEvent.setup()
-    const onCitySelect = vi.fn()
+    const user = userEvent.setup();
+    const onCitySelect = vi.fn();
 
     vi.mocked(useCitySearch).mockReturnValue({
       searchQuery: 'Rome',
@@ -77,31 +77,31 @@ describe('WeatherCitySearch', () => {
       noResults: false,
       handleSearch: mockHandleSearch,
       resetSearch: vi.fn(),
-    })
+    });
 
-    renderWithProviders(<WeatherCitySearch onCitySelect={onCitySelect} />)
+    renderWithProviders(<WeatherCitySearch onCitySelect={onCitySelect} />);
 
-    await user.click(screen.getByText('Rome'))
+    await user.click(screen.getByText('Rome'));
     expect(onCitySelect).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'Rome', country: 'Italy' }),
-    )
-  })
+    );
+  });
 
   it('calls handleSearch on Enter key', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />)
+    const user = userEvent.setup();
+    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    await user.type(screen.getByPlaceholderText('Search for a city…'), 'Rome{Enter}')
+    await user.type(screen.getByPlaceholderText('Search for a city…'), 'Rome{Enter}');
 
-    expect(mockHandleSearch).toHaveBeenCalled()
-  })
+    expect(mockHandleSearch).toHaveBeenCalled();
+  });
 
   it('calls handleSearch when search button is clicked', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />)
+    const user = userEvent.setup();
+    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    await user.click(screen.getByRole('button', { name: 'Search city' }))
+    await user.click(screen.getByRole('button', { name: 'Search city' }));
 
-    expect(mockHandleSearch).toHaveBeenCalled()
-  })
-})
+    expect(mockHandleSearch).toHaveBeenCalled();
+  });
+});
