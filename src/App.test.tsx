@@ -1,68 +1,68 @@
-import '@/test/mocks/supabase'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import { MantineProvider } from '@mantine/core'
-import App from './App'
-import { mockSession, resetSupabaseMocks } from '@/test/mocks/supabase'
-import { buildSession } from '@/test/builders/session'
+import '@/test/mocks/supabase';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { MantineProvider } from '@mantine/core';
+import App from './App';
+import { mockSession, resetSupabaseMocks } from '@/test/mocks/supabase';
+import { buildSession } from '@/test/builders/session';
 
 vi.mock('@/pages/Dashboard', () => ({
   default: () => <div>Dashboard page</div>,
-}))
+}));
 
 vi.mock('@/pages/PlantCenter', () => ({
   default: () => <div>Plant center page</div>,
-}))
+}));
 
 vi.mock('@/pages/SettingsPage', () => ({
   default: () => <div>Settings page</div>,
-}))
+}));
 
 vi.mock('@/admin/AdminPage', () => ({
   default: () => <div>Admin page</div>,
-}))
+}));
 
 function renderApp(initialRoute = '/') {
-  window.history.pushState({}, '', initialRoute)
+  window.history.pushState({}, '', initialRoute);
   return render(
     <MantineProvider>
       <App />
     </MantineProvider>,
-  )
+  );
 }
 
 describe('App', () => {
   beforeEach(() => {
-    resetSupabaseMocks()
-    mockSession(null)
-  })
+    resetSupabaseMocks();
+    mockSession(null);
+  });
 
   it('renders login page for unauthenticated users', async () => {
-    renderApp('/login')
+    renderApp('/login');
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+    });
+  });
 
   it('renders dashboard for authenticated users', async () => {
-    mockSession(buildSession())
+    mockSession(buildSession());
 
-    renderApp('/')
+    renderApp('/');
 
     await waitFor(() => {
-      expect(screen.getByText('Dashboard page')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Dashboard page')).toBeInTheDocument();
+    });
+  });
 
   it('renders plant center route', async () => {
-    mockSession(buildSession())
+    mockSession(buildSession());
 
-    renderApp('/plants-center')
+    renderApp('/plants-center');
 
     await waitFor(() => {
-      expect(screen.getByText('Plant center page')).toBeInTheDocument()
-    })
-  })
-})
+      expect(screen.getByText('Plant center page')).toBeInTheDocument();
+    });
+  });
+});

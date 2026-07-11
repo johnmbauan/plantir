@@ -1,20 +1,31 @@
 import { useCallback, useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
-import { fetchAdminDevices, type AdminDevice } from "@/admin/adminService";
+import {
+  fetchAdminFilterOptions,
+  type AdminFilterOptions,
+} from "@/admin/adminService";
 import { getErrorMessage } from "@/utils/error";
 
-export function useAdminDevices() {
-  const [devices, setDevices] = useState<AdminDevice[]>([]);
+const EMPTY_FILTER_OPTIONS: AdminFilterOptions = {
+  serials: [],
+  owners: [],
+  plants: [],
+  hasUnassignedOwner: false,
+  hasUnassignedPlant: false,
+};
+
+export function useAdminFilterOptions() {
+  const [filterOptions, setFilterOptions] = useState<AdminFilterOptions>(EMPTY_FILTER_OPTIONS);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      setDevices(await fetchAdminDevices());
+      setFilterOptions(await fetchAdminFilterOptions());
     } catch (err) {
       notifications.show({
         color: "red",
-        title: "Error loading devices",
+        title: "Error loading filters",
         message: getErrorMessage(err),
       });
     } finally {
@@ -28,5 +39,5 @@ export function useAdminDevices() {
     void refresh();
   }, [refresh]);
 
-  return { devices, loading, refresh };
+  return { filterOptions, loading, refresh };
 }

@@ -27,6 +27,7 @@ import { IconBattery, IconClock, IconDroplet, IconPencil, IconTool } from "@tabl
 import { Link } from "react-router-dom";
 import type { EnrichedPlant, HistoryRange, PlantHistory } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
+import { batteryMantineColor } from "@/utils/color-utils";
 import { formatInterval } from "@/utils/time";
 import HumidityBar from "@/components/HumidityBar";
 import HistoryLineChart from "@/components/HistoryLineChart";
@@ -179,7 +180,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
               icon={<IconBattery size={14} />}
               label="Battery"
               value={plant.batteryPercent != null ? `${plant.batteryPercent}%` : "No reading"}
-              color={plant.batteryPercent != null && plant.batteryPercent < 20 ? "red" : plant.batteryPercent != null && plant.batteryPercent < 50 ? "orange" : "green"}
+              color={batteryMantineColor(plant.batteryPercent)}
             />
             <MetricCard
               icon={<IconClock size={14} />}

@@ -1,119 +1,172 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Badge,
-  Group,
-  Skeleton,
-  Stack,
   Table,
   Text,
-  TextInput,
 } from "@mantine/core";
-import type { AdminDevice } from "@/admin/adminService";
-import { RefreshButton } from "@/admin/components/RefreshButton";
-import { batteryColor, humidityColor } from "@/admin/utils";
-import { relativeTime } from "@/utils/time";
+import type { AdminDeviceSortKey, AdminFilterOptions } from "@/admin/adminService";
+import { AdminDeviceRow } from "@/admin/components/AdminDeviceRow";
+import { DevicesTabHeader } from "@/admin/components/DevicesTabHeader";
+import { AdminTabLayout } from "@/admin/components/AdminTabLayout";
+import { SortableTh } from "@/admin/components/SortableTh";
+import { TableLoadingRows } from "@/admin/components/TableLoadingRows";
+import { TablePagination } from "@/admin/components/TablePagination";
+import { ADMIN_PAGE_SIZE } from "@/admin/constants";
+import {
+  buildOwnerOptions,
+  buildPlantOptions,
+  buildSerialOptions,
+} from "@/admin/filterOptions";
+import { useAdminDevicesPage } from "@/admin/hooks/useAdminDevicesPage";
+import { paginationMeta } from "@/utils/pagination";
+import type { SortDirection } from "@/utils/sort";
 
 interface DevicesTabProps {
-  devices: AdminDevice[];
-  loading: boolean;
-  onRefresh: () => void;
+  filterOptions: AdminFilterOptions;
+  onRefreshFilters?: () => void;
 }
 
-export function DevicesTab({ devices, loading, onRefresh }: DevicesTabProps) {
-  const [search, setSearch] = useState("");
+const DEVICE_COLUMNS: { key: AdminDeviceSortKey; label: string }[] = [
+  { key: "serialNumber", label: "Serial Number" },
+  { key: "owner_email", label: "Owner" },
+  { key: "plantName", label: "Plant" },
+  { key: "type", label: "Type" },
+  { key: "lastHumidity", label: "Humidity" },
+  { key: "lastBattery", label: "Battery" },
+  { key: "lastSeenAt", label: "Last Seen" },
+];
 
-  const visible = devices.filter((d) => {
-    const q = search.toLowerCase();
-    return (
-      d.serialNumber.toLowerCase().includes(q) ||
-      (d.owner_email ?? "").toLowerCase().includes(q) ||
-      (d.plantName ?? "").toLowerCase().includes(q)
-    );
-  });
+export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps) {
+  const [selectedSerial, setSelectedSerial] = useState<string | null>(null);
+  const [selectedOwner, setSelectedOwner] = useState<string | null>(null);
+  const [selectedPlant, setSelectedPlant] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<AdminDeviceSortKey>("lastSeenAt");
+  const [sortDir, setSortDir] = useState<SortDirection>("desc");
+  const [page, setPage] = useState(1);
+
+  const query = useMemo(
+    () => ({
+      serialNumber: selectedSerial,
+      ownerEmail: selectedOwner,
+      plantName: selectedPlant,
+      sortKey,
+      sortDir,
+      page,
+      pageSize: ADMIN_PAGE_SIZE,
+    }),
+    [selectedSerial, selectedOwner, selectedPlant, sortKey, sortDir, page],
+  );
+
+  const { items, totalCount, loading, refresh, currentPage } = useAdminDevicesPage(query);
+
+  const pagination = useMemo(
+    () => paginationMeta(totalCount, page, ADMIN_PAGE_SIZE),
+    [totalCount, page],
+  );
+
+  useEffect(() => {
+    if (page !== currentPage) {
+      setPage(currentPage);
+    }
+  }, [page, currentPage]);
+
+  const serialOptions = buildSerialOptions(filterOptions);
+  const ownerOptions = buildOwnerOptions(filterOptions);
+  const plantOptions = buildPlantOptions(filterOptions);
+  const hasActiveFilters = selectedSerial || selectedOwner || selectedPlant;
+
+  function handleRefresh() {
+    void refresh();
+    void onRefreshFilters?.();
+  }
+
+  function handleSort(key: string) {
+    const column = key as AdminDeviceSortKey;
+    if (sortKey === column) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(column);
+      setSortDir("asc");
+    }
+    setPage(1);
+  }
+
+  function handleFilterChange(
+    setter: (value: string | null) => void,
+    value: string | null,
+  ) {
+    setter(value);
+    setPage(1);
+  }
+
+  const header = (
+    <DevicesTabHeader
+      serialOptions={serialOptions}
+      ownerOptions={ownerOptions}
+      plantOptions={plantOptions}
+      selectedSerial={selectedSerial}
+      selectedOwner={selectedOwner}
+      selectedPlant={selectedPlant}
+      onSerialChange={(value) => handleFilterChange(setSelectedSerial, value)}
+      onOwnerChange={(value) => handleFilterChange(setSelectedOwner, value)}
+      onPlantChange={(value) => handleFilterChange(setSelectedPlant, value)}
+      onRefresh={handleRefresh}
+    />
+  );
+
+  const footer = (
+    <TablePagination
+      page={currentPage}
+      totalPages={pagination.totalPages}
+      rangeStart={pagination.rangeStart}
+      rangeEnd={pagination.rangeEnd}
+      totalItems={totalCount}
+      loading={loading}
+      onPageChange={setPage}
+    />
+  );
 
   return (
-    <Stack gap="md">
-      <Group justify="space-between">
-        <Text size="lg" fw={600}>All Devices</Text>
-        <Group gap="xs">
-          <TextInput
-            placeholder="Filter by serial, owner or plant…"
-            value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
-            style={{ width: 280 }}
-          />
-          <RefreshButton onClick={onRefresh} label="Refresh devices" />
-        </Group>
-      </Group>
-
+    <AdminTabLayout header={header} footer={footer}>
       <Table.ScrollContainer minWidth={700}>
         <Table verticalSpacing="sm">
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Serial Number</Table.Th>
-              <Table.Th>Owner</Table.Th>
-              <Table.Th>Plant</Table.Th>
-              <Table.Th>Type</Table.Th>
-              <Table.Th>Humidity</Table.Th>
-              <Table.Th>Battery</Table.Th>
-              <Table.Th>Last Seen</Table.Th>
+              {DEVICE_COLUMNS.map((col) => (
+                <SortableTh
+                  key={col.key}
+                  label={col.label}
+                  columnKey={col.key}
+                  activeKey={sortKey}
+                  direction={sortDir}
+                  onSort={handleSort}
+                />
+              ))}
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
             {loading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <Table.Tr key={i}>
-                  {Array.from({ length: 7 }).map((__, j) => (
-                    <Table.Td key={j}><Skeleton height={14} radius="sm" /></Table.Td>
-                  ))}
-                </Table.Tr>
-              ))
-            ) : visible.length === 0 ? (
+              <TableLoadingRows
+                rowCount={ADMIN_PAGE_SIZE}
+                columnCount={DEVICE_COLUMNS.length}
+              />
+            ) : items.length === 0 ? (
               <Table.Tr>
                 <Table.Td colSpan={7}>
                   <Text ta="center" c="dimmed" py="xl" size="sm">
-                    {devices.length === 0 ? "No devices registered." : "No devices match your filter."}
+                    {hasActiveFilters
+                      ? "No devices match your filters."
+                      : "No devices registered."}
                   </Text>
                 </Table.Td>
               </Table.Tr>
             ) : (
-              visible.map((d) => (
-                <Table.Tr key={d.id}>
-                  <Table.Td fw={500} ff="monospace">{d.serialNumber}</Table.Td>
-                  <Table.Td>
-                    {d.owner_email
-                      ? <Text size="sm">{d.owner_email}</Text>
-                      : <Text size="sm" c="dimmed">—</Text>}
-                  </Table.Td>
-                  <Table.Td>
-                    {d.plantName
-                      ? <Text size="sm">{d.plantName}</Text>
-                      : <Text size="sm" c="dimmed">Unassigned</Text>}
-                  </Table.Td>
-                  <Table.Td>
-                    <Badge variant="light" color="green" size="sm" style={{ textTransform: "capitalize" }}>
-                      {d.type}
-                    </Badge>
-                  </Table.Td>
-                  <Table.Td>
-                    {d.lastHumidity !== null
-                      ? <Text size="sm" c={humidityColor(d.lastHumidity)} fw={600}>{d.lastHumidity}%</Text>
-                      : <Text size="sm" c="dimmed">—</Text>}
-                  </Table.Td>
-                  <Table.Td>
-                    {d.lastBattery !== null
-                      ? <Text size="sm" c={batteryColor(d.lastBattery)} fw={600}>{d.lastBattery}%</Text>
-                      : <Text size="sm" c="dimmed">—</Text>}
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="sm" c="dimmed">{relativeTime(d.lastSeenAt) ?? "—"}</Text>
-                  </Table.Td>
-                </Table.Tr>
+              items.map((device) => (
+                <AdminDeviceRow key={device.id} device={device} />
               ))
             )}
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
-    </Stack>
+    </AdminTabLayout>
   );
 }

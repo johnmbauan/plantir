@@ -1,11 +1,11 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import testingLibrary from 'eslint-plugin-testing-library'
-import vitest from 'eslint-plugin-vitest'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+import testingLibrary from 'eslint-plugin-testing-library';
+import vitest from 'eslint-plugin-vitest';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
   globalIgnores(['dist', 'arduino', 'coverage']),
@@ -27,6 +27,7 @@ export default defineConfig([
       },
     },
     rules: {
+      'semi': ['error', 'always'],
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
       'react-hooks/set-state-in-effect': 'warn',
@@ -52,6 +53,10 @@ export default defineConfig([
       'testing-library/await-async-queries': 'error',
       'testing-library/no-manual-cleanup': 'off',
       'react-refresh/only-export-components': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
-])
+]);

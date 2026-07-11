@@ -1,18 +1,18 @@
-import { describe, it, expect, vi } from 'vitest'
-import userEvent from '@testing-library/user-event'
-import { renderWithProviders, screen } from '@/test/render'
-import { defaultFormValues } from '@/components/DeviceFormModal/utils'
-import AssignmentSection from './AssignmentSection'
+import { describe, it, expect, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders, screen } from '@/test/render';
+import { defaultFormValues } from '@/components/DeviceFormModal/utils';
+import AssignmentSection from './AssignmentSection';
 
 const plantOptions = [
   { value: '1', label: 'Monstera' },
   { value: '2', label: 'Ficus' },
-]
+];
 
 describe('AssignmentSection', () => {
   it('renders editable serial input in create mode', async () => {
-    const user = userEvent.setup()
-    const onSerialChange = vi.fn()
+    const user = userEvent.setup();
+    const onSerialChange = vi.fn();
 
     renderWithProviders(
       <AssignmentSection
@@ -23,15 +23,15 @@ describe('AssignmentSection', () => {
         onSerialChange={onSerialChange}
         onPlantChange={vi.fn()}
       />,
-    )
+    );
 
-    const serialInput = screen.getByPlaceholderText('e.g. SN-001')
-    expect(serialInput).toBeEnabled()
+    const serialInput = screen.getByPlaceholderText('e.g. SN-001');
+    expect(serialInput).toBeEnabled();
 
-    await user.type(serialInput, 'SN-NEW')
+    await user.type(serialInput, 'SN-NEW');
 
-    expect(onSerialChange).toHaveBeenCalled()
-  })
+    expect(onSerialChange).toHaveBeenCalled();
+  });
 
   it('shows read-only serial and sensor badge in edit mode', () => {
     renderWithProviders(
@@ -43,11 +43,11 @@ describe('AssignmentSection', () => {
         onSerialChange={vi.fn()}
         onPlantChange={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByDisplayValue('SN-001')).toHaveAttribute('readonly')
-    expect(screen.getByText('Humidity sensor')).toBeInTheDocument()
-  })
+    expect(screen.getByDisplayValue('SN-001')).toHaveAttribute('readonly');
+    expect(screen.getByText('Humidity sensor')).toBeInTheDocument();
+  });
 
   it('shows serial validation error', () => {
     renderWithProviders(
@@ -59,14 +59,14 @@ describe('AssignmentSection', () => {
         onSerialChange={vi.fn()}
         onPlantChange={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Serial number is required')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Serial number is required')).toBeInTheDocument();
+  });
 
   it('calls onPlantChange with null when plant is cleared', async () => {
-    const user = userEvent.setup()
-    const onPlantChange = vi.fn()
+    const user = userEvent.setup();
+    const onPlantChange = vi.fn();
 
     renderWithProviders(
       <AssignmentSection
@@ -77,14 +77,14 @@ describe('AssignmentSection', () => {
         onSerialChange={vi.fn()}
         onPlantChange={onPlantChange}
       />,
-    )
+    );
 
     // Mantine Select clear button is aria-hidden.
     // eslint-disable-next-line testing-library/no-node-access
-    const clearButton = document.querySelector('.mantine-Select-root button:last-of-type')
-    expect(clearButton).toBeTruthy()
-    await user.click(clearButton!)
+    const clearButton = document.querySelector('.mantine-Select-root button:last-of-type');
+    expect(clearButton).toBeTruthy();
+    await user.click(clearButton!);
 
-    expect(onPlantChange).toHaveBeenCalledWith(null)
-  })
-})
+    expect(onPlantChange).toHaveBeenCalledWith(null);
+  });
+});

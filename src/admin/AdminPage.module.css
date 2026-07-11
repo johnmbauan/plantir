@@ -1,0 +1,35 @@
+.list {
+  gap: var(--mantine-spacing-lg);
+  border-bottom: 1px solid var(--terracotta-100);
+}
+
+.list::before {
+  border-color: var(--terracotta-100) !important;
+}
+
+.tab {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--green-500);
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 2px;
+  margin-bottom: -1px;
+}
+
+.tab:hover {
+  background-color: transparent;
+  color: var(--green-700);
+}
+
+.tab[data-active] {
+  color: var(--terracotta-900);
+  border-bottom-color: var(--terracotta-500);
+  background-color: transparent;
+}
+
+.tab[data-active]:hover {
+  color: var(--terracotta-900);
+  background-color: transparent;
+}

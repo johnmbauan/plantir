@@ -1,101 +1,166 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Badge,
-  Group,
-  Select,
-  Skeleton,
-  Stack,
   Table,
   Text,
 } from "@mantine/core";
-import type { AdminDevice } from "@/admin/adminService";
-import { RefreshButton } from "@/admin/components/RefreshButton";
-import { useAdminLogs } from "@/admin/hooks/useAdminLogs";
-import { LOG_LEVEL_COLOR } from "@/admin/utils";
+import type { AdminFilterOptions, AdminLogSortKey } from "@/admin/adminService";
+import { AdminLogRow } from "@/admin/components/AdminLogRow";
+import { AdminTabLayout } from "@/admin/components/AdminTabLayout";
+import { LogsTabHeader } from "@/admin/components/LogsTabHeader";
+import { SortableTh } from "@/admin/components/SortableTh";
+import { TableLoadingRows } from "@/admin/components/TableLoadingRows";
+import { TablePagination } from "@/admin/components/TablePagination";
+import { ADMIN_PAGE_SIZE } from "@/admin/constants";
+import {
+  buildOwnerOptions,
+  buildSerialOptions,
+} from "@/admin/filterOptions";
+import { useAdminLogsPage } from "@/admin/hooks/useAdminLogsPage";
+import { paginationMeta } from "@/utils/pagination";
+import type { SortDirection } from "@/utils/sort";
 
 interface LogsTabProps {
-  devices: AdminDevice[];
+  filterOptions: AdminFilterOptions;
+  onRefreshFilters?: () => void;
 }
 
-export function LogsTab({ devices }: LogsTabProps) {
-  const [selectedSerial, setSelectedSerial] = useState<string | null>(null);
-  const { logs, loading, refresh } = useAdminLogs(selectedSerial);
+const LOG_COLUMNS: { key: AdminLogSortKey; label: string }[] = [
+  { key: "createdAt", label: "Timestamp" },
+  { key: "serialNumber", label: "Serial" },
+  { key: "level", label: "Level" },
+  { key: "message", label: "Message" },
+];
 
-  const serialOptions = [
-    { value: "", label: "All devices" },
-    ...devices.map((d) => ({ value: d.serialNumber, label: d.serialNumber })),
-  ];
+export function LogsTab({ filterOptions, onRefreshFilters }: LogsTabProps) {
+  const [selectedSerial, setSelectedSerial] = useState<string | null>(null);
+  const [selectedOwner, setSelectedOwner] = useState<string | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<AdminLogSortKey>("createdAt");
+  const [sortDir, setSortDir] = useState<SortDirection>("desc");
+  const [page, setPage] = useState(1);
+
+  const query = useMemo(
+    () => ({
+      serialNumber: selectedSerial,
+      ownerEmail: selectedOwner,
+      level: selectedLevel as "error" | "warning" | "info" | null,
+      sortKey,
+      sortDir,
+      page,
+      pageSize: ADMIN_PAGE_SIZE,
+    }),
+    [selectedSerial, selectedOwner, selectedLevel, sortKey, sortDir, page],
+  );
+
+  const { items, totalCount, loading, refresh, currentPage } = useAdminLogsPage(query);
+
+  const pagination = useMemo(
+    () => paginationMeta(totalCount, page, ADMIN_PAGE_SIZE),
+    [totalCount, page],
+  );
+
+  useEffect(() => {
+    if (page !== currentPage) {
+      setPage(currentPage);
+    }
+  }, [page, currentPage]);
+
+  const serialOptions = buildSerialOptions(filterOptions);
+  const ownerOptions = buildOwnerOptions(filterOptions);
+  const hasActiveFilters = selectedSerial || selectedOwner || selectedLevel;
+
+  function handleRefresh() {
+    void refresh();
+    void onRefreshFilters?.();
+  }
+
+  function handleSort(key: string) {
+    const column = key as AdminLogSortKey;
+    if (sortKey === column) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(column);
+      setSortDir("asc");
+    }
+    setPage(1);
+  }
+
+  function handleFilterChange(
+    setter: (value: string | null) => void,
+    value: string | null,
+  ) {
+    setter(value);
+    setPage(1);
+  }
+
+  const header = (
+    <LogsTabHeader
+      serialOptions={serialOptions}
+      ownerOptions={ownerOptions}
+      selectedSerial={selectedSerial}
+      selectedOwner={selectedOwner}
+      selectedLevel={selectedLevel}
+      onSerialChange={(value) => handleFilterChange(setSelectedSerial, value)}
+      onOwnerChange={(value) => handleFilterChange(setSelectedOwner, value)}
+      onLevelChange={(value) => handleFilterChange(setSelectedLevel, value)}
+      onRefresh={handleRefresh}
+    />
+  );
+
+  const footer = (
+    <TablePagination
+      page={currentPage}
+      totalPages={pagination.totalPages}
+      rangeStart={pagination.rangeStart}
+      rangeEnd={pagination.rangeEnd}
+      totalItems={totalCount}
+      loading={loading}
+      onPageChange={setPage}
+    />
+  );
 
   return (
-    <Stack gap="md">
-      <Group justify="space-between">
-        <Text size="lg" fw={600}>Device Logs</Text>
-        <Group gap="xs">
-          <Select
-            data={serialOptions}
-            value={selectedSerial ?? ""}
-            onChange={(v) => setSelectedSerial(v || null)}
-            placeholder="All devices"
-            style={{ width: 240 }}
-            clearable
-          />
-          <RefreshButton onClick={refresh} label="Refresh logs" />
-        </Group>
-      </Group>
-
+    <AdminTabLayout header={header} footer={footer}>
       <Table.ScrollContainer minWidth={600}>
         <Table verticalSpacing="sm">
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Timestamp</Table.Th>
-              <Table.Th>Serial</Table.Th>
-              <Table.Th>Level</Table.Th>
-              <Table.Th>Message</Table.Th>
+              {LOG_COLUMNS.map((col) => (
+                <SortableTh
+                  key={col.key}
+                  label={col.label}
+                  columnKey={col.key}
+                  activeKey={sortKey}
+                  direction={sortDir}
+                  onSort={handleSort}
+                />
+              ))}
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
             {loading ? (
-              Array.from({ length: 6 }).map((_, i) => (
-                <Table.Tr key={i}>
-                  {Array.from({ length: 4 }).map((__, j) => (
-                    <Table.Td key={j}><Skeleton height={14} radius="sm" /></Table.Td>
-                  ))}
-                </Table.Tr>
-              ))
-            ) : logs.length === 0 ? (
+              <TableLoadingRows
+                rowCount={ADMIN_PAGE_SIZE}
+                columnCount={LOG_COLUMNS.length}
+              />
+            ) : items.length === 0 ? (
               <Table.Tr>
                 <Table.Td colSpan={4}>
-                  <Text ta="center" c="dimmed" py="xl" size="sm">No logs found.</Text>
+                  <Text ta="center" c="dimmed" py="xl" size="sm">
+                    {hasActiveFilters
+                      ? "No logs match your filters."
+                      : "No logs found."}
+                  </Text>
                 </Table.Td>
               </Table.Tr>
             ) : (
-              logs.map((log) => (
-                <Table.Tr key={log.id}>
-                  <Table.Td style={{ whiteSpace: "nowrap" }}>
-                    <Text size="sm" c="dimmed">{new Date(log.createdAt).toLocaleString()}</Text>
-                  </Table.Td>
-                  <Table.Td ff="monospace">
-                    <Text size="sm">{log.serialNumber}</Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Badge
-                      variant="light"
-                      color={LOG_LEVEL_COLOR[log.level] ?? "gray"}
-                      size="sm"
-                      style={{ textTransform: "capitalize" }}
-                    >
-                      {log.level}
-                    </Badge>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="sm" style={{ wordBreak: "break-word" }}>{log.message}</Text>
-                  </Table.Td>
-                </Table.Tr>
+              items.map((log) => (
+                <AdminLogRow key={log.id} log={log} />
               ))
             )}
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
-    </Stack>
+    </AdminTabLayout>
   );
 }

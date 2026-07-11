@@ -1,74 +1,86 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import userEvent from '@testing-library/user-event'
-import { renderWithProviders, screen } from '@/test/render'
-import AdminPage from './AdminPage'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
+import { MantineProvider } from '@mantine/core';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { AuthProvider } from '@/context/AuthContext';
+import AdminPage from './AdminPage';
 
-const refresh = vi.fn()
+const refresh = vi.fn();
 
-vi.mock('@/admin/hooks/useAdminDevices', () => ({
-  useAdminDevices: vi.fn(),
-}))
+vi.mock('@/admin/hooks/useAdminFilterOptions', () => ({
+  useAdminFilterOptions: vi.fn(),
+}));
 
 vi.mock('@/admin/components/DevicesTab', () => ({
-  DevicesTab: ({ loading }: { loading: boolean }) => (
-    <div>{loading ? 'Loading devices…' : 'Admin devices tab'}</div>
-  ),
-}))
+  DevicesTab: () => <div>Admin devices tab</div>,
+}));
 
 vi.mock('@/admin/components/LogsTab', () => ({
   LogsTab: () => <div>Admin logs tab</div>,
-}))
+}));
 
-import { useAdminDevices } from '@/admin/hooks/useAdminDevices'
+import { useAdminFilterOptions } from '@/admin/hooks/useAdminFilterOptions';
 
-const mockedUseAdminDevices = vi.mocked(useAdminDevices)
+const mockedUseAdminFilterOptions = vi.mocked(useAdminFilterOptions);
+
+function createAdminPageRouter(route = '/admin') {
+  return createMemoryRouter(
+    [{ path: '/admin', element: <AdminPage /> }],
+    { initialEntries: [route] },
+  );
+}
+
+function renderAdminPage(router: ReturnType<typeof createAdminPageRouter>) {
+  render(
+    <MantineProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </MantineProvider>,
+  );
+}
 
 describe('AdminPage', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockedUseAdminDevices.mockReturnValue({
-      devices: [{
-        id: 1,
-        serialNumber: 'SN-001',
-        type: 'humidity',
-        user_id: 'user-1',
-        owner_email: 'a@example.com',
-        plantName: 'Monstera',
-        lastHumidity: null,
-        lastBattery: null,
-        lastSeenAt: null,
-      }],
+    vi.clearAllMocks();
+    mockedUseAdminFilterOptions.mockReturnValue({
+      filterOptions: {
+        serials: ['SN-001'],
+        owners: ['a@example.com'],
+        plants: ['Monstera'],
+        hasUnassignedOwner: false,
+        hasUnassignedPlant: false,
+      },
       loading: false,
       refresh,
-    })
-  })
+    });
+  });
 
-  it('renders admin portal with devices tab', () => {
-    renderWithProviders(<AdminPage />)
+  it('renders admin portal with devices tab by default', () => {
+    renderAdminPage(createAdminPageRouter('/admin'));
 
-    expect(screen.getByRole('heading', { name: 'Admin Portal' })).toBeInTheDocument()
-    expect(screen.getByText('Admin devices tab')).toBeInTheDocument()
-  })
+    expect(screen.getByRole('heading', { name: 'Admin Portal' })).toBeInTheDocument();
+    expect(screen.getByText('Admin devices tab')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Devices', selected: true })).toBeInTheDocument();
+  });
 
-  it('switches to logs tab', async () => {
-    const user = userEvent.setup()
+  it('switches to logs tab and updates the URL', async () => {
+    const user = userEvent.setup();
+    const memoryRouter = createAdminPageRouter('/admin');
+    renderAdminPage(memoryRouter);
 
-    renderWithProviders(<AdminPage />)
+    await user.click(screen.getByRole('tab', { name: 'Logs' }));
 
-    await user.click(screen.getByRole('tab', { name: 'Logs' }))
+    expect(screen.getByText('Admin logs tab')).toBeInTheDocument();
+    expect(memoryRouter.state.location.search).toBe('?tab=logs');
+  });
 
-    expect(screen.getByText('Admin logs tab')).toBeInTheDocument()
-  })
+  it('opens the logs tab when the URL includes tab=logs', () => {
+    renderAdminPage(createAdminPageRouter('/admin?tab=logs'));
 
-  it('shows loading state from hook', () => {
-    mockedUseAdminDevices.mockReturnValue({
-      devices: [],
-      loading: true,
-      refresh,
-    })
-
-    renderWithProviders(<AdminPage />)
-
-    expect(screen.getByText('Loading devices…')).toBeInTheDocument()
-  })
-})
+    expect(screen.getByText('Admin logs tab')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Logs', selected: true })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Devices', selected: false })).toBeInTheDocument();
+  });
+});

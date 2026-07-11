@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import userEvent from '@testing-library/user-event'
-import { renderWithProviders, screen } from '@/test/render'
-import WaitingStep from './WaitingStep'
+import { describe, it, expect, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders, screen } from '@/test/render';
+import WaitingStep from './WaitingStep';
 
 describe('WaitingStep', () => {
   it('shows loading state while waiting', () => {
@@ -12,16 +12,16 @@ describe('WaitingStep', () => {
         onKeepWaiting={vi.fn()}
         onRegenerateCode={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Waiting for registration')).toBeInTheDocument()
-    expect(screen.getByText(/Waiting for the device to register/i)).toBeInTheDocument()
-  })
+    expect(screen.getByText('Waiting for registration')).toBeInTheDocument();
+    expect(screen.getByText(/Waiting for the device to register/i)).toBeInTheDocument();
+  });
 
   it('shows timeout actions when timed out', async () => {
-    const user = userEvent.setup()
-    const onKeepWaiting = vi.fn()
-    const onRegenerateCode = vi.fn()
+    const user = userEvent.setup();
+    const onKeepWaiting = vi.fn();
+    const onRegenerateCode = vi.fn();
 
     renderWithProviders(
       <WaitingStep
@@ -30,16 +30,16 @@ describe('WaitingStep', () => {
         onKeepWaiting={onKeepWaiting}
         onRegenerateCode={onRegenerateCode}
       />,
-    )
+    );
 
-    expect(screen.getByText('Still waiting')).toBeInTheDocument()
+    expect(screen.getByText('Still waiting')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Keep waiting' }))
-    await user.click(screen.getByRole('button', { name: 'Generate a new setup code' }))
+    await user.click(screen.getByRole('button', { name: 'Keep waiting' }));
+    await user.click(screen.getByRole('button', { name: 'Generate a new setup code' }));
 
-    expect(onKeepWaiting).toHaveBeenCalledTimes(1)
-    expect(onRegenerateCode).toHaveBeenCalledTimes(1)
-  })
+    expect(onKeepWaiting).toHaveBeenCalledTimes(1);
+    expect(onRegenerateCode).toHaveBeenCalledTimes(1);
+  });
 
   it('shows error alert when registration fails', () => {
     renderWithProviders(
@@ -49,9 +49,9 @@ describe('WaitingStep', () => {
         onKeepWaiting={vi.fn()}
         onRegenerateCode={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Error')).toBeInTheDocument()
-    expect(screen.getByText(/Registration failed/i)).toBeInTheDocument()
-  })
-})
+    expect(screen.getByText('Error')).toBeInTheDocument();
+    expect(screen.getByText(/Registration failed/i)).toBeInTheDocument();
+  });
+});

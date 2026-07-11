@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { renderWithProviders, screen } from '@/test/render'
-import WateringAlertsSection from './WateringAlertsSection'
+import { describe, it, expect, vi } from 'vitest';
+import { renderWithProviders, screen } from '@/test/render';
+import WateringAlertsSection from './WateringAlertsSection';
 
 describe('WateringAlertsSection', () => {
   it('renders threshold value and description', () => {
@@ -10,12 +10,12 @@ describe('WateringAlertsSection', () => {
         validation={{}}
         onThresholdChange={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Watering alerts')).toBeInTheDocument()
-    expect(screen.getByText('25%')).toBeInTheDocument()
-    expect(screen.getByText(/Alert when humidity drops below/i)).toBeInTheDocument()
-  })
+    expect(screen.getByText('Watering alerts')).toBeInTheDocument();
+    expect(screen.getByText('25%')).toBeInTheDocument();
+    expect(screen.getByText(/Alert when humidity drops below/i)).toBeInTheDocument();
+  });
 
   it('shows validation error when threshold is invalid', () => {
     renderWithProviders(
@@ -24,10 +24,10 @@ describe('WateringAlertsSection', () => {
         validation={{ threshold: 'Threshold must be between 0 and 100' }}
         onThresholdChange={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Threshold must be between 0 and 100')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Threshold must be between 0 and 100')).toBeInTheDocument();
+  });
 
   it('shows suggested threshold from species when available', () => {
     renderWithProviders(
@@ -37,8 +37,8 @@ describe('WateringAlertsSection', () => {
         validation={{}}
         onThresholdChange={vi.fn()}
       />,
-    )
+    );
 
-    expect(screen.getByText('Suggested from species: 42%')).toBeInTheDocument()
-  })
-})
+    expect(screen.getByText('Suggested from species: 42%')).toBeInTheDocument();
+  });
+});

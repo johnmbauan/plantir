@@ -1,4 +1,4 @@
-import type { EnrichedPlant } from '@/types'
+import type { EnrichedPlant } from '@/types';
 
 export function buildPlant(overrides: Partial<EnrichedPlant> = {}): EnrichedPlant {
   return {
@@ -14,5 +14,5 @@ export function buildPlant(overrides: Partial<EnrichedPlant> = {}): EnrichedPlan
     humidityPercent: 55,
     batteryPercent: 80,
     ...overrides,
-  }
+  };
 }
