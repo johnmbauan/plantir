@@ -3,6 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, waitFor } from '@/test/render';
 import { mockSession, resetSupabaseMocks, supabaseMock } from '@/test/mocks/supabase';
+import { buildSession } from '@/test/builders/session';
+import { clearPendingPasswordSetup } from '@/pages/password/password-helper';
 import LoginPage from './LoginPage';
 
 const { navigate } = vi.hoisted(() => ({
@@ -20,6 +22,7 @@ vi.mock('react-router-dom', async () => {
 describe('LoginPage', () => {
   beforeEach(() => {
     resetSupabaseMocks();
+    clearPendingPasswordSetup();
     mockSession(null);
     vi.clearAllMocks();
     supabaseMock.auth.signInWithPassword.mockResolvedValue({ error: null });
@@ -73,5 +76,44 @@ describe('LoginPage', () => {
     await user.click(screen.getByRole('button', { name: 'Sign in' }));
 
     expect(await screen.findByText('Invalid credentials')).toBeInTheDocument();
+  });
+
+  it('redirects authenticated users to home', async () => {
+    mockSession(buildSession());
+
+    renderWithProviders(<LoginPage />);
+
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalledWith('/', { replace: true });
+    });
+  });
+
+  it('redirects invited users to set-password', async () => {
+    mockSession(buildSession({
+      user: {
+        id: 'user-1',
+        email: 'invited@example.com',
+        user_metadata: { needs_password_setup: true },
+      },
+    }));
+
+    renderWithProviders(<LoginPage />);
+
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalledWith('/set-password', { replace: true });
+    });
+  });
+
+  it('shows invite message from navigation state', async () => {
+    renderWithProviders(<LoginPage />, {
+      routerProps: {
+        initialEntries: [{
+          pathname: '/login',
+          state: { message: 'Invite link expired or invalid.' },
+        }],
+      },
+    });
+
+    expect(await screen.findByText('Invite link expired or invalid.')).toBeInTheDocument();
   });
 });

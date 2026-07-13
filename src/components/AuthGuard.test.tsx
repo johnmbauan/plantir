@@ -3,7 +3,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { Route, Routes } from 'react-router-dom';
 import { renderWithProviders, screen, waitFor } from '@/test/render';
 import { buildSession } from '@/test/builders/session';
-import { mockSession, mockGetSession, resetSupabaseMocks } from '@/test/mocks/supabase';
+import { mockSession, mockGetSession, mockGetUser, resetSupabaseMocks } from '@/test/mocks/supabase';
+import { markPendingPasswordSetup, clearPendingPasswordSetup } from '@/pages/password/password-helper';
 import AuthGuard from '@/components/AuthGuard';
 
 function renderGuard(route = '/') {
@@ -14,6 +15,7 @@ function renderGuard(route = '/') {
         <Route path="/dashboard" element={<div>Protected content</div>} />
       </Route>
       <Route path="/login" element={<div>Login page</div>} />
+      <Route path="/set-password" element={<div>Set password page</div>} />
     </Routes>,
     { route },
   );
@@ -22,6 +24,7 @@ function renderGuard(route = '/') {
 describe('AuthGuard', () => {
   beforeEach(() => {
     resetSupabaseMocks();
+    clearPendingPasswordSetup();
   });
 
   it('redirects unauthenticated users to login', async () => {
@@ -48,5 +51,44 @@ describe('AuthGuard', () => {
       expect(screen.queryByText('Protected content')).not.toBeInTheDocument();
       expect(screen.queryByText('Login page')).not.toBeInTheDocument();
     });
+  });
+
+  it('redirects invited users to set-password', async () => {
+    mockSession(buildSession({
+      user: {
+        id: 'user-1',
+        email: 'invited@example.com',
+        user_metadata: { needs_password_setup: true },
+      },
+    }));
+    renderGuard();
+
+    expect(await screen.findByText('Set password page')).toBeInTheDocument();
+    expect(screen.queryByText('Protected content')).not.toBeInTheDocument();
+  });
+
+  it('redirects invite callback users to set-password', async () => {
+    markPendingPasswordSetup();
+    mockSession(buildSession());
+    renderGuard();
+
+    expect(await screen.findByText('Set password page')).toBeInTheDocument();
+    expect(screen.queryByText('Protected content')).not.toBeInTheDocument();
+  });
+
+  it('redirects invited users using session user when context user is null', async () => {
+    const session = buildSession({
+      user: {
+        id: 'user-1',
+        email: 'invited@example.com',
+        user_metadata: { needs_password_setup: true },
+      },
+    });
+    mockGetSession.mockResolvedValue({ data: { session }, error: null });
+    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+    renderGuard();
+
+    expect(await screen.findByText('Set password page')).toBeInTheDocument();
+    expect(screen.queryByText('Protected content')).not.toBeInTheDocument();
   });
 });

@@ -51,6 +51,7 @@ const mocks = vi.hoisted(() => {
       getSession: mockGetSession,
       onAuthStateChange: mockOnAuthStateChange,
       signInWithPassword: vi.fn(),
+      updateUser: vi.fn(),
       signOut: vi.fn(),
     },
     from: mockFrom,
@@ -97,6 +98,10 @@ const mocks = vi.hoisted(() => {
 
   function mockSessionValue(session: Session | null) {
     mockGetSession.mockResolvedValue({ data: { session }, error: null });
+    mockGetUser.mockResolvedValue({
+      data: { user: session?.user ?? null },
+      error: null,
+    });
   }
 
   function mockFromTable(table: string, result: QueryResult) {

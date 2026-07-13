@@ -1,20 +1,37 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Paper, TextInput, PasswordInput, Button, Title, Text, Stack, Center } from "@mantine/core";
+import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
+import { needsPasswordSetup } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { session, user, loading } = useAuth();
+  const authUser = user ?? session?.user;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inviteMessage = (location.state as { message?: string } | null)?.message ?? null;
+
+  useEffect(() => {
+    if (loading || !session) return;
+
+    if (needsPasswordSetup(authUser)) {
+      navigate("/set-password", { replace: true });
+      return;
+    }
+
+    navigate("/", { replace: true });
+  }, [loading, session, authUser, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
+    setSubmitting(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
@@ -22,8 +39,12 @@ export default function LoginPage() {
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
+  }
+
+  if (loading || session) {
+    return null;
   }
 
   return (
@@ -47,9 +68,9 @@ export default function LoginPage() {
             </Text>
           </Stack>
 
-          {error && (
-            <Text size="sm" c="red">
-              {error}
+          {(inviteMessage || error) && (
+            <Text size="sm" c={error ? "red" : "dimmed"}>
+              {error ?? inviteMessage}
             </Text>
           )}
 
@@ -70,7 +91,7 @@ export default function LoginPage() {
             autoComplete="current-password"
           />
 
-          <Button type="submit" loading={loading} fullWidth mt="xs">
+          <Button type="submit" loading={submitting} fullWidth mt="xs">
             Sign in
           </Button>
         </Stack>
