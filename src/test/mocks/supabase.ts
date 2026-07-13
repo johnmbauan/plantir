@@ -51,6 +51,7 @@ const mocks = vi.hoisted(() => {
       getSession: mockGetSession,
       onAuthStateChange: mockOnAuthStateChange,
       signInWithPassword: vi.fn(),
+      resetPasswordForEmail: vi.fn(),
       updateUser: vi.fn(),
       signOut: vi.fn(),
     },

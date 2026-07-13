@@ -5,7 +5,7 @@ import { renderWithProviders, screen, waitFor } from '@/test/render';
 import { mockSession, resetSupabaseMocks, supabaseMock } from '@/test/mocks/supabase';
 import { buildSession } from '@/test/builders/session';
 import { clearPendingPasswordSetup } from '@/pages/password/password-helper';
-import LoginPage from './LoginPage';
+import ForgotPasswordPage from './ForgotPasswordPage';
 
 const { navigate } = vi.hoisted(() => ({
   navigate: vi.fn(),
@@ -19,69 +19,67 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-describe('LoginPage', () => {
+describe('ForgotPasswordPage', () => {
   beforeEach(() => {
     resetSupabaseMocks();
     clearPendingPasswordSetup();
     mockSession(null);
     vi.clearAllMocks();
-    supabaseMock.auth.signInWithPassword.mockResolvedValue({ error: null });
+    supabaseMock.auth.resetPasswordForEmail.mockResolvedValue({ error: null });
   });
 
-  it('renders sign-in form', async () => {
-    renderWithProviders(<LoginPage />);
+  it('renders forgot-password form', async () => {
+    renderWithProviders(<ForgotPasswordPage />);
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
-      expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Send reset link' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Back to sign in' })).toHaveAttribute('href', '/login');
     });
   });
 
-  it('submits credentials and navigates on success', async () => {
+  it('submits email and shows confirmation message', async () => {
     const user = userEvent.setup();
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<ForgotPasswordPage />);
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
     });
 
     await user.type(screen.getByRole('textbox', { name: /email/i }), 'test@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'secret');
-    await user.click(screen.getByRole('button', { name: 'Sign in' }));
+    await user.click(screen.getByRole('button', { name: 'Send reset link' }));
 
-    expect(supabaseMock.auth.signInWithPassword).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: 'secret',
+    expect(supabaseMock.auth.resetPasswordForEmail).toHaveBeenCalledWith('test@example.com', {
+      redirectTo: `${window.location.origin}/reset-password`,
     });
-    expect(navigate).toHaveBeenCalledWith('/', { replace: true });
+    expect(await screen.findByText(/If an account exists for that email/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Send reset link' })).not.toBeInTheDocument();
   });
 
-  it('shows error message on failed sign-in', async () => {
+  it('shows error message on failed request', async () => {
     const user = userEvent.setup();
-    vi.mocked(supabaseMock.auth.signInWithPassword).mockResolvedValue({
-      error: new Error('Invalid credentials'),
+    vi.mocked(supabaseMock.auth.resetPasswordForEmail).mockResolvedValue({
+      error: new Error('Rate limit exceeded'),
     });
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<ForgotPasswordPage />);
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
     });
 
     await user.type(screen.getByRole('textbox', { name: /email/i }), 'test@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'wrong');
-    await user.click(screen.getByRole('button', { name: 'Sign in' }));
+    await user.click(screen.getByRole('button', { name: 'Send reset link' }));
 
-    expect(await screen.findByText('Invalid credentials')).toBeInTheDocument();
+    expect(await screen.findByText('Rate limit exceeded')).toBeInTheDocument();
   });
 
   it('redirects authenticated users to home', async () => {
     mockSession(buildSession());
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<ForgotPasswordPage />);
 
     await waitFor(() => {
       expect(navigate).toHaveBeenCalledWith('/', { replace: true });
@@ -97,31 +95,10 @@ describe('LoginPage', () => {
       },
     }));
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<ForgotPasswordPage />);
 
     await waitFor(() => {
       expect(navigate).toHaveBeenCalledWith('/set-password', { replace: true });
-    });
-  });
-
-  it('shows invite message from navigation state', async () => {
-    renderWithProviders(<LoginPage />, {
-      routerProps: {
-        initialEntries: [{
-          pathname: '/login',
-          state: { message: 'Invite link expired or invalid.' },
-        }],
-      },
-    });
-
-    expect(await screen.findByText('Invite link expired or invalid.')).toBeInTheDocument();
-  });
-
-  it('links to forgot-password page', async () => {
-    renderWithProviders(<LoginPage />);
-
-    await waitFor(() => {
-      expect(screen.getByRole('link', { name: 'Forgot password?' })).toHaveAttribute('href', '/forgot-password');
     });
   });
 });

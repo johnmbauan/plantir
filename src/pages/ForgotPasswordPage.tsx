@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Paper, TextInput, PasswordInput, Button, Title, Text, Stack, Center, Anchor } from "@mantine/core";
+import { Link, useNavigate } from "react-router-dom";
+import { Paper, TextInput, Button, Title, Text, Stack, Center, Anchor } from "@mantine/core";
 import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
 import { needsPasswordSetup } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
 
-export default function LoginPage() {
+function getResetPasswordRedirectUrl(): string {
+  return `${window.location.origin}/reset-password`;
+}
+
+export default function ForgotPasswordPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { session, user, loading } = useAuth();
   const authUser = user ?? session?.user;
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const inviteMessage = (location.state as { message?: string } | null)?.message ?? null;
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (loading || !session) return;
@@ -33,9 +35,11 @@ export default function LoginPage() {
     setError(null);
     setSubmitting(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      navigate("/", { replace: true });
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: getResetPasswordRedirectUrl(),
+      });
+      if (resetError) throw resetError;
+      setSubmitted(true);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -64,39 +68,41 @@ export default function LoginPage() {
               🪴 Plantir
             </Title>
             <Text size="sm" c="dimmed">
-              Sign in to manage your plants
+              {submitted
+                ? "Check your email for a password reset link."
+                : "Enter your email and we'll send you a reset link."}
             </Text>
           </Stack>
 
-          {(inviteMessage || error) && (
-            <Text size="sm" c={error ? "red" : "dimmed"}>
-              {error ?? inviteMessage}
+          {error && (
+            <Text size="sm" c="red">
+              {error}
             </Text>
           )}
 
-          <TextInput
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.currentTarget.value)}
-            required
-            autoComplete="email"
-          />
+          {submitted ? (
+            <Text size="sm" c="dimmed">
+              If an account exists for that email, you will receive a link shortly. The link expires in 1 hour.
+            </Text>
+          ) : (
+            <TextInput
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
+              required
+              autoComplete="email"
+            />
+          )}
 
-          <PasswordInput
-            label="Password"
-            value={password}
-            onChange={(e) => setPassword(e.currentTarget.value)}
-            required
-            autoComplete="current-password"
-          />
+          {!submitted && (
+            <Button type="submit" loading={submitting} fullWidth mt="xs">
+              Send reset link
+            </Button>
+          )}
 
-          <Button type="submit" loading={submitting} fullWidth mt="xs">
-            Sign in
-          </Button>
-
-          <Anchor component={Link} to="/forgot-password" size="sm" ta="center">
-            Forgot password?
+          <Anchor component={Link} to="/login" size="sm" ta="center">
+            Back to sign in
           </Anchor>
         </Stack>
       </Paper>
