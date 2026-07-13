@@ -1,7 +1,7 @@
 import { Skeleton, Stack, Text, Group, Badge, Button } from "@mantine/core";
 import type { EnrichedPlant } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
-import { batteryCssColor } from "@/utils/color-utils";
+import { batteryCssColor, humidityBarCssColor } from "@/utils/color-utils";
 import { relativeTime } from "@/utils/time";
 import HumidityBar from "@/components/HumidityBar";
 
@@ -31,7 +31,8 @@ function PlantLeaderboardRow({
 }) {
   const SEVERITY = ["OFFLINE", "WATERING_NEEDED", "HEALTHY"] as const;
   const primaryStatus = SEVERITY.find((s) => plant.statuses.includes(s)) ?? "HEALTHY";
-  const { barColor } = STATUS_CONFIG[primaryStatus];
+  const { barColor: statusBarColor } = STATUS_CONFIG[primaryStatus];
+  const barColor = humidityBarCssColor(plant.humidityPercent, plant.threshold, statusBarColor);
   const timeAgo = relativeTime(plant.lastMeasuredAt);
 
   return (
