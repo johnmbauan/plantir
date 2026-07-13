@@ -1,6 +1,6 @@
 # Supabase
 
-[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [Inviting users](#inviting-users) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Database Migrations](#database-migrations) • [Cron Job](#cron-job)
+[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [Inviting users](#inviting-users) • [Resetting passwords](#resetting-passwords) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Database Migrations](#database-migrations) • [Cron Job](#cron-job)
 
 ---
 
@@ -61,6 +61,22 @@ To grant admin access, edit the user in the dashboard and set `app_metadata.role
 ### Invite email template
 
 Customize the invite email in [Authentication → Email Templates → Invite](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/auth/templates).
+
+## Resetting passwords
+
+Users who already have an account can reset their password from the sign-in page.
+
+### Reset flow
+
+1. User opens `/login` and clicks **Forgot password?**
+2. On `/forgot-password`, they enter their email and submit the form.
+3. Supabase sends a recovery email with a link that opens `/reset-password`.
+4. The user chooses a new password, then is signed out and returned to `/login`.
+5. They sign in with the new password.
+
+### Recovery email template
+
+Customize the recovery email in [Authentication → Email Templates → Reset password](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/auth/templates).
 
 ## SDK
 

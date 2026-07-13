@@ -152,8 +152,11 @@ site_url = "http://localhost:5173"
 additional_redirect_urls = [
   "https://plantir-smoky.vercel.app",
   "https://plantir-smoky.vercel.app/",
+  "https://plantir-smoky.vercel.app/reset-password",
   "http://127.0.0.1:5173",
+  "http://127.0.0.1:5173/reset-password",
   "http://localhost:5173",
+  "http://localhost:5173/reset-password",
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
@@ -231,6 +234,10 @@ otp_expiry = 3600
 # [auth.email.template.invite]
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.recovery]
+subject = "Reset your Plantir password"
+content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
