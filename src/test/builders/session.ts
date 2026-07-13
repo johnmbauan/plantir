@@ -1,5 +1,9 @@
 import type { Session, User } from '@supabase/supabase-js';
 
+type BuildSessionOptions = Partial<Omit<Session, 'user'>> & {
+  user?: Partial<User>;
+};
+
 export function buildUser(overrides: Partial<User> = {}): User {
   return {
     id: 'user-1',
@@ -12,14 +16,15 @@ export function buildUser(overrides: Partial<User> = {}): User {
   } as User;
 }
 
-export function buildSession(overrides: Partial<Session> = {}): Session {
-  const user = buildUser(overrides.user ?? {});
+export function buildSession(overrides: BuildSessionOptions = {}): Session {
+  const { user: userOverrides, ...sessionOverrides } = overrides;
+  const user = buildUser(userOverrides ?? {});
   return {
     access_token: 'access-token',
     refresh_token: 'refresh-token',
     expires_in: 3600,
     token_type: 'bearer',
     user,
-    ...overrides,
+    ...sessionOverrides,
   };
 }

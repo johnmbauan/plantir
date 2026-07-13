@@ -1,9 +1,10 @@
 import { useAuth } from "@/context/AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
 import { Center, Loader } from "@mantine/core";
+import { needsPasswordSetup } from "@/pages/password/password-helper";
 
 export default function AuthGuard() {
-  const { session, loading } = useAuth();
+  const { session, user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -15,6 +16,10 @@ export default function AuthGuard() {
 
   if (!session) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (needsPasswordSetup(user ?? session.user)) {
+    return <Navigate to="/set-password" replace />;
   }
 
   return <Outlet />;

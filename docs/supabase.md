@@ -1,6 +1,6 @@
 # Supabase
 
-[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Database Migrations](#database-migrations) • [Cron Job](#cron-job)
+[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [Inviting users](#inviting-users) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Database Migrations](#database-migrations) • [Cron Job](#cron-job)
 
 ---
 
@@ -42,6 +42,25 @@ cp env.sample .env
 ```
 
 Then retrieve from [this link](https://supabase.com/dashboard/project/_?showConnect=true&connectTab=frameworks&framework=react) all environment values required. Click on the project `plantir` card; this will open a modal from which you can copy the env values.
+
+## Inviting users
+
+Plantir uses an invite-only signup flow. Admins add users from the Supabase dashboard; invited users set their own password the first time they open the app.
+
+### Inviting a new user
+
+1. Open [Authentication → Users](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/auth/users) in the Supabase dashboard.
+2. Click **Invite user** (not "Add user").
+3. Enter the user's email and send the invite.
+4. The user receives an email with a link. Clicking it opens Plantir with a temporary session.
+5. The app redirects them to `/set-password` to choose a password.
+6. After setting a password, they can sign in normally via `/login`.
+
+To grant admin access, edit the user in the dashboard and set `app_metadata.role` to `"admin"` (unchanged from before).
+
+### Invite email template
+
+Customize the invite email in [Authentication → Email Templates → Invite](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/auth/templates).
 
 ## SDK
 
@@ -153,7 +172,7 @@ Policies are defined in migration [20260628000000_scoped_rls_policies.sql](../su
 
 ## Database Migrations
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > Never delete the [20260327121111_remote_schema.sql](./supabase/migrations/20260327121111_remote_schema.sql) file; this is the initial migration created at the project bootstrap. All subsequent migrations apply from this snapshot forward.
 
 You can use the Supabase CLI to apply database migrations; in this case you need first to execute the following commands:

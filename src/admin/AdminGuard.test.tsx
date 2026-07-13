@@ -28,12 +28,14 @@ function renderGuard() {
 
 describe('AdminGuard', () => {
   beforeEach(() => {
-    vi.mocked(useAuth).mockReturnValue({ session: null, loading: false });
+    vi.mocked(useAuth).mockReturnValue({ session: null, user: null, loading: false });
   });
 
   it('redirects non-admin users to home', () => {
+    const session = buildSession();
     vi.mocked(useAuth).mockReturnValue({
-      session: buildSession(),
+      session,
+      user: session.user,
       loading: false,
     });
     renderGuard();
@@ -43,10 +45,12 @@ describe('AdminGuard', () => {
   });
 
   it('renders child routes for admin users', () => {
+    const session = buildSession({
+      user: buildUser({ app_metadata: { role: 'admin' } }),
+    });
     vi.mocked(useAuth).mockReturnValue({
-      session: buildSession({
-        user: buildUser({ app_metadata: { role: 'admin' } }),
-      }),
+      session,
+      user: session.user,
       loading: false,
     });
     renderGuard();
