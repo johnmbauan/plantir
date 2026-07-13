@@ -5,6 +5,7 @@ import Layout from "@/components/Layout";
 import Dashboard from "@/pages/Dashboard";
 import PlantCenter from "@/pages/PlantCenter";
 import SettingsPage from "@/pages/SettingsPage";
+import ProfilePage from "@/pages/ProfilePage";
 import LoginPage from "@/pages/LoginPage";
 import AdminGuard from "@/admin/AdminGuard";
 import AdminPage from "@/admin/AdminPage";
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="plants-center" element={<PlantCenter />} />
+              <Route path="profile" element={<ProfilePage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route element={<AdminGuard />}>
                 <Route path="admin" element={<AdminPage />} />

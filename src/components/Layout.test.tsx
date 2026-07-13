@@ -5,18 +5,22 @@ import { Route, Routes } from 'react-router-dom';
 import { renderWithProviders, screen } from '@/test/render';
 import { buildSession, buildUser } from '@/test/builders/session';
 import { mockSession, resetSupabaseMocks } from '@/test/mocks/supabase';
-import supabase from '@/supabase';
 import Layout from '@/components/Layout';
 
 vi.mock('@/components/NotificationBell', () => ({
   default: () => <div>Notification bell</div>,
 }));
 
+vi.mock('@/components/UserMenu', () => ({
+  default: () => <button type="button">Account menu</button>,
+}));
+
 function renderLayout(route = '/') {
   return renderWithProviders(
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<div>Page content</div>} />
+        <Route path="/" element={<div>Dashboard page</div>} />
+        <Route path="/profile" element={<div>Profile page</div>} />
         <Route path="/login" element={<div>Login page</div>} />
       </Route>
     </Routes>,
@@ -28,17 +32,24 @@ describe('Layout', () => {
   beforeEach(() => {
     resetSupabaseMocks();
     mockSession(buildSession());
-    Object.assign(supabase.auth, {
-      signOut: vi.fn().mockResolvedValue({ error: null }),
-    });
   });
 
   it('renders the app header and outlet content', async () => {
     renderLayout();
 
     expect(await screen.findByText('🪴 Plantir')).toBeInTheDocument();
-    expect(screen.getByText('Page content')).toBeInTheDocument();
+    expect(screen.getByText('Dashboard page')).toBeInTheDocument();
     expect(screen.getByText('Notification bell')).toBeInTheDocument();
+  });
+
+  it('navigates to the dashboard when the Plantir logo is clicked', async () => {
+    const user = userEvent.setup();
+    renderLayout('/profile');
+
+    expect(await screen.findByText('Profile page')).toBeInTheDocument();
+    await user.click(screen.getByRole('link', { name: 'Plantir home' }));
+
+    expect(await screen.findByText('Dashboard page')).toBeInTheDocument();
   });
 
   it('shows admin navigation for admin users', async () => {
@@ -52,14 +63,9 @@ describe('Layout', () => {
     expect(await screen.findByRole('link', { name: 'Admin' })).toBeInTheDocument();
   });
 
-  it('signs out and navigates to login', async () => {
-    const user = userEvent.setup();
+  it('shows the account menu', async () => {
     renderLayout();
 
-    await screen.findByText('Page content');
-    await user.click(screen.getByRole('button', { name: 'Sign out' }));
-
-    expect(supabase.auth.signOut).toHaveBeenCalledOnce();
-    expect(await screen.findByText('Login page')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Account menu' })).toBeInTheDocument();
   });
 });

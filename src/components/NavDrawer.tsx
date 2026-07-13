@@ -1,5 +1,5 @@
-import { Drawer, Stack, Text, Button } from "@mantine/core";
-import { NavLink } from "react-router-dom";
+import { Drawer, Stack, Text, UnstyledButton } from "@mantine/core";
+import { NavLink, Link } from "react-router-dom";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -14,20 +14,27 @@ const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
 interface Props {
   opened: boolean;
   onClose: () => void;
-  onSignOut: () => void;
   isAdmin?: boolean;
 }
 
-export default function NavDrawer({ opened, onClose, onSignOut, isAdmin }: Props) {
+export default function NavDrawer({ opened, onClose, isAdmin }: Props) {
   return (
     <Drawer
       opened={opened}
       onClose={onClose}
       size="xs"
       title={
-        <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-          🪴 Plantir
-        </Text>
+        <UnstyledButton
+          component={Link}
+          to="/"
+          onClick={onClose}
+          aria-label="Plantir home"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
+            🪴 Plantir
+          </Text>
+        </UnstyledButton>
       }
       styles={{ header: { background: "var(--terracotta-50)", borderBottom: "1px solid var(--terracotta-100)" } }}
     >
@@ -46,14 +53,6 @@ export default function NavDrawer({ opened, onClose, onSignOut, isAdmin }: Props
             Admin
           </NavLink>
         )}
-        <Button
-          variant="subtle"
-          color="gray"
-          onClick={() => { onSignOut(); onClose(); }}
-          style={{ color: "var(--green-500)", justifyContent: "flex-start" }}
-        >
-          Sign out
-        </Button>
       </Stack>
     </Drawer>
   );
