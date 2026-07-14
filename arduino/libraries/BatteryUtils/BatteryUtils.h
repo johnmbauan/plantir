@@ -36,7 +36,7 @@
 #endif
 
 #define BATTERY_VOLTAGE_DIVIDER_RATIO 2.0f
-#define BATTERY_VOLTAGE_MIN 3.4f  // Practical empty for ESP32 + WiFi (not cell protection cutoff)
+#define BATTERY_VOLTAGE_MIN 3.0f  // LiPo protection cutoff (~0% SOC); device can run below 3.4 V in deep sleep
 #define BATTERY_VOLTAGE_MAX 4.2f  // LiPo full charge
 
 inline void initBatteryAdc() {
