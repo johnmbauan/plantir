@@ -14,7 +14,7 @@ describe('WeatherCityHeader', () => {
       />,
     );
 
-    expect(screen.getByText('Select a city…')).toBeInTheDocument();
+    expect(screen.getByText('Weather forecast')).toBeInTheDocument();
   });
 
   it('shows city name when location is set', () => {

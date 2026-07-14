@@ -28,15 +28,15 @@ describe('WeatherCitySearch', () => {
   it('renders search input and button', () => {
     renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    expect(screen.getByPlaceholderText('Search for a city…')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Search city' })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search for a city to see the forecast…')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search city for weather forecast' })).toBeInTheDocument();
   });
 
   it('calls setSearchQuery when typing', async () => {
     const user = userEvent.setup();
     renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    await user.type(screen.getByPlaceholderText('Search for a city…'), 'Rome');
+    await user.type(screen.getByPlaceholderText('Search for a city to see the forecast…'), 'Rome');
     expect(mockSetSearchQuery).toHaveBeenCalled();
   });
 
@@ -91,16 +91,22 @@ describe('WeatherCitySearch', () => {
     const user = userEvent.setup();
     renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    await user.type(screen.getByPlaceholderText('Search for a city…'), 'Rome{Enter}');
+    await user.type(screen.getByPlaceholderText('Search for a city to see the forecast…'), 'Rome{Enter}');
 
     expect(mockHandleSearch).toHaveBeenCalled();
+  });
+
+  it('shows intro hint when showIntroHint is true', () => {
+    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} showIntroHint />);
+
+    expect(screen.getByText('Choose a city to see the upcoming forecast.')).toBeInTheDocument();
   });
 
   it('calls handleSearch when search button is clicked', async () => {
     const user = userEvent.setup();
     renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);
 
-    await user.click(screen.getByRole('button', { name: 'Search city' }));
+    await user.click(screen.getByRole('button', { name: 'Search city for weather forecast' }));
 
     expect(mockHandleSearch).toHaveBeenCalled();
   });

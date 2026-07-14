@@ -36,7 +36,9 @@ export default function WeatherWidget() {
         )}
       </Group>
 
-      {searchOpen && <WeatherCitySearch onCitySelect={handleCitySelect} />}
+      {searchOpen && (
+        <WeatherCitySearch onCitySelect={handleCitySelect} showIntroHint={!city} />
+      )}
     </Paper>
   );
 }

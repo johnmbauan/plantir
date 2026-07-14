@@ -36,7 +36,7 @@ describe('WeatherWidget', () => {
   it('shows city search when no city is selected', () => {
     renderWithProviders(<WeatherWidget />);
 
-    expect(screen.getByText('Select a city…')).toBeInTheDocument();
+    expect(screen.getByText('Weather forecast')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Pick Milan' })).toBeInTheDocument();
   });
 

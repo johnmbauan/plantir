@@ -14,10 +14,10 @@ export function WeatherCityHeader({ city, locationSource, editMode, onToggleEdit
     <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
       <IconMapPin
         size={13}
-        color={locationSource === "none" ? "var(--green-200)" : "var(--green-500)"}
+        color="var(--green-500)"
       />
       {locationSource === "none" ? (
-        <Text className="weather-city-name weather-city-detecting">Select a city…</Text>
+        <Text className="weather-city-name">Weather forecast</Text>
       ) : city ? (
         <Text className="weather-city-name">{city.name}</Text>
       ) : (
