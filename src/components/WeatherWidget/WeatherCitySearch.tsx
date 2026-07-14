@@ -5,17 +5,23 @@ import { useCitySearch } from "@/hooks/useCitySearch";
 
 interface WeatherCitySearchProps {
   onCitySelect: (result: GeocodingResult) => void;
+  showIntroHint?: boolean;
 }
 
-export function WeatherCitySearch({ onCitySelect }: WeatherCitySearchProps) {
+export function WeatherCitySearch({ onCitySelect, showIntroHint = false }: WeatherCitySearchProps) {
   const { searchQuery, setSearchQuery, searchResults, searching, noResults, handleSearch } =
     useCitySearch();
 
   return (
     <Box className="weather-city-search" mt="xs">
+      {showIntroHint && (
+        <Text size="xs" c="dimmed" mb={6}>
+          Choose a city to see the upcoming forecast.
+        </Text>
+      )}
       <Group gap="xs">
         <TextInput
-          placeholder="Search for a city…"
+          placeholder="Search for a city to see the forecast…"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.currentTarget.value)}
           onKeyDown={(e) => {
@@ -32,7 +38,7 @@ export function WeatherCitySearch({ onCitySelect }: WeatherCitySearchProps) {
           size={30}
           onClick={() => void handleSearch()}
           loading={searching}
-          aria-label="Search city"
+          aria-label="Search city for weather forecast"
         >
           <IconSearch size={14} />
         </ActionIcon>
