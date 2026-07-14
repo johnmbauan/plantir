@@ -103,6 +103,10 @@ const mocks = vi.hoisted(() => {
       data: { user: session?.user ?? null },
       error: null,
     });
+    mockOnAuthStateChange.mockImplementation((cb) => {
+      queueMicrotask(() => cb("INITIAL_SESSION", session));
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
+    });
   }
 
   function mockFromTable(table: string, result: QueryResult) {

@@ -1,9 +1,9 @@
 import '@/test/mocks/supabase';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Route, Routes } from 'react-router-dom';
 import { renderWithProviders, screen, waitFor } from '@/test/render';
 import { buildSession } from '@/test/builders/session';
-import { mockSession, mockGetSession, mockGetUser, resetSupabaseMocks } from '@/test/mocks/supabase';
+import { mockSession, mockGetUser, mockOnAuthStateChange, resetSupabaseMocks } from '@/test/mocks/supabase';
 import { markPendingPasswordSetup, clearPendingPasswordSetup } from '@/pages/password/password-helper';
 import AuthGuard from '@/components/AuthGuard';
 
@@ -44,7 +44,9 @@ describe('AuthGuard', () => {
   });
 
   it('shows a loader while session is loading', async () => {
-    mockGetSession.mockReturnValue(new Promise(() => {}));
+    mockOnAuthStateChange.mockReturnValue({
+      data: { subscription: { unsubscribe: vi.fn() } },
+    });
     renderGuard();
 
     await waitFor(() => {
@@ -84,8 +86,11 @@ describe('AuthGuard', () => {
         user_metadata: { needs_password_setup: true },
       },
     });
-    mockGetSession.mockResolvedValue({ data: { session }, error: null });
     mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+    mockOnAuthStateChange.mockImplementation((cb) => {
+      queueMicrotask(() => cb('INITIAL_SESSION', session));
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
+    });
     renderGuard();
 
     expect(await screen.findByText('Set password page')).toBeInTheDocument();

@@ -6,7 +6,6 @@ import type { Session } from '@supabase/supabase-js';
 import {
   resetSupabaseMocks,
   mockSession,
-  mockGetSession,
   mockGetUser,
   mockOnAuthStateChange,
 } from '@/test/mocks/supabase';
@@ -22,7 +21,7 @@ describe('AuthContext', () => {
     resetSupabaseMocks();
   });
 
-  it('loads the initial session from getSession', async () => {
+  it('loads the initial session from onAuthStateChange', async () => {
     const session = buildSession();
     mockSession(session);
 
@@ -34,7 +33,7 @@ describe('AuthContext', () => {
     expect(result.current.user).toEqual(session.user);
   });
 
-  it('starts with no session when getSession returns null', async () => {
+  it('starts with no session when INITIAL_SESSION is null', async () => {
     mockSession(null);
 
     const { result } = renderHook(() => useAuth(), { wrapper });
@@ -46,7 +45,7 @@ describe('AuthContext', () => {
 
   it('falls back to session user when getUser fails', async () => {
     const session = buildSession({ user: buildUser({ email: 'fallback@example.com' }) });
-    mockGetSession.mockResolvedValue({ data: { session }, error: null });
+    mockSession(session);
     mockGetUser.mockResolvedValue({
       data: { user: null },
       error: new Error('fetch failed'),
@@ -66,6 +65,7 @@ describe('AuthContext', () => {
     const unsubscribe = vi.fn();
     mockOnAuthStateChange.mockImplementation((cb) => {
       authCallback = cb;
+      queueMicrotask(() => cb('INITIAL_SESSION', null));
       return { data: { subscription: { unsubscribe } } };
     });
 
@@ -75,12 +75,36 @@ describe('AuthContext', () => {
     const newSession = buildSession({ user: buildUser({ email: 'signed-in@example.com' }) });
     await act(async () => {
       mockSession(newSession);
-      await authCallback('SIGNED_IN', newSession);
+      authCallback('SIGNED_IN', newSession);
     });
 
     await waitFor(() => {
       expect(result.current.session).toEqual(newSession);
       expect(result.current.user).toEqual(newSession.user);
+    });
+  });
+
+  it('clears session when auth state changes to signed out', async () => {
+    const session = buildSession();
+    mockSession(session);
+
+    let authCallback: (event: string, session: Session | null) => void = () => {};
+    mockOnAuthStateChange.mockImplementation((cb) => {
+      authCallback = cb;
+      queueMicrotask(() => cb('INITIAL_SESSION', session));
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    await waitFor(() => expect(result.current.session).toEqual(session));
+
+    act(() => {
+      authCallback('SIGNED_OUT', null);
+    });
+
+    await waitFor(() => {
+      expect(result.current.session).toBeNull();
+      expect(result.current.user).toBeNull();
     });
   });
 
