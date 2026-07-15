@@ -39,7 +39,7 @@ export function useDeviceForm({
 
   useEffect(() => {
     if (!opened) return;
-    /* eslint-disable react-hooks/set-state-in-effect */
+
     setCreatedDevice(null);
     setThresholdTouched(false);
     if (editingDevice) {
@@ -55,7 +55,7 @@ export function useDeviceForm({
       setIntervalPreset(preset);
       setInitialSnapshot(serializeFormState(values, preset));
     }
-    /* eslint-enable react-hooks/set-state-in-effect */
+
   }, [opened, editingDevice]);
 
   const setHumidityField = (

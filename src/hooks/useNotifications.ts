@@ -51,7 +51,7 @@ export function useNotifications() {
   useEffect(() => {
     if (!session?.user) {
       // Explicitly clear notification state on sign-out/session loss.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setItems([]);
       setLoading(false);
       return;

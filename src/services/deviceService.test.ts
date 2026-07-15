@@ -15,6 +15,7 @@ import {
   createPairingBundle,
   startCalibrationMode,
   clearCalibrationMode,
+  isCalibrationModeActive,
   getLatestCalibrationReading,
   saveCalibrationValues,
   type DeviceFormValues,
@@ -164,6 +165,26 @@ describe('deviceService', () => {
     it('clears calibration mode', async () => {
       setupFromMocks({ humidity_sensors_config: { data: null, error: null } });
       await expect(clearCalibrationMode(1)).resolves.toBeUndefined();
+    });
+
+    it('reports whether calibration mode is active', async () => {
+      setupFromMocks({
+        humidity_sensors_config: {
+          data: { calibrationModeStartedAt: '2026-01-01T00:00:00Z' },
+          error: null,
+        },
+      });
+      await expect(isCalibrationModeActive(1)).resolves.toBe(true);
+    });
+
+    it('reports inactive calibration mode when flag is cleared', async () => {
+      setupFromMocks({
+        humidity_sensors_config: {
+          data: { calibrationModeStartedAt: null },
+          error: null,
+        },
+      });
+      await expect(isCalibrationModeActive(1)).resolves.toBe(false);
     });
 
     it('returns latest calibration reading', async () => {

@@ -96,7 +96,7 @@ export function usePlantSpeciesSelection({ opened }: UsePlantSpeciesSelectionPar
     const search = speciesQuery.trim();
     if (search.length < 2) {
       // Keep empty-results state in sync with short queries.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setSpeciesResults([]);
       setSpeciesError(null);
       return;

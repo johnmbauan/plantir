@@ -1,25 +1,11 @@
-import { Badge, Group, Select, type SelectProps } from "@mantine/core";
+import { Select, type SelectProps } from "@mantine/core";
 import type { PlantOption } from "@/components/DeviceFormModal/types";
 import { hasAssignedPlantOptions, toPlantSelectData } from "@/components/DeviceFormModal/plantOptions";
+import { renderPlantAssignmentOption } from "@/components/DeviceFormModal/renderPlantAssignmentOption";
 
 type Props = Omit<SelectProps, "data" | "renderOption"> & {
   plantOptions: PlantOption[];
 };
-
-export function renderPlantAssignmentOption(label: string, hasDevice: boolean) {
-  if (!hasDevice) {
-    return label;
-  }
-
-  return (
-    <Group justify="space-between" wrap="nowrap" gap="xs" w="100%">
-      <span>{label}</span>
-      <Badge size="xs" variant="light" color="gray" style={{ flexShrink: 0 }}>
-        device assigned
-      </Badge>
-    </Group>
-  );
-}
 
 export default function PlantAssignmentSelect({
   plantOptions,

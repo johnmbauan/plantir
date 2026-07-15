@@ -4,7 +4,12 @@ import { Progress, Text, Stack } from "@mantine/core";
 const CYCLE_MS = 10000; // must match CALIBRATION_INTERVAL_MS in CalibrationRunner.cpp
 const TICK_MS = 50;
 
-export default function ReadingCountdownBar() {
+interface Props {
+  resetKey?: number;
+}
+
+/** Remounted via key when resetKey changes so progress always restarts at 0. */
+function CountdownProgress() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -16,9 +21,13 @@ export default function ReadingCountdownBar() {
     return () => window.clearInterval(id);
   }, []);
 
+  return <Progress value={progress} size="sm" color="green" />;
+}
+
+export default function ReadingCountdownBar({ resetKey = 0 }: Props) {
   return (
     <Stack gap={4} mt="xs">
-      <Progress value={progress} size="sm" color="green" />
+      <CountdownProgress key={resetKey} />
       <Text size="xs" c="dimmed">The device sends a reading every 10 seconds</Text>
     </Stack>
   );

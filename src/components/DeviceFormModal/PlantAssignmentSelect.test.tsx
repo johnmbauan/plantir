@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderWithProviders, screen } from '@/test/render';
-import PlantAssignmentSelect, {
-  renderPlantAssignmentOption,
-} from './PlantAssignmentSelect';
+import PlantAssignmentSelect from './PlantAssignmentSelect';
+import { renderPlantAssignmentOption } from './renderPlantAssignmentOption';
 
 describe('renderPlantAssignmentOption', () => {
   it('returns plain label for available plants', () => {

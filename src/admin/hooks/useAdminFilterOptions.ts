@@ -35,7 +35,7 @@ export function useAdminFilterOptions() {
 
   useEffect(() => {
     // Intentionally trigger initial load for current dependencies.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     void refresh();
   }, [refresh]);
 

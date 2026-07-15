@@ -62,7 +62,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     void loadData();
   }, [reloadKey]);
 
@@ -72,7 +72,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
     const device = devices.find((d) => d.id === Number(editDeviceId));
     if (device) {
       // Open edit modal from URL deep-link once data is ready.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       handleOpenEdit(device);
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
