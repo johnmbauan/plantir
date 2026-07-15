@@ -14,7 +14,7 @@ const DEFAULT_HUMIDITY_CONFIG = {
   minHumidityThreshold: 15,
   airValue: 520,
   waterValue: 260,
-  sleepDurationSeconds: 3600,
+  sleepDurationSeconds: 8 * 60 * 60, // 8h — keep in sync with src/constants/deviceDefaults.ts
 };
 
 interface RegisterDeviceRequest {
