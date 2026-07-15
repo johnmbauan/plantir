@@ -17,6 +17,23 @@ describe('PrepareStep', () => {
     expect(screen.getByPlaceholderText('You can assign a plant now or later')).toBeInTheDocument();
   });
 
+  it('shows helper text for plants that already have a device', () => {
+    renderWithProviders(
+      <PrepareStep
+        plantOptions={[
+          { value: '1', label: 'Monstera', hasDevice: true },
+          { value: '2', label: 'Ficus', hasDevice: false },
+        ]}
+        plantId={null}
+        onPlantChange={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText('Plants that already have a device assigned are disabled.'),
+    ).toBeInTheDocument();
+  });
+
   it('reflects selected plant in the selector', () => {
     renderWithProviders(
       <PrepareStep plantOptions={plantOptions} plantId="1" onPlantChange={vi.fn()} />,

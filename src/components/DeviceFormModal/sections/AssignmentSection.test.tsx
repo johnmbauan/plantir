@@ -64,6 +64,26 @@ describe('AssignmentSection', () => {
     expect(screen.getByText('Serial number is required')).toBeInTheDocument();
   });
 
+  it('shows helper text for plants that already have a device', () => {
+    renderWithProviders(
+      <AssignmentSection
+        isEditing={false}
+        form={defaultFormValues()}
+        plantOptions={[
+          { value: '1', label: 'Monstera', hasDevice: true },
+          { value: '2', label: 'Ficus', hasDevice: false },
+        ]}
+        validation={{}}
+        onSerialChange={vi.fn()}
+        onPlantChange={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText('Plants that already have a device assigned are disabled.'),
+    ).toBeInTheDocument();
+  });
+
   it('calls onPlantChange with null when plant is cleared', async () => {
     const user = userEvent.setup();
     const onPlantChange = vi.fn();

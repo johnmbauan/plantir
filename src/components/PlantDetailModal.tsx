@@ -93,13 +93,13 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
   useEffect(() => {
     if (!opened || !plant?.deviceId) return;
     // Loading depends on runtime plant/range state and is intentionally effect-driven.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     void loadHistory(plant.id, range);
   }, [opened, plant?.id, plant?.deviceId, range, loadHistory]);
 
   useEffect(() => {
     if (!opened) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setImageExpanded(false);
     }
   }, [opened]);

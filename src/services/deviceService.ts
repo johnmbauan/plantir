@@ -156,6 +156,17 @@ export async function clearCalibrationMode(deviceId: number): Promise<void> {
   if (error) throw error;
 }
 
+export async function isCalibrationModeActive(deviceId: number): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("humidity_sensors_config")
+    .select("calibrationModeStartedAt")
+    .eq("deviceId", deviceId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data?.calibrationModeStartedAt != null;
+}
+
 export async function getLatestCalibrationReading(
   deviceId: number,
   since: string,

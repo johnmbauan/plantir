@@ -68,7 +68,7 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
 
   useEffect(() => {
     if (!opened) return;
-    /* eslint-disable react-hooks/set-state-in-effect */
+
     if (editingPlant) {
       setName(editingPlant.name);
       setExistingImageUrl(editingPlant.image_url);
@@ -87,7 +87,7 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
       useSpeciesImage: false,
       existingImageUrl: editingPlant?.image_url ?? null,
     });
-    /* eslint-enable react-hooks/set-state-in-effect */
+
   }, [opened, editingPlant, initializeSpecies]);
 
   const requestClose = () => {

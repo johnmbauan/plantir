@@ -53,7 +53,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     void loadData();
   }, [reloadKey]);
 
@@ -63,7 +63,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
     const plant = plants.find((p) => p.id === Number(editPlantId));
     if (plant) {
       // Open edit modal from URL deep-link once data is ready.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       handleOpenEdit(plant);
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);

@@ -29,6 +29,17 @@ describe('useDeviceForm', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
   });
 
+  it('defaults reporting interval to 8h for new devices', () => {
+    const { result } = renderHook(() => useDeviceForm(baseOptions));
+
+    expect(result.current.intervalPreset).toBe(
+      String(DEFAULT_HUMIDITY_CONFIG.sleepDurationSeconds),
+    );
+    expect(result.current.form.humidityConfig.sleepDurationSeconds).toBe(
+      DEFAULT_HUMIDITY_CONFIG.sleepDurationSeconds,
+    );
+  });
+
   it('requires serial number when creating a device', () => {
     const { result } = renderHook(() => useDeviceForm(baseOptions));
 

@@ -40,7 +40,7 @@ export function useWeatherCity(): UseWeatherCityReturn {
     try {
       const parsed = JSON.parse(stored) as StoredCity;
       // Restore persisted city and load forecast on initial mount.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setCity(parsed);
       setLocationSource("stored");
       void loadForecast(parsed);

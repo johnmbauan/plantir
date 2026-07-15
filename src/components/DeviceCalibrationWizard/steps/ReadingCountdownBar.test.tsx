@@ -27,4 +27,26 @@ describe('ReadingCountdownBar', () => {
       vi.useRealTimers();
     }
   });
+
+  it('resets progress when resetKey changes', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      vi.setSystemTime(new Date('2026-07-06T12:00:00Z'));
+      const { rerender } = renderWithProviders(<ReadingCountdownBar resetKey={0} />);
+
+      vi.setSystemTime(new Date('2026-07-06T12:00:05Z'));
+      await vi.advanceTimersByTimeAsync(50);
+      const mid = Number(screen.getByRole('progressbar').getAttribute('aria-valuenow'));
+      expect(mid).toBeGreaterThanOrEqual(49);
+
+      rerender(<ReadingCountdownBar resetKey={1} />);
+      vi.setSystemTime(new Date('2026-07-06T12:00:00Z'));
+      await vi.advanceTimersByTimeAsync(50);
+      const reset = Number(screen.getByRole('progressbar').getAttribute('aria-valuenow'));
+
+      expect(reset).toBeLessThan(10);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

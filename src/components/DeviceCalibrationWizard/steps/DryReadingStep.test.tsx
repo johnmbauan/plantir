@@ -3,21 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/render';
 import DryReadingStep from './DryReadingStep';
 
-const pendingReading = {
-  id: 1,
-  deviceId: 1,
-  rawValue: 512,
-  createdAt: '2026-07-06T12:00:00Z',
-};
-
 describe('DryReadingStep', () => {
   it('shows waiting state when no reading is available', () => {
     renderWithProviders(
       <DryReadingStep
-        pendingReading={null}
+        calibrationExpired={false}
         timedOut={false}
-        onAccept={vi.fn()}
-        onSkip={vi.fn()}
+        readingRejected={false}
+        countdownKey={0}
         onRetry={vi.fn()}
       />,
     );
@@ -26,25 +19,19 @@ describe('DryReadingStep', () => {
     expect(screen.getByText(/Waiting for a reading/i)).toBeInTheDocument();
   });
 
-  it('shows reading and accept actions when data arrives', async () => {
-    const user = userEvent.setup();
-    const onAccept = vi.fn();
-
+  it('shows placement hint when reading is rejected', () => {
     renderWithProviders(
       <DryReadingStep
-        pendingReading={pendingReading}
+        calibrationExpired={false}
         timedOut={false}
-        onAccept={onAccept}
-        onSkip={vi.fn()}
+        readingRejected
+        countdownKey={1}
         onRetry={vi.fn()}
       />,
     );
 
-    expect(screen.getByText('512')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Use this reading' }));
-
-    expect(onAccept).toHaveBeenCalledTimes(1);
+    expect(screen.getByText(/then hold still/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Waiting for a reading/i)).not.toBeInTheDocument();
   });
 
   it('shows retry action when timed out', async () => {
@@ -53,10 +40,10 @@ describe('DryReadingStep', () => {
 
     renderWithProviders(
       <DryReadingStep
-        pendingReading={null}
+        calibrationExpired={false}
         timedOut
-        onAccept={vi.fn()}
-        onSkip={vi.fn()}
+        readingRejected={false}
+        countdownKey={0}
         onRetry={onRetry}
       />,
     );

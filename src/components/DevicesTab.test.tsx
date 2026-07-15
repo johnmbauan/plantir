@@ -188,6 +188,41 @@ describe('DevicesTab', () => {
     );
   });
 
+  it('passes plant assignment options to device modals', async () => {
+    const user = userEvent.setup();
+    vi.mocked(fetchDevices).mockResolvedValue([
+      buildDevice({ id: 10, plantId: 1, plantName: 'Monstera' }),
+    ]);
+    vi.mocked(fetchPlants).mockResolvedValue([
+      buildPlant({ id: 1, name: 'Monstera', deviceId: 10 }),
+      buildPlant({ id: 2, name: 'Ficus', deviceId: null }),
+    ]);
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    expect(DeviceRegistrationWizardMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        plantOptions: [
+          expect.objectContaining({ value: '1', label: 'Monstera', hasDevice: true }),
+          expect.objectContaining({ value: '2', label: 'Ficus', hasDevice: false }),
+        ],
+      }),
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Edit device' }));
+
+    expect(DeviceFormModalMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        editingDevice: expect.objectContaining({ id: 10 }),
+        plantOptions: [
+          expect.objectContaining({ value: '1', label: 'Monstera', hasDevice: false }),
+          expect.objectContaining({ value: '2', label: 'Ficus', hasDevice: false }),
+        ],
+      }),
+    );
+  });
+
   it('opens registration wizard from register=1 URL param', async () => {
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />, {
       route: '/?register=1',

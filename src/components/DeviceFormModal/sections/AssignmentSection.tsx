@@ -1,7 +1,8 @@
-import { Badge, Select, Stack, TextInput, Title } from "@mantine/core";
+import { Badge, Stack, TextInput, Title } from "@mantine/core";
 import type { DeviceFormValues } from "@/services/deviceService";
 import type { DeviceFormValidationErrors } from "@/components/DeviceFormModal/types";
 import type { PlantOption } from "@/components/DeviceFormModal/types";
+import PlantAssignmentSelect from "@/components/DeviceFormModal/PlantAssignmentSelect";
 
 interface Props {
   isEditing: boolean;
@@ -46,10 +47,10 @@ export default function AssignmentSection({
           </Badge>
         </>
       )}
-      <Select
+      <PlantAssignmentSelect
         label="Plant"
         placeholder="Select a plant"
-        data={plantOptions}
+        plantOptions={plantOptions}
         value={form.plantId ? String(form.plantId) : null}
         onChange={(val) => onPlantChange(val ? Number(val) : null)}
         clearable
