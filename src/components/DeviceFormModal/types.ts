@@ -4,6 +4,7 @@ export interface PlantOption {
   value: string;
   label: string;
   recommendedThreshold?: number | null;
+  hasDevice?: boolean;
 }
 
 export interface DeviceFormModalProps {

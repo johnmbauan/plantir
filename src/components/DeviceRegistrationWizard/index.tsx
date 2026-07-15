@@ -15,10 +15,12 @@ import DeviceCalibrationWizard from "@/components/DeviceCalibrationWizard";
 const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 3 * 60 * 1000;
 
+import type { PlantOption } from "@/components/DeviceFormModal/types";
+
 interface Props {
   opened: boolean;
   onClose: () => void;
-  plantOptions: { value: string; label: string }[];
+  plantOptions: PlantOption[];
   onRegistered: () => void;
 }
 
