@@ -1,6 +1,9 @@
-import { NumberInput, Select, Stack, Text, Title } from "@mantine/core";
+import { Badge, Group, NumberInput, Select, Stack, Text } from "@mantine/core";
 import type { DeviceFormValidationErrors } from "@/components/DeviceFormModal/types";
+import { DEFAULT_HUMIDITY_CONFIG } from "@/constants/deviceDefaults";
 import { formatInterval, INTERVAL_PRESET_OPTIONS } from "@/utils/time";
+
+const RECOMMENDED_INTERVAL = String(DEFAULT_HUMIDITY_CONFIG.sleepDurationSeconds);
 
 interface Props {
   intervalPreset: string;
@@ -21,14 +24,25 @@ export default function ReportingSection({
 
   return (
     <Stack gap="xs">
-      <Title order={6}>Reporting</Title>
       <Select
         label="Reporting interval"
-        description="How often the device wakes up and sends data"
+        description={`How often the device wakes up and sends data. Higher frequencies drain the battery faster.`}
         data={INTERVAL_PRESET_OPTIONS}
         value={intervalPreset}
         onChange={onPresetChange}
         error={validation.interval}
+        renderOption={({ option }) =>
+          option.value === RECOMMENDED_INTERVAL ? (
+            <Group justify="space-between" wrap="nowrap" gap="xs" w="100%">
+              <span>{option.label}</span>
+              <Badge size="xs" variant="light" color="green" style={{ flexShrink: 0 }}>
+                Recommended
+              </Badge>
+            </Group>
+          ) : (
+            option.label
+          )
+        }
       />
       {showCustomInterval && (
         <NumberInput
