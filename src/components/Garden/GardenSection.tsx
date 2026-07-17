@@ -31,7 +31,7 @@ export default function GardenSection() {
         </Stack>
 
         {loading ? (
-          <Skeleton height={360} radius="md" />
+          <Skeleton data-testid="garden-loading-skeleton" height={360} radius="md" />
         ) : (
           <GardenScene
             visualStage={tier.visualStage}

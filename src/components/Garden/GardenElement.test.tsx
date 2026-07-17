@@ -172,7 +172,7 @@ describe('GardenElement', () => {
 
       const button = screen.getByRole('button');
       await user.tab();
-      expect(document.activeElement).toBe(button);
+      expect(button).toHaveFocus();
       expect(await screen.findByTestId('popover-content')).toBeInTheDocument();
 
       await user.tab();

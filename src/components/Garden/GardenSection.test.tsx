@@ -78,9 +78,8 @@ describe('GardenSection', () => {
 
   it('shows a skeleton while loading', () => {
     vi.mocked(useGardenState).mockReturnValue(baseState({ loading: true }));
-    const { container } = renderSection();
-    // Mantine Skeleton renders as a div with specific class
-    expect(container.querySelector('[class*="skeleton"]')).toBeInTheDocument();
+    renderSection();
+    expect(screen.getByTestId('garden-loading-skeleton')).toBeInTheDocument();
   });
 
   it('renders the garden scene when loaded', () => {
@@ -135,6 +134,6 @@ describe('GardenSection', () => {
       value: { ...window.location, hash: '' },
       configurable: true,
     });
-    vi.mocked(document.getElementById).mockRestore();
+    vi.restoreAllMocks();
   });
 });

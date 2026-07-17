@@ -30,33 +30,32 @@ const ALL_ELEMENTS: GardenElementId[] = [
 
 describe('GardenSprite', () => {
   it.each(ALL_ELEMENTS)('renders %s without crashing', (element) => {
-    const { container } = render(
+    render(
       <MantineProvider>
         <GardenSprite element={element} size={40} />
       </MantineProvider>,
     );
-    // Each sprite renders an <svg> element
-    expect(container.querySelector('svg')).toBeInTheDocument();
+    expect(screen.getByTestId('garden-sprite-svg')).toBeInTheDocument();
   });
 
   it('renders at the requested size', () => {
-    const { container } = render(
+    render(
       <MantineProvider>
         <GardenSprite element="sprout" size={64} />
       </MantineProvider>,
     );
-    const svg = container.querySelector('svg');
+    const svg = screen.getByTestId('garden-sprite-svg');
     expect(svg).toHaveAttribute('width', '64');
     expect(svg).toHaveAttribute('height', '64');
   });
 
   it('uses a default size of 40 when none is provided', () => {
-    const { container } = render(
+    render(
       <MantineProvider>
         <GardenSprite element="sprout" />
       </MantineProvider>,
     );
-    const svg = container.querySelector('svg');
+    const svg = screen.getByTestId('garden-sprite-svg');
     expect(svg).toHaveAttribute('width', '40');
   });
 });

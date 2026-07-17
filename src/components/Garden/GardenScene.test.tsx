@@ -117,7 +117,7 @@ describe('GardenScene', () => {
 
   describe('visual stage', () => {
     it('applies the correct CSS class for each stage', () => {
-      const { container } = render(
+      render(
         <MantineProvider>
           <GardenScene
             visualStage="forest"
@@ -128,8 +128,7 @@ describe('GardenScene', () => {
         </MantineProvider>,
       );
 
-      const scene = container.querySelector('.garden-scene');
-      expect(scene).toHaveClass('garden-scene--forest');
+      expect(screen.getByRole('img', { name: 'Your growing garden' })).toHaveClass('garden-scene--forest');
     });
   });
 });

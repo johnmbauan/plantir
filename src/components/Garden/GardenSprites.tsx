@@ -13,7 +13,7 @@ function Shadow() {
 
 function Frame({ size = 40, children }: { size?: number; children: ReactNode }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden data-testid="garden-sprite-svg">
       <Shadow />
       {children}
     </svg>
