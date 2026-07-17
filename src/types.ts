@@ -41,6 +41,7 @@ export interface EnrichedPlant {
   threshold: number | null;
   lastMeasuredAt: string | null;
   deviceId: number | null;
+  serialNumber: string | null;
   sleepDurationSeconds: number | null;
   humidityPercent: number | null;
   batteryPercent: number | null;

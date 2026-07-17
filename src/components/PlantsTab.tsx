@@ -8,9 +8,9 @@ import {
   Stack,
   Text,
   Badge,
-  Avatar,
   Skeleton,
   TextInput,
+  Anchor,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconTrash, IconPlus } from "@tabler/icons-react";
@@ -109,7 +109,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
             <Table.Tr>
               <Table.Th>Name</Table.Th>
               <Table.Th>Status</Table.Th>
-              <Table.Th className="col-hide-mobile">Image URL</Table.Th>
+              <Table.Th className="col-hide-mobile">Assigned Device</Table.Th>
               <Table.Th w={100}>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -162,25 +162,24 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
                     </Group>
                   </Table.Td>
                   <Table.Td className="col-hide-mobile">
-                    <Group gap="xs" wrap="nowrap">
-                      <Avatar
-                        src={plant.image_url ?? undefined}
-                        radius="xl"
+                    {plant.serialNumber && plant.deviceId ? (
+                      <Anchor
                         size="sm"
-                        alt={plant.name}
+                        onClick={() =>
+                          setSearchParams(
+                            { tab: "devices", deviceId: String(plant.deviceId) },
+                            { replace: true },
+                          )
+                        }
+                        style={{ cursor: "pointer" }}
                       >
-                        🪴
-                      </Avatar>
-                      {plant.image_url ? (
-                        <Text size="sm" truncate maw={200}>
-                          {plant.image_url}
-                        </Text>
-                      ) : (
-                        <Text size="sm" c="dimmed">
-                          None
-                        </Text>
-                      )}
-                    </Group>
+                        {plant.serialNumber}
+                      </Anchor>
+                    ) : (
+                      <Text size="sm" c="dimmed">
+                        None
+                      </Text>
+                    )}
                   </Table.Td>
                   <Table.Td>
                     <Group gap="xs" wrap="nowrap">

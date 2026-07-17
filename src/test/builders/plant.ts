@@ -10,6 +10,7 @@ export function buildPlant(overrides: Partial<EnrichedPlant> = {}): EnrichedPlan
     threshold: 15,
     lastMeasuredAt: '2026-07-06T08:00:00Z',
     deviceId: 1,
+    serialNumber: 'SN-001',
     sleepDurationSeconds: 28800,
     humidityPercent: 55,
     batteryPercent: 80,

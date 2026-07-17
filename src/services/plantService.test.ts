@@ -46,6 +46,7 @@ describe('plantService', () => {
             createdAt: '2026-01-01',
             devices: [{
               id: 10,
+              serialNumber: 'SN-10',
               humidity_sensors_config: [{ minHumidityThreshold: 15, sleepDurationSeconds: 3600 }],
             }],
           }],
@@ -67,6 +68,56 @@ describe('plantService', () => {
         humidityPercent: 40,
         statuses: ['HEALTHY'],
       });
+    });
+
+    it('maps serialNumber from the humidity device', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({
+        plants: {
+          data: [{
+            id: 1,
+            name: 'Fern',
+            imageUrl: null,
+            createdAt: '2026-01-01',
+            devices: [{
+              id: 10,
+              serialNumber: 'SN-FERN',
+              humidity_sensors_config: [{ minHumidityThreshold: 15, sleepDurationSeconds: 3600 }],
+            }],
+          }],
+          error: null,
+        },
+        devices: {
+          data: [{
+            id: 10,
+            humidity_measurements: [{ humidityPercentage: 50, createdAt: '2026-07-06T11:00:00Z' }],
+            battery_measurements: [],
+          }],
+          error: null,
+        },
+      });
+
+      const plants = await fetchPlants();
+      expect(plants[0].serialNumber).toBe('SN-FERN');
+    });
+
+    it('sets serialNumber to null when plant has no device', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({
+        plants: {
+          data: [{
+            id: 1,
+            name: 'No Device',
+            imageUrl: null,
+            createdAt: '2026-01-01',
+            devices: [],
+          }],
+          error: null,
+        },
+      });
+
+      const plants = await fetchPlants();
+      expect(plants[0].serialNumber).toBeNull();
     });
 
     it('maps species summary when available', async () => {
@@ -127,6 +178,7 @@ describe('plantService', () => {
             createdAt: '2026-01-01',
             devices: [{
               id: 10,
+              serialNumber: 'SN-10',
               humidity_sensors_config: [{ minHumidityThreshold: 30, sleepDurationSeconds: 3600 }],
             }],
           }],
@@ -177,6 +229,7 @@ describe('plantService', () => {
               createdAt: '2026-01-01',
               devices: [{
                 id: 10,
+                serialNumber: 'SN-10',
                 humidity_sensors_config: [{ minHumidityThreshold: 15, sleepDurationSeconds: 3600 }],
               }],
             },
@@ -187,6 +240,7 @@ describe('plantService', () => {
               createdAt: '2026-01-01',
               devices: [{
                 id: 20,
+                serialNumber: 'SN-20',
                 humidity_sensors_config: [{ minHumidityThreshold: 15, sleepDurationSeconds: 3600 }],
               }],
             },
@@ -297,6 +351,7 @@ describe('plantService', () => {
             createdAt: '2026-01-01',
             devices: [{
               id: 10,
+              serialNumber: 'SN-10',
               humidity_sensors_config: [{ minHumidityThreshold: 15, sleepDurationSeconds: 3600 }],
             }],
           }],

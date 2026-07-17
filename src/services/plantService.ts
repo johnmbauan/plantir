@@ -40,6 +40,7 @@ interface RawDeviceMeasurements {
 
 interface RawDevice {
   id: number;
+  serialNumber: string;
   humidity_sensors_config: RawSensorConfig[];
 }
 
@@ -140,6 +141,7 @@ function enrichPlant(
       threshold: null,
       lastMeasuredAt: null,
       deviceId: null,
+      serialNumber: null,
       sleepDurationSeconds: null,
       batteryPercent: null,
     };
@@ -166,6 +168,7 @@ function enrichPlant(
     threshold: config.minHumidityThreshold,
     lastMeasuredAt: latest?.createdAt ?? null,
     deviceId: humidityDevice.id,
+    serialNumber: humidityDevice.serialNumber,
     sleepDurationSeconds: config.sleepDurationSeconds,
     batteryPercent: latestBattery?.batteryPercent ?? null,
   };
@@ -196,7 +199,7 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
     .select(
       `id, name, imageUrl, createdAt, species_id,
        plant_species(id, source, sourceSpeciesId, scientificName, displayName, imageUrl, minSoilMoisture, maxSoilMoisture, minTemperatureCelsius, maxTemperatureCelsius, sunlight, soil, watering, fertilization, pruning),
-       devices(id, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
+       devices(id, serialNumber, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
     )
     .eq("user_id", user.id);
 
@@ -243,7 +246,7 @@ export async function fetchPlantStatusesByIds(plantIds: number[]): Promise<Map<n
     .select(
       `id, name, imageUrl, createdAt, species_id,
        plant_species(id, source, sourceSpeciesId, scientificName, displayName, imageUrl, minSoilMoisture, maxSoilMoisture, minTemperatureCelsius, maxTemperatureCelsius, sunlight, soil, watering, fertilization, pruning),
-       devices(id, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
+       devices(id, serialNumber, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
     )
     .in("id", uniqueIds)
     .eq("user_id", user.id);

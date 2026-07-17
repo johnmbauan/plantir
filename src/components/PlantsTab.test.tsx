@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
+import { useSearchParams } from 'react-router-dom';
 import { renderWithProviders, screen, waitFor } from '@/test/render';
 import { buildPlant } from '@/test/builders/plant';
 import PlantsTab from '@/components/PlantsTab';
@@ -153,6 +154,56 @@ describe('PlantsTab', () => {
       expect(PlantFormModalMock).toHaveBeenCalledWith(
         expect.objectContaining({ opened: true, editingPlant: plant }),
       );
+    });
+  });
+
+  describe('Assigned Device column', () => {
+    it('renders the Assigned Device column header', async () => {
+      renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+      await screen.findByText('Monstera');
+
+      expect(screen.getByRole('columnheader', { name: 'Assigned Device' })).toBeInTheDocument();
+    });
+
+    it('shows the serial number as a clickable element when a device is assigned', async () => {
+      vi.mocked(fetchPlants).mockResolvedValue([buildPlant({ deviceId: 1, serialNumber: 'SN-ABC' })]);
+      renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+      await screen.findByText('Monstera');
+
+      expect(screen.getByText('SN-ABC')).toBeInTheDocument();
+    });
+
+    it('shows None when no device is assigned', async () => {
+      vi.mocked(fetchPlants).mockResolvedValue([buildPlant({ deviceId: null, serialNumber: null, statuses: ['OFFLINE'] })]);
+      renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+      await screen.findByText('Monstera');
+
+      expect(screen.getByText('None')).toBeInTheDocument();
+      expect(screen.queryByText('SN-')).not.toBeInTheDocument();
+    });
+
+    it('switches to devices tab with deviceId when the serial number is clicked', async () => {
+      const user = userEvent.setup();
+      vi.mocked(fetchPlants).mockResolvedValue([buildPlant({ deviceId: 5, serialNumber: 'SN-XYZ' })]);
+
+      function SearchParamsSpy() {
+        const [params] = useSearchParams();
+        return <div data-testid="params">{params.toString()}</div>;
+      }
+
+      renderWithProviders(
+        <>
+          <PlantsTab reloadKey={0} onMutated={vi.fn()} />
+          <SearchParamsSpy />
+        </>,
+      );
+      await screen.findByText('Monstera');
+
+      await user.click(screen.getByText('SN-XYZ'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('params').textContent).toBe('tab=devices&deviceId=5');
+      });
     });
   });
 });
