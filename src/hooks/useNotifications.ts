@@ -38,7 +38,8 @@ export function useNotifications() {
       return [notification, ...current];
     });
 
-    if (document.hasFocus()) {
+    // Achievement unlocks already toast from evaluate/client-event responses.
+    if (document.hasFocus() && notification.type !== "achievement") {
       notifications.show({
         title: notification.title,
         message: notification.body.split("\n")[0],

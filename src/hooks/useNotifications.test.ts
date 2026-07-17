@@ -169,6 +169,35 @@ describe('useNotifications', () => {
     vi.mocked(document.hasFocus).mockRestore();
   });
 
+  it('does not show a toast for incoming achievement notifications even when document has focus', async () => {
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([]);
+    vi.spyOn(document, 'hasFocus').mockReturnValue(true);
+
+    const { result } = renderHook(() => useNotifications());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    const achievementNotification: AppNotification = {
+      id: 'n-achievement',
+      type: 'achievement',
+      title: 'Sprout Wars',
+      body: 'Create your first plant.',
+      payload: { achievementKey: 'hello_my_name_is', garden_element: 'sprout' } as AppNotification['payload'],
+      created_at: new Date().toISOString(),
+    };
+
+    act(() => {
+      broadcastHandler?.({ payload: achievementNotification });
+    });
+
+    // The item is still added to the list
+    expect(result.current.items).toContainEqual(achievementNotification);
+    // But no toast is fired (the achievementService already handles that)
+    expect(mockNotificationsShow).not.toHaveBeenCalled();
+
+    vi.mocked(document.hasFocus).mockRestore();
+  });
+
   it('clearAll removes all items', async () => {
     mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
     mockFetchUnreadNotifications.mockResolvedValue([wateringNotification]);

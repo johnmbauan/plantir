@@ -7,6 +7,7 @@ import type {
   PlantSpeciesSummary,
   PlantStatus,
 } from "@/types";
+import { evaluateAndToastUnlocks } from "@/services/achievementService";
 
 // ---------------------------------------------------------------------------
 // Raw DB shapes (reflect actual Supabase column names after migrations)
@@ -349,6 +350,7 @@ export async function createPlant(name: string, imageUrl: string | null, species
     .insert([{ name, imageUrl, species_id: speciesId ?? null, user_id: user.id }]);
 
   if (error) throw error;
+  void evaluateAndToastUnlocks();
 }
 
 export async function updatePlant(
@@ -367,6 +369,7 @@ export async function updatePlant(
     .eq("user_id", user.id);
 
   if (error) throw error;
+  void evaluateAndToastUnlocks();
 }
 
 export async function deletePlant(id: number) {

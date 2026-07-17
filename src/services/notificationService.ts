@@ -1,6 +1,8 @@
 import supabase from "@/supabase";
+import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
 import { fetchPlantStatusesByIds } from "@/services/plantService";
 import type { PlantStatus } from "@/types";
+import { evaluateAndToastUnlocks, recordClientEvent, showUnlockToasts } from "@/services/achievementService";
 
 export interface NotificationSettings {
   id: number;
@@ -10,7 +12,7 @@ export interface NotificationSettings {
   browser_notifications_enabled: boolean;
 }
 
-export type NotificationType = "watering" | "offline";
+export type NotificationType = "watering" | "offline" | "achievement";
 
 export interface WateringPayload {
   plantId: number;
@@ -29,20 +31,27 @@ export interface OfflinePayload {
   plants: OfflinePlantPayload[];
 }
 
+export interface AchievementPayload {
+  achievementKey: string;
+  garden_element: string;
+}
+
+export type NotificationPayload = WateringPayload | OfflinePayload | AchievementPayload;
+
 export interface AppNotification {
   id: string;
   type: NotificationType;
   title: string;
   body: string;
-  payload: WateringPayload | OfflinePayload;
+  payload: NotificationPayload;
   created_at: string;
 }
 
-function isWateringPayload(payload: WateringPayload | OfflinePayload): payload is WateringPayload {
+function isWateringPayload(payload: NotificationPayload): payload is WateringPayload {
   return "plantId" in payload && !("plants" in payload);
 }
 
-function isOfflinePayload(payload: WateringPayload | OfflinePayload): payload is OfflinePayload {
+function isOfflinePayload(payload: NotificationPayload): payload is OfflinePayload {
   return "plants" in payload;
 }
 
@@ -103,6 +112,7 @@ export async function upsertSettings(
     );
 
   if (error) throw error;
+  void evaluateAndToastUnlocks();
 }
 
 export async function fetchUnreadNotifications(): Promise<AppNotification[]> {
@@ -161,7 +171,13 @@ async function autoResolveNotifications(notifications: AppNotification[]): Promi
   }
 
   const resolvedIds = new Set(toResolve.map((n) => n.id));
-  return notifications.filter((n) => !resolvedIds.has(n.id));
+  const remaining = notifications.filter((n) => !resolvedIds.has(n.id));
+
+  if (toResolve.length > 0) {
+    void evaluateAndToastUnlocks();
+  }
+
+  return remaining;
 }
 
 export async function markNotificationRead(id: string): Promise<void> {
@@ -185,9 +201,17 @@ export async function markAllNotificationsRead(): Promise<void> {
     .is("resolved_at", null);
 
   if (error) throw error;
+
+  try {
+    const newly = await recordClientEvent("inbox_cleared");
+    showUnlockToasts(newly);
+  } catch (err) {
+    console.error("Failed to record inbox_cleared achievement event:", err);
+  }
 }
 
 export function getNotificationHref(notification: AppNotification): string {
+  if (notification.type === "achievement") return GARDEN_PROFILE_PATH;
   if (notification.type === "offline") return "/plants-center?tab=devices";
   if (isWateringPayload(notification.payload)) {
     return `/?highlightPlant=${notification.payload.plantId}`;

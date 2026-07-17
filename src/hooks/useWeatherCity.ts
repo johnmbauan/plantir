@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { GeocodingResult, WeatherForecast } from "@/services/weatherService";
 import { getWeatherForecast } from "@/services/weatherService";
 import type { StoredCity, LocationSource } from "@/components/WeatherWidget/types";
+import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
 
 const STORAGE_KEY = "weather_city";
 
@@ -61,6 +62,9 @@ export function useWeatherCity(): UseWeatherCityReturn {
       setLocationSource("manual");
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newCity));
       void loadForecast(newCity);
+      void recordClientEvent("weather_city_set")
+        .then((newly) => showUnlockToasts(newly))
+        .catch((err) => console.error("Weather achievement event failed:", err));
     },
     [loadForecast],
   );

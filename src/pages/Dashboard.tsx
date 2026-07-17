@@ -11,6 +11,7 @@ import PlantLeaderboard from "@/components/PlantLeaderboard";
 import PlantDetailModal from "@/components/PlantDetailModal";
 import WeatherWidget from "@/components/WeatherWidget";
 import OnboardingChecklist from "@/components/OnboardingChecklist";
+import { recordDashboardVisit, showUnlockToasts } from "@/services/achievementService";
 import "@/pages/Dashboard.css";
 
 type DashboardFilter = PlantStatus | "all";
@@ -61,6 +62,12 @@ export default function Dashboard() {
 
     void reloadPlants("initial");
   }, [reloadPlants]);
+
+  useEffect(() => {
+    void recordDashboardVisit()
+      .then((newly) => showUnlockToasts(newly))
+      .catch((err) => console.error("Dashboard achievement visit failed:", err));
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("plantir_dashboard_sort", sortBy);

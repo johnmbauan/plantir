@@ -242,6 +242,33 @@ describe('NotificationBell', () => {
     expect(screen.getByText('📡')).toBeInTheDocument();
   });
 
+  it('renders achievement notification with a garden avatar', async () => {
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    const achievementNotification: AppNotification = {
+      id: 'n-achievement',
+      type: 'achievement',
+      title: 'Sprout Wars',
+      body: 'Create your first plant.',
+      payload: { achievementKey: 'hello_my_name_is', garden_element: 'sprout' } as AppNotification['payload'],
+      created_at: new Date().toISOString(),
+    };
+
+    vi.mocked(useNotifications).mockReturnValue({
+      items: [achievementNotification],
+      loading: false,
+      unreadCount: 1,
+      refresh: mockRefresh,
+      removeItem: mockRemoveItem,
+      clearAll: mockClearAll,
+    });
+
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+
+    expect(await screen.findByText('Sprout Wars')).toBeInTheDocument();
+    expect(screen.getByText('🌿')).toBeInTheDocument();
+  });
+
   it('shows 9+ label when unread count exceeds nine', () => {
     vi.mocked(useNotifications).mockReturnValue({
       items: Array.from({ length: 12 }, (_, i) => ({ ...sampleNotification, id: `n-${i}` })),

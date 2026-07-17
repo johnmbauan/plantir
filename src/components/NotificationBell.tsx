@@ -29,6 +29,12 @@ function isWateringPayload(payload: AppNotification["payload"]): payload is Wate
   return "plantId" in payload && !("plants" in payload);
 }
 
+function notificationAvatar(notification: AppNotification): { color: string; label: string } {
+  if (notification.type === "watering") return { color: "yellow", label: "💧" };
+  if (notification.type === "offline") return { color: "red", label: "📡" };
+  return { color: "green", label: "🌿" };
+}
+
 function NotificationItem({
   notification,
   onSelect,
@@ -39,6 +45,7 @@ function NotificationItem({
   const imageUrl = isWateringPayload(notification.payload)
     ? notification.payload.imageUrl
     : null;
+  const fallback = notificationAvatar(notification);
 
   return (
     <Menu.Item
@@ -50,8 +57,8 @@ function NotificationItem({
         {imageUrl ? (
           <Avatar src={imageUrl} radius="sm" size={36} alt="" />
         ) : (
-          <Avatar radius="sm" size={36} color={notification.type === "watering" ? "yellow" : "red"}>
-            {notification.type === "watering" ? "💧" : "📡"}
+          <Avatar radius="sm" size={36} color={fallback.color}>
+            {fallback.label}
           </Avatar>
         )}
         <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>

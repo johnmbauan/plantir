@@ -4,6 +4,7 @@ import { notifications } from "@mantine/notifications";
 import { createPairingBundle, pollPairingToken } from "@/services/deviceService";
 import type { PairingBundle } from "@/types";
 import { getErrorMessage } from "@/utils/error";
+import { evaluateAndToastUnlocks } from "@/services/achievementService";
 import PrepareStep from "./steps/PrepareStep";
 import OpenDeviceStep from "./steps/OpenDeviceStep";
 import SetupCodeStep from "./steps/SetupCodeStep";
@@ -108,6 +109,7 @@ export default function DeviceRegistrationWizard({
           setRegisteredDeviceId(result.deviceId ?? null);
           setActive(5);
           onRegistered();
+          void evaluateAndToastUnlocks();
         } else if (result.failed) {
           window.clearInterval(intervalId);
           setWaitingError(

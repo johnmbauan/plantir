@@ -96,7 +96,7 @@ export default function SettingsPage() {
                   Notifications
                 </Text>
                 <Text size="sm" c="dimmed">
-                  Get watering reminders and offline alerts in the app.
+                  Get watering reminders, offline alerts, and garden unlocks in the app.
                 </Text>
               </Stack>
 
