@@ -35,6 +35,7 @@ import { ModalSection } from "@/components/shared/ModalSection";
 import { SpeciesCareCard } from "@/components/shared/SpeciesCareCard";
 import { fetchPlantHistory } from "@/services/plantService";
 import { getErrorMessage } from "@/utils/error";
+import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
 
 interface Props {
   plant: EnrichedPlant | null;
@@ -98,8 +99,14 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
   }, [opened, plant?.id, plant?.deviceId, range, loadHistory]);
 
   useEffect(() => {
-    if (!opened) {
+    if (!opened || range !== "30d") return;
+    void recordClientEvent("viewed_30d_history")
+      .then((newly) => showUnlockToasts(newly))
+      .catch((err) => console.error("History achievement event failed:", err));
+  }, [opened, range]);
 
+  useEffect(() => {
+    if (!opened) {
       setImageExpanded(false);
     }
   }, [opened]);

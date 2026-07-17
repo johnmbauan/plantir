@@ -1,5 +1,6 @@
 import supabase from "@/supabase";
 import type { CalibrationReading, Device, DeviceType, HumidityConfig, PairingBundle, PairingPollResult } from "@/types";
+import { evaluateAndToastUnlocks } from "@/services/achievementService";
 
 export { DEFAULT_HUMIDITY_CONFIG } from "@/constants/deviceDefaults";
 
@@ -73,6 +74,7 @@ export async function createDevice(values: DeviceFormValues): Promise<{ id: numb
     }
   }
 
+  void evaluateAndToastUnlocks();
   return { id: device.id };
 }
 
@@ -110,6 +112,7 @@ export async function updateDevice(id: number, values: DeviceFormValues): Promis
       if (configError) throw configError;
     }
   }
+  void evaluateAndToastUnlocks();
 }
 
 export async function deleteDevice(id: number): Promise<void> {
@@ -191,7 +194,12 @@ export async function saveCalibrationValues(
 ): Promise<void> {
   const { error: configError } = await supabase
     .from("humidity_sensors_config")
-    .update({ airValue, waterValue, calibrationModeStartedAt: null })
+    .update({
+      airValue,
+      waterValue,
+      calibrationModeStartedAt: null,
+      calibrated_at: new Date().toISOString(),
+    })
     .eq("deviceId", deviceId);
 
   if (configError) throw configError;
@@ -202,6 +210,7 @@ export async function saveCalibrationValues(
     .eq("deviceId", deviceId);
 
   if (deleteError) throw deleteError;
+  void evaluateAndToastUnlocks();
 }
 
 export async function pollPairingToken(tokenId: string): Promise<PairingPollResult> {

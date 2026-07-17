@@ -134,6 +134,16 @@ describe('notificationService', () => {
       };
       expect(getNotificationHref(offline)).toBe('/plants-center?tab=devices');
     });
+
+    it('links achievement notifications to the garden section of the profile page', () => {
+      const achievement: AppNotification = {
+        ...wateringNotification,
+        id: 'n-achievement',
+        type: 'achievement',
+        payload: { achievementKey: 'hello_my_name_is', garden_element: 'sprout' },
+      };
+      expect(getNotificationHref(achievement)).toBe('/profile#garden');
+    });
   });
 
   describe('markNotificationRead', () => {

@@ -11,6 +11,7 @@ export interface HumidityConfig {
   waterValue: number;
   sleepDurationSeconds: number;
   calibrationModeStartedAt: string | null;
+  calibrated_at?: string | null;
 }
 
 export interface CalibrationReading {

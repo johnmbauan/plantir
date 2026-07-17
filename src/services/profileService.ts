@@ -1,4 +1,5 @@
 import supabase from "@/supabase";
+import { evaluateAndToastUnlocks } from "@/services/achievementService";
 
 export interface UserProfile {
   nickname: string | null;
@@ -41,9 +42,8 @@ export async function upsertProfile(
     );
 
   if (error) throw error;
+  void evaluateAndToastUnlocks();
 }
-
-/** Uploads an avatar file and returns its public URL. */
 export async function uploadAvatar(file: File): Promise<string> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
