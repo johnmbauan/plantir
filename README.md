@@ -20,9 +20,39 @@ The following commands are defined in the `scripts` section of the `package.json
 - **`lint`**: Runs ESLint to analyze the code and find potential issues. Run the command `npm run lint`.
 - **`preview`**: Starts a preview of the production build. Run the command `npm run preview`.
 
-## VSCode Extensions
+## Deno (Edge Functions)
 
-Edge Functions developed in JS and deployed on Supabase require Deno to work, thus you need to install the following VSCode extension: `denoland.vscode-deno`.
+Edge Functions in this repository run on Deno. You need Deno installed locally to work with them (run unit tests, type-check, etc.).
+
+Install Deno via Homebrew:
+
+```sh
+brew install deno
+```
+
+Or with the official install script:
+
+```sh
+curl -fsSL https://deno.land/install.sh | sh
+```
+
+After installation, add the Deno binary to your PATH if prompted (add the two `export` lines to your `~/.zshrc` and run `source ~/.zshrc`). Verify with `deno --version`.
+
+### Running Edge Function unit tests
+
+```sh
+cd supabase && deno task test
+```
+
+To type-check edge functions without running the tests:
+
+```sh
+deno check supabase/functions/garden-achievements/badgeEligibility.ts
+```
+
+### VSCode Extension
+
+Install the `denoland.vscode-deno` extension for syntax highlighting, type checking, and IntelliSense inside the `supabase/functions/` directory.
 
 ## Arduino IDE
 

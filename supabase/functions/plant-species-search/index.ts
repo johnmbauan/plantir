@@ -15,7 +15,7 @@ import { asString, objectFromUnknown } from "../_shared/normalize.ts";
 
 const REQUEST_TIMEOUT_MS = 8000;
 const MAX_QUERY_LENGTH = 80;
-const MIN_QUERY_LENGTH = 2;
+const MIN_QUERY_LENGTH = 3;
 const MAX_LIMIT = 20;
 
 const CORS_ORIGIN_HEADERS = {
