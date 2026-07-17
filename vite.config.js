@@ -13,6 +13,7 @@ export default defineConfig({
   test: {
     globals: false,
     environment: 'jsdom',
+    exclude: ['supabase/**', 'node_modules/**'],
     setupFiles: ['./src/test/setup.ts'],
     css: true,
     pool: 'forks',

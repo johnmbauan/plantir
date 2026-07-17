@@ -146,6 +146,35 @@ The `telegram-notifier` code is versioned in the project, at the [supabase/funct
 1. `supabase login`: login automatically with your Supabase account; follow the instructions in the terminal to authenticate yourself.
 2. `supabase functions deploy telegram-notifier`: deploy on supabase the updated function code.
 
+### Unit testing and integration testing Edge Functions
+
+Edge Function business logic is covered by Deno tests located in [`supabase/functions/tests/`](../supabase/functions/tests/). [Deno](https://deno.com/) must be installed locally to run them — see the [Deno section](../README.md#deno-edge-functions) of the README for installation instructions.
+
+The test suite contains two layers:
+
+- **Unit tests** (`_shared/`, `garden-achievements/badgeEligibility.test.ts`) — test pure business logic with no network calls.
+- **Integration tests** (`plant-species-search/`, `plant-species-detail/`, `create-device-pairing/`, `garden-achievements/index.test.ts`) — call the full `Deno.serve` handler directly, mocking `globalThis.fetch` to simulate Supabase REST and external API responses. No running Supabase instance is required.
+
+**First-time setup** — cache the Supabase JS package before running integration tests for the first time:
+
+```sh
+cd supabase
+deno cache functions/plant-species-search/index.ts
+```
+
+Run all tests from the `supabase/` directory:
+
+```sh
+cd supabase
+deno task test
+```
+
+Or run a single test file directly:
+
+```sh
+deno test --no-check supabase/functions/tests/_shared/normalize.test.ts
+```
+
 ## Secrets
 
 In Supabase secrets are at the project level. In our case the `telegram-notifier` function requires some custom secrets to work (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` and `CRON_API_KEY`); you can use the Supabase CLI to fully manage them. In particular:
