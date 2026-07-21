@@ -8,6 +8,16 @@ const plantOptions = [
 ];
 
 describe('PrepareStep', () => {
+  it('shows a recommendation to use a PC or laptop', () => {
+    renderWithProviders(
+      <PrepareStep plantOptions={plantOptions} plantId={null} onPlantChange={vi.fn()} />,
+    );
+
+    expect(
+      screen.getByText(/recommend completing this setup from a PC or laptop/i),
+    ).toBeInTheDocument();
+  });
+
   it('renders intro text and plant selector', () => {
     renderWithProviders(
       <PrepareStep plantOptions={plantOptions} plantId={null} onPlantChange={vi.fn()} />,
