@@ -103,9 +103,8 @@ describe('PlantFilterBar', () => {
       <PlantFilterBar {...defaultProps} activeFilter="WATERING_NEEDED" />,
     );
 
-    // Badge label text is nested inside the root element that carries the active class.
     // eslint-disable-next-line testing-library/no-node-access
-    const activeBadge = document.querySelector('.dashboard-filter-badge--active');
+    const activeBadge = document.querySelector('.filter-chip--active');
     expect(activeBadge).toHaveTextContent(/need watering/);
   });
 });

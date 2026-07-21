@@ -1,25 +1,6 @@
-/* Filter badges */
+/* Filter summary row */
 .dashboard-summary {
   flex-wrap: wrap;
-}
-
-.dashboard-filter-badge {
-  cursor: pointer;
-  user-select: none;
-  transition: opacity 0.15s, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.dashboard-filter-badge:hover {
-  opacity: 0.85;
-  transform: translateY(-1px);
-}
-
-.dashboard-filter-badge:active {
-  transform: translateY(0);
-}
-
-.dashboard-filter-badge--active {
-  transform: scale(1.07);
 }
 
 /* Leaderboard */
