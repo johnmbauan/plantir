@@ -6,14 +6,16 @@ import { useWeatherCity, WEATHER_CITY_STORAGE_KEY } from './useWeatherCity';
 import { mockGeocodingResults, mockForecastResponse } from '@/test/msw/handlers';
 
 const mockUpdateWeatherLocation = vi.fn().mockResolvedValue(undefined);
+const mockRecordClientEvent = vi.fn().mockResolvedValue([]);
+const mockShowUnlockToasts = vi.fn();
 
 vi.mock('@/services/notificationService', () => ({
   updateWeatherLocation: (...args: unknown[]) => mockUpdateWeatherLocation(...args),
 }));
 
 vi.mock('@/services/achievementService', () => ({
-  recordClientEvent: vi.fn().mockResolvedValue([]),
-  showUnlockToasts: vi.fn(),
+  recordClientEvent: (...args: unknown[]) => mockRecordClientEvent(...args),
+  showUnlockToasts: (...args: unknown[]) => mockShowUnlockToasts(...args),
 }));
 
 const STORAGE_KEY = WEATHER_CITY_STORAGE_KEY;
@@ -22,6 +24,9 @@ describe('useWeatherCity', () => {
   beforeEach(() => {
     localStorage.clear();
     mockUpdateWeatherLocation.mockClear();
+    mockRecordClientEvent.mockClear();
+    mockShowUnlockToasts.mockClear();
+    mockRecordClientEvent.mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -40,9 +45,10 @@ describe('useWeatherCity', () => {
     expect(result.current.forecast).toHaveLength(mockForecastResponse.daily.time.length);
     expect(result.current.error).toBeNull();
     expect(mockUpdateWeatherLocation).toHaveBeenCalledWith(41.89, 12.49);
+    expect(mockRecordClientEvent).not.toHaveBeenCalled();
   });
 
-  it('selectCity persists to localStorage and loads forecast', async () => {
+  it('selectCity records weather_city_set without notification_settings_saved', async () => {
     const { result } = renderHook(() => useWeatherCity());
 
     act(() => {
@@ -67,6 +73,9 @@ describe('useWeatherCity', () => {
       weatherCode: mockForecastResponse.daily.weather_code[0],
     });
     expect(mockUpdateWeatherLocation).toHaveBeenCalledWith(41.89, 12.49);
+    expect(mockRecordClientEvent).toHaveBeenCalledWith('weather_city_set');
+    expect(mockRecordClientEvent).not.toHaveBeenCalledWith('notification_settings_saved');
+    expect(mockShowUnlockToasts).toHaveBeenCalled();
   });
 
   it('starts with no city when localStorage is empty', () => {

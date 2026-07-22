@@ -113,7 +113,13 @@ export async function upsertSettings(
     );
 
   if (error) throw error;
-  void evaluateAndToastUnlocks();
+
+  try {
+    const newly = await recordClientEvent("notification_settings_saved");
+    showUnlockToasts(newly);
+  } catch (err) {
+    console.error("Failed to record notification_settings_saved achievement event:", err);
+  }
 }
 
 export async function updateWeatherLocation(lat: number, lng: number): Promise<void> {

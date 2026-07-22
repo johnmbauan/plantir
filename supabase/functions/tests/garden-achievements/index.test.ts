@@ -269,6 +269,15 @@ describe("record_client_event action", () => {
     // No badges in the empty DB → newly unlocked list is []
     assertEquals(await res.json(), []);
   });
+
+  it("accepts notification_settings_saved as a whitelisted event key", async () => {
+    using _fetch = stub(globalThis, "fetch", emptyDbFetch());
+    const res = await handler(
+      postRequest({ action: "record_client_event", eventKey: "notification_settings_saved" }),
+    );
+    assertEquals(res.status, 200);
+    assertEquals(await res.json(), []);
+  });
 });
 
 // ---------------------------------------------------------------------------
