@@ -1,5 +1,8 @@
 import type { WateringRow } from "./types.ts";
 
+/** TEMP: remove before deploy — forces rain alerts for today and tomorrow. */
+const TEMP_FORCE_RAIN_FORECAST = false;
+
 export interface RainForecast {
   isRainForcastedForToday: boolean;
   isRainForcastedForTomorrow: boolean;
@@ -17,6 +20,10 @@ function isRainWeatherCode(code: number): boolean {
 }
 
 export async function fetchRainForecast(lat: number, lng: number): Promise<RainForecast> {
+  if (TEMP_FORCE_RAIN_FORECAST) {
+    return { isRainForcastedForToday: true, isRainForcastedForTomorrow: true };
+  }
+
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(lat));
   url.searchParams.set("longitude", String(lng));

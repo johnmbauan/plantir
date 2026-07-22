@@ -87,4 +87,68 @@ describe('PlantLeaderboard', () => {
     expect(bars[0]).toHaveAttribute('data-bar-color', '#9ca3af');
     expect(bars[1]).toHaveAttribute('data-bar-color', 'var(--green-400)');
   });
+
+  it('renders status chips for plant statuses', () => {
+    renderWithProviders(
+      <PlantLeaderboard
+        plants={[buildPlant({ statuses: ['WATERING_NEEDED', 'RECHARGE_NEEDED'] })]}
+        loading={false}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Needs water' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Needs recharge' })).toBeInTheDocument();
+  });
+
+  it('shows battery percent below the plant name', () => {
+    renderWithProviders(
+      <PlantLeaderboard
+        plants={[buildPlant({ batteryPercent: 42 })]}
+        loading={false}
+      />,
+    );
+
+    expect(screen.getByText('42%')).toBeInTheDocument();
+  });
+
+  it('shows a snooze chip when the plant is snoozed', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2026-07-22T12:00:00.000Z'));
+
+      renderWithProviders(
+        <PlantLeaderboard
+          plants={[buildPlant({ id: 3, name: 'Fern' })]}
+          loading={false}
+          snoozedUntilByPlantId={new Map([[3, '2026-07-23T11:00:00.000Z']])}
+        />,
+      );
+
+      expect(screen.getByRole('button', { name: 'Snoozed · 23h left' })).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('calls onUnsnooze without opening the plant when remove snooze is clicked', async () => {
+    const user = userEvent.setup();
+    const onUnsnooze = vi.fn();
+    const onPlantClick = vi.fn();
+    const plant = buildPlant({ id: 3, name: 'Fern' });
+
+    renderWithProviders(
+      <PlantLeaderboard
+        plants={[plant]}
+        loading={false}
+        snoozedUntilByPlantId={new Map([[3, '2026-07-23T11:00:00.000Z']])}
+        onUnsnooze={onUnsnooze}
+        onPlantClick={onPlantClick}
+      />,
+    );
+
+    await user.click(screen.getByLabelText('Remove snooze'));
+
+    expect(onUnsnooze).toHaveBeenCalledWith(3);
+    expect(onPlantClick).not.toHaveBeenCalled();
+  });
 });

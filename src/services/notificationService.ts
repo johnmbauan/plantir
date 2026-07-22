@@ -158,6 +158,25 @@ export async function snoozeNotification(plantId: number, hours: 24 | 48): Promi
   if (error) throw error;
 }
 
+export async function fetchActiveSnoozedPlants(): Promise<Map<number, string>> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { data, error } = await supabase
+    .from("plant_notification_snooze")
+    .select("plant_id, snoozed_until")
+    .eq("user_id", user.id)
+    .gt("snoozed_until", new Date().toISOString());
+
+  if (error) throw error;
+
+  const map = new Map<number, string>();
+  for (const row of data ?? []) {
+    map.set(row.plant_id as number, row.snoozed_until as string);
+  }
+  return map;
+}
+
 export async function unsnoozeNotification(plantId: number): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
