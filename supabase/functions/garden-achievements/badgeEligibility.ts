@@ -59,7 +59,6 @@ export async function computeEligibleBadgeKeys(
   const [
     { data: plants, error: plantsError },
     { data: devices, error: devicesError },
-    { data: settings, error: settingsError },
     { data: profile, error: profileError },
     { data: wateringNotifs, error: wateringError },
     { data: offlineResolved, error: offlineError },
@@ -71,11 +70,6 @@ export async function computeEligibleBadgeKeys(
         "id, plantId, humidity_sensors_config(calibrated_at, minHumidityThreshold, sleepDurationSeconds)",
       )
       .eq("user_id", userId),
-    admin
-      .from("notification_settings")
-      .select("telegram_chat_id, createdAt, updatedAt")
-      .eq("user_id", userId)
-      .maybeSingle(),
     admin.from("profiles").select("nickname, avatar_url").eq("user_id", userId).maybeSingle(),
     admin
       .from("notifications")
@@ -95,7 +89,6 @@ export async function computeEligibleBadgeKeys(
 
   if (plantsError) throw plantsError;
   if (devicesError) throw devicesError;
-  if (settingsError) throw settingsError;
   if (profileError) throw profileError;
   if (wateringError) throw wateringError;
   if (offlineError) throw offlineError;
@@ -112,15 +105,6 @@ export async function computeEligibleBadgeKeys(
   if (hasDevice) keys.push("stalking_fern_legally");
   if (hasLink) keys.push("matchmaker_of_moisture");
   if (hasCalibrated) keys.push("dirt_whisperer_initiate");
-
-  if (settings) {
-    const telegram = String(settings.telegram_chat_id ?? "").trim();
-    const updatedAt = settings.updatedAt ? new Date(settings.updatedAt).getTime() : 0;
-    const createdAt = settings.createdAt ? new Date(settings.createdAt).getTime() : 0;
-    if (telegram !== "" || updatedAt > createdAt) {
-      keys.push("plant_texted_back");
-    }
-  }
 
   if (hasPlant && hasLink && hasCalibrated) {
     keys.push("fully_rooted_not_emotionally");
@@ -208,6 +192,7 @@ export async function computeEligibleBadgeKeys(
   if (plantRows.filter((p) => p.imageUrl != null).length >= 3) keys.push("influencer_garden");
 
   const events = progress.client_events ?? {};
+  if (events.notification_settings_saved === true) keys.push("plant_texted_back");
   if (events.weather_city_set === true) keys.push("cloud_oracle");
 
   if (

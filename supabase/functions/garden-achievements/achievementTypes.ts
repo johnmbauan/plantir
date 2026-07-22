@@ -11,6 +11,7 @@ export const ALLOWED_CLIENT_EVENTS = [
   "viewed_30d_history",
   "alert_hour_visit",
   "inbox_cleared",
+  "notification_settings_saved",
 ] as const;
 
 export type ClientEventKey = (typeof ALLOWED_CLIENT_EVENTS)[number];

@@ -1,9 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 const mockFetchPlantStatusesByIds = vi.fn();
+const mockRecordClientEvent = vi.fn();
+const mockShowUnlockToasts = vi.fn();
+const mockEvaluateAndToastUnlocks = vi.fn();
 
 vi.mock('@/services/plantService', () => ({
   fetchPlantStatusesByIds: (...args: unknown[]) => mockFetchPlantStatusesByIds(...args),
+}));
+
+vi.mock('@/services/achievementService', () => ({
+  recordClientEvent: (...args: unknown[]) => mockRecordClientEvent(...args),
+  showUnlockToasts: (...args: unknown[]) => mockShowUnlockToasts(...args),
+  evaluateAndToastUnlocks: (...args: unknown[]) => mockEvaluateAndToastUnlocks(...args),
 }));
 
 import '@/test/mocks/supabase';
@@ -39,6 +48,11 @@ describe('notificationService', () => {
   beforeEach(() => {
     resetSupabaseMocks();
     mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[1, ['WATERING_NEEDED']]]));
+    mockRecordClientEvent.mockReset();
+    mockShowUnlockToasts.mockReset();
+    mockEvaluateAndToastUnlocks.mockReset();
+    mockRecordClientEvent.mockResolvedValue([]);
+    mockEvaluateAndToastUnlocks.mockResolvedValue([]);
   });
 
   describe('fetchSettings', () => {
@@ -113,6 +127,57 @@ describe('notificationService', () => {
         upsertSettings('chat-1', 9, 'Europe/Rome', true),
       ).resolves.toBeUndefined();
     });
+
+    it('records notification_settings_saved and shows unlock toasts after a successful save', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ notification_settings: { data: null, error: null } });
+      const unlocked = [{
+        key: 'plant_texted_back',
+        name: 'The Pothos Always Rings Twice',
+        description: 'Save notification settings or connect Telegram.',
+        garden_element: 'bell_flower',
+        sort_order: 50,
+        is_hidden: false,
+      }];
+      mockRecordClientEvent.mockResolvedValue(unlocked);
+
+      await upsertSettings('chat-1', 9, 'Europe/Rome', true);
+
+      expect(mockRecordClientEvent).toHaveBeenCalledWith('notification_settings_saved');
+      expect(mockShowUnlockToasts).toHaveBeenCalledWith(unlocked);
+    });
+
+    it('does not record an achievement event when the database upsert fails', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ notification_settings: { data: null, error: new Error('DB error') } });
+
+      await expect(
+        upsertSettings('chat-1', 9, 'Europe/Rome', true),
+      ).rejects.toThrow('DB error');
+
+      expect(mockRecordClientEvent).not.toHaveBeenCalled();
+      expect(mockShowUnlockToasts).not.toHaveBeenCalled();
+    });
+
+    it('still resolves when recording the achievement event fails', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ notification_settings: { data: null, error: null } });
+      mockRecordClientEvent.mockRejectedValue(new Error('Edge function failed'));
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await expect(
+        upsertSettings('chat-1', 9, 'Europe/Rome', true),
+      ).resolves.toBeUndefined();
+
+      expect(mockRecordClientEvent).toHaveBeenCalledWith('notification_settings_saved');
+      expect(mockShowUnlockToasts).not.toHaveBeenCalled();
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Failed to record notification_settings_saved achievement event:',
+        expect.any(Error),
+      );
+
+      errorSpy.mockRestore();
+    });
   });
 
   describe('markAllNotificationsRead', () => {
@@ -159,6 +224,17 @@ describe('notificationService', () => {
       mockAuthenticatedUser();
       setupFromMocks({ notification_settings: { data: null, error: null } });
       await expect(updateWeatherLocation(48.8, 2.3)).resolves.toBeUndefined();
+    });
+
+    it('does not record notification_settings_saved when syncing weather location', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ notification_settings: { data: null, error: null } });
+
+      await updateWeatherLocation(48.8, 2.3);
+
+      expect(mockRecordClientEvent).not.toHaveBeenCalled();
+      expect(mockShowUnlockToasts).not.toHaveBeenCalled();
+      expect(mockEvaluateAndToastUnlocks).not.toHaveBeenCalled();
     });
 
     it('throws when the database update fails', async () => {

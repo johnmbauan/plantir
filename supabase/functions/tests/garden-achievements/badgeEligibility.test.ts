@@ -71,7 +71,7 @@ const BASE_PROGRESS: GardenProgress = {
 };
 
 /**
- * Default empty state satisfying all 6 parallel queries in
+ * Default empty state satisfying all parallel queries in
  * computeEligibleBadgeKeys. Override individual keys per test.
  *
  * notifications:1 → watering query (first call)
@@ -80,7 +80,6 @@ const BASE_PROGRESS: GardenProgress = {
 const EMPTY_TABLES: Record<string, TableSpec> = {
   plants: { data: [] },
   devices: { data: [] },
-  notification_settings: { data: null },
   profiles: { data: null },
   "notifications:1": { data: [] },
   "notifications:2": { data: [] },
@@ -361,21 +360,6 @@ describe("computeEligibleBadgeKeys", () => {
       const keys = await computeEligibleBadgeKeys(client as any, "user-1", BASE_PROGRESS);
       assert(keys.includes("fully_rooted_not_emotionally"));
     });
-
-    it("earns plant_texted_back when a Telegram chat ID is configured", async () => {
-      const client = createClient({
-        ...EMPTY_TABLES,
-        notification_settings: {
-          data: {
-            telegram_chat_id: "12345",
-            createdAt: "2024-01-01T00:00:00Z",
-            updatedAt: "2024-01-01T00:00:00Z",
-          },
-        },
-      });
-      const keys = await computeEligibleBadgeKeys(client as any, "user-1", BASE_PROGRESS);
-      assert(keys.includes("plant_texted_back"));
-    });
   });
 
   describe("notification badges", () => {
@@ -517,6 +501,21 @@ describe("computeEligibleBadgeKeys", () => {
         client_events: { inbox_cleared: true },
       });
       assert(keys.includes("inbox_compost"));
+    });
+
+    it("earns plant_texted_back when notification_settings_saved is true", async () => {
+      const client = createClient(EMPTY_TABLES);
+      const keys = await computeEligibleBadgeKeys(client as any, "user-1", {
+        ...BASE_PROGRESS,
+        client_events: { notification_settings_saved: true },
+      });
+      assert(keys.includes("plant_texted_back"));
+    });
+
+    it("does not earn plant_texted_back without notification_settings_saved", async () => {
+      const client = createClient(EMPTY_TABLES);
+      const keys = await computeEligibleBadgeKeys(client as any, "user-1", BASE_PROGRESS);
+      assert(!keys.includes("plant_texted_back"));
     });
   });
 
