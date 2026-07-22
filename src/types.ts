@@ -35,6 +35,7 @@ export interface EnrichedPlant {
   name: string;
   image_url: string | null;
   created_at: string;
+  is_outdoor: boolean;
   speciesId?: number | null;
   species?: PlantSpeciesSummary | null;
   statuses: PlantStatus[];

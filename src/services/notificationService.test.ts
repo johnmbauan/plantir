@@ -20,6 +20,9 @@ import {
   markNotificationRead,
   markAllNotificationsRead,
   upsertSettings,
+  updateWeatherLocation,
+  snoozeNotification,
+  unsnoozeNotification,
   type AppNotification,
 } from './notificationService';
 
@@ -143,6 +146,69 @@ describe('notificationService', () => {
         payload: { achievementKey: 'hello_my_name_is', garden_element: 'sprout' },
       };
       expect(getNotificationHref(achievement)).toBe('/profile#garden');
+    });
+  });
+
+  describe('updateWeatherLocation', () => {
+    it('throws when not authenticated', async () => {
+      mockUnauthenticated();
+      await expect(updateWeatherLocation(48.8, 2.3)).rejects.toThrow('Not authenticated');
+    });
+
+    it('updates weather location for the authenticated user', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ notification_settings: { data: null, error: null } });
+      await expect(updateWeatherLocation(48.8, 2.3)).resolves.toBeUndefined();
+    });
+
+    it('throws when the database update fails', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ notification_settings: { data: null, error: new Error('DB error') } });
+      await expect(updateWeatherLocation(48.8, 2.3)).rejects.toThrow('DB error');
+    });
+  });
+
+  describe('snoozeNotification', () => {
+    it('throws when not authenticated', async () => {
+      mockUnauthenticated();
+      await expect(snoozeNotification(1, 24)).rejects.toThrow('Not authenticated');
+    });
+
+    it('upserts a snooze entry for 24 hours', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plant_notification_snooze: { data: null, error: null } });
+      await expect(snoozeNotification(42, 24)).resolves.toBeUndefined();
+    });
+
+    it('upserts a snooze entry for 48 hours', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plant_notification_snooze: { data: null, error: null } });
+      await expect(snoozeNotification(42, 48)).resolves.toBeUndefined();
+    });
+
+    it('throws when the database upsert fails', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plant_notification_snooze: { data: null, error: new Error('DB error') } });
+      await expect(snoozeNotification(1, 24)).rejects.toThrow('DB error');
+    });
+  });
+
+  describe('unsnoozeNotification', () => {
+    it('throws when not authenticated', async () => {
+      mockUnauthenticated();
+      await expect(unsnoozeNotification(1)).rejects.toThrow('Not authenticated');
+    });
+
+    it('deletes the snooze record for the given plant', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plant_notification_snooze: { data: null, error: null } });
+      await expect(unsnoozeNotification(42)).resolves.toBeUndefined();
+    });
+
+    it('throws when the database delete fails', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plant_notification_snooze: { data: null, error: new Error('DB error') } });
+      await expect(unsnoozeNotification(1)).rejects.toThrow('DB error');
     });
   });
 

@@ -29,6 +29,7 @@ vi.mock('@/services/notificationService', () => ({
   markNotificationRead: vi.fn().mockResolvedValue(undefined),
   markAllNotificationsRead: vi.fn().mockResolvedValue(undefined),
   getNotificationHref: vi.fn(() => '/'),
+  snoozeNotification: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { markNotificationRead, markAllNotificationsRead, getNotificationHref } from '@/services/notificationService';

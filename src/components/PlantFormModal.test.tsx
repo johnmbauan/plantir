@@ -100,7 +100,7 @@ describe('PlantFormModal', () => {
     await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Ficus');
     await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
 
-    expect(createPlant).toHaveBeenCalledWith('Ficus', null, null);
+    expect(createPlant).toHaveBeenCalledWith('Ficus', null, null, false);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onSaved).toHaveBeenCalledTimes(1);
   });
@@ -119,7 +119,7 @@ describe('PlantFormModal', () => {
     await user.type(nameInput, 'Big Monstera');
     await user.click(within(dialog).getByRole('button', { name: 'Save changes' }));
 
-    expect(updatePlant).toHaveBeenCalledWith(5, 'Big Monstera', null, null);
+    expect(updatePlant).toHaveBeenCalledWith(5, 'Big Monstera', null, null, false);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onSaved).toHaveBeenCalledTimes(1);
   });
@@ -160,7 +160,7 @@ describe('PlantFormModal', () => {
     });
 
     await user.click(saveButton);
-    expect(updatePlant).toHaveBeenCalledWith(5, 'Monstera', null, 7);
+    expect(updatePlant).toHaveBeenCalledWith(5, 'Monstera', null, 7, false);
   });
 
   it('calls onClose when cancel is clicked', async () => {
@@ -214,7 +214,7 @@ describe('PlantFormModal', () => {
 
     expect(deletePlantImage).toHaveBeenCalledWith(null);
     expect(uploadPlantImage).toHaveBeenCalledWith(file);
-    expect(createPlant).toHaveBeenCalledWith('Ficus', 'https://cdn/plant.jpg', null);
+    expect(createPlant).toHaveBeenCalledWith('Ficus', 'https://cdn/plant.jpg', null, false);
   });
 
   it('saves selected species without extra confirmation step', async () => {
@@ -254,7 +254,7 @@ describe('PlantFormModal', () => {
     expect(saveButton).toBeEnabled();
 
     await user.click(saveButton);
-    expect(createPlant).toHaveBeenCalledWith('My Plant', null, 7);
+    expect(createPlant).toHaveBeenCalledWith('My Plant', null, 7, false);
   });
 
   it('clears selected species when user rejects suggestion', async () => {
@@ -290,7 +290,7 @@ describe('PlantFormModal', () => {
     expect(within(dialog).queryByText('Care guidance')).not.toBeInTheDocument();
 
     await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
-    expect(createPlant).toHaveBeenCalledWith('My Plant', null, null);
+    expect(createPlant).toHaveBeenCalledWith('My Plant', null, null, false);
   });
 
   it('allows using confirmed species image without custom upload', async () => {
@@ -325,6 +325,6 @@ describe('PlantFormModal', () => {
     await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
 
     expect(uploadPlantImage).not.toHaveBeenCalled();
-    expect(createPlant).toHaveBeenCalledWith('My Plant', 'https://cdn/monstera.jpg', 7);
+    expect(createPlant).toHaveBeenCalledWith('My Plant', 'https://cdn/monstera.jpg', 7, false);
   });
 });

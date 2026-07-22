@@ -11,6 +11,7 @@ import {
   ScrollArea,
   Stack,
   Text,
+  Anchor,
 } from "@mantine/core";
 import { IconBell } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
@@ -19,6 +20,7 @@ import {
   getNotificationHref,
   markAllNotificationsRead,
   markNotificationRead,
+  snoozeNotification,
   type AppNotification,
   type WateringPayload,
 } from "@/services/notificationService";
@@ -38,13 +40,16 @@ function notificationAvatar(notification: AppNotification): { color: string; lab
 function NotificationItem({
   notification,
   onSelect,
+  onSnooze,
+  snoozing,
 }: {
   notification: AppNotification;
   onSelect: (notification: AppNotification) => void;
+  onSnooze: (notification: AppNotification, hours: 24 | 48) => void;
+  snoozing: boolean;
 }) {
-  const imageUrl = isWateringPayload(notification.payload)
-    ? notification.payload.imageUrl
-    : null;
+  const watering = isWateringPayload(notification.payload) ? notification.payload : null;
+  const imageUrl = watering?.imageUrl ?? null;
   const fallback = notificationAvatar(notification);
 
   return (
@@ -68,9 +73,39 @@ function NotificationItem({
           <Text size="xs" c="dimmed" lineClamp={2}>
             {notification.body.split("\n")[0]}
           </Text>
+          {watering?.rain_forecasted && (
+            <Text size="xs" c="blue">
+              Rain expected — watering may not be needed.
+            </Text>
+          )}
           <Text size="xs" c="dimmed">
             {relativeTime(notification.created_at) ?? ""}
           </Text>
+          {watering && (
+            <Group gap="xs" mt={2} onClick={(e) => e.stopPropagation()}>
+              <Anchor
+                component="button"
+                type="button"
+                size="xs"
+                c="dimmed"
+                disabled={snoozing}
+                onClick={() => onSnooze(notification, 24)}
+              >
+                Snooze 24h
+              </Anchor>
+              <Text size="xs" c="dimmed">·</Text>
+              <Anchor
+                component="button"
+                type="button"
+                size="xs"
+                c="dimmed"
+                disabled={snoozing}
+                onClick={() => onSnooze(notification, 48)}
+              >
+                Snooze 48h
+              </Anchor>
+            </Group>
+          )}
         </Stack>
       </Group>
     </Menu.Item>
@@ -81,6 +116,7 @@ export default function NotificationBell() {
   const navigate = useNavigate();
   const { items, unreadCount, removeItem, clearAll, refresh } = useNotifications();
   const [markingAll, setMarkingAll] = useState(false);
+  const [snoozingId, setSnoozingId] = useState<string | null>(null);
 
   async function handleSelect(notification: AppNotification) {
     try {
@@ -89,6 +125,25 @@ export default function NotificationBell() {
       navigate(getNotificationHref(notification));
     } catch (err) {
       notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+    }
+  }
+
+  async function handleSnooze(notification: AppNotification, hours: 24 | 48) {
+    if (!isWateringPayload(notification.payload)) return;
+    setSnoozingId(notification.id);
+    try {
+      await snoozeNotification(notification.payload.plantId, hours);
+      await markNotificationRead(notification.id);
+      removeItem(notification.id);
+      notifications.show({
+        color: "green",
+        title: "Snoozed",
+        message: `Watering reminders for ${notification.payload.plantName} silenced for ${hours}h`,
+      });
+    } catch (err) {
+      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+    } finally {
+      setSnoozingId(null);
     }
   }
 
@@ -160,6 +215,8 @@ export default function NotificationBell() {
                 key={notification.id}
                 notification={notification}
                 onSelect={(item) => void handleSelect(item)}
+                onSnooze={(item, hours) => void handleSnooze(item, hours)}
+                snoozing={snoozingId === notification.id}
               />
             ))}
           </ScrollArea.Autosize>

@@ -3,6 +3,7 @@ import type { GeocodingResult, WeatherForecast } from "@/services/weatherService
 import { getWeatherForecast } from "@/services/weatherService";
 import type { StoredCity, LocationSource } from "@/components/WeatherWidget/types";
 import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
+import { updateWeatherLocation } from "@/services/notificationService";
 
 const STORAGE_KEY = "weather_city";
 
@@ -45,6 +46,10 @@ export function useWeatherCity(): UseWeatherCityReturn {
       setCity(parsed);
       setLocationSource("stored");
       void loadForecast(parsed);
+      // Keep server-side weather coords in sync for rain-aware alerts.
+      void updateWeatherLocation(parsed.lat, parsed.lng).catch((err) =>
+        console.error("Failed to sync weather location:", err),
+      );
     } catch {
       localStorage.removeItem(STORAGE_KEY);
     }
@@ -62,6 +67,9 @@ export function useWeatherCity(): UseWeatherCityReturn {
       setLocationSource("manual");
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newCity));
       void loadForecast(newCity);
+      void updateWeatherLocation(newCity.lat, newCity.lng).catch((err) =>
+        console.error("Failed to sync weather location:", err),
+      );
       void recordClientEvent("weather_city_set")
         .then((newly) => showUnlockToasts(newly))
         .catch((err) => console.error("Weather achievement event failed:", err));

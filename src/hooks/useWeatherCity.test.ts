@@ -1,9 +1,18 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw/server';
 import { useWeatherCity } from './useWeatherCity';
 import { mockGeocodingResults, mockForecastResponse } from '@/test/msw/handlers';
+
+vi.mock('@/services/notificationService', () => ({
+  updateWeatherLocation: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('@/services/achievementService', () => ({
+  recordClientEvent: vi.fn().mockResolvedValue([]),
+  showUnlockToasts: vi.fn(),
+}));
 
 const STORAGE_KEY = 'weather_city';
 
