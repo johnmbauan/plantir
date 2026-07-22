@@ -379,7 +379,7 @@ describe('plantService', () => {
         plants: { data: { devices: [] }, error: null },
       });
 
-      await expect(fetchPlantHistory(1, '24h')).resolves.toEqual({
+      await expect(fetchPlantHistory(1, '7d')).resolves.toEqual({
         humidity: [],
         battery: [],
       });

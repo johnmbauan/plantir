@@ -48,7 +48,7 @@ export interface AppNotification {
   created_at: string;
 }
 
-function isWateringPayload(payload: NotificationPayload): payload is WateringPayload {
+export function isWateringPayload(payload: NotificationPayload): payload is WateringPayload {
   return "plantId" in payload && !("plants" in payload);
 }
 

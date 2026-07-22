@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/render';
 import { buildPlant } from '@/test/builders/plant';
-import type { EnrichedPlant } from '@/types';
+import type { PlantStatus } from '@/types';
 import PlantLeaderboard from './PlantLeaderboard';
 
 vi.mock('@/components/HumidityBar', () => ({
@@ -58,12 +58,12 @@ describe('PlantLeaderboard', () => {
   });
 
   it.each([
-    ['var(--green-400)', { humidityPercent: 35, threshold: 30 }],
-    ['var(--terracotta-500)', { humidityPercent: 32, threshold: 30 }],
-    ['var(--mantine-color-red-6)', { humidityPercent: 25, threshold: 30 }],
-  ] as const)(
-    'passes %s to HumidityBar when humidity is %s',
-    (expectedColor: string, overrides: Partial<EnrichedPlant>) => {
+    ['var(--green-400)', { statuses: ['HEALTHY'] as PlantStatus[], humidityPercent: 35, threshold: 30 }],
+    ['var(--terracotta-500)', { statuses: ['WATERING_NEEDED'] as PlantStatus[], humidityPercent: 25, threshold: 30 }],
+    ['#9ca3af', { statuses: ['OFFLINE'] as PlantStatus[], humidityPercent: 25, threshold: 30 }],
+  ])(
+    'passes %s to HumidityBar for primary status',
+    (expectedColor, overrides) => {
       renderWithProviders(
         <PlantLeaderboard plants={[buildPlant(overrides)]} loading={false} />,
       );
@@ -72,7 +72,7 @@ describe('PlantLeaderboard', () => {
     },
   );
 
-  it('falls back to status bar color when humidity or threshold is missing', () => {
+  it('uses status bar color regardless of missing humidity or threshold', () => {
     renderWithProviders(
       <PlantLeaderboard
         plants={[

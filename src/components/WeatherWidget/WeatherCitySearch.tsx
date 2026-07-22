@@ -6,15 +6,25 @@ import { useCitySearch } from "@/hooks/useCitySearch";
 interface WeatherCitySearchProps {
   onCitySelect: (result: GeocodingResult) => void;
   showIntroHint?: boolean;
+  showLocationSetupHint?: boolean;
 }
 
-export function WeatherCitySearch({ onCitySelect, showIntroHint = false }: WeatherCitySearchProps) {
+export function WeatherCitySearch({
+  onCitySelect,
+  showIntroHint = false,
+  showLocationSetupHint = false,
+}: WeatherCitySearchProps) {
   const { searchQuery, setSearchQuery, searchResults, searching, noResults, handleSearch } =
     useCitySearch();
 
   return (
     <Box className="weather-city-search" mt="xs">
-      {showIntroHint && (
+      {showLocationSetupHint && (
+        <Text size="xs" c="var(--green-700)" mb={6}>
+          Set your city so Plantir can include rain forecasts in watering alerts for outdoor plants.
+        </Text>
+      )}
+      {showIntroHint && !showLocationSetupHint && (
         <Text size="xs" c="dimmed" mb={6}>
           Choose a city to see the upcoming forecast.
         </Text>

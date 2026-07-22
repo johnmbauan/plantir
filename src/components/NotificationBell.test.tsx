@@ -25,18 +25,28 @@ vi.mock('@mantine/notifications', async (importOriginal) => {
   };
 });
 
-vi.mock('@/services/notificationService', () => ({
-  markNotificationRead: vi.fn().mockResolvedValue(undefined),
-  markAllNotificationsRead: vi.fn().mockResolvedValue(undefined),
-  getNotificationHref: vi.fn(() => '/'),
-  snoozeNotification: vi.fn().mockResolvedValue(undefined),
-}));
+vi.mock('@/services/notificationService', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/services/notificationService')>();
+  return {
+    ...actual,
+    markNotificationRead: vi.fn().mockResolvedValue(undefined),
+    markAllNotificationsRead: vi.fn().mockResolvedValue(undefined),
+    getNotificationHref: vi.fn(() => '/'),
+    snoozeNotification: vi.fn().mockResolvedValue(undefined),
+  };
+});
 
-import { markNotificationRead, markAllNotificationsRead, getNotificationHref } from '@/services/notificationService';
+import {
+  markNotificationRead,
+  markAllNotificationsRead,
+  getNotificationHref,
+  snoozeNotification,
+} from '@/services/notificationService';
 
 const mockedMarkRead = vi.mocked(markNotificationRead);
 const mockedMarkAll = vi.mocked(markAllNotificationsRead);
 const mockedGetHref = vi.mocked(getNotificationHref);
+const mockedSnooze = vi.mocked(snoozeNotification);
 
 import { useNotifications } from '@/hooks/useNotifications';
 
@@ -283,5 +293,122 @@ describe('NotificationBell', () => {
     renderBell();
 
     expect(screen.getByText('9+')).toBeInTheDocument();
+  });
+
+  it('shows snooze actions for watering notifications', async () => {
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    vi.mocked(useNotifications).mockReturnValue({
+      items: [sampleNotification],
+      loading: false,
+      unreadCount: 1,
+      refresh: mockRefresh,
+      removeItem: mockRemoveItem,
+      clearAll: mockClearAll,
+    });
+
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+
+    expect(await screen.findByText('Snooze 24h')).toBeInTheDocument();
+    expect(screen.getByText('Snooze 48h')).toBeInTheDocument();
+  });
+
+  it('snoozes a watering notification for 24 hours', async () => {
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    mockNotificationsShow.mockClear();
+    vi.mocked(useNotifications).mockReturnValue({
+      items: [sampleNotification],
+      loading: false,
+      unreadCount: 1,
+      refresh: mockRefresh,
+      removeItem: mockRemoveItem,
+      clearAll: mockClearAll,
+    });
+
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    await user.click(await screen.findByText('Snooze 24h'));
+
+    await waitFor(() => {
+      expect(mockedSnooze).toHaveBeenCalledWith(1, 24);
+    });
+    expect(mockedMarkRead).toHaveBeenCalledWith('n-1');
+    expect(mockRemoveItem).toHaveBeenCalledWith('n-1');
+    expect(mockNotificationsShow).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Snoozed',
+        message: 'Watering reminders for Monstera silenced for 24h',
+      }),
+    );
+  });
+
+  it('does not navigate when snoozing a notification', async () => {
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    vi.mocked(useNotifications).mockReturnValue({
+      items: [sampleNotification],
+      loading: false,
+      unreadCount: 1,
+      refresh: mockRefresh,
+      removeItem: mockRemoveItem,
+      clearAll: mockClearAll,
+    });
+
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    await user.click(await screen.findByText('Snooze 48h'));
+
+    await waitFor(() => {
+      expect(mockedSnooze).toHaveBeenCalledWith(1, 48);
+    });
+    expect(mockedGetHref).not.toHaveBeenCalled();
+  });
+
+  it('shows error when snoozing fails', async () => {
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    mockNotificationsShow.mockClear();
+    mockedSnooze.mockRejectedValueOnce(new Error('Snooze failed'));
+    vi.mocked(useNotifications).mockReturnValue({
+      items: [sampleNotification],
+      loading: false,
+      unreadCount: 1,
+      refresh: mockRefresh,
+      removeItem: mockRemoveItem,
+      clearAll: mockClearAll,
+    });
+
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    await user.click(await screen.findByText('Snooze 24h'));
+
+    await waitFor(() => {
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({ title: 'Error', message: 'Snooze failed' }),
+      );
+    });
+    expect(mockRemoveItem).not.toHaveBeenCalled();
+  });
+
+  it('shows rain forecast hint when rain is expected', async () => {
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    const rainyNotification: AppNotification = {
+      ...sampleNotification,
+      payload: {
+        ...sampleNotification.payload,
+        rain_forecasted: true,
+      },
+    };
+    vi.mocked(useNotifications).mockReturnValue({
+      items: [rainyNotification],
+      loading: false,
+      unreadCount: 1,
+      refresh: mockRefresh,
+      removeItem: mockRemoveItem,
+      clearAll: mockClearAll,
+    });
+
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+
+    expect(await screen.findByText('Rain expected — watering may not be needed.')).toBeInTheDocument();
   });
 });

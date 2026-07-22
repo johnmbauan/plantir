@@ -76,8 +76,8 @@ interface RawPlantSpeciesSummary {
 const BATTERY_WARNING_THRESHOLD = 10; // Percent below which we consider the battery needs recharge
 const OFFLINE_SLEEP_MULTIPLIER = 2; // How many sleep cycles without measurements before considering the plant offline
 const HISTORY_RANGE_HOURS: Record<HistoryRange, number> = {
-  "24h": 24,
   "7d": 24 * 7,
+  "14d": 24 * 14,
   "30d": 24 * 30,
 };
 

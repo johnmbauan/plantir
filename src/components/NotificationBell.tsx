@@ -18,18 +18,14 @@ import { notifications } from "@mantine/notifications";
 import { useNotifications } from "@/hooks/useNotifications";
 import {
   getNotificationHref,
+  isWateringPayload,
   markAllNotificationsRead,
   markNotificationRead,
   snoozeNotification,
   type AppNotification,
-  type WateringPayload,
 } from "@/services/notificationService";
 import { getErrorMessage } from "@/utils/error";
 import { relativeTime } from "@/utils/time";
-
-function isWateringPayload(payload: AppNotification["payload"]): payload is WateringPayload {
-  return "plantId" in payload && !("plants" in payload);
-}
 
 function notificationAvatar(notification: AppNotification): { color: string; label: string } {
   if (notification.type === "watering") return { color: "yellow", label: "💧" };

@@ -124,6 +124,40 @@ describe('PlantFormModal', () => {
     expect(onSaved).toHaveBeenCalledTimes(1);
   });
 
+  it('renders the outdoor plant switch', () => {
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={null} onClose={onClose} onSaved={onSaved} />,
+    );
+
+    const dialog = getDialog();
+    expect(within(dialog).getByRole('switch', { name: /Outdoor plant/i })).not.toBeChecked();
+  });
+
+  it('creates an outdoor plant when the switch is enabled', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={null} onClose={onClose} onSaved={onSaved} />,
+    );
+
+    const dialog = getDialog();
+    await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Gardenia');
+    await user.click(within(dialog).getByRole('switch', { name: /Outdoor plant/i }));
+    await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
+
+    expect(createPlant).toHaveBeenCalledWith('Gardenia', null, null, true);
+  });
+
+  it('prefills the outdoor switch when editing an outdoor plant', () => {
+    const plant = buildPlant({ name: 'Rosemary', is_outdoor: true });
+
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={plant} onClose={onClose} onSaved={onSaved} />,
+    );
+
+    expect(within(getDialog()).getByRole('switch', { name: /Outdoor plant/i })).toBeChecked();
+  });
+
   it('enables save changes when editing a plant and selecting its first species', async () => {
     const user = userEvent.setup();
     const plant = buildPlant({ id: 5, name: 'Monstera', speciesId: null, species: null });

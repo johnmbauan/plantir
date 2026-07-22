@@ -7,7 +7,15 @@ import { WeatherForecastRow } from "./WeatherForecastRow";
 import { WeatherCitySearch } from "./WeatherCitySearch";
 import "./WeatherWidget.css";
 
-export default function WeatherWidget() {
+interface WeatherWidgetProps {
+  locationSetupPrompt?: boolean;
+  onLocationSet?: () => void;
+}
+
+export default function WeatherWidget({
+  locationSetupPrompt = false,
+  onLocationSet,
+}: WeatherWidgetProps) {
   const { city, locationSource, forecast, loading, error, selectCity } = useWeatherCity();
   const [editMode, setEditMode] = useState(false);
 
@@ -17,10 +25,11 @@ export default function WeatherWidget() {
   const handleCitySelect = (result: GeocodingResult) => {
     selectCity(result);
     setEditMode(false);
+    onLocationSet?.();
   };
 
   return (
-    <Paper className="weather-widget" px="md" py="xs" radius="md" withBorder>
+    <Paper id="weather-widget" className="weather-widget" px="md" py="xs" radius="md" withBorder>
       <Group gap="sm" wrap="nowrap" align="center" className="weather-widget-row">
         <WeatherCityHeader
           city={city}
@@ -37,7 +46,11 @@ export default function WeatherWidget() {
       </Group>
 
       {searchOpen && (
-        <WeatherCitySearch onCitySelect={handleCitySelect} showIntroHint={!city} />
+        <WeatherCitySearch
+          onCitySelect={handleCitySelect}
+          showIntroHint={!city}
+          showLocationSetupHint={locationSetupPrompt && !city}
+        />
       )}
     </Paper>
   );

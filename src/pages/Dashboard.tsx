@@ -73,6 +73,29 @@ export default function Dashboard() {
     localStorage.setItem("plantir_dashboard_sort", sortBy);
   }, [sortBy]);
 
+  const locationSetupPrompt = searchParams.get("setLocation") === "1";
+
+  const clearLocationSetupParam = useCallback(() => {
+    if (searchParams.get("setLocation") !== "1") return;
+    setSearchParams((params) => {
+      params.delete("setLocation");
+      return params;
+    }, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (!locationSetupPrompt) return;
+
+    const scrollTimer = window.setTimeout(() => {
+      document.getElementById("weather-widget")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+
+    return () => window.clearTimeout(scrollTimer);
+  }, [locationSetupPrompt]);
+
   useEffect(() => {
     const highlightParam = searchParams.get("highlightPlant");
     if (!highlightParam) return;
@@ -207,7 +230,10 @@ export default function Dashboard() {
 
   return (
     <Stack gap="lg">
-      <WeatherWidget />
+      <WeatherWidget
+        locationSetupPrompt={locationSetupPrompt}
+        onLocationSet={clearLocationSetupParam}
+      />
       <OnboardingChecklist />
       <PlantFilterBar
         counts={counts}

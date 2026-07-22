@@ -6,10 +6,12 @@ import {
   IconLeaf,
   IconCpu,
   IconBell,
+  IconMapPin,
   IconX,
   IconChevronRight,
 } from "@tabler/icons-react";
 import supabase from "@/supabase";
+import { WEATHER_CITY_STORAGE_KEY } from "@/hooks/useWeatherCity";
 
 const DISMISSED_KEY = "onboarding_dismissed";
 const SETTINGS_VISITED_KEY = "settings_visited";
@@ -29,6 +31,7 @@ export default function OnboardingChecklist() {
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
   const [hasPlants, setHasPlants] = useState(false);
   const [hasDevices, setHasDevices] = useState(false);
+  const [hasLocation, setHasLocation] = useState(false);
   const [hasNotifications, setHasNotifications] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
@@ -48,6 +51,7 @@ export default function OnboardingChecklist() {
       const deviceCount = devicesRes.data?.length ?? 0;
       setHasPlants(plantCount > 0);
       setHasDevices(deviceCount > 0);
+      setHasLocation(localStorage.getItem(WEATHER_CITY_STORAGE_KEY) !== null);
 
       const explicitlyVisited = localStorage.getItem(SETTINGS_VISITED_KEY) === "true";
       const oldestPlantDate = plantsRes.data?.[0]?.createdAt;
@@ -80,6 +84,14 @@ export default function OnboardingChecklist() {
       done: hasDevices,
     },
     {
+      key: "location",
+      icon: <IconMapPin size={15} />,
+      label: "Set your location",
+      description: "Choose your city so outdoor plants can get rain-aware watering alerts.",
+      href: "/?setLocation=1",
+      done: hasLocation,
+    },
+    {
       key: "notifications",
       icon: <IconBell size={15} />,
       label: "Review notification settings",
@@ -89,7 +101,7 @@ export default function OnboardingChecklist() {
     },
   ];
 
-  const allDone = hasPlants && hasDevices && hasNotifications;
+  const allDone = hasPlants && hasDevices && hasLocation && hasNotifications;
 
   if (dismissed || !loaded || allDone) return null;
 
