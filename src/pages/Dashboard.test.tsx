@@ -8,13 +8,26 @@ import { mockAuthenticatedUser, mockSession, resetSupabaseMocks, supabaseMock } 
 import Dashboard from './Dashboard';
 
 const fetchPlants = vi.fn();
+const weatherWidgetMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@/services/plantService', () => ({
   fetchPlants: (...args: unknown[]) => fetchPlants(...args),
 }));
 
 vi.mock('@/components/WeatherWidget', () => ({
-  default: () => <div>Weather widget</div>,
+  default: (props: { locationSetupPrompt?: boolean; onLocationSet?: () => void }) => {
+    weatherWidgetMock(props);
+    return (
+      <div id="weather-widget">
+        Weather widget
+        {props.onLocationSet && (
+          <button type="button" onClick={props.onLocationSet}>
+            Confirm location
+          </button>
+        )}
+      </div>
+    );
+  },
 }));
 
 vi.mock('@/components/OnboardingChecklist', () => ({
@@ -65,6 +78,7 @@ describe('Dashboard', () => {
     mockAuthenticatedUser();
     mockSession(buildSession());
     vi.clearAllMocks();
+    weatherWidgetMock.mockClear();
     localStorage.clear();
     fetchPlants.mockResolvedValue([
       buildPlant({ id: 1, name: 'Monstera', humidityPercent: 40 }),
@@ -186,6 +200,48 @@ describe('Dashboard', () => {
 
     const rows = screen.getAllByText(/Monstera|Ficus/);
     expect(rows[0]).toHaveTextContent('Ficus');
+  });
+
+  it('scrolls to weather widget when setLocation param is present', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const scrollIntoView = vi.fn();
+      Element.prototype.scrollIntoView = scrollIntoView;
+
+      renderWithProviders(<Dashboard />, { route: '/?setLocation=1' });
+
+      await waitFor(() => {
+        expect(screen.getByText('Monstera')).toBeInTheDocument();
+      });
+
+      expect(weatherWidgetMock).toHaveBeenCalledWith(
+        expect.objectContaining({ locationSetupPrompt: true }),
+      );
+
+      await vi.advanceTimersByTimeAsync(150);
+
+      expect(scrollIntoView).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('clears setLocation param after weather location is set', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<Dashboard />, { route: '/?setLocation=1' });
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Confirm location' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Confirm location' }));
+
+    await waitFor(() => {
+      expect(weatherWidgetMock).toHaveBeenCalledWith(
+        expect.objectContaining({ locationSetupPrompt: false }),
+      );
+    });
   });
 
   it('clears highlightPlant URL param and scrolls to plant', async () => {

@@ -19,6 +19,7 @@ export interface WateringPayload {
   plantName: string;
   humidity: number;
   imageUrl: string | null;
+  rain_forecasted?: boolean;
 }
 
 export interface OfflinePlantPayload {
@@ -47,7 +48,7 @@ export interface AppNotification {
   created_at: string;
 }
 
-function isWateringPayload(payload: NotificationPayload): payload is WateringPayload {
+export function isWateringPayload(payload: NotificationPayload): payload is WateringPayload {
   return "plantId" in payload && !("plants" in payload);
 }
 
@@ -113,6 +114,55 @@ export async function upsertSettings(
 
   if (error) throw error;
   void evaluateAndToastUnlocks();
+}
+
+export async function updateWeatherLocation(lat: number, lng: number): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from("notification_settings")
+    .update({
+      weather_lat: lat,
+      weather_lng: lng,
+      updatedAt: new Date().toISOString(),
+    })
+    .eq("user_id", user.id);
+
+  if (error) throw error;
+}
+
+export async function snoozeNotification(plantId: number, hours: 24 | 48): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const snoozedUntil = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+
+  const { error } = await supabase
+    .from("plant_notification_snooze")
+    .upsert(
+      {
+        user_id: user.id,
+        plant_id: plantId,
+        snoozed_until: snoozedUntil,
+      },
+      { onConflict: "user_id,plant_id" },
+    );
+
+  if (error) throw error;
+}
+
+export async function unsnoozeNotification(plantId: number): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from("plant_notification_snooze")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("plant_id", plantId);
+
+  if (error) throw error;
 }
 
 export async function fetchUnreadNotifications(): Promise<AppNotification[]> {

@@ -1,5 +1,5 @@
 export type PlantStatus = "HEALTHY" | "WATERING_NEEDED" | "OFFLINE" | "RECHARGE_NEEDED";
-export type HistoryRange = "24h" | "7d" | "30d";
+export type HistoryRange = "7d" | "14d" | "30d";
 
 export type DeviceType = "humidity";
 
@@ -35,6 +35,7 @@ export interface EnrichedPlant {
   name: string;
   image_url: string | null;
   created_at: string;
+  is_outdoor: boolean;
   speciesId?: number | null;
   species?: PlantSpeciesSummary | null;
   statuses: PlantStatus[];

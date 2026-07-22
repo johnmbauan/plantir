@@ -1,15 +1,27 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw/server';
-import { useWeatherCity } from './useWeatherCity';
+import { useWeatherCity, WEATHER_CITY_STORAGE_KEY } from './useWeatherCity';
 import { mockGeocodingResults, mockForecastResponse } from '@/test/msw/handlers';
 
-const STORAGE_KEY = 'weather_city';
+const mockUpdateWeatherLocation = vi.fn().mockResolvedValue(undefined);
+
+vi.mock('@/services/notificationService', () => ({
+  updateWeatherLocation: (...args: unknown[]) => mockUpdateWeatherLocation(...args),
+}));
+
+vi.mock('@/services/achievementService', () => ({
+  recordClientEvent: vi.fn().mockResolvedValue([]),
+  showUnlockToasts: vi.fn(),
+}));
+
+const STORAGE_KEY = WEATHER_CITY_STORAGE_KEY;
 
 describe('useWeatherCity', () => {
   beforeEach(() => {
     localStorage.clear();
+    mockUpdateWeatherLocation.mockClear();
   });
 
   afterEach(() => {
@@ -27,6 +39,7 @@ describe('useWeatherCity', () => {
     expect(result.current.locationSource).toBe('stored');
     expect(result.current.forecast).toHaveLength(mockForecastResponse.daily.time.length);
     expect(result.current.error).toBeNull();
+    expect(mockUpdateWeatherLocation).toHaveBeenCalledWith(41.89, 12.49);
   });
 
   it('selectCity persists to localStorage and loads forecast', async () => {
@@ -53,6 +66,7 @@ describe('useWeatherCity', () => {
       minTemp: Math.round(mockForecastResponse.daily.temperature_2m_min[0]),
       weatherCode: mockForecastResponse.daily.weather_code[0],
     });
+    expect(mockUpdateWeatherLocation).toHaveBeenCalledWith(41.89, 12.49);
   });
 
   it('starts with no city when localStorage is empty', () => {

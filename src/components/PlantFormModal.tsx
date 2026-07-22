@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Modal, Stack, TextInput } from "@mantine/core";
+import { Modal, Stack, Switch, TextInput } from "@mantine/core";
 import type { EnrichedPlant } from "@/types";
 import { createPlant, deletePlantImage, updatePlant, uploadPlantImage } from "@/services/plantService";
 import { notifications } from "@mantine/notifications";
@@ -20,11 +20,13 @@ interface Props {
 
 export default function PlantFormModal({ opened, onClose, editingPlant, onSaved }: Props) {
   const [name, setName] = useState("");
+  const [isOutdoor, setIsOutdoor] = useState(false);
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [initialSnapshot, setInitialSnapshot] = useState<{
     name: string;
+    isOutdoor: boolean;
     selectedSpeciesId: string | null;
     selectedSpeciesDbId: number | null;
     useSpeciesImage: boolean;
@@ -60,6 +62,7 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
     imageFile
     || !initialSnapshot
     || initialSnapshot.name !== name.trim()
+    || initialSnapshot.isOutdoor !== isOutdoor
     || initialSnapshot.selectedSpeciesId !== selectedSpeciesId
     || initialSnapshot.selectedSpeciesDbId !== (selectedSpecies?.id ?? null)
     || initialSnapshot.useSpeciesImage !== useSpeciesImage
@@ -71,10 +74,12 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
 
     if (editingPlant) {
       setName(editingPlant.name);
+      setIsOutdoor(editingPlant.is_outdoor);
       setExistingImageUrl(editingPlant.image_url);
       initializeSpecies(editingPlant);
     } else {
       setName("");
+      setIsOutdoor(false);
       setExistingImageUrl(null);
       initializeSpecies(null);
     }
@@ -82,6 +87,7 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
     resetFileRef.current?.();
     setInitialSnapshot({
       name: editingPlant?.name.trim() ?? "",
+      isOutdoor: editingPlant?.is_outdoor ?? false,
       selectedSpeciesId: editingPlant?.species?.sourceSpeciesId ?? null,
       selectedSpeciesDbId: editingPlant?.species?.id ?? editingPlant?.speciesId ?? null,
       useSpeciesImage: false,
@@ -115,9 +121,9 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
       }
 
       if (editingPlant) {
-        await updatePlant(editingPlant.id, trimmedName, resolvedUrl, selectedSpecies?.id ?? null);
+        await updatePlant(editingPlant.id, trimmedName, resolvedUrl, selectedSpecies?.id ?? null, isOutdoor);
       } else {
-        await createPlant(trimmedName, resolvedUrl, selectedSpecies?.id ?? null);
+        await createPlant(trimmedName, resolvedUrl, selectedSpecies?.id ?? null, isOutdoor);
       }
 
       notifications.show({
@@ -151,6 +157,14 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+        />
+
+        <Switch
+          label="Outdoor plant"
+          description="Enable for outdoor plants that get rainwater"
+          checked={isOutdoor}
+          onChange={(e) => setIsOutdoor(e.currentTarget.checked)}
+          disabled={saving}
         />
 
         <ModalSection

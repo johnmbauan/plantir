@@ -9,10 +9,21 @@ vi.mock('@/hooks/useWeatherCity', () => ({
   useWeatherCity: vi.fn(),
 }));
 
-const WeatherCitySearchMock = vi.fn(({ onCitySelect }: { onCitySelect: (r: unknown) => void }) => (
-  <button type="button" onClick={() => onCitySelect({ id: 1, name: 'Milan', latitude: 45.46, longitude: 9.19, country: 'Italy', admin1: 'Lombardy' })}>
-    Pick Milan
-  </button>
+const WeatherCitySearchMock = vi.fn(({
+  onCitySelect,
+  showLocationSetupHint,
+}: {
+  onCitySelect: (r: unknown) => void;
+  showLocationSetupHint?: boolean;
+}) => (
+  <div>
+    {showLocationSetupHint && (
+      <span>Set your city so Plantir can include rain forecasts in watering alerts for outdoor plants.</span>
+    )}
+    <button type="button" onClick={() => onCitySelect({ id: 1, name: 'Milan', latitude: 45.46, longitude: 9.19, country: 'Italy', admin1: 'Lombardy' })}>
+      Pick Milan
+    </button>
+  </div>
 ));
 
 vi.mock('@/components/WeatherWidget/WeatherCitySearch', () => ({
@@ -97,5 +108,21 @@ describe('WeatherWidget', () => {
     expect(mockSelectCity).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'Milan', country: 'Italy' }),
     );
+  });
+
+  it('shows the location setup hint during onboarding', () => {
+    renderWithProviders(<WeatherWidget locationSetupPrompt />);
+
+    expect(screen.getByText('Set your city so Plantir can include rain forecasts in watering alerts for outdoor plants.')).toBeInTheDocument();
+  });
+
+  it('calls onLocationSet when a city is picked during onboarding', async () => {
+    const user = userEvent.setup();
+    const onLocationSet = vi.fn();
+
+    renderWithProviders(<WeatherWidget locationSetupPrompt onLocationSet={onLocationSet} />);
+    await user.click(screen.getByRole('button', { name: 'Pick Milan' }));
+
+    expect(onLocationSet).toHaveBeenCalledTimes(1);
   });
 });

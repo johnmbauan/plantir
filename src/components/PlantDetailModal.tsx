@@ -71,7 +71,7 @@ function MetricCard({ icon, label, value, color = "green", children }: MetricCar
 }
 
 export default function PlantDetailModal({ plant, opened, onClose }: Props) {
-  const [range, setRange] = useState<HistoryRange>("24h");
+  const [range, setRange] = useState<HistoryRange>("7d");
   const [history, setHistory] = useState<PlantHistory | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
@@ -215,9 +215,9 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
                 value={range}
                 onChange={(value) => setRange(value as HistoryRange)}
                 data={[
-                  { label: "24h", value: "24h" },
-                  { label: "7d", value: "7d" },
-                  { label: "30d", value: "30d" },
+                  { label: "7 days", value: "7d" },
+                  { label: "14 days", value: "14d" },
+                  { label: "30 days", value: "30d" },
                 ]}
               />
             </Group>

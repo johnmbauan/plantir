@@ -49,6 +49,7 @@ interface RawPlant {
   name: string;
   imageUrl: string | null;
   createdAt: string;
+  is_outdoor?: boolean;
   species_id?: number | null;
   plant_species?: RawPlantSpeciesSummary | null;
   devices: RawDevice[];
@@ -75,8 +76,8 @@ interface RawPlantSpeciesSummary {
 const BATTERY_WARNING_THRESHOLD = 10; // Percent below which we consider the battery needs recharge
 const OFFLINE_SLEEP_MULTIPLIER = 2; // How many sleep cycles without measurements before considering the plant offline
 const HISTORY_RANGE_HOURS: Record<HistoryRange, number> = {
-  "24h": 24,
   "7d": 24 * 7,
+  "14d": 24 * 14,
   "30d": 24 * 30,
 };
 
@@ -134,6 +135,7 @@ function enrichPlant(
       name: plant.name,
       image_url: plant.imageUrl,
       created_at: plant.createdAt,
+      is_outdoor: plant.is_outdoor ?? false,
       speciesId: plant.species_id ?? null,
       species,
       statuses: ["OFFLINE"],
@@ -161,6 +163,7 @@ function enrichPlant(
     name: plant.name,
     image_url: plant.imageUrl,
     created_at: plant.createdAt,
+    is_outdoor: plant.is_outdoor ?? false,
     speciesId: plant.species_id ?? null,
     species,
     statuses,
@@ -197,7 +200,7 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
   const { data: plantsData, error: plantsError } = await supabase
     .from("plants")
     .select(
-      `id, name, imageUrl, createdAt, species_id,
+      `id, name, imageUrl, createdAt, is_outdoor, species_id,
        plant_species(id, source, sourceSpeciesId, scientificName, displayName, imageUrl, minSoilMoisture, maxSoilMoisture, minTemperatureCelsius, maxTemperatureCelsius, sunlight, soil, watering, fertilization, pruning),
        devices(id, serialNumber, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
     )
@@ -244,7 +247,7 @@ export async function fetchPlantStatusesByIds(plantIds: number[]): Promise<Map<n
   const { data: plantsData, error: plantsError } = await supabase
     .from("plants")
     .select(
-      `id, name, imageUrl, createdAt, species_id,
+      `id, name, imageUrl, createdAt, is_outdoor, species_id,
        plant_species(id, source, sourceSpeciesId, scientificName, displayName, imageUrl, minSoilMoisture, maxSoilMoisture, minTemperatureCelsius, maxTemperatureCelsius, sunlight, soil, watering, fertilization, pruning),
        devices(id, serialNumber, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
     )
@@ -344,13 +347,18 @@ export async function fetchPlantHistory(plantId: number, range: HistoryRange): P
 // CRUD Operations for Plants Center
 // ---------------------------------------------------------------------------
 
-export async function createPlant(name: string, imageUrl: string | null, speciesId?: number | null) {
+export async function createPlant(
+  name: string,
+  imageUrl: string | null,
+  speciesId?: number | null,
+  isOutdoor = false,
+) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
   const { error } = await supabase
     .from("plants")
-    .insert([{ name, imageUrl, species_id: speciesId ?? null, user_id: user.id }]);
+    .insert([{ name, imageUrl, species_id: speciesId ?? null, is_outdoor: isOutdoor, user_id: user.id }]);
 
   if (error) throw error;
   void evaluateAndToastUnlocks();
@@ -361,13 +369,14 @@ export async function updatePlant(
   name: string,
   imageUrl: string | null,
   speciesId?: number | null,
+  isOutdoor = false,
 ) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
   const { error } = await supabase
     .from("plants")
-    .update({ name, imageUrl, species_id: speciesId ?? null })
+    .update({ name, imageUrl, species_id: speciesId ?? null, is_outdoor: isOutdoor })
     .eq("id", id)
     .eq("user_id", user.id);
 

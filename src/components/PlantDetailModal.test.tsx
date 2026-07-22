@@ -144,7 +144,7 @@ describe('PlantDetailModal', () => {
     expect(screen.getByText('Measurement history')).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(fetchPlantHistory).toHaveBeenCalledWith(3, '24h');
+      expect(fetchPlantHistory).toHaveBeenCalledWith(3, '7d');
     });
 
     await waitFor(() => {
@@ -165,10 +165,10 @@ describe('PlantDetailModal', () => {
       expect(screen.getByText('Humidity trend')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText('7d'));
+    await user.click(screen.getByText('14 days'));
 
     await waitFor(() => {
-      expect(fetchPlantHistory).toHaveBeenCalledWith(3, '7d');
+      expect(fetchPlantHistory).toHaveBeenCalledWith(3, '14d');
     });
   });
 });

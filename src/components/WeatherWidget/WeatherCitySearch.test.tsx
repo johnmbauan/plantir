@@ -102,6 +102,12 @@ describe('WeatherCitySearch', () => {
     expect(screen.getByText('Choose a city to see the upcoming forecast.')).toBeInTheDocument();
   });
 
+  it('shows location setup hint when showLocationSetupHint is true', () => {
+    renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} showLocationSetupHint />);
+
+    expect(screen.getByText('Set your city so Plantir can include rain forecasts in watering alerts for outdoor plants.')).toBeInTheDocument();
+  });
+
   it('calls handleSearch when search button is clicked', async () => {
     const user = userEvent.setup();
     renderWithProviders(<WeatherCitySearch onCitySelect={vi.fn()} />);

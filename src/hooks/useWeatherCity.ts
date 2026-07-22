@@ -3,8 +3,9 @@ import type { GeocodingResult, WeatherForecast } from "@/services/weatherService
 import { getWeatherForecast } from "@/services/weatherService";
 import type { StoredCity, LocationSource } from "@/components/WeatherWidget/types";
 import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
+import { updateWeatherLocation } from "@/services/notificationService";
 
-const STORAGE_KEY = "weather_city";
+export const WEATHER_CITY_STORAGE_KEY = "weather_city";
 
 interface UseWeatherCityReturn {
   city: StoredCity | null;
@@ -36,7 +37,7 @@ export function useWeatherCity(): UseWeatherCityReturn {
   }, []);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(WEATHER_CITY_STORAGE_KEY);
     if (!stored) return;
     try {
       const parsed = JSON.parse(stored) as StoredCity;
@@ -45,8 +46,12 @@ export function useWeatherCity(): UseWeatherCityReturn {
       setCity(parsed);
       setLocationSource("stored");
       void loadForecast(parsed);
+      // Keep server-side weather coords in sync for rain-aware alerts.
+      void updateWeatherLocation(parsed.lat, parsed.lng).catch((err) =>
+        console.error("Failed to sync weather location:", err),
+      );
     } catch {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(WEATHER_CITY_STORAGE_KEY);
     }
   }, [loadForecast]);
 
@@ -60,8 +65,11 @@ export function useWeatherCity(): UseWeatherCityReturn {
       };
       setCity(newCity);
       setLocationSource("manual");
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newCity));
+      localStorage.setItem(WEATHER_CITY_STORAGE_KEY, JSON.stringify(newCity));
       void loadForecast(newCity);
+      void updateWeatherLocation(newCity.lat, newCity.lng).catch((err) =>
+        console.error("Failed to sync weather location:", err),
+      );
       void recordClientEvent("weather_city_set")
         .then((newly) => showUnlockToasts(newly))
         .catch((err) => console.error("Weather achievement event failed:", err));
