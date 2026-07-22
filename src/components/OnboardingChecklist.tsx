@@ -11,7 +11,7 @@ import {
   IconChevronRight,
 } from "@tabler/icons-react";
 import supabase from "@/supabase";
-import { WEATHER_CITY_STORAGE_KEY } from "@/hooks/useWeatherCity";
+import { useWeatherCity } from "@/context/WeatherCityContext";
 
 const DISMISSED_KEY = "onboarding_dismissed";
 const SETTINGS_VISITED_KEY = "settings_visited";
@@ -28,12 +28,13 @@ interface ChecklistStep {
 
 export default function OnboardingChecklist() {
   const navigate = useNavigate();
+  const { city } = useWeatherCity();
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
   const [hasPlants, setHasPlants] = useState(false);
   const [hasDevices, setHasDevices] = useState(false);
-  const [hasLocation, setHasLocation] = useState(false);
   const [hasNotifications, setHasNotifications] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const hasLocation = city !== null;
 
   useEffect(() => {
     if (dismissed) return;
@@ -51,7 +52,6 @@ export default function OnboardingChecklist() {
       const deviceCount = devicesRes.data?.length ?? 0;
       setHasPlants(plantCount > 0);
       setHasDevices(deviceCount > 0);
-      setHasLocation(localStorage.getItem(WEATHER_CITY_STORAGE_KEY) !== null);
 
       const explicitlyVisited = localStorage.getItem(SETTINGS_VISITED_KEY) === "true";
       const oldestPlantDate = plantsRes.data?.[0]?.createdAt;

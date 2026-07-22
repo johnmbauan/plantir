@@ -10,7 +10,17 @@ import {
 } from '@/test/mocks/supabase';
 import { buildSession } from '@/test/builders/session';
 import OnboardingChecklist from '@/components/OnboardingChecklist';
-import { WEATHER_CITY_STORAGE_KEY } from '@/hooks/useWeatherCity';
+import { useWeatherCity, WEATHER_CITY_STORAGE_KEY } from '@/context/WeatherCityContext';
+import { mockGeocodingResults } from '@/test/msw/handlers';
+
+function WeatherCitySetter() {
+  const { selectCity } = useWeatherCity();
+  return (
+    <button type="button" onClick={() => selectCity(mockGeocodingResults[0])}>
+      Set weather city
+    </button>
+  );
+}
 
 const mockNavigate = vi.fn();
 
@@ -109,6 +119,28 @@ describe('OnboardingChecklist', () => {
     });
 
     renderWithProviders(<OnboardingChecklist />);
+
+    expect(await screen.findByText(/3 of 4 steps complete/)).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Go' })).toHaveLength(1);
+  });
+
+  it('marks location complete when weather city is set after mount', async () => {
+    const user = userEvent.setup();
+    const recentDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    setupFromMocks({
+      plants: { data: [{ id: 1, createdAt: recentDate }], error: null },
+      devices: { data: [{ id: 1 }], error: null },
+    });
+
+    renderWithProviders(
+      <>
+        <OnboardingChecklist />
+        <WeatherCitySetter />
+      </>,
+    );
+
+    expect(await screen.findByText(/2 of 4 steps complete/)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Set weather city' }));
 
     expect(await screen.findByText(/3 of 4 steps complete/)).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Go' })).toHaveLength(1);

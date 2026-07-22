@@ -5,9 +5,13 @@ import WeatherWidget from '@/components/WeatherWidget';
 
 const mockSelectCity = vi.fn();
 
-vi.mock('@/hooks/useWeatherCity', () => ({
-  useWeatherCity: vi.fn(),
-}));
+vi.mock('@/context/WeatherCityContext', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/context/WeatherCityContext')>();
+  return {
+    ...actual,
+    useWeatherCity: vi.fn(),
+  };
+});
 
 const WeatherCitySearchMock = vi.fn(({
   onCitySelect,
@@ -30,7 +34,7 @@ vi.mock('@/components/WeatherWidget/WeatherCitySearch', () => ({
   WeatherCitySearch: (props: { onCitySelect: (r: unknown) => void }) => WeatherCitySearchMock(props),
 }));
 
-import { useWeatherCity } from '@/hooks/useWeatherCity';
+import { useWeatherCity } from '@/context/WeatherCityContext';
 
 describe('WeatherWidget', () => {
   beforeEach(() => {
