@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import type { GeocodingResult, WeatherForecast } from "@/services/weatherService";
 import { getWeatherForecast } from "@/services/weatherService";
 import type { StoredCity, LocationSource } from "@/components/WeatherWidget/types";
@@ -7,7 +7,7 @@ import { updateWeatherLocation } from "@/services/notificationService";
 
 export const WEATHER_CITY_STORAGE_KEY = "weather_city";
 
-interface UseWeatherCityReturn {
+interface WeatherCityContextValue {
   city: StoredCity | null;
   locationSource: LocationSource;
   forecast: WeatherForecast | null;
@@ -16,7 +16,9 @@ interface UseWeatherCityReturn {
   selectCity: (result: GeocodingResult) => void;
 }
 
-export function useWeatherCity(): UseWeatherCityReturn {
+const WeatherCityContext = createContext<WeatherCityContextValue | null>(null);
+
+export function WeatherCityProvider({ children }: { children: React.ReactNode }) {
   const [city, setCity] = useState<StoredCity | null>(null);
   const [locationSource, setLocationSource] = useState<LocationSource>("none");
   const [forecast, setForecast] = useState<WeatherForecast | null>(null);
@@ -41,12 +43,9 @@ export function useWeatherCity(): UseWeatherCityReturn {
     if (!stored) return;
     try {
       const parsed = JSON.parse(stored) as StoredCity;
-      // Restore persisted city and load forecast on initial mount.
-
       setCity(parsed);
       setLocationSource("stored");
       void loadForecast(parsed);
-      // Keep server-side weather coords in sync for rain-aware alerts.
       void updateWeatherLocation(parsed.lat, parsed.lng).catch((err) =>
         console.error("Failed to sync weather location:", err),
       );
@@ -77,5 +76,19 @@ export function useWeatherCity(): UseWeatherCityReturn {
     [loadForecast],
   );
 
-  return { city, locationSource, forecast, loading, error, selectCity };
+  return (
+    <WeatherCityContext.Provider
+      value={{ city, locationSource, forecast, loading, error, selectCity }}
+    >
+      {children}
+    </WeatherCityContext.Provider>
+  );
+}
+
+export function useWeatherCity(): WeatherCityContextValue {
+  const value = useContext(WeatherCityContext);
+  if (!value) {
+    throw new Error("useWeatherCity must be used within WeatherCityProvider");
+  }
+  return value;
 }

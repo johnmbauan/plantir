@@ -6,6 +6,7 @@ import NavDrawer from "@/components/NavDrawer";
 import NotificationBell from "@/components/NotificationBell";
 import UserMenu from "@/components/UserMenu";
 import { useAuth } from "@/context/AuthContext";
+import { WeatherCityProvider } from "@/context/WeatherCityContext";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -88,7 +89,9 @@ export default function Layout() {
       </AppShell.Header>
 
       <AppShell.Main>
-        <Outlet />
+        <WeatherCityProvider>
+          <Outlet />
+        </WeatherCityProvider>
       </AppShell.Main>
     </AppShell>
   );

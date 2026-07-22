@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Paper, Group, Divider } from "@mantine/core";
 import type { GeocodingResult } from "@/services/weatherService";
-import { useWeatherCity } from "@/hooks/useWeatherCity";
+import { useWeatherCity } from "@/context/WeatherCityContext";
 import { WeatherCityHeader } from "./WeatherCityHeader";
 import { WeatherForecastRow } from "./WeatherForecastRow";
 import { WeatherCitySearch } from "./WeatherCitySearch";

@@ -1,8 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw/server';
-import { useWeatherCity, WEATHER_CITY_STORAGE_KEY } from './useWeatherCity';
+import {
+  useWeatherCity,
+  WEATHER_CITY_STORAGE_KEY,
+  WeatherCityProvider,
+} from '@/context/WeatherCityContext';
 import { mockGeocodingResults, mockForecastResponse } from '@/test/msw/handlers';
 
 const mockUpdateWeatherLocation = vi.fn().mockResolvedValue(undefined);
@@ -20,7 +25,11 @@ vi.mock('@/services/achievementService', () => ({
 
 const STORAGE_KEY = WEATHER_CITY_STORAGE_KEY;
 
-describe('useWeatherCity', () => {
+function wrapper({ children }: { children: ReactNode }) {
+  return <WeatherCityProvider>{children}</WeatherCityProvider>;
+}
+
+describe('WeatherCityContext', () => {
   beforeEach(() => {
     localStorage.clear();
     mockUpdateWeatherLocation.mockClear();
@@ -37,7 +46,7 @@ describe('useWeatherCity', () => {
     const storedCity = { name: 'Rome, Lazio, Italy', lat: 41.89, lng: 12.49 };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(storedCity));
 
-    const { result } = renderHook(() => useWeatherCity());
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.city).toEqual(storedCity);
@@ -49,7 +58,7 @@ describe('useWeatherCity', () => {
   });
 
   it('selectCity records weather_city_set without notification_settings_saved', async () => {
-    const { result } = renderHook(() => useWeatherCity());
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
     act(() => {
       result.current.selectCity(mockGeocodingResults[0]);
@@ -79,19 +88,21 @@ describe('useWeatherCity', () => {
   });
 
   it('starts with no city when localStorage is empty', () => {
-    const { result } = renderHook(() => useWeatherCity());
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
     expect(result.current.city).toBeNull();
     expect(result.current.locationSource).toBe('none');
     expect(result.current.forecast).toBeNull();
   });
 
-  it('removes invalid localStorage entry and starts fresh', () => {
+  it('removes invalid localStorage entry and starts fresh', async () => {
     localStorage.setItem(STORAGE_KEY, 'not-json');
 
-    const { result } = renderHook(() => useWeatherCity());
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
-    expect(result.current.city).toBeNull();
+    await waitFor(() => {
+      expect(result.current.city).toBeNull();
+    });
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
 
@@ -103,10 +114,16 @@ describe('useWeatherCity', () => {
     const storedCity = { name: 'Rome, Lazio, Italy', lat: 41.89, lng: 12.49 };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(storedCity));
 
-    const { result } = renderHook(() => useWeatherCity());
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe('Could not load forecast.');
     expect(result.current.forecast).toBeNull();
+  });
+
+  it('throws when used outside WeatherCityProvider', () => {
+    expect(() => renderHook(() => useWeatherCity())).toThrow(
+      'useWeatherCity must be used within WeatherCityProvider',
+    );
   });
 });
