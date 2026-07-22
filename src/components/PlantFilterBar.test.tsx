@@ -53,6 +53,7 @@ describe('PlantFilterBar', () => {
 
     renderWithProviders(<StatefulPlantFilterBar {...defaultProps} />);
 
+    await user.click(screen.getByRole('button', { name: 'Search plants' }));
     await user.type(screen.getByPlaceholderText('Search plants…'), 'fern');
     expect(screen.getByDisplayValue('fern')).toBeInTheDocument();
   });
@@ -92,7 +93,7 @@ describe('PlantFilterBar', () => {
 
     renderWithProviders(<PlantFilterBar {...defaultProps} onSortChange={onSortChange} />);
 
-    await user.click(screen.getByRole('textbox', { name: 'Sort plants' }));
+    await user.click(screen.getByRole('button', { name: 'Sort plants' }));
     await user.click(await screen.findByText('Humidity (lowest first)'));
 
     expect(onSortChange).toHaveBeenCalledWith('humidity-low');

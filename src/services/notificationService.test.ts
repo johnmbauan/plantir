@@ -32,6 +32,7 @@ import {
   updateWeatherLocation,
   snoozeNotification,
   unsnoozeNotification,
+  fetchActiveSnoozedPlants,
   type AppNotification,
 } from './notificationService';
 
@@ -285,6 +286,45 @@ describe('notificationService', () => {
       mockAuthenticatedUser();
       setupFromMocks({ plant_notification_snooze: { data: null, error: new Error('DB error') } });
       await expect(unsnoozeNotification(1)).rejects.toThrow('DB error');
+    });
+  });
+
+  describe('fetchActiveSnoozedPlants', () => {
+    it('throws when not authenticated', async () => {
+      mockUnauthenticated();
+      await expect(fetchActiveSnoozedPlants()).rejects.toThrow('Not authenticated');
+    });
+
+    it('returns a map of plant ids to snoozed_until', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({
+        plant_notification_snooze: {
+          data: [
+            { plant_id: 1, snoozed_until: '2026-07-23T10:00:00.000Z' },
+            { plant_id: 7, snoozed_until: '2026-07-24T12:00:00.000Z' },
+          ],
+          error: null,
+        },
+      });
+
+      await expect(fetchActiveSnoozedPlants()).resolves.toEqual(
+        new Map([
+          [1, '2026-07-23T10:00:00.000Z'],
+          [7, '2026-07-24T12:00:00.000Z'],
+        ]),
+      );
+    });
+
+    it('returns an empty map when there are no active snoozes', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plant_notification_snooze: { data: [], error: null } });
+      await expect(fetchActiveSnoozedPlants()).resolves.toEqual(new Map());
+    });
+
+    it('throws when the database query fails', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plant_notification_snooze: { data: null, error: new Error('DB error') } });
+      await expect(fetchActiveSnoozedPlants()).rejects.toThrow('DB error');
     });
   });
 

@@ -37,6 +37,7 @@
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.03em;
+  text-transform: capitalize;
 }
 
 /* Healthy — green */
@@ -105,4 +106,77 @@
   border-color: var(--terracotta-500);
   color: #fff;
   box-shadow: 0 2px 8px rgba(214, 122, 91, 0.32);
+}
+
+/* Snoozed — muted gray */
+.filter-chip--snooze {
+  background: var(--stone-50);
+  border-color: var(--stone-100);
+  color: var(--stone-600);
+}
+.filter-chip--snooze:hover {
+  background: var(--stone-100);
+  border-color: var(--stone-400);
+}
+
+/* Icon-only variant — text is hidden but animates in on hover */
+.filter-chip--icon-only {
+  padding: 5px 7px;
+}
+
+/* Icon-only chips default to their hover colour so they stand out */
+.filter-chip--icon-only.filter-chip--healthy {
+  background: var(--green-100);
+  border-color: var(--green-100);
+}
+.filter-chip--icon-only.filter-chip--watering {
+  background: var(--slate-100);
+  border-color: var(--slate-100);
+}
+.filter-chip--icon-only.filter-chip--offline {
+  background: var(--stone-100);
+  border-color: var(--stone-100);
+}
+.filter-chip--icon-only.filter-chip--recharge {
+  background: var(--terracotta-100);
+  border-color: var(--terracotta-100);
+}
+.filter-chip--icon-only.filter-chip--snooze {
+  background: var(--stone-100);
+  border-color: var(--stone-100);
+}
+
+.filter-chip--icon-only .filter-chip__text {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  white-space: nowrap;
+  transition:
+    max-width 0.2s ease,
+    opacity 0.15s ease,
+    margin-left 0.2s ease;
+  margin-left: 0;
+}
+
+.filter-chip--icon-only:hover .filter-chip__text {
+  max-width: 200px;
+  opacity: 1;
+  margin-left: 2px;
+}
+
+/* Non-interactive (display-only) chips in plant cards */
+.filter-chip--static {
+  cursor: default;
+}
+.filter-chip--static:hover {
+  transform: none;
+}
+.filter-chip--static:active {
+  transform: none;
+}
+
+.filter-chip__right {
+  display: flex;
+  align-items: center;
+  margin-left: 2px;
 }

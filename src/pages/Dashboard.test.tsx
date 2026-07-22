@@ -8,10 +8,22 @@ import { mockAuthenticatedUser, mockSession, resetSupabaseMocks, supabaseMock } 
 import Dashboard from './Dashboard';
 
 const fetchPlants = vi.fn();
+const fetchActiveSnoozedPlants = vi.fn();
+const unsnoozeNotification = vi.fn();
 const weatherWidgetMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@/services/plantService', () => ({
   fetchPlants: (...args: unknown[]) => fetchPlants(...args),
+}));
+
+vi.mock('@/services/notificationService', () => ({
+  fetchActiveSnoozedPlants: (...args: unknown[]) => fetchActiveSnoozedPlants(...args),
+  unsnoozeNotification: (...args: unknown[]) => unsnoozeNotification(...args),
+}));
+
+vi.mock('@/services/achievementService', () => ({
+  recordDashboardVisit: vi.fn().mockResolvedValue([]),
+  showUnlockToasts: vi.fn(),
 }));
 
 vi.mock('@/components/WeatherWidget', () => ({
@@ -84,6 +96,8 @@ describe('Dashboard', () => {
       buildPlant({ id: 1, name: 'Monstera', humidityPercent: 40 }),
       buildPlant({ id: 2, name: 'Ficus', humidityPercent: 70, statuses: ['WATERING_NEEDED'] }),
     ]);
+    fetchActiveSnoozedPlants.mockResolvedValue(new Map());
+    unsnoozeNotification.mockResolvedValue(undefined);
   });
 
   it('renders plants after loading', async () => {
@@ -195,7 +209,7 @@ describe('Dashboard', () => {
       expect(screen.getByText('Monstera')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('textbox', { name: 'Sort plants' }));
+    await user.click(screen.getByRole('button', { name: 'Sort plants' }));
     await user.click(await screen.findByText('Name (A-Z)'));
 
     const rows = screen.getAllByText(/Monstera|Ficus/);
@@ -334,6 +348,24 @@ describe('Dashboard', () => {
     });
   });
 
+  it('loads active snoozes with plants and unsnoozes from the leaderboard', async () => {
+    const user = userEvent.setup();
+    fetchActiveSnoozedPlants.mockResolvedValue(
+      new Map([[1, new Date(Date.now() + 23 * 60 * 60 * 1000).toISOString()]]),
+    );
+
+    renderWithProviders(<Dashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Snoozed · \d+h left/ })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByLabelText('Remove snooze'));
+
+    expect(unsnoozeNotification).toHaveBeenCalledWith(1);
+    expect(screen.queryByRole('button', { name: /Snoozed · \d+h left/ })).not.toBeInTheDocument();
+  });
+
   it('reloads plants after realtime humidity insert', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     try {
@@ -385,7 +417,7 @@ describe('Dashboard', () => {
       expect(screen.getByText('Monstera')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('textbox', { name: 'Sort plants' }));
+    await user.click(screen.getByRole('button', { name: 'Sort plants' }));
     await user.click(await screen.findByText('Name (A-Z)'));
 
     expect(localStorage.getItem('plantir_dashboard_sort')).toBe('name');
@@ -404,7 +436,7 @@ describe('Dashboard', () => {
       expect(screen.getByText('Alpha')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('textbox', { name: 'Sort plants' }));
+    await user.click(screen.getByRole('button', { name: 'Sort plants' }));
     await user.click(await screen.findByText('Humidity (highest first)'));
 
     const rows = screen.getAllByText(/Alpha|Beta/);
@@ -458,7 +490,7 @@ describe('Dashboard', () => {
       expect(screen.getByText('Recent')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('textbox', { name: 'Sort plants' }));
+    await user.click(screen.getByRole('button', { name: 'Sort plants' }));
     await user.click(await screen.findByText('Last seen (recent first)'));
 
     const rows = screen.getAllByText(/Recent|Old/);

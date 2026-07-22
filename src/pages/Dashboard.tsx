@@ -12,6 +12,10 @@ import PlantDetailModal from "@/components/PlantDetailModal";
 import WeatherWidget from "@/components/WeatherWidget";
 import OnboardingChecklist from "@/components/OnboardingChecklist";
 import { recordDashboardVisit, showUnlockToasts } from "@/services/achievementService";
+import {
+  fetchActiveSnoozedPlants,
+  unsnoozeNotification,
+} from "@/services/notificationService";
 import "@/pages/Dashboard.css";
 
 type DashboardFilter = PlantStatus | "all";
@@ -32,6 +36,7 @@ export default function Dashboard() {
   });
   const [selectedPlant, setSelectedPlant] = useState<EnrichedPlant | null>(null);
   const [highlightedPlantId, setHighlightedPlantId] = useState<number | null>(null);
+  const [snoozedUntilByPlantId, setSnoozedUntilByPlantId] = useState<Map<number, string>>(new Map());
 
   function toggleFilter(status: PlantStatus) {
     setActiveFilter((prev) => (prev === status ? "all" : status));
@@ -42,8 +47,9 @@ export default function Dashboard() {
     if (source !== "initial") setRefreshing(true);
 
     try {
-      const data = await fetchPlants();
+      const [data, snoozeMap] = await Promise.all([fetchPlants(), fetchActiveSnoozedPlants()]);
       setPlants(data);
+      setSnoozedUntilByPlantId(snoozeMap);
       setSelectedPlant((prev) => {
         if (!prev) return null;
         return data.find((p) => p.id === prev.id) ?? prev;
@@ -228,6 +234,21 @@ export default function Dashboard() {
     return undefined;
   }, [plants.length, visible.length, navigate]);
 
+  const handleUnsnooze = useCallback(async (plantId: number) => {
+    setSnoozedUntilByPlantId((prev) => {
+      const next = new Map(prev);
+      next.delete(plantId);
+      return next;
+    });
+    try {
+      await unsnoozeNotification(plantId);
+    } catch (err) {
+      console.error(err);
+      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      void reloadPlants("manual");
+    }
+  }, [reloadPlants]);
+
   return (
     <Stack gap="lg">
       <WeatherWidget
@@ -250,7 +271,9 @@ export default function Dashboard() {
         plants={visible}
         loading={loading}
         highlightedPlantId={highlightedPlantId}
+        snoozedUntilByPlantId={snoozedUntilByPlantId}
         onPlantClick={setSelectedPlant}
+        onUnsnooze={handleUnsnooze}
         emptyState={emptyState}
       />
       <PlantDetailModal
