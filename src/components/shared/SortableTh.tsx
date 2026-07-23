@@ -8,6 +8,8 @@ interface SortableThProps {
   activeKey: string;
   direction: SortDirection;
   onSort: (key: string) => void;
+  className?: string;
+  w?: number | string;
 }
 
 export function SortableTh({
@@ -16,6 +18,8 @@ export function SortableTh({
   activeKey,
   direction,
   onSort,
+  className,
+  w,
 }: SortableThProps) {
   const isActive = activeKey === columnKey;
   const Icon = isActive
@@ -25,7 +29,7 @@ export function SortableTh({
     : IconSelector;
 
   return (
-    <Table.Th>
+    <Table.Th className={className} w={w}>
       <UnstyledButton
         onClick={() => onSort(columnKey)}
         onKeyDown={(e) => {

@@ -123,10 +123,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
 
   return (
     <Stack gap="md">
-      <Group justify="space-between">
-        <Text size="lg" fw={600}>
-          Devices
-        </Text>
+      <Group justify="flex-end">
         <Group gap="xs">
           <Button variant="subtle" onClick={() => handleOpenEdit()}>
             Add manually

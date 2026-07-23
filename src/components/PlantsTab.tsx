@@ -3,30 +3,45 @@ import { useSearchParams } from "react-router-dom";
 import {
   Table,
   Button,
-  Group,
-  ActionIcon,
   Stack,
   Text,
-  Badge,
-  Skeleton,
-  TextInput,
-  Anchor,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconEdit, IconTrash, IconPlus } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { fetchPlants } from "@/services/plantService";
 import type { EnrichedPlant } from "@/types";
-import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { getErrorMessage } from "@/utils/error";
+import type { SortDirection } from "@/utils/sort";
 import PlantFormModal from "@/components/PlantFormModal";
 import PlantDeleteModal from "@/components/PlantDeleteModal";
+import PlantTableRow from "@/components/PlantsTab/PlantTableRow";
+import {
+  plantMatchesSearch,
+  sortPlantsByColumn,
+  type PlantsTabSortKey,
+} from "@/components/PlantsTab/utils";
+import PlantFilterSearch from "@/components/PlantFilterSearch";
+import { SortableTh } from "@/components/shared/SortableTh";
+import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
+import "@/components/PlantsTab/PlantsTab.css";
+
+const COLUMN_COUNT = 5;
+
+const SORTABLE_COLUMNS: { key: PlantsTabSortKey; label: string; className?: string }[] = [
+  { key: "name", label: "Name" },
+  { key: "status", label: "Status" },
+  { key: "moisture", label: "Moisture" },
+  { key: "device", label: "Assigned Device", className: "col-hide-mobile" },
+];
 
 export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<PlantsTabSortKey>("name");
+  const [sortDir, setSortDir] = useState<SortDirection>("asc");
 
   const [editingPlant, setEditingPlant] = useState<EnrichedPlant | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
@@ -53,7 +68,6 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
   };
 
   useEffect(() => {
-
     void loadData();
   }, [reloadKey]);
 
@@ -63,7 +77,6 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
     const plant = plants.find((p) => p.id === Number(editPlantId));
     if (plant) {
       // Open edit modal from URL deep-link once data is ready.
-
       handleOpenEdit(plant);
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
@@ -79,53 +92,65 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
     openDelete();
   };
 
+  const handleSort = (key: string) => {
+    const column = key as PlantsTabSortKey;
+    if (sortKey === column) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(column);
+      setSortDir("asc");
+    }
+  };
+
+  const openDevice = (deviceId: number) => {
+    setSearchParams(
+      { tab: "devices", deviceId: String(deviceId) },
+      { replace: true },
+    );
+  };
+
+  const assignDevice = () => {
+    setSearchParams({ tab: "devices" }, { replace: true });
+  };
+
   const visible = useMemo(() => {
-    return plants
-      .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [plants, search]);
+    const filtered = plants.filter((p) => plantMatchesSearch(p, search));
+    return sortPlantsByColumn(filtered, sortKey, sortDir);
+  }, [plants, search, sortKey, sortDir]);
 
   return (
     <Stack gap="md" pos="relative">
-      <Group justify="space-between">
-        <Text size="lg" fw={600}>
-          Plants
-        </Text>
+      <div className="filter-toolbar plants-tab-toolbar">
+        <PlantFilterSearch value={search} onChange={setSearch} />
         <Button leftSection={<IconPlus size={16} />} onClick={() => handleOpenEdit()}>
           Add Plant
         </Button>
-      </Group>
+      </div>
 
-      <TextInput
-        placeholder="Search plants…"
-        value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
-        style={{ maxWidth: 320, width: "100%" }}
-      />
-
-      <Table.ScrollContainer minWidth={500}>
+      <Table.ScrollContainer minWidth={560}>
         <Table verticalSpacing="sm">
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Name</Table.Th>
-              <Table.Th>Status</Table.Th>
-              <Table.Th className="col-hide-mobile">Assigned Device</Table.Th>
+              {SORTABLE_COLUMNS.map((col) => (
+                <SortableTh
+                  key={col.key}
+                  label={col.label}
+                  columnKey={col.key}
+                  activeKey={sortKey}
+                  direction={sortDir}
+                  onSort={handleSort}
+                  className={col.className}
+                />
+              ))}
               <Table.Th w={100}>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
             {loading ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <Table.Tr key={i}>
-                  <Table.Td><Skeleton height={16} radius="sm" /></Table.Td>
-                  <Table.Td><Skeleton height={16} radius="sm" width={80} /></Table.Td>
-                  <Table.Td className="col-hide-mobile"><Skeleton height={16} radius="sm" /></Table.Td>
-                  <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
-                </Table.Tr>
-              ))
+              <TableLoadingRows rowCount={4} columnCount={COLUMN_COUNT} />
             ) : visible.length === 0 ? (
               <Table.Tr>
-                <Table.Td colSpan={4}>
+                <Table.Td colSpan={COLUMN_COUNT}>
                   <Stack align="center" gap="xs" py="xl">
                     {plants.length === 0 ? (
                       <>
@@ -150,48 +175,14 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
               </Table.Tr>
             ) : (
               visible.map((plant) => (
-                <Table.Tr key={plant.id}>
-                  <Table.Td fw={500}>{plant.name}</Table.Td>
-                  <Table.Td>
-                    <Group gap={4}>
-                      {plant.statuses.map((s) => (
-                        <Badge key={s} color={STATUS_CONFIG[s].color}>
-                          {STATUS_CONFIG[s].label}
-                        </Badge>
-                      ))}
-                    </Group>
-                  </Table.Td>
-                  <Table.Td className="col-hide-mobile">
-                    {plant.serialNumber && plant.deviceId ? (
-                      <Anchor
-                        size="sm"
-                        onClick={() =>
-                          setSearchParams(
-                            { tab: "devices", deviceId: String(plant.deviceId) },
-                            { replace: true },
-                          )
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        {plant.serialNumber}
-                      </Anchor>
-                    ) : (
-                      <Text size="sm" c="dimmed">
-                        None
-                      </Text>
-                    )}
-                  </Table.Td>
-                  <Table.Td>
-                    <Group gap="xs" wrap="nowrap">
-                      <ActionIcon variant="subtle" color="blue" aria-label="Edit plant" onClick={() => handleOpenEdit(plant)}>
-                        <IconEdit size={16} />
-                      </ActionIcon>
-                      <ActionIcon variant="subtle" color="red" aria-label="Delete plant" onClick={() => handleDeletePrompt(plant)}>
-                        <IconTrash size={16} />
-                      </ActionIcon>
-                    </Group>
-                  </Table.Td>
-                </Table.Tr>
+                <PlantTableRow
+                  key={plant.id}
+                  plant={plant}
+                  onEdit={handleOpenEdit}
+                  onDelete={handleDeletePrompt}
+                  onOpenDevice={openDevice}
+                  onAssignDevice={assignDevice}
+                />
               ))
             )}
           </Table.Tbody>

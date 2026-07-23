@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { useSearchParams } from 'react-router-dom';
-import { renderWithProviders, screen, waitFor } from '@/test/render';
+import { renderWithProviders, screen, waitFor, within } from '@/test/render';
 import { buildPlant } from '@/test/builders/plant';
+import type { PlantSpeciesSummary } from '@/types';
 import PlantsTab from '@/components/PlantsTab';
 
 vi.mock('@/services/plantService', () => ({
@@ -26,17 +27,55 @@ vi.mock('@mantine/notifications', () => ({
 
 import { fetchPlants } from '@/services/plantService';
 
+function buildSpecies(overrides: Partial<PlantSpeciesSummary> = {}): PlantSpeciesSummary {
+  return {
+    id: 10,
+    source: 'perenual',
+    sourceSpeciesId: '42',
+    scientificName: 'Monstera deliciosa',
+    displayName: 'Swiss cheese plant',
+    imageUrl: null,
+    minSoilMoisture: null,
+    maxSoilMoisture: null,
+    minTemperatureCelsius: null,
+    maxTemperatureCelsius: null,
+    ...overrides,
+  };
+}
+
+function SearchParamsSpy() {
+  const [params] = useSearchParams();
+  return <div data-testid="params">{params.toString()}</div>;
+}
+
 describe('PlantsTab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(fetchPlants).mockResolvedValue([buildPlant()]);
   });
 
-  it('renders loaded plants', async () => {
+  it('renders loaded plants with moisture and does not show a redundant Plants heading', async () => {
     renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
 
     expect(await screen.findByText('Monstera')).toBeInTheDocument();
     expect(screen.getByText('Healthy')).toBeInTheDocument();
+    expect(screen.getByText('55%')).toBeInTheDocument();
+    expect(screen.getByText('/ 15%')).toBeInTheDocument();
+    expect(screen.queryByText('Plants')).not.toBeInTheDocument();
+  });
+
+  it('shows outdoor indicator and species subtitle when present', async () => {
+    vi.mocked(fetchPlants).mockResolvedValue([
+      buildPlant({
+        is_outdoor: true,
+        species: buildSpecies({ displayName: 'Bird of paradise' }),
+      }),
+    ]);
+
+    renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+
+    expect(await screen.findByLabelText('Outdoor plant')).toBeInTheDocument();
+    expect(screen.getByText('Bird of paradise')).toBeInTheDocument();
   });
 
   it('shows empty state when there are no plants', async () => {
@@ -63,10 +102,31 @@ describe('PlantsTab', () => {
     expect(screen.getByText('Fern')).toBeInTheDocument();
   });
 
-  it('sorts plants by name ascending', async () => {
+  it('filters plants by species name and device serial', async () => {
+    const user = userEvent.setup();
     vi.mocked(fetchPlants).mockResolvedValue([
+      buildPlant({ id: 1, name: 'Alpha', species: buildSpecies({ displayName: 'Pothos' }) }),
+      buildPlant({ id: 2, name: 'Beta', serialNumber: 'SN-ZZZ', species: null }),
+    ]);
+
+    renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('Alpha');
+
+    await user.type(screen.getByPlaceholderText('Search plants…'), 'pothos');
+    expect(screen.getByText('Alpha')).toBeInTheDocument();
+    expect(screen.queryByText('Beta')).not.toBeInTheDocument();
+
+    await user.clear(screen.getByPlaceholderText('Search plants…'));
+    await user.type(screen.getByPlaceholderText('Search plants…'), 'zzz');
+    expect(screen.queryByText('Alpha')).not.toBeInTheDocument();
+    expect(screen.getByText('Beta')).toBeInTheDocument();
+  });
+
+  it('sorts plants by name ascending by default', async () => {
+    vi.mocked(fetchPlants).mockResolvedValue([
+      buildPlant({ id: 1, name: 'Mango' }),
       buildPlant({ id: 2, name: 'Zebra' }),
-      buildPlant({ id: 1, name: 'Apple' }),
+      buildPlant({ id: 3, name: 'Apple' }),
     ]);
 
     renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
@@ -74,10 +134,60 @@ describe('PlantsTab', () => {
 
     const rows = screen.getAllByRole('row');
     expect(rows[1]).toHaveTextContent('Apple');
-    expect(rows[2]).toHaveTextContent('Zebra');
+    expect(rows[2]).toHaveTextContent('Mango');
+    expect(rows[3]).toHaveTextContent('Zebra');
   });
 
-  it('shows no search results message when filter matches nothing', async () => {
+  it('toggles name sort direction when the Name header is clicked', async () => {
+    const user = userEvent.setup();
+    vi.mocked(fetchPlants).mockResolvedValue([
+      buildPlant({ id: 1, name: 'Mango' }),
+      buildPlant({ id: 2, name: 'Zebra' }),
+      buildPlant({ id: 3, name: 'Apple' }),
+    ]);
+
+    renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('Apple');
+
+    await user.click(screen.getByRole('button', { name: 'Sort by Name' }));
+
+    const rows = screen.getAllByRole('row');
+    expect(rows[1]).toHaveTextContent('Zebra');
+    expect(rows[2]).toHaveTextContent('Mango');
+    expect(rows[3]).toHaveTextContent('Apple');
+  });
+
+  it('sorts by moisture when the Moisture header is clicked', async () => {
+    const user = userEvent.setup();
+    vi.mocked(fetchPlants).mockResolvedValue([
+      buildPlant({ id: 1, name: 'Mid', humidityPercent: 50 }),
+      buildPlant({ id: 2, name: 'High', humidityPercent: 80 }),
+      buildPlant({ id: 3, name: 'Low', humidityPercent: 20 }),
+    ]);
+
+    renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('Mid');
+
+    await user.click(screen.getByRole('button', { name: 'Sort by Moisture' }));
+
+    const rows = screen.getAllByRole('row');
+    expect(rows[1]).toHaveTextContent('Low');
+    expect(rows[2]).toHaveTextContent('Mid');
+    expect(rows[3]).toHaveTextContent('High');
+  });
+
+  it('shows an em dash when moisture is missing', async () => {
+    vi.mocked(fetchPlants).mockResolvedValue([
+      buildPlant({ humidityPercent: null, threshold: null }),
+    ]);
+
+    renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('Monstera');
+
+    expect(screen.getByText('—')).toBeInTheDocument();
+  });
+
+  it('shows no search results message when search matches nothing', async () => {
     const user = userEvent.setup();
 
     renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
@@ -158,11 +268,16 @@ describe('PlantsTab', () => {
   });
 
   describe('Assigned Device column', () => {
-    it('renders the Assigned Device column header', async () => {
+    it('renders a sortable Assigned Device column header', async () => {
       renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
       await screen.findByText('Monstera');
 
-      expect(screen.getByRole('columnheader', { name: 'Assigned Device' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Sort by Assigned Device' })).toBeInTheDocument();
+      expect(
+        within(screen.getByRole('columnheader', { name: /Assigned Device/ })).getByText(
+          'Assigned Device',
+        ),
+      ).toBeInTheDocument();
     });
 
     it('shows the serial number as a clickable element when a device is assigned', async () => {
@@ -173,23 +288,21 @@ describe('PlantsTab', () => {
       expect(screen.getByText('SN-ABC')).toBeInTheDocument();
     });
 
-    it('shows None when no device is assigned', async () => {
-      vi.mocked(fetchPlants).mockResolvedValue([buildPlant({ deviceId: null, serialNumber: null, statuses: ['OFFLINE'] })]);
+    it('shows None and Assign when no device is assigned', async () => {
+      vi.mocked(fetchPlants).mockResolvedValue([
+        buildPlant({ deviceId: null, serialNumber: null, statuses: ['OFFLINE'] }),
+      ]);
       renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
       await screen.findByText('Monstera');
 
       expect(screen.getByText('None')).toBeInTheDocument();
+      expect(screen.getByText('Assign')).toBeInTheDocument();
       expect(screen.queryByText('SN-')).not.toBeInTheDocument();
     });
 
     it('switches to devices tab with deviceId when the serial number is clicked', async () => {
       const user = userEvent.setup();
       vi.mocked(fetchPlants).mockResolvedValue([buildPlant({ deviceId: 5, serialNumber: 'SN-XYZ' })]);
-
-      function SearchParamsSpy() {
-        const [params] = useSearchParams();
-        return <div data-testid="params">{params.toString()}</div>;
-      }
 
       renderWithProviders(
         <>
@@ -203,6 +316,27 @@ describe('PlantsTab', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('params').textContent).toBe('tab=devices&deviceId=5');
+      });
+    });
+
+    it('switches to devices tab when Assign is clicked', async () => {
+      const user = userEvent.setup();
+      vi.mocked(fetchPlants).mockResolvedValue([
+        buildPlant({ deviceId: null, serialNumber: null, statuses: ['OFFLINE'] }),
+      ]);
+
+      renderWithProviders(
+        <>
+          <PlantsTab reloadKey={0} onMutated={vi.fn()} />
+          <SearchParamsSpy />
+        </>,
+      );
+      await screen.findByText('Monstera');
+
+      await user.click(screen.getByText('Assign'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('params').textContent).toBe('tab=devices');
       });
     });
   });

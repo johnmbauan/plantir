@@ -1,5 +1,5 @@
 import { Skeleton, Stack, Text, Button, ActionIcon, Tooltip } from "@mantine/core";
-import { IconBellOff, IconLeaf, IconDroplet, IconWifiOff, IconBattery } from "@tabler/icons-react";
+import { IconBellOff, IconLeaf, IconDroplet, IconWifiOff, IconBattery, IconSun } from "@tabler/icons-react";
 import type { EnrichedPlant, PlantStatus } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { relativeTime } from "@/utils/time";
@@ -115,7 +115,16 @@ function PlantLeaderboardRow({
           )}
         </div>
         <div className="leaderboard-name-group">
-          <span className="leaderboard-name">{plant.name}</span>
+          <span className="leaderboard-name-row">
+            <span className="leaderboard-name">{plant.name}</span>
+            {plant.is_outdoor && (
+              <Tooltip label="Outdoor plant" withArrow>
+                <span className="leaderboard-outdoor" aria-label="Outdoor plant" onClick={(e) => e.stopPropagation()}>
+                  <IconSun size={14} color="var(--terracotta-500)" />
+                </span>
+              </Tooltip>
+            )}
+          </span>
           {plant.species && (
             <Text size="xs" c="dimmed" tt="capitalize">
               {plant.species.displayName ?? plant.species.scientificName ?? plant.species.sourceSpeciesId}

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Table } from '@mantine/core';
 import { renderWithProviders, screen } from '@/test/render';
-import { TableLoadingRows } from '@/admin/components/TableLoadingRows';
+import { TableLoadingRows } from '@/components/shared/TableLoadingRows';
 
 function renderRows(rowCount: number, columnCount: number) {
   renderWithProviders(
