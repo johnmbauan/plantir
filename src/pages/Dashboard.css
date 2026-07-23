@@ -48,22 +48,22 @@
 .leaderboard-info {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 200px;
+  gap: 12px;
+  width: 220px;
   flex-shrink: 0;
   padding-top: 4px;
 }
 
 .leaderboard-avatar {
-  width: 36px;
-  height: 36px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: var(--green-50);
   border: 1px solid var(--green-100);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -230,9 +230,29 @@
   to   { transform: scaleX(1); }
 }
 
+@media (min-width: 900px) {
+  .leaderboard-info {
+    width: 248px;
+    gap: 14px;
+  }
+
+  .leaderboard-avatar {
+    width: 72px;
+    height: 72px;
+    font-size: 2rem;
+  }
+}
+
 @media (max-width: 600px) {
   .leaderboard-info {
     width: 130px;
+    gap: 10px;
+  }
+
+  .leaderboard-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
   }
 
   .leaderboard-row {
