@@ -64,6 +64,26 @@ describe('PlantsTab', () => {
     expect(screen.queryByText('Plants')).not.toBeInTheDocument();
   });
 
+  it('renders expanded status chips and icon-only action chips without label expansion', async () => {
+    renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+
+    expect(await screen.findByText('Monstera')).toBeInTheDocument();
+
+    const healthy = screen.getByRole('button', { name: 'Healthy' });
+    expect(healthy).toHaveClass('filter-chip--healthy');
+    expect(healthy).not.toHaveClass('filter-chip--icon-only');
+
+    const edit = screen.getByRole('button', { name: 'Edit plant' });
+    expect(edit).toHaveClass('filter-chip--edit');
+    expect(edit).toHaveClass('filter-chip--icon-only');
+    expect(edit).not.toHaveClass('filter-chip--expand-label');
+
+    const remove = screen.getByRole('button', { name: 'Delete plant' });
+    expect(remove).toHaveClass('filter-chip--danger');
+    expect(remove).toHaveClass('filter-chip--icon-only');
+    expect(remove).not.toHaveClass('filter-chip--expand-label');
+  });
+
   it('shows outdoor indicator and species subtitle when present', async () => {
     vi.mocked(fetchPlants).mockResolvedValue([
       buildPlant({

@@ -109,6 +109,7 @@ describe('PlantLeaderboard', () => {
     );
 
     expect(screen.getByRole('button', { name: 'Healthy' })).toHaveClass('filter-chip--icon-only');
+    expect(screen.getByRole('button', { name: 'Healthy' })).toHaveClass('filter-chip--expand-label');
 
     rerender(
       <PlantLeaderboard

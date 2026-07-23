@@ -64,9 +64,33 @@ describe('FilterChip', () => {
     expect(screen.getByRole('button')).toHaveClass('filter-chip--icon-only');
   });
 
+  it('adds the expand-label class by default when iconOnly', () => {
+    renderWithProviders(<FilterChip {...defaultProps} iconOnly />);
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--expand-label');
+  });
+
+  it('omits the expand-label class when expandLabel=false', () => {
+    renderWithProviders(<FilterChip {...defaultProps} iconOnly expandLabel={false} />);
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--icon-only');
+    expect(screen.getByRole('button')).not.toHaveClass('filter-chip--expand-label');
+  });
+
   it('keeps the label available as aria-label when iconOnly', () => {
     renderWithProviders(<FilterChip {...defaultProps} iconOnly />);
     expect(screen.getByRole('button', { name: 'healthy' })).toBeInTheDocument();
+  });
+
+  it('applies the calibration, edit, and danger variant classes', () => {
+    const { rerender } = renderWithProviders(
+      <FilterChip icon={<span>⚙</span>} label="Calibration recommended" variant="calibration" />,
+    );
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--calibration');
+
+    rerender(<FilterChip icon={<span>✎</span>} label="Edit plant" variant="edit" />);
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--edit');
+
+    rerender(<FilterChip icon={<span>🗑</span>} label="Delete plant" variant="danger" />);
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--danger');
   });
 
   it('renders rightSection content', () => {
