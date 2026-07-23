@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Paper, Stack, Group, Text, ThemeIcon, ActionIcon, Button } from "@mantine/core";
 import {
@@ -10,6 +10,8 @@ import {
   IconX,
   IconChevronRight,
 } from "@tabler/icons-react";
+import supabase from "@/supabase";
+import { useAuth } from "@/context/AuthContext";
 import { useWeatherCity } from "@/context/WeatherCityContext";
 
 const DISMISSED_KEY = "onboarding_dismissed";
@@ -25,40 +27,44 @@ interface ChecklistStep {
   done: boolean;
 }
 
-interface OnboardingChecklistProps {
-  plantsLoaded: boolean;
-  hasPlants: boolean;
-  hasDevices: boolean;
-  oldestPlantCreatedAt: string | null;
-}
-
-function notificationsStepDone(
-  hasPlants: boolean,
-  hasDevices: boolean,
-  oldestPlantCreatedAt: string | null,
-  nowMs: number,
-): boolean {
-  const explicitlyVisited = localStorage.getItem(SETTINGS_VISITED_KEY) === "true";
-  const plantIsOldEnough = oldestPlantCreatedAt
-    ? nowMs - new Date(oldestPlantCreatedAt).getTime() >= SETTINGS_IMPLICIT_DAYS * 24 * 60 * 60 * 1000
-    : false;
-  return explicitlyVisited || (hasPlants && hasDevices && plantIsOldEnough);
-}
-
-export default function OnboardingChecklist({
-  plantsLoaded,
-  hasPlants,
-  hasDevices,
-  oldestPlantCreatedAt,
-}: OnboardingChecklistProps) {
+export default function OnboardingChecklist() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { city } = useWeatherCity();
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
-  // Capture mount time once so age checks stay pure across re-renders.
-  const [nowMs] = useState(() => Date.now());
+  const [hasPlants, setHasPlants] = useState(false);
+  const [hasDevices, setHasDevices] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const hasLocation = city !== null;
-  const hasNotifications = plantsLoaded
-    && notificationsStepDone(hasPlants, hasDevices, oldestPlantCreatedAt, nowMs);
+
+  useEffect(() => {
+    if (dismissed || !user) return;
+    const userId = user.id;
+
+    async function checkProgress() {
+      const [plantsRes, devicesRes] = await Promise.all([
+        supabase.from("plants").select("id, createdAt").eq("user_id", userId).order("createdAt", { ascending: true }).limit(1),
+        supabase.from("devices").select("id").eq("user_id", userId).limit(1),
+      ]);
+
+      const plantCount = plantsRes.data?.length ?? 0;
+      const deviceCount = devicesRes.data?.length ?? 0;
+      setHasPlants(plantCount > 0);
+      setHasDevices(deviceCount > 0);
+
+      const explicitlyVisited = localStorage.getItem(SETTINGS_VISITED_KEY) === "true";
+      const oldestPlantDate = plantsRes.data?.[0]?.createdAt;
+      const plantIsOldEnough = oldestPlantDate
+        ? Date.now() - new Date(oldestPlantDate).getTime() >= SETTINGS_IMPLICIT_DAYS * 24 * 60 * 60 * 1000
+        : false;
+      setHasNotifications(explicitlyVisited || (plantCount > 0 && deviceCount > 0 && plantIsOldEnough));
+
+      setLoaded(true);
+    }
+
+    void checkProgress();
+  }, [dismissed, user]);
 
   const steps: ChecklistStep[] = [
     {
@@ -97,7 +103,7 @@ export default function OnboardingChecklist({
 
   const allDone = hasPlants && hasDevices && hasLocation && hasNotifications;
 
-  if (dismissed || !plantsLoaded || allDone) return null;
+  if (dismissed || !loaded || allDone) return null;
 
   const completedCount = steps.filter((s) => s.done).length;
 

@@ -1,16 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 const mockFetchPlantStatusesByIds = vi.fn();
-const mockGetCachedPlantStatuses = vi.fn();
-const mockWaitForCachedPlantStatuses = vi.fn();
 const mockRecordClientEvent = vi.fn();
 const mockShowUnlockToasts = vi.fn();
 const mockEvaluateAndToastUnlocks = vi.fn();
 
 vi.mock('@/services/plantService', () => ({
   fetchPlantStatusesByIds: (...args: unknown[]) => mockFetchPlantStatusesByIds(...args),
-  getCachedPlantStatuses: (...args: unknown[]) => mockGetCachedPlantStatuses(...args),
-  waitForCachedPlantStatuses: (...args: unknown[]) => mockWaitForCachedPlantStatuses(...args),
 }));
 
 vi.mock('@/services/achievementService', () => ({
@@ -29,7 +25,6 @@ import {
 import {
   fetchSettings,
   fetchUnreadNotifications,
-  resolveStaleNotifications,
   getNotificationHref,
   markNotificationRead,
   markAllNotificationsRead,
@@ -54,8 +49,6 @@ describe('notificationService', () => {
   beforeEach(() => {
     resetSupabaseMocks();
     mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[1, ['WATERING_NEEDED']]]));
-    mockGetCachedPlantStatuses.mockReturnValue(null);
-    mockWaitForCachedPlantStatuses.mockResolvedValue(null);
     mockRecordClientEvent.mockReset();
     mockShowUnlockToasts.mockReset();
     mockEvaluateAndToastUnlocks.mockReset();
@@ -92,27 +85,17 @@ describe('notificationService', () => {
       await expect(fetchUnreadNotifications()).resolves.toEqual([wateringNotification]);
     });
 
-    it('does not auto-resolve during the initial fetch', async () => {
-      mockAuthenticatedUser();
-      mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[1, ['HEALTHY']]]));
-      setupFromMocks({
-        notifications: { data: [wateringNotification], error: null },
-      });
-
-      await expect(fetchUnreadNotifications()).resolves.toEqual([wateringNotification]);
-      expect(mockFetchPlantStatusesByIds).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('resolveStaleNotifications', () => {
     it('auto-resolves notifications when plant is healthy again', async () => {
       mockAuthenticatedUser();
       mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[1, ['HEALTHY']]]));
       setupFromMocks({
-        notifications: { data: null, error: null },
+        notifications: [
+          { data: [wateringNotification], error: null },
+          { data: null, error: null },
+        ],
       });
 
-      await expect(resolveStaleNotifications([wateringNotification])).resolves.toEqual([]);
+      await expect(fetchUnreadNotifications()).resolves.toEqual([]);
     });
 
     it('auto-resolves offline notifications when all plants are back online', async () => {
@@ -127,10 +110,13 @@ describe('notificationService', () => {
       };
       mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[2, ['HEALTHY']]]));
       setupFromMocks({
-        notifications: { data: null, error: null },
+        notifications: [
+          { data: [offlineNotification], error: null },
+          { data: null, error: null },
+        ],
       });
 
-      await expect(resolveStaleNotifications([offlineNotification])).resolves.toEqual([]);
+      await expect(fetchUnreadNotifications()).resolves.toEqual([]);
     });
   });
 
@@ -237,31 +223,13 @@ describe('notificationService', () => {
 
     it('updates weather location for the authenticated user', async () => {
       mockAuthenticatedUser();
-      setupFromMocks({
-        notification_settings: [
-          { data: { weather_lat: null, weather_lng: null }, error: null },
-          { data: null, error: null },
-        ],
-      });
-      await expect(updateWeatherLocation(48.8, 2.3)).resolves.toBeUndefined();
-    });
-
-    it('skips the write when weather location is unchanged', async () => {
-      mockAuthenticatedUser();
-      setupFromMocks({
-        notification_settings: { data: { weather_lat: 48.8, weather_lng: 2.3 }, error: null },
-      });
+      setupFromMocks({ notification_settings: { data: null, error: null } });
       await expect(updateWeatherLocation(48.8, 2.3)).resolves.toBeUndefined();
     });
 
     it('does not record notification_settings_saved when syncing weather location', async () => {
       mockAuthenticatedUser();
-      setupFromMocks({
-        notification_settings: [
-          { data: { weather_lat: null, weather_lng: null }, error: null },
-          { data: null, error: null },
-        ],
-      });
+      setupFromMocks({ notification_settings: { data: null, error: null } });
 
       await updateWeatherLocation(48.8, 2.3);
 
@@ -272,12 +240,7 @@ describe('notificationService', () => {
 
     it('throws when the database update fails', async () => {
       mockAuthenticatedUser();
-      setupFromMocks({
-        notification_settings: [
-          { data: { weather_lat: null, weather_lng: null }, error: null },
-          { data: null, error: new Error('DB error') },
-        ],
-      });
+      setupFromMocks({ notification_settings: { data: null, error: new Error('DB error') } });
       await expect(updateWeatherLocation(48.8, 2.3)).rejects.toThrow('DB error');
     });
   });
