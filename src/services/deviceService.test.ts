@@ -57,6 +57,7 @@ describe('deviceService', () => {
               airValue: 2400,
               waterValue: 850,
               sleepDurationSeconds: 3600,
+              calibrated_at: '2026-06-01T00:00:00Z',
             }],
           }],
           error: null,
@@ -68,7 +69,10 @@ describe('deviceService', () => {
         id: 1,
         serialNumber: 'SN-1',
         plantName: 'Fern',
-        humidityConfig: expect.objectContaining({ deviceId: 1 }),
+        humidityConfig: expect.objectContaining({
+          deviceId: 1,
+          calibrated_at: '2026-06-01T00:00:00Z',
+        }),
       });
     });
   });

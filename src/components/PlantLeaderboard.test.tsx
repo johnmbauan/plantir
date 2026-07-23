@@ -210,6 +210,28 @@ describe('PlantLeaderboard', () => {
     }
   });
 
+  it('shows outdoor plant indicator next to the name', () => {
+    renderWithProviders(
+      <PlantLeaderboard
+        plants={[buildPlant({ name: 'Rosemary', is_outdoor: true })]}
+        loading={false}
+      />,
+    );
+
+    expect(screen.getByLabelText('Outdoor plant')).toBeInTheDocument();
+  });
+
+  it('does not show outdoor indicator for indoor plants', () => {
+    renderWithProviders(
+      <PlantLeaderboard
+        plants={[buildPlant({ name: 'Fern', is_outdoor: false })]}
+        loading={false}
+      />,
+    );
+
+    expect(screen.queryByLabelText('Outdoor plant')).not.toBeInTheDocument();
+  });
+
   it('calls onUnsnooze without opening the plant when remove snooze is clicked', async () => {
     const user = userEvent.setup();
     const onUnsnooze = vi.fn();

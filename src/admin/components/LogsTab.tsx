@@ -7,8 +7,8 @@ import type { AdminFilterOptions, AdminLogSortKey } from "@/admin/adminService";
 import { AdminLogRow } from "@/admin/components/AdminLogRow";
 import { AdminTabLayout } from "@/admin/components/AdminTabLayout";
 import { LogsTabHeader } from "@/admin/components/LogsTabHeader";
-import { SortableTh } from "@/admin/components/SortableTh";
-import { TableLoadingRows } from "@/admin/components/TableLoadingRows";
+import { SortableTh } from "@/components/shared/SortableTh";
+import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
 import { TablePagination } from "@/admin/components/TablePagination";
 import { ADMIN_PAGE_SIZE } from "@/admin/constants";
 import {

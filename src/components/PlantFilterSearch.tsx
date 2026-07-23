@@ -4,9 +4,16 @@ import IconSearch from "@/components/icons/IconSearch";
 interface PlantFilterSearchProps {
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
+  searchLabel?: string;
 }
 
-export default function PlantFilterSearch({ value, onChange }: PlantFilterSearchProps) {
+export default function PlantFilterSearch({
+  value,
+  onChange,
+  placeholder = "Search plants…",
+  searchLabel = "Search plants",
+}: PlantFilterSearchProps) {
   const [open, setOpen] = useState(value.length > 0);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -29,14 +36,14 @@ export default function PlantFilterSearch({ value, onChange }: PlantFilterSearch
         type="button"
         className="filter-search__icon-btn"
         onClick={() => setOpen(true)}
-        aria-label="Search plants"
+        aria-label={searchLabel}
       >
         <IconSearch />
       </button>
       <input
         ref={inputRef}
         className="filter-search__input"
-        placeholder="Search plants…"
+        placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={handleBlur}

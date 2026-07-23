@@ -3,6 +3,7 @@ import { Tabs, Title, Box } from "@mantine/core";
 import { useSearchParams } from "react-router-dom";
 import PlantsTab from "@/components/PlantsTab";
 import DevicesTab from "@/components/DevicesTab";
+import styles from "@/pages/PlantCenter.module.css";
 
 const VALID_TABS = ["plants", "devices"] as const;
 type TabValue = (typeof VALID_TABS)[number];
@@ -23,11 +24,11 @@ export default function PlantCenter() {
 
   return (
     <Box p="md">
-      <Title order={2} c="var(--green-700)" mb="md">
+      <Title order={2} c="var(--green-700)" mb="md" ta="center">
         Plants Center
       </Title>
 
-      <Tabs value={activeTab} onChange={handleTabChange}>
+      <Tabs value={activeTab} onChange={handleTabChange} classNames={{ list: styles.list, tab: styles.tab }}>
         <Tabs.List mb="md">
           <Tabs.Tab value="plants">Plants</Tabs.Tab>
           <Tabs.Tab value="devices">Devices</Tabs.Tab>

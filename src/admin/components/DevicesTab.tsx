@@ -7,8 +7,8 @@ import type { AdminDeviceSortKey, AdminFilterOptions } from "@/admin/adminServic
 import { AdminDeviceRow } from "@/admin/components/AdminDeviceRow";
 import { DevicesTabHeader } from "@/admin/components/DevicesTabHeader";
 import { AdminTabLayout } from "@/admin/components/AdminTabLayout";
-import { SortableTh } from "@/admin/components/SortableTh";
-import { TableLoadingRows } from "@/admin/components/TableLoadingRows";
+import { SortableTh } from "@/components/shared/SortableTh";
+import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
 import { TablePagination } from "@/admin/components/TablePagination";
 import { ADMIN_PAGE_SIZE } from "@/admin/constants";
 import {
