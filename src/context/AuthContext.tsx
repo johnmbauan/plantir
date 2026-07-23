@@ -36,10 +36,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(nextSession.user);
         setLoading(false);
 
-        void supabase.auth.getUser().then(({ data: { user: freshUser }, error }) => {
-          if (error || !freshUser) return;
-          setUser(freshUser);
-        });
+        // One server verification on first session restore. Later events
+        // (TOKEN_REFRESHED, SIGNED_IN, …) already carry a trusted session user.
+        if (event === "INITIAL_SESSION") {
+          void supabase.auth.getUser().then(({ data: { user: freshUser }, error }) => {
+            if (error || !freshUser) return;
+            setUser(freshUser);
+          });
+        }
       },
     );
 

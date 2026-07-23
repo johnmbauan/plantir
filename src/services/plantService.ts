@@ -8,6 +8,7 @@ import type {
   PlantStatus,
 } from "@/types";
 import { evaluateAndToastUnlocks } from "@/services/achievementService";
+import { getSessionUser, requireUser } from "@/utils/requireUser";
 
 // ---------------------------------------------------------------------------
 // Raw DB shapes (reflect actual Supabase column names after migrations)
@@ -194,8 +195,7 @@ function sortPlants(plants: EnrichedPlant[]): EnrichedPlant[] {
 // ---------------------------------------------------------------------------
 
 export async function fetchPlants(): Promise<EnrichedPlant[]> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   // Query 1: plant structure and device config — no measurements
   const { data: plantsData, error: plantsError } = await supabase
@@ -240,8 +240,7 @@ export async function fetchPlants(): Promise<EnrichedPlant[]> {
 export async function fetchPlantStatusesByIds(plantIds: number[]): Promise<Map<number, PlantStatus[]>> {
   if (plantIds.length === 0) return new Map();
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const uniqueIds = [...new Set(plantIds)];
 
@@ -301,8 +300,7 @@ function toBatteryPoints(rows: RawBatteryMeasurement[]): MeasurementPoint[] {
 }
 
 export async function fetchPlantHistory(plantId: number, range: HistoryRange): Promise<PlantHistory> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { data: plantData, error: plantError } = await supabase
     .from("plants")
@@ -354,8 +352,7 @@ export async function createPlant(
   speciesId?: number | null,
   isOutdoor = false,
 ) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error } = await supabase
     .from("plants")
@@ -372,8 +369,7 @@ export async function updatePlant(
   speciesId?: number | null,
   isOutdoor = false,
 ) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error } = await supabase
     .from("plants")
@@ -386,8 +382,7 @@ export async function updatePlant(
 }
 
 export async function deletePlant(id: number) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error } = await supabase.from("plants").delete().eq("id", id).eq("user_id", user.id);
   if (error) throw error;
@@ -401,8 +396,7 @@ const PLANT_IMAGES_BUCKET = "plant-images";
 
 /** Uploads a file and returns its public URL. */
 export async function uploadPlantImage(file: File): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const ext = file.name.split(".").pop();
   const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
@@ -425,7 +419,7 @@ export async function uploadPlantImage(file: File): Promise<string> {
 export async function deletePlantImage(publicUrl: string | null | undefined): Promise<void> {
   if (!publicUrl) return;
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getSessionUser();
   if (!user) return;
 
   // Extract path after "/object/public/plant-images/"

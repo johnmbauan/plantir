@@ -90,11 +90,16 @@ const mocks = vi.hoisted(() => {
       ...user,
     } as User;
     mockGetUser.mockResolvedValue({ data: { user: fullUser }, error: null });
+    mockGetSession.mockResolvedValue({
+      data: { session: { user: fullUser } as Session },
+      error: null,
+    });
     return fullUser;
   }
 
   function mockUnauthenticated() {
     mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+    mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
   }
 
   function mockSessionValue(session: Session | null) {

@@ -100,6 +100,84 @@ describe('PlantLeaderboard', () => {
     expect(screen.getByRole('button', { name: 'Needs recharge' })).toBeInTheDocument();
   });
 
+  it('keeps the healthy status chip icon-only and shows labels for attention statuses', () => {
+    const { rerender } = renderWithProviders(
+      <PlantLeaderboard
+        plants={[buildPlant({ statuses: ['HEALTHY'] })]}
+        loading={false}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Healthy' })).toHaveClass('filter-chip--icon-only');
+
+    rerender(
+      <PlantLeaderboard
+        plants={[buildPlant({ statuses: ['WATERING_NEEDED', 'OFFLINE'] })]}
+        loading={false}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Needs water' })).not.toHaveClass('filter-chip--icon-only');
+    expect(screen.getByRole('button', { name: 'Offline' })).not.toHaveClass('filter-chip--icon-only');
+  });
+
+  it('does not render list rank numbers', () => {
+    renderWithProviders(
+      <PlantLeaderboard
+        plants={[
+          buildPlant({ id: 1, name: 'Fern' }),
+          buildPlant({ id: 2, name: 'Pothos' }),
+        ]}
+        loading={false}
+      />,
+    );
+
+    expect(screen.queryByText('1')).not.toBeInTheDocument();
+    expect(screen.queryByText('2')).not.toBeInTheDocument();
+  });
+
+  it('emphasizes last-seen time when the reading is stale', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2026-07-22T12:00:00.000Z'));
+
+      renderWithProviders(
+        <PlantLeaderboard
+          plants={[
+            buildPlant({
+              id: 1,
+              name: 'Fresh',
+              statuses: ['HEALTHY'],
+              lastMeasuredAt: '2026-07-22T11:00:00.000Z',
+              sleepDurationSeconds: 28_800,
+            }),
+            buildPlant({
+              id: 2,
+              name: 'Stale',
+              statuses: ['HEALTHY'],
+              lastMeasuredAt: '2026-07-22T02:00:00.000Z',
+              sleepDurationSeconds: 28_800,
+            }),
+            buildPlant({
+              id: 3,
+              name: 'Offline plant',
+              statuses: ['OFFLINE'],
+              lastMeasuredAt: '2026-07-22T11:30:00.000Z',
+              sleepDurationSeconds: 28_800,
+            }),
+          ]}
+          loading={false}
+        />,
+      );
+
+      expect(screen.getByText('1h ago')).not.toHaveClass('leaderboard-time--stale');
+      expect(screen.getByText('10h ago')).toHaveClass('leaderboard-time--stale');
+      expect(screen.getByText('30m ago')).toHaveClass('leaderboard-time--stale');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('shows battery percent below the plant name', () => {
     renderWithProviders(
       <PlantLeaderboard
@@ -111,7 +189,7 @@ describe('PlantLeaderboard', () => {
     expect(screen.getByText('42%')).toBeInTheDocument();
   });
 
-  it('shows a snooze chip when the plant is snoozed', () => {
+  it('shows the full snooze label instead of an icon-only chip', () => {
     vi.useFakeTimers();
     try {
       vi.setSystemTime(new Date('2026-07-22T12:00:00.000Z'));
@@ -124,7 +202,9 @@ describe('PlantLeaderboard', () => {
         />,
       );
 
-      expect(screen.getByRole('button', { name: 'Snoozed · 23h left' })).toBeInTheDocument();
+      const snoozeChip = screen.getByRole('button', { name: 'Snoozed · 23h left' });
+      expect(snoozeChip).toBeInTheDocument();
+      expect(snoozeChip).not.toHaveClass('filter-chip--icon-only');
     } finally {
       vi.useRealTimers();
     }

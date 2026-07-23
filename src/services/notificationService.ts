@@ -3,6 +3,7 @@ import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
 import { fetchPlantStatusesByIds } from "@/services/plantService";
 import type { PlantStatus } from "@/types";
 import { evaluateAndToastUnlocks, recordClientEvent, showUnlockToasts } from "@/services/achievementService";
+import { requireUser } from "@/utils/requireUser";
 
 export interface NotificationSettings {
   id: number;
@@ -76,8 +77,7 @@ function shouldResolveNotification(
 }
 
 export async function fetchSettings(): Promise<NotificationSettings | null> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { data, error } = await supabase
     .from("notification_settings")
@@ -95,8 +95,7 @@ export async function upsertSettings(
   notification_timezone: string,
   browser_notifications_enabled: boolean,
 ): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error } = await supabase
     .from("notification_settings")
@@ -123,8 +122,7 @@ export async function upsertSettings(
 }
 
 export async function updateWeatherLocation(lat: number, lng: number): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error } = await supabase
     .from("notification_settings")
@@ -139,8 +137,7 @@ export async function updateWeatherLocation(lat: number, lng: number): Promise<v
 }
 
 export async function snoozeNotification(plantId: number, hours: 24 | 48): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const snoozedUntil = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
 
@@ -159,8 +156,7 @@ export async function snoozeNotification(plantId: number, hours: 24 | 48): Promi
 }
 
 export async function fetchActiveSnoozedPlants(): Promise<Map<number, string>> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { data, error } = await supabase
     .from("plant_notification_snooze")
@@ -178,8 +174,7 @@ export async function fetchActiveSnoozedPlants(): Promise<Map<number, string>> {
 }
 
 export async function unsnoozeNotification(plantId: number): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error } = await supabase
     .from("plant_notification_snooze")
@@ -191,8 +186,7 @@ export async function unsnoozeNotification(plantId: number): Promise<void> {
 }
 
 export async function fetchUnreadNotifications(): Promise<AppNotification[]> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { data, error } = await supabase
     .from("notifications")
@@ -265,8 +259,7 @@ export async function markNotificationRead(id: string): Promise<void> {
 }
 
 export async function markAllNotificationsRead(): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error } = await supabase
     .from("notifications")

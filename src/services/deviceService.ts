@@ -1,6 +1,7 @@
 import supabase from "@/supabase";
 import type { CalibrationReading, Device, DeviceType, HumidityConfig, PairingBundle, PairingPollResult } from "@/types";
 import { evaluateAndToastUnlocks } from "@/services/achievementService";
+import { requireUser } from "@/utils/requireUser";
 
 export { DEFAULT_HUMIDITY_CONFIG } from "@/constants/deviceDefaults";
 
@@ -26,8 +27,7 @@ function enrichDevice(raw: RawDevice): Device {
 }
 
 export async function fetchDevices(): Promise<Device[]> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { data, error } = await supabase
     .from("devices")
@@ -51,8 +51,7 @@ export interface DeviceFormValues {
 }
 
 export async function createDevice(values: DeviceFormValues): Promise<{ id: number }> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { data: device, error: deviceError } = await supabase
     .from("devices")
@@ -79,8 +78,7 @@ export async function createDevice(values: DeviceFormValues): Promise<{ id: numb
 }
 
 export async function updateDevice(id: number, values: DeviceFormValues): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error: deviceError } = await supabase
     .from("devices")
@@ -116,8 +114,7 @@ export async function updateDevice(id: number, values: DeviceFormValues): Promis
 }
 
 export async function deleteDevice(id: number): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { error } = await supabase.from("devices").delete().eq("id", id).eq("user_id", user.id);
   if (error) throw error;
