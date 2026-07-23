@@ -239,6 +239,16 @@ describe('PlantsTab', () => {
     );
   });
 
+  it('renders the toolbar with search and Add Plant action', async () => {
+    renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('Monstera');
+
+    expect(screen.getByRole('button', { name: 'Search plants' })).toBeInTheDocument();
+
+    const addPlant = screen.getByRole('button', { name: 'Add Plant' });
+    expect(screen.getByTestId('center-tab-toolbar-actions')).toContainElement(addPlant);
+  });
+
   it('opens add plant modal from Add Plant button', async () => {
     const user = userEvent.setup();
 
