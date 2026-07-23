@@ -3,9 +3,7 @@ import { buildPlant } from '@/test/builders/plant';
 import type { PlantSpeciesSummary } from '@/types';
 import {
   plantMatchesSearch,
-  plantThumbnailUrl,
   sortPlantsByColumn,
-  speciesLabel,
 } from '@/components/PlantsTab/utils';
 
 function buildSpecies(overrides: Partial<PlantSpeciesSummary> = {}): PlantSpeciesSummary {
@@ -161,58 +159,5 @@ describe('sortPlantsByColumn', () => {
       'Alpha',
       'Beta',
     ]);
-  });
-});
-
-describe('speciesLabel', () => {
-  it('returns null when species is missing', () => {
-    expect(speciesLabel(buildPlant({ species: undefined }))).toBeNull();
-  });
-
-  it('prefers displayName, then scientificName, then sourceSpeciesId', () => {
-    expect(speciesLabel(buildPlant({ species: buildSpecies() }))).toBe('Swiss cheese plant');
-    expect(
-      speciesLabel(
-        buildPlant({
-          species: buildSpecies({ displayName: null, scientificName: 'Ficus lyrata' }),
-        }),
-      ),
-    ).toBe('Ficus lyrata');
-    expect(
-      speciesLabel(
-        buildPlant({
-          species: buildSpecies({
-            displayName: null,
-            scientificName: null,
-            sourceSpeciesId: 'source-9',
-          }),
-        }),
-      ),
-    ).toBe('source-9');
-  });
-});
-
-describe('plantThumbnailUrl', () => {
-  it('prefers plant image over species image', () => {
-    expect(
-      plantThumbnailUrl(
-        buildPlant({
-          image_url: 'https://cdn/plant.jpg',
-          species: buildSpecies({ imageUrl: 'https://cdn/species.jpg' }),
-        }),
-      ),
-    ).toBe('https://cdn/plant.jpg');
-  });
-
-  it('falls back to species image, then null', () => {
-    expect(
-      plantThumbnailUrl(
-        buildPlant({
-          image_url: null,
-          species: buildSpecies({ imageUrl: 'https://cdn/species.jpg' }),
-        }),
-      ),
-    ).toBe('https://cdn/species.jpg');
-    expect(plantThumbnailUrl(buildPlant({ image_url: null, species: null }))).toBeNull();
   });
 });

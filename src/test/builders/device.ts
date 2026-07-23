@@ -10,6 +10,7 @@ export function buildHumidityConfig(overrides: Partial<HumidityConfig> = {}): Hu
     waterValue: DEFAULT_HUMIDITY_CONFIG.waterValue,
     sleepDurationSeconds: DEFAULT_HUMIDITY_CONFIG.sleepDurationSeconds,
     calibrationModeStartedAt: null,
+    calibrated_at: '2026-01-01T00:00:00Z',
     ...overrides,
   };
 }

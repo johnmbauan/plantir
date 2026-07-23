@@ -34,7 +34,7 @@ export async function fetchDevices(): Promise<Device[]> {
     .select(
       `id, serialNumber, plantId, type,
        plants(name),
-       humidity_sensors_config(id, minHumidityThreshold, airValue, waterValue, sleepDurationSeconds)`,
+       humidity_sensors_config(id, minHumidityThreshold, airValue, waterValue, sleepDurationSeconds, calibrated_at)`,
     )
     .eq("user_id", user.id);
 

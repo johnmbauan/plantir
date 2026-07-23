@@ -4,26 +4,41 @@ import {
   Table,
   Button,
   Group,
-  ActionIcon,
   Stack,
   Text,
-  Skeleton,
-  TextInput,
-  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconEdit, IconTrash, IconCpu, IconAdjustments } from "@tabler/icons-react";
+import { IconCpu } from "@tabler/icons-react";
 import { fetchDevices } from "@/services/deviceService";
 import { notifications } from "@mantine/notifications";
 import { fetchPlants } from "@/services/plantService";
 import type { Device, EnrichedPlant } from "@/types";
 import { buildPlantAssignmentOptions } from "@/components/DeviceFormModal/plantOptions";
 import { getErrorMessage } from "@/utils/error";
-import { formatInterval } from "@/utils/time";
+import type { SortDirection } from "@/utils/sort";
+import { nextSortState } from "@/utils/sort";
 import DeviceFormModal from "@/components/DeviceFormModal";
 import DeviceDeleteModal from "@/components/DeviceDeleteModal";
 import DeviceRegistrationWizard from "@/components/DeviceRegistrationWizard";
 import DeviceCalibrationWizard from "@/components/DeviceCalibrationWizard";
+import DeviceTableRow from "@/components/DevicesTab/DeviceTableRow";
+import {
+  deviceMatchesSearch,
+  sortDevicesByColumn,
+  type DevicesTabSortKey,
+} from "@/components/DevicesTab/utils";
+import { plantThumbnailUrl } from "@/utils/plantDisplay";
+import PlantFilterSearch from "@/components/PlantFilterSearch";
+import { SortableTh } from "@/components/shared/SortableTh";
+import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
+
+const COLUMN_COUNT = 4;
+
+const SORTABLE_COLUMNS: { key: DevicesTabSortKey; label: string; className?: string }[] = [
+  { key: "serial", label: "Serial Number" },
+  { key: "plant", label: "Plant" },
+  { key: "interval", label: "Interval", className: "col-hide-mobile" },
+];
 
 export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,6 +46,8 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<DevicesTabSortKey>("serial");
+  const [sortDir, setSortDir] = useState<SortDirection>("asc");
 
   const [editingDevice, setEditingDevice] = useState<Device | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
@@ -62,7 +79,6 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
   };
 
   useEffect(() => {
-
     void loadData();
   }, [reloadKey]);
 
@@ -72,7 +88,6 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
     const device = devices.find((d) => d.id === Number(editDeviceId));
     if (device) {
       // Open edit modal from URL deep-link once data is ready.
-
       handleOpenEdit(device);
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
@@ -113,17 +128,41 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
     openCalibration();
   };
 
-  const visible = devices.filter((d) => {
-    const q = search.toLowerCase();
-    return (
-      d.serialNumber.toLowerCase().includes(q) ||
-      (d.plantName ?? "").toLowerCase().includes(q)
+  const handleSort = (key: string) => {
+    const next = nextSortState(sortKey, sortDir, key as DevicesTabSortKey);
+    setSortKey(next.sortKey);
+    setSortDir(next.sortDir);
+  };
+
+  const openPlant = (plantId: number) => {
+    setSearchParams(
+      { tab: "plants", plantId: String(plantId) },
+      { replace: true },
     );
-  });
+  };
+
+  const plantImageById = useMemo(() => {
+    const map = new Map<number, string | null>();
+    for (const plant of plants) {
+      map.set(plant.id, plantThumbnailUrl(plant));
+    }
+    return map;
+  }, [plants]);
+
+  const visible = useMemo(() => {
+    const filtered = devices.filter((d) => deviceMatchesSearch(d, search));
+    return sortDevicesByColumn(filtered, sortKey, sortDir);
+  }, [devices, search, sortKey, sortDir]);
 
   return (
     <Stack gap="md">
-      <Group justify="flex-end">
+      <div className="filter-toolbar center-tab-toolbar">
+        <PlantFilterSearch
+          value={search}
+          onChange={setSearch}
+          placeholder="Search by serial or plant…"
+          searchLabel="Search devices"
+        />
         <Group gap="xs">
           <Button variant="subtle" onClick={() => handleOpenEdit()}>
             Add manually
@@ -132,42 +171,32 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
             Register new device
           </Button>
         </Group>
-      </Group>
-
-      <TextInput
-        placeholder="Search by serial number or plant…"
-        value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
-        style={{ maxWidth: 320, width: "100%" }}
-      />
+      </div>
 
       <Table.ScrollContainer minWidth={550}>
         <Table verticalSpacing="sm">
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Serial Number</Table.Th>
-              <Table.Th>Plant</Table.Th>
-              <Table.Th className="col-hide-mobile">Type</Table.Th>
-              <Table.Th>Threshold</Table.Th>
-              <Table.Th className="col-hide-mobile">Interval</Table.Th>
+              {SORTABLE_COLUMNS.map((col) => (
+                <SortableTh
+                  key={col.key}
+                  label={col.label}
+                  columnKey={col.key}
+                  activeKey={sortKey}
+                  direction={sortDir}
+                  onSort={handleSort}
+                  className={col.className}
+                />
+              ))}
               <Table.Th w={100}>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
             {loading ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <Table.Tr key={i}>
-                  <Table.Td><Skeleton height={16} radius="sm" /></Table.Td>
-                  <Table.Td><Skeleton height={16} radius="sm" width={80} /></Table.Td>
-                  <Table.Td className="col-hide-mobile"><Skeleton height={16} radius="sm" width={120} /></Table.Td>
-                  <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
-                  <Table.Td className="col-hide-mobile"><Skeleton height={16} radius="sm" width={60} /></Table.Td>
-                  <Table.Td><Skeleton height={16} radius="sm" width={60} /></Table.Td>
-                </Table.Tr>
-              ))
+              <TableLoadingRows rowCount={4} columnCount={COLUMN_COUNT} />
             ) : visible.length === 0 ? (
               <Table.Tr>
-                <Table.Td colSpan={6}>
+                <Table.Td colSpan={COLUMN_COUNT}>
                   <Stack align="center" gap="xs" py="xl">
                     {devices.length === 0 ? (
                       <>
@@ -192,42 +221,17 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
               </Table.Tr>
             ) : (
               visible.map((device) => (
-                <Table.Tr key={device.id}>
-                  <Table.Td fw={500}>{device.serialNumber}</Table.Td>
-                  <Table.Td>{device.plantName ?? <Text size="sm" c="dimmed">Unassigned</Text>}</Table.Td>
-                  <Table.Td className="col-hide-mobile" style={{ textTransform: "capitalize" }}>{device.type}</Table.Td>
-                  <Table.Td>
-                    {device.humidityConfig
-                      ? `${device.humidityConfig.minHumidityThreshold}%`
-                      : <Text size="sm" c="dimmed">—</Text>}
-                  </Table.Td>
-                  <Table.Td className="col-hide-mobile">
-                    {device.humidityConfig
-                      ? formatInterval(device.humidityConfig.sleepDurationSeconds)
-                      : <Text size="sm" c="dimmed">—</Text>}
-                  </Table.Td>
-                  <Table.Td>
-                    <Group gap="xs" wrap="nowrap">
-                      {device.type === "humidity" && (
-                        <Tooltip label="Calibrate sensor" withArrow>
-                          <ActionIcon variant="subtle" color="green" aria-label="Calibrate sensor" onClick={() => handleOpenCalibration(device)}>
-                            <IconAdjustments size={16} />
-                          </ActionIcon>
-                        </Tooltip>
-                      )}
-                      <Tooltip label="Edit device" withArrow>
-                        <ActionIcon variant="subtle" color="blue" aria-label="Edit device" onClick={() => handleOpenEdit(device)}>
-                          <IconEdit size={16} />
-                        </ActionIcon>
-                      </Tooltip>
-                      <Tooltip label="Delete device" withArrow>
-                        <ActionIcon variant="subtle" color="red" aria-label="Delete device" onClick={() => handleDeletePrompt(device)}>
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      </Tooltip>
-                    </Group>
-                  </Table.Td>
-                </Table.Tr>
+                <DeviceTableRow
+                  key={device.id}
+                  device={device}
+                  plantImageUrl={
+                    device.plantId != null ? (plantImageById.get(device.plantId) ?? null) : null
+                  }
+                  onEdit={handleOpenEdit}
+                  onDelete={handleDeletePrompt}
+                  onCalibrate={handleOpenCalibration}
+                  onOpenPlant={openPlant}
+                />
               ))
             )}
           </Table.Tbody>

@@ -1,5 +1,11 @@
 import type { EnrichedPlant, PlantStatus } from "@/types";
-import type { SortDirection } from "@/utils/sort";
+import {
+  compareNullableNumber,
+  compareNullableString,
+  compareString,
+  type SortDirection,
+} from "@/utils/sort";
+import { matchesAnySearchField } from "@/utils/search";
 
 export type PlantsTabSortKey = "name" | "status" | "moisture" | "device";
 
@@ -12,47 +18,17 @@ const STATUS_RANK: Record<PlantStatus, number> = {
 };
 
 export function plantMatchesSearch(plant: EnrichedPlant, search: string): boolean {
-  const q = search.trim().toLowerCase();
-  if (!q) return true;
-
-  const speciesDisplay = (plant.species?.displayName ?? "").toLowerCase();
-  const speciesScientific = (plant.species?.scientificName ?? "").toLowerCase();
-  const serial = (plant.serialNumber ?? "").toLowerCase();
-
-  return (
-    plant.name.toLowerCase().includes(q) ||
-    speciesDisplay.includes(q) ||
-    speciesScientific.includes(q) ||
-    serial.includes(q)
-  );
+  return matchesAnySearchField(search, [
+    plant.name,
+    plant.species?.displayName,
+    plant.species?.scientificName,
+    plant.serialNumber,
+  ]);
 }
 
 function primaryStatusRank(plant: EnrichedPlant): number {
   if (plant.statuses.length === 0) return STATUS_RANK.HEALTHY;
   return Math.min(...plant.statuses.map((s) => STATUS_RANK[s]));
-}
-
-function compareNullableNumber(
-  a: number | null,
-  b: number | null,
-  direction: SortDirection,
-): number {
-  if (a == null && b == null) return 0;
-  if (a == null) return 1;
-  if (b == null) return -1;
-  return direction === "asc" ? a - b : b - a;
-}
-
-function compareNullableString(
-  a: string | null,
-  b: string | null,
-  direction: SortDirection,
-): number {
-  if (!a && !b) return 0;
-  if (!a) return 1;
-  if (!b) return -1;
-  const cmp = a.localeCompare(b);
-  return direction === "asc" ? cmp : -cmp;
 }
 
 export function sortPlantsByColumn(
@@ -64,8 +40,7 @@ export function sortPlantsByColumn(
     let cmp = 0;
 
     if (sortKey === "name") {
-      cmp = a.name.localeCompare(b.name);
-      if (direction === "desc") cmp = -cmp;
+      cmp = compareString(a.name, b.name, direction);
     } else if (sortKey === "status") {
       cmp = primaryStatusRank(a) - primaryStatusRank(b);
       if (direction === "desc") cmp = -cmp;
@@ -78,13 +53,4 @@ export function sortPlantsByColumn(
     if (cmp !== 0) return cmp;
     return a.name.localeCompare(b.name);
   });
-}
-
-export function speciesLabel(plant: EnrichedPlant): string | null {
-  if (!plant.species) return null;
-  return plant.species.displayName ?? plant.species.scientificName ?? plant.species.sourceSpeciesId;
-}
-
-export function plantThumbnailUrl(plant: EnrichedPlant): string | null {
-  return plant.image_url ?? plant.species?.imageUrl ?? null;
 }

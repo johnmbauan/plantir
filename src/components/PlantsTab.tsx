@@ -13,6 +13,7 @@ import { fetchPlants } from "@/services/plantService";
 import type { EnrichedPlant } from "@/types";
 import { getErrorMessage } from "@/utils/error";
 import type { SortDirection } from "@/utils/sort";
+import { nextSortState } from "@/utils/sort";
 import PlantFormModal from "@/components/PlantFormModal";
 import PlantDeleteModal from "@/components/PlantDeleteModal";
 import PlantTableRow from "@/components/PlantsTab/PlantTableRow";
@@ -24,7 +25,6 @@ import {
 import PlantFilterSearch from "@/components/PlantFilterSearch";
 import { SortableTh } from "@/components/shared/SortableTh";
 import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
-import "@/components/PlantsTab/PlantsTab.css";
 
 const COLUMN_COUNT = 5;
 
@@ -93,13 +93,9 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
   };
 
   const handleSort = (key: string) => {
-    const column = key as PlantsTabSortKey;
-    if (sortKey === column) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(column);
-      setSortDir("asc");
-    }
+    const next = nextSortState(sortKey, sortDir, key as PlantsTabSortKey);
+    setSortKey(next.sortKey);
+    setSortDir(next.sortDir);
   };
 
   const openDevice = (deviceId: number) => {
@@ -120,7 +116,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
 
   return (
     <Stack gap="md" pos="relative">
-      <div className="filter-toolbar plants-tab-toolbar">
+      <div className="filter-toolbar center-tab-toolbar">
         <PlantFilterSearch value={search} onChange={setSearch} />
         <Button leftSection={<IconPlus size={16} />} onClick={() => handleOpenEdit()}>
           Add Plant

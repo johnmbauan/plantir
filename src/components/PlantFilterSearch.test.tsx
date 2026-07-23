@@ -96,4 +96,19 @@ describe('PlantFilterSearch', () => {
 
     expect(screen.getByTestId('filter-search')).toHaveClass('filter-search--open');
   });
+
+  it('supports a custom placeholder and search label', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <PlantFilterSearch
+        value=""
+        onChange={vi.fn()}
+        placeholder="Search by serial or plant…"
+        searchLabel="Search devices"
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Search devices' }));
+    expect(screen.getByPlaceholderText('Search by serial or plant…')).toBeInTheDocument();
+  });
 });

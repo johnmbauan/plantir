@@ -11,7 +11,7 @@ import {
 import { IconEdit, IconTrash, IconSun } from "@tabler/icons-react";
 import type { EnrichedPlant } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
-import { plantThumbnailUrl, speciesLabel } from "@/components/PlantsTab/utils";
+import { plantThumbnailUrl, speciesLabel } from "@/utils/plantDisplay";
 
 interface PlantTableRowProps {
   plant: EnrichedPlant;

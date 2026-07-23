@@ -147,6 +147,11 @@
   background: var(--green-50);
 }
 
+.center-tab-toolbar {
+  justify-content: space-between;
+  width: 100%;
+}
+
 @media (max-width: 600px) {
   .col-hide-mobile {
     display: none;
