@@ -1,6 +1,6 @@
 # Supabase
 
-[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [Inviting users](#inviting-users) • [Resetting passwords](#resetting-passwords) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Database Migrations](#database-migrations) • [Cron Job](#cron-job)
+[Intro](#intro) • [Install the CLI](#install-the-cli) • [Environment](#environment) • [Inviting users](#inviting-users) • [Resetting passwords](#resetting-passwords) • [SDK](#sdk) • [REST APIs](#rest-apis) • [Edge Functions](#edge-functions) • [Secrets](#secrets) • [Row Level Security](#row-level-security) • [Database Migrations](#database-migrations) • [Cron Job](#cron-job)
 
 ---
 
@@ -198,8 +198,9 @@ Devices may only:
 
 - **SELECT** `devices` and `humidity_sensors_config` (fetch config by `serialNumber`)
 - **INSERT** `humidity_measurements` and `battery_measurements` (readings must reference a valid `deviceId`)
+- **EXECUTE** `clear_calibration_mode(deviceId)` after an on-device calibration loop
 
-Devices have **no** access to `plants`, `notification_settings`, or any other table.
+Devices have **no** write access to `devices`, `plants`, or `humidity_sensors_config`, and **no** access to `notification_settings` or admin RPCs. Device registration and pairing go through edge functions that use the service role.
 
 > **Important — intentional RLS trade-offs for device access:**
 >
@@ -209,11 +210,15 @@ Devices have **no** access to `plants`, `notification_settings`, or any other ta
 
 ### Dashboard access (`authenticated`)
 
-Signed-in users may only read and write rows they own (`user_id = auth.uid()` on `plants`, `devices`, and `notification_settings`). Measurement tables are readable (and deletable on cascade) only for devices belonging to the current user.
+Signed-in users may only read and write rows they own (`user_id = auth.uid()` on `plants`, `devices`, `profiles`, and `notification_settings`). Child rows (`humidity_sensors_config`, measurements, logs) are reachable only through devices belonging to the current user.
 
-Policies are defined in migration [20260628000000_scoped_rls_policies.sql](../supabase/migrations/20260628000000_scoped_rls_policies.sql).
+Admins (`app_metadata.role = 'admin'`) get additional SELECT policies plus `SECURITY DEFINER` RPCs (`get_admin_devices`, `get_admin_devices_page`, `get_admin_logs_page`, `get_admin_device_filter_options`). Those RPCs re-check the admin role internally; they are granted to `authenticated` only (not `anon`). Trigger-only functions (`handle_new_user_profile`, invite password-setup helpers, etc.) are not executable via the REST API.
 
-> **Note:** The `telegram-notifier` edge function connects with the service role and bypasses RLS, so scheduled alerts continue to work across all users.
+### Storage
+
+`avatars` and `plant-images` are public buckets, so image URLs work without auth. Listing is restricted: authenticated users can only list objects under their own `<user_id>/` folder. Broad public SELECT policies that allowed full-bucket enumeration were removed in the hardening migration above.
+
+> **Note:** Edge functions such as `telegram-notifier` and `register-device` connect with the service role and bypass RLS, so scheduled alerts and device provisioning continue to work across all users.
 
 ## Database Migrations
 
