@@ -1,16 +1,17 @@
 import {
   Table,
   Group,
-  ActionIcon,
   Text,
-  Badge,
   Anchor,
   Avatar,
   Tooltip,
 } from "@mantine/core";
-import { IconEdit, IconTrash, IconSun } from "@tabler/icons-react";
+import { IconSun } from "@tabler/icons-react";
 import type { EnrichedPlant } from "@/types";
-import { STATUS_CONFIG } from "@/constants/plantStatus";
+import PlantStatusChips from "@/components/shared/PlantStatusChips";
+import FilterChip from "@/components/shared/FilterChip";
+import IconEdit from "@/components/icons/IconEdit";
+import IconTrash from "@/components/icons/IconTrash";
 import { plantThumbnailUrl, speciesLabel } from "@/utils/plantDisplay";
 
 interface PlantTableRowProps {
@@ -61,11 +62,7 @@ export default function PlantTableRow({
       </Table.Td>
       <Table.Td>
         <Group gap={4}>
-          {plant.statuses.map((s) => (
-            <Badge key={s} color={STATUS_CONFIG[s].color}>
-              {STATUS_CONFIG[s].label}
-            </Badge>
-          ))}
+          <PlantStatusChips statuses={plant.statuses} expanded />
         </Group>
       </Table.Td>
       <Table.Td>
@@ -108,26 +105,26 @@ export default function PlantTableRow({
         )}
       </Table.Td>
       <Table.Td>
-        <Group gap="xs" wrap="nowrap">
+        <Group gap={4} wrap="nowrap">
           <Tooltip label="Edit plant" withArrow>
-            <ActionIcon
-              variant="subtle"
-              color="blue"
-              aria-label="Edit plant"
+            <FilterChip
+              variant="edit"
+              icon={<IconEdit size={12} />}
+              label="Edit plant"
+              iconOnly
+              expandLabel={false}
               onClick={() => onEdit(plant)}
-            >
-              <IconEdit size={16} />
-            </ActionIcon>
+            />
           </Tooltip>
           <Tooltip label="Delete plant" withArrow>
-            <ActionIcon
-              variant="subtle"
-              color="red"
-              aria-label="Delete plant"
+            <FilterChip
+              variant="danger"
+              icon={<IconTrash size={12} />}
+              label="Delete plant"
+              iconOnly
+              expandLabel={false}
               onClick={() => onDelete(plant)}
-            >
-              <IconTrash size={16} />
-            </ActionIcon>
+            />
           </Tooltip>
         </Group>
       </Table.Td>

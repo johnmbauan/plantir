@@ -57,7 +57,7 @@ describe('DevicesTab', () => {
     expect(screen.queryByText('Devices')).not.toBeInTheDocument();
   });
 
-  it('shows a needs-calibration badge for uncalibrated devices', async () => {
+  it('shows a calibration-recommended chip for uncalibrated devices', async () => {
     vi.mocked(fetchDevices).mockResolvedValue([
       buildDevice({
         humidityConfig: buildHumidityConfig({ calibrated_at: null }),
@@ -67,10 +67,12 @@ describe('DevicesTab', () => {
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
     await screen.findByText('SN-001');
 
-    expect(screen.getByText('Needs calibration')).toBeInTheDocument();
+    const chip = screen.getByRole('button', { name: 'Calibration recommended' });
+    expect(chip).toHaveClass('filter-chip--calibration');
+    expect(chip).toHaveTextContent('Calibration recommended');
   });
 
-  it('does not show needs-calibration badge for calibrated devices', async () => {
+  it('does not show calibration-recommended chip for calibrated devices', async () => {
     vi.mocked(fetchDevices).mockResolvedValue([
       buildDevice({
         humidityConfig: buildHumidityConfig({ calibrated_at: '2026-06-01T00:00:00Z' }),
@@ -80,7 +82,33 @@ describe('DevicesTab', () => {
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
     await screen.findByText('SN-001');
 
-    expect(screen.queryByText('Needs calibration')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Calibration recommended' })).not.toBeInTheDocument();
+  });
+
+  it('renders icon-only action chips without label expansion', async () => {
+    vi.mocked(fetchDevices).mockResolvedValue([
+      buildDevice({
+        humidityConfig: buildHumidityConfig({ calibrated_at: '2026-06-01T00:00:00Z' }),
+      }),
+    ]);
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    const calibrate = screen.getByRole('button', { name: 'Calibrate sensor' });
+    expect(calibrate).toHaveClass('filter-chip--healthy');
+    expect(calibrate).toHaveClass('filter-chip--icon-only');
+    expect(calibrate).not.toHaveClass('filter-chip--expand-label');
+
+    const edit = screen.getByRole('button', { name: 'Edit device' });
+    expect(edit).toHaveClass('filter-chip--edit');
+    expect(edit).toHaveClass('filter-chip--icon-only');
+    expect(edit).not.toHaveClass('filter-chip--expand-label');
+
+    const remove = screen.getByRole('button', { name: 'Delete device' });
+    expect(remove).toHaveClass('filter-chip--danger');
+    expect(remove).toHaveClass('filter-chip--icon-only');
+    expect(remove).not.toHaveClass('filter-chip--expand-label');
   });
 
   it('shows empty state when there are no devices', async () => {
@@ -214,7 +242,7 @@ describe('DevicesTab', () => {
 
     expect(screen.getByText('Unassigned')).toBeInTheDocument();
     expect(screen.getByText('—')).toBeInTheDocument();
-    expect(screen.getByText('Needs calibration')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Calibration recommended' })).toBeInTheDocument();
   });
 
   it('clears the calibrating device when the calibration wizard closes', async () => {

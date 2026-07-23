@@ -1,8 +1,11 @@
-import { Table, Group, ActionIcon, Text, Tooltip, Anchor, Avatar, Badge } from "@mantine/core";
-import { IconEdit, IconTrash, IconAdjustments } from "@tabler/icons-react";
+import { Table, Group, Text, Anchor, Avatar, Tooltip } from "@mantine/core";
 import type { Device } from "@/types";
 import { formatInterval } from "@/utils/time";
 import { isDeviceCalibrated } from "@/components/DevicesTab/utils";
+import FilterChip from "@/components/shared/FilterChip";
+import IconEdit from "@/components/icons/IconEdit";
+import IconTrash from "@/components/icons/IconTrash";
+import IconCalibrate from "@/components/icons/IconCalibrate";
 
 interface DeviceTableRowProps {
   device: Device;
@@ -31,9 +34,11 @@ export default function DeviceTableRow({
             {device.serialNumber}
           </Text>
           {!calibrated && (
-            <Badge color="orange" variant="light" size="sm">
-              Needs calibration
-            </Badge>
+            <FilterChip
+              variant="calibration"
+              icon={<IconCalibrate size={12} />}
+              label="Calibration recommended"
+            />
           )}
         </Group>
       </Table.Td>
@@ -68,38 +73,41 @@ export default function DeviceTableRow({
         )}
       </Table.Td>
       <Table.Td>
-        <Group gap="xs" wrap="nowrap">
+        <Group gap={4} wrap="nowrap">
           {device.type === "humidity" && (
-            <Tooltip label={calibrated ? "Calibrate sensor" : "Calibrate sensor (required)"} withArrow>
-              <ActionIcon
-                variant={calibrated ? "subtle" : "light"}
-                color={calibrated ? "green" : "orange"}
-                aria-label="Calibrate sensor"
+            <Tooltip
+              label={calibrated ? "Calibrate sensor" : "Calibrate sensor (required)"}
+              withArrow
+            >
+              <FilterChip
+                variant={calibrated ? "healthy" : "calibration"}
+                icon={<IconCalibrate size={12} />}
+                label="Calibrate sensor"
+                iconOnly
+                expandLabel={false}
                 onClick={() => onCalibrate(device)}
-              >
-                <IconAdjustments size={16} />
-              </ActionIcon>
+              />
             </Tooltip>
           )}
           <Tooltip label="Edit device" withArrow>
-            <ActionIcon
-              variant="subtle"
-              color="blue"
-              aria-label="Edit device"
+            <FilterChip
+              variant="edit"
+              icon={<IconEdit size={12} />}
+              label="Edit device"
+              iconOnly
+              expandLabel={false}
               onClick={() => onEdit(device)}
-            >
-              <IconEdit size={16} />
-            </ActionIcon>
+            />
           </Tooltip>
           <Tooltip label="Delete device" withArrow>
-            <ActionIcon
-              variant="subtle"
-              color="red"
-              aria-label="Delete device"
+            <FilterChip
+              variant="danger"
+              icon={<IconTrash size={12} />}
+              label="Delete device"
+              iconOnly
+              expandLabel={false}
               onClick={() => onDelete(device)}
-            >
-              <IconTrash size={16} />
-            </ActionIcon>
+            />
           </Tooltip>
         </Group>
       </Table.Td>

@@ -1,18 +1,11 @@
 import { Skeleton, Stack, Text, Button, ActionIcon, Tooltip } from "@mantine/core";
-import { IconBellOff, IconLeaf, IconDroplet, IconWifiOff, IconBattery, IconSun } from "@tabler/icons-react";
+import { IconBellOff, IconSun } from "@tabler/icons-react";
 import type { EnrichedPlant, PlantStatus } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { relativeTime } from "@/utils/time";
 import HumidityBar from "@/components/HumidityBar";
 import FilterChip from "@/components/shared/FilterChip";
-import type { FilterChipProps } from "@/components/shared/FilterChip";
-
-const STATUS_CHIP: Record<PlantStatus, { variant: FilterChipProps["variant"]; icon: React.ReactNode }> = {
-  HEALTHY:          { variant: "healthy",  icon: <IconLeaf    size={12} /> },
-  WATERING_NEEDED:  { variant: "watering", icon: <IconDroplet size={12} /> },
-  OFFLINE:          { variant: "offline",  icon: <IconWifiOff size={12} /> },
-  RECHARGE_NEEDED:  { variant: "recharge", icon: <IconBattery size={12} /> },
-};
+import PlantStatusChips from "@/components/shared/PlantStatusChips";
 
 function batteryColor(percent: number): string {
   if (percent < 15) return "var(--mantine-color-red-6)";
@@ -154,15 +147,7 @@ function PlantLeaderboardRow({
         </div>
 
         <div className="leaderboard-badges-row">
-          {plant.statuses.map((s) => (
-            <FilterChip
-              key={s}
-              variant={STATUS_CHIP[s].variant}
-              icon={STATUS_CHIP[s].icon}
-              label={STATUS_CONFIG[s].label}
-              iconOnly={s === "HEALTHY"}
-            />
-          ))}
+          <PlantStatusChips statuses={plant.statuses} />
           {snoozedUntil && (
             <FilterChip
               variant="snooze"

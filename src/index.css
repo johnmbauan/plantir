@@ -26,6 +26,11 @@
   --stone-100: #e5e0d8;
   --stone-50:  #f5f3f0;
 
+  --rose-900: #6b3030;
+  --rose-500: #c45c5c;
+  --rose-100: #f0d6d6;
+  --rose-50:  #faf1f1;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
