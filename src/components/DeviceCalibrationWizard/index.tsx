@@ -39,6 +39,7 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
       title="Calibrate sensor"
       size="lg"
       closeOnClickOutside={false}
+      closeButtonProps={{ "aria-label": "Close calibration wizard" }}
     >
       <Stepper
         active={step}

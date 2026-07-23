@@ -11,31 +11,28 @@ function StatefulSearch({ initial = '' }: { initial?: string }) {
 
 describe('PlantFilterSearch', () => {
   it('starts collapsed when value is empty', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <PlantFilterSearch value="" onChange={vi.fn()} />,
     );
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
-    expect(container.querySelector('.filter-search')).not.toHaveClass('filter-search--open');
+    expect(screen.getByTestId('filter-search')).not.toHaveClass('filter-search--open');
   });
 
   it('starts expanded when value is non-empty', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <PlantFilterSearch value="fern" onChange={vi.fn()} />,
     );
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
-    expect(container.querySelector('.filter-search')).toHaveClass('filter-search--open');
+    expect(screen.getByTestId('filter-search')).toHaveClass('filter-search--open');
   });
 
   it('expands when the search icon is clicked', async () => {
     const user = userEvent.setup();
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <PlantFilterSearch value="" onChange={vi.fn()} />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Search plants' }));
 
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
-    expect(container.querySelector('.filter-search')).toHaveClass('filter-search--open');
+    expect(screen.getByTestId('filter-search')).toHaveClass('filter-search--open');
   });
 
   it('calls onChange when typing', async () => {
@@ -76,30 +73,27 @@ describe('PlantFilterSearch', () => {
 
   it('collapses on blur when the value is empty', async () => {
     const user = userEvent.setup();
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <PlantFilterSearch value="" onChange={vi.fn()} />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Search plants' }));
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
-    expect(container.querySelector('.filter-search')).toHaveClass('filter-search--open');
+    expect(screen.getByTestId('filter-search')).toHaveClass('filter-search--open');
 
     await user.click(document.body);
 
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
-    expect(container.querySelector('.filter-search')).not.toHaveClass('filter-search--open');
+    expect(screen.getByTestId('filter-search')).not.toHaveClass('filter-search--open');
   });
 
   it('stays open on blur when the value is non-empty', async () => {
     const user = userEvent.setup();
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <PlantFilterSearch value="fern" onChange={vi.fn()} />,
     );
 
     await user.click(screen.getByPlaceholderText('Search plants…'));
     await user.tab();
 
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
-    expect(container.querySelector('.filter-search')).toHaveClass('filter-search--open');
+    expect(screen.getByTestId('filter-search')).toHaveClass('filter-search--open');
   });
 });

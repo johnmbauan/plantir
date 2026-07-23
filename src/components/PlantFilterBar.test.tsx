@@ -104,8 +104,7 @@ describe('PlantFilterBar', () => {
       <PlantFilterBar {...defaultProps} activeFilter="WATERING_NEEDED" />,
     );
 
-    // eslint-disable-next-line testing-library/no-node-access
-    const activeBadge = document.querySelector('.filter-chip--active');
-    expect(activeBadge).toHaveTextContent(/need watering/);
+    const activeBadge = screen.getByRole('button', { name: 'need watering' });
+    expect(activeBadge).toHaveClass('filter-chip--active');
   });
 });

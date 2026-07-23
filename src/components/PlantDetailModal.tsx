@@ -218,6 +218,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
                   { label: "7 days", value: "7d" },
                   { label: "14 days", value: "14d" },
                   { label: "30 days", value: "30d" },
+                  { label: "90 days", value: "90d" },
                 ]}
               />
             </Group>

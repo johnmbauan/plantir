@@ -99,11 +99,8 @@ describe('AssignmentSection', () => {
       />,
     );
 
-    // Mantine Select clear button is aria-hidden.
-    // eslint-disable-next-line testing-library/no-node-access
-    const clearButton = document.querySelector('.mantine-Select-root button:last-of-type');
-    expect(clearButton).toBeTruthy();
-    await user.click(clearButton!);
+    // Mantine Select clear button is aria-hidden; query by its aria-label attribute.
+    await user.click(screen.getByLabelText('Clear plant'));
 
     expect(onPlantChange).toHaveBeenCalledWith(null);
   });

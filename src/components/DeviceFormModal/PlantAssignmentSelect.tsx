@@ -18,6 +18,7 @@ export default function PlantAssignmentSelect({
     <Select
       {...selectProps}
       data={toPlantSelectData(plantOptions)}
+      clearButtonProps={{ "aria-label": "Clear plant" }}
       description={
         description ?? (
           hasAssignedPlantOptions(plantOptions)

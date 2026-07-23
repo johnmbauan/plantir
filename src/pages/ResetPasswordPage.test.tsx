@@ -19,10 +19,6 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-function getPasswordFields() {
-  return document.querySelectorAll('input[type="password"]');
-}
-
 describe('ResetPasswordPage', () => {
   beforeEach(() => {
     resetSupabaseMocks();
@@ -39,7 +35,8 @@ describe('ResetPasswordPage', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument();
-      expect(getPasswordFields()).toHaveLength(2);
+      expect(screen.getByLabelText(/^New password/)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^Confirm new password/)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Reset password' })).toBeInTheDocument();
     });
   });
@@ -91,12 +88,11 @@ describe('ResetPasswordPage', () => {
     renderWithProviders(<ResetPasswordPage />);
 
     await waitFor(() => {
-      expect(getPasswordFields()).toHaveLength(2);
+      expect(screen.getByLabelText(/^New password/)).toBeInTheDocument();
     });
 
-    const [passwordInput, confirmInput] = getPasswordFields();
-    await user.type(passwordInput, 'Secret123');
-    await user.type(confirmInput, 'Secret123');
+    await user.type(screen.getByLabelText(/^New password/), 'Secret123');
+    await user.type(screen.getByLabelText(/^Confirm new password/), 'Secret123');
     await user.click(screen.getByRole('button', { name: 'Reset password' }));
 
     expect(supabaseMock.auth.updateUser).toHaveBeenCalledWith({ password: 'Secret123' });
@@ -114,12 +110,11 @@ describe('ResetPasswordPage', () => {
     renderWithProviders(<ResetPasswordPage />);
 
     await waitFor(() => {
-      expect(getPasswordFields()).toHaveLength(2);
+      expect(screen.getByLabelText(/^New password/)).toBeInTheDocument();
     });
 
-    const [passwordInput, confirmInput] = getPasswordFields();
-    await user.type(passwordInput, 'Secret123');
-    await user.type(confirmInput, 'different');
+    await user.type(screen.getByLabelText(/^New password/), 'Secret123');
+    await user.type(screen.getByLabelText(/^Confirm new password/), 'different');
     await user.click(screen.getByRole('button', { name: 'Reset password' }));
 
     expect(await screen.findByText('Passwords do not match.')).toBeInTheDocument();
@@ -136,12 +131,11 @@ describe('ResetPasswordPage', () => {
     renderWithProviders(<ResetPasswordPage />);
 
     await waitFor(() => {
-      expect(getPasswordFields()).toHaveLength(2);
+      expect(screen.getByLabelText(/^New password/)).toBeInTheDocument();
     });
 
-    const [passwordInput, confirmInput] = getPasswordFields();
-    await user.type(passwordInput, 'Secret123');
-    await user.type(confirmInput, 'Secret123');
+    await user.type(screen.getByLabelText(/^New password/), 'Secret123');
+    await user.type(screen.getByLabelText(/^Confirm new password/), 'Secret123');
     await user.click(screen.getByRole('button', { name: 'Reset password' }));
 
     expect(await screen.findByText('Update failed')).toBeInTheDocument();
@@ -154,12 +148,11 @@ describe('ResetPasswordPage', () => {
     renderWithProviders(<ResetPasswordPage />);
 
     await waitFor(() => {
-      expect(getPasswordFields()).toHaveLength(2);
+      expect(screen.getByLabelText(/^New password/)).toBeInTheDocument();
     });
 
-    const [passwordInput, confirmInput] = getPasswordFields();
-    await user.type(passwordInput, 'secret123');
-    await user.type(confirmInput, 'secret123');
+    await user.type(screen.getByLabelText(/^New password/), 'secret123');
+    await user.type(screen.getByLabelText(/^Confirm new password/), 'secret123');
     await user.click(screen.getByRole('button', { name: 'Reset password' }));
 
     expect(await screen.findByText(PASSWORD_REQUIREMENTS_MESSAGE)).toBeInTheDocument();
