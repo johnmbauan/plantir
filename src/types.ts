@@ -1,5 +1,5 @@
 export type PlantStatus = "HEALTHY" | "WATERING_NEEDED" | "OFFLINE" | "RECHARGE_NEEDED";
-export type HistoryRange = "7d" | "14d" | "30d";
+export type HistoryRange = "7d" | "14d" | "30d" | "90d";
 
 export type DeviceType = "humidity";
 

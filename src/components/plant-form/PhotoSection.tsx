@@ -48,7 +48,7 @@ export function PhotoSection({
         />
       )}
       <Group gap="sm" align="center">
-        <FileButton resetRef={resetFileRef} onChange={onFileChange} accept="image/*">
+        <FileButton resetRef={resetFileRef} onChange={onFileChange} accept="image/*" inputProps={{ "aria-label": "Plant photo file" }}>
           {(props) => (
             <Button variant="default" disabled={saving} {...props}>
               {imageFile || (!useSpeciesImage && previewSrc) ? "Replace custom photo" : "Upload custom photo"}

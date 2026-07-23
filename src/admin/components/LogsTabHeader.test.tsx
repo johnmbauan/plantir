@@ -20,11 +20,8 @@ async function selectComboboxOption(
 ) {
   const inputs = screen.getAllByRole('textbox');
   await user.click(inputs[index]);
-  // Mantine keeps combobox options in a hidden portal until layout completes in jsdom.
-  // eslint-disable-next-line testing-library/no-node-access
-  const option = document.querySelector(`[data-combobox-option][value="${value}"]`);
-  expect(option).toBeTruthy();
-  await user.click(option!);
+  const option = await screen.findByRole('option', { name: value, hidden: true });
+  await user.click(option);
 }
 
 describe('LogsTabHeader', () => {
@@ -72,7 +69,7 @@ describe('LogsTabHeader', () => {
 
     await selectComboboxOption(user, 0, 'SN-001');
     await selectComboboxOption(user, 1, 'alice@example.com');
-    await selectComboboxOption(user, 2, 'error');
+    await selectComboboxOption(user, 2, 'Error');
 
     expect(onSerialChange).toHaveBeenCalledWith('SN-001');
     expect(onOwnerChange).toHaveBeenCalledWith('alice@example.com');

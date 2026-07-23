@@ -53,18 +53,9 @@ describe('ReportingSection', () => {
 
     await user.click(screen.getByRole('textbox', { name: /Reporting interval/i }));
 
-    // Mantine keeps combobox options in a hidden portal until layout completes in jsdom.
-    // eslint-disable-next-line testing-library/no-node-access
-    const recommendedOption = document.querySelector(
-      `[data-combobox-option][value="${recommendedInterval}"]`,
-    );
-    expect(recommendedOption).toBeTruthy();
-    expect(within(recommendedOption as HTMLElement).getByText('Recommended')).toBeInTheDocument();
-
-    // eslint-disable-next-line testing-library/no-node-access
-    const otherOption = document.querySelector('[data-combobox-option][value="3600"]');
-    expect(otherOption).toBeTruthy();
-    expect(within(otherOption as HTMLElement).queryByText('Recommended')).not.toBeInTheDocument();
+    // findByRole throws if 0 or 2+ options match, so this asserts exactly one has the badge
+    const recommendedOption = await screen.findByRole('option', { name: /Recommended/, hidden: true });
+    expect(within(recommendedOption).getByText('Recommended')).toBeInTheDocument();
   });
 
   it('shows custom interval input when custom preset is selected', () => {

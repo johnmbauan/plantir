@@ -353,11 +353,8 @@ describe('DeviceCalibrationWizard', () => {
     await advanceToOpenDeviceStep(user);
     await startCalibration(user);
 
-    // Mantine modal close button is not exposed in the accessibility tree.
-    // eslint-disable-next-line testing-library/no-node-access
-    const closeButton = document.querySelector('.mantine-Modal-close');
-    expect(closeButton).toBeTruthy();
-    await user.click(closeButton!);
+    // Mantine modal close button is aria-hidden; query by its aria-label attribute.
+    await user.click(screen.getByLabelText('Close calibration wizard'));
 
     expect(deviceService.clearCalibrationMode).toHaveBeenCalledWith(1);
     expect(onClose).toHaveBeenCalled();

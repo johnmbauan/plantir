@@ -171,4 +171,23 @@ describe('PlantDetailModal', () => {
       expect(fetchPlantHistory).toHaveBeenCalledWith(3, '14d');
     });
   });
+
+  it('fetches 90-day history when that range is selected', async () => {
+    const user = userEvent.setup();
+    const plant = buildPlant({ id: 3, deviceId: 10 });
+
+    renderWithProviders(
+      <PlantDetailModal plant={plant} opened onClose={onClose} />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Humidity trend')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText('90 days'));
+
+    await waitFor(() => {
+      expect(fetchPlantHistory).toHaveBeenCalledWith(3, '90d');
+    });
+  });
 });

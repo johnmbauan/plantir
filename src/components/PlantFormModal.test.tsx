@@ -238,9 +238,7 @@ describe('PlantFormModal', () => {
 
     const dialog = getDialog();
     const file = new File(['img'], 'plant.jpg', { type: 'image/jpeg' });
-    // eslint-disable-next-line testing-library/no-node-access
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-    expect(input).toBeTruthy();
+    const input = screen.getByLabelText('Plant photo file');
 
     await user.upload(input, file);
     await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Ficus');

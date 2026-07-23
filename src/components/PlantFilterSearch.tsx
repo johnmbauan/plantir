@@ -24,7 +24,7 @@ export default function PlantFilterSearch({ value, onChange }: PlantFilterSearch
   }
 
   return (
-    <div className={`filter-search${open ? " filter-search--open" : ""}`}>
+    <div className={`filter-search${open ? " filter-search--open" : ""}`} data-testid="filter-search">
       <button
         type="button"
         className="filter-search__icon-btn"
