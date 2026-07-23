@@ -4,6 +4,7 @@ import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
 import {
   fetchUnreadNotifications,
+  resolveStaleNotifications,
   type AppNotification,
 } from "@/services/notificationService";
 
@@ -25,9 +26,13 @@ export function useNotifications() {
     try {
       const unread = await fetchUnreadNotifications();
       setItems(unread);
+      setLoading(false);
+
+      // Auto-resolve in the background so the inbox paints without waiting on plant statuses.
+      const remaining = await resolveStaleNotifications(unread);
+      setItems(remaining);
     } catch (err) {
       console.error("Failed to fetch notifications:", err);
-    } finally {
       setLoading(false);
     }
   }, [session]);
@@ -50,16 +55,12 @@ export function useNotifications() {
   }, []);
 
   useEffect(() => {
-    if (!session?.user) {
-      // Explicitly clear notification state on sign-out/session loss.
+    if (!session?.user) return;
 
-      setItems([]);
-      setLoading(false);
-      return;
-    }
-
-    // Initial fetch for active authenticated session.
-    void refresh();
+    // Defer so the initial fetch's setState is not synchronous inside this effect.
+    const loadTimer = window.setTimeout(() => {
+      void refresh();
+    }, 0);
 
     const userId = session.user.id;
     const channelName = `user:${userId}`;
@@ -83,6 +84,7 @@ export function useNotifications() {
       });
 
     return () => {
+      window.clearTimeout(loadTimer);
       void supabase.removeChannel(channel);
     };
   }, [session, refresh, handleIncoming]);
@@ -105,10 +107,14 @@ export function useNotifications() {
     setItems([]);
   }, []);
 
+  const signedIn = Boolean(session?.user);
+  const visibleItems = signedIn ? items : [];
+  const visibleLoading = signedIn ? loading : false;
+
   return {
-    items,
-    loading,
-    unreadCount: items.length,
+    items: visibleItems,
+    loading: visibleLoading,
+    unreadCount: visibleItems.length,
     refresh,
     removeItem,
     clearAll,
