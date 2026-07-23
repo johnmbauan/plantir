@@ -2,7 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Stack } from "@mantine/core";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import type { EnrichedPlant, PlantStatus } from "@/types";
-import { fetchPlants } from "@/services/plantService";
+import {
+  applyBatteryMeasurement,
+  applyHumidityMeasurement,
+  fetchPlants,
+} from "@/services/plantService";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/error";
 import supabase from "@/supabase";
@@ -42,14 +46,23 @@ export default function Dashboard() {
     setActiveFilter((prev) => (prev === status ? "all" : status));
   }
 
-  const reloadPlants = useCallback(async (source: "initial" | "manual" | "realtime" = "manual") => {
+  const reloadPlants = useCallback(async (source: "initial" | "manual" = "manual") => {
     if (source === "initial") setLoading(true);
     if (source !== "initial") setRefreshing(true);
 
+    const snoozePromise = fetchActiveSnoozedPlants().then(
+      (snoozeMap) => {
+        setSnoozedUntilByPlantId(snoozeMap);
+      },
+      (err: unknown) => {
+        console.error(err);
+        notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      },
+    );
+
     try {
-      const [data, snoozeMap] = await Promise.all([fetchPlants(), fetchActiveSnoozedPlants()]);
+      const data = await fetchPlants();
       setPlants(data);
-      setSnoozedUntilByPlantId(snoozeMap);
       setSelectedPlant((prev) => {
         if (!prev) return null;
         return data.find((p) => p.id === prev.id) ?? prev;
@@ -61,6 +74,8 @@ export default function Dashboard() {
       if (source === "initial") setLoading(false);
       if (source !== "initial") setRefreshing(false);
     }
+
+    await snoozePromise;
   }, []);
 
   useEffect(() => {
@@ -70,9 +85,15 @@ export default function Dashboard() {
   }, [reloadPlants]);
 
   useEffect(() => {
-    void recordDashboardVisit()
-      .then((newly) => showUnlockToasts(newly))
-      .catch((err) => console.error("Dashboard achievement visit failed:", err));
+    const timeoutId = window.setTimeout(() => {
+      void recordDashboardVisit()
+        .then((newly) => showUnlockToasts(newly))
+        .catch((err) => console.error("Dashboard achievement visit failed:", err));
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, []);
 
   useEffect(() => {
@@ -139,20 +160,78 @@ export default function Dashboard() {
   }, [highlightedPlantId, loading, plants]);
 
   useEffect(() => {
-    let debounceTimer: number | undefined;
     let warned = false;
-    const triggerReload = () => {
-      if (debounceTimer) return;
-      debounceTimer = window.setTimeout(() => {
-        debounceTimer = undefined;
-        void reloadPlants("realtime");
-      }, 800);
-    };
 
     const channel = supabase
       .channel("dashboard-measurements")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "humidity_measurements" }, triggerReload)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "battery_measurements" }, triggerReload)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "humidity_measurements" },
+        (payload) => {
+          const row = payload.new as {
+            deviceId?: number;
+            humidityPercentage?: number;
+            createdAt?: string;
+          };
+          if (
+            typeof row.deviceId !== "number" ||
+            typeof row.humidityPercentage !== "number" ||
+            typeof row.createdAt !== "string"
+          ) {
+            return;
+          }
+
+          setPlants((prev) =>
+            applyHumidityMeasurement(prev, {
+              deviceId: row.deviceId!,
+              humidityPercentage: row.humidityPercentage!,
+              createdAt: row.createdAt!,
+            }),
+          );
+          setSelectedPlant((prev) => {
+            if (!prev || prev.deviceId !== row.deviceId) return prev;
+            return applyHumidityMeasurement([prev], {
+              deviceId: row.deviceId!,
+              humidityPercentage: row.humidityPercentage!,
+              createdAt: row.createdAt!,
+            })[0] ?? prev;
+          });
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "battery_measurements" },
+        (payload) => {
+          const row = payload.new as {
+            deviceId?: number;
+            batteryPercent?: number;
+            createdAt?: string;
+          };
+          if (
+            typeof row.deviceId !== "number" ||
+            typeof row.batteryPercent !== "number" ||
+            typeof row.createdAt !== "string"
+          ) {
+            return;
+          }
+
+          setPlants((prev) =>
+            applyBatteryMeasurement(prev, {
+              deviceId: row.deviceId!,
+              batteryPercent: row.batteryPercent!,
+              createdAt: row.createdAt!,
+            }),
+          );
+          setSelectedPlant((prev) => {
+            if (!prev || prev.deviceId !== row.deviceId) return prev;
+            return applyBatteryMeasurement([prev], {
+              deviceId: row.deviceId!,
+              batteryPercent: row.batteryPercent!,
+              createdAt: row.createdAt!,
+            })[0] ?? prev;
+          });
+        },
+      )
       .subscribe((status) => {
         if (status === "CHANNEL_ERROR" && !warned) {
           warned = true;
@@ -165,10 +244,9 @@ export default function Dashboard() {
       });
 
     return () => {
-      if (debounceTimer) window.clearTimeout(debounceTimer);
       void supabase.removeChannel(channel);
     };
-  }, [reloadPlants]);
+  }, []);
 
   const counts = useMemo(() => ({
     healthy: plants.filter((p) => p.statuses.includes("HEALTHY")).length,
@@ -176,6 +254,15 @@ export default function Dashboard() {
     offline: plants.filter((p) => p.statuses.includes("OFFLINE")).length,
     rechargeNeeded: plants.filter((p) => p.statuses.includes("RECHARGE_NEEDED")).length,
   }), [plants]);
+
+  const oldestPlantCreatedAt = useMemo(() => {
+    if (plants.length === 0) return null;
+    return plants.reduce((oldest, plant) =>
+      plant.created_at < oldest ? plant.created_at : oldest,
+    plants[0].created_at);
+  }, [plants]);
+
+  const hasDevices = useMemo(() => plants.some((plant) => plant.deviceId != null), [plants]);
 
   const visible = useMemo(() => {
     const filtered = plants.filter((p) => {
@@ -255,7 +342,12 @@ export default function Dashboard() {
         locationSetupPrompt={locationSetupPrompt}
         onLocationSet={clearLocationSetupParam}
       />
-      <OnboardingChecklist />
+      <OnboardingChecklist
+        plantsLoaded={!loading}
+        hasPlants={plants.length > 0}
+        hasDevices={hasDevices}
+        oldestPlantCreatedAt={oldestPlantCreatedAt}
+      />
       <PlantFilterBar
         counts={counts}
         activeFilter={activeFilter}

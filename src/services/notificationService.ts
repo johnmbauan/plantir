@@ -1,6 +1,10 @@
 import supabase from "@/supabase";
 import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
-import { fetchPlantStatusesByIds } from "@/services/plantService";
+import {
+  fetchPlantStatusesByIds,
+  getCachedPlantStatuses,
+  waitForCachedPlantStatuses,
+} from "@/services/plantService";
 import type { PlantStatus } from "@/types";
 import { evaluateAndToastUnlocks, recordClientEvent, showUnlockToasts } from "@/services/achievementService";
 import { requireUser } from "@/utils/requireUser";
@@ -124,6 +128,22 @@ export async function upsertSettings(
 export async function updateWeatherLocation(lat: number, lng: number): Promise<void> {
   const user = await requireUser();
 
+  const { data: existing, error: readError } = await supabase
+    .from("notification_settings")
+    .select("weather_lat, weather_lng")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (readError) throw readError;
+
+  if (
+    existing &&
+    Number(existing.weather_lat) === lat &&
+    Number(existing.weather_lng) === lng
+  ) {
+    return;
+  }
+
   const { error } = await supabase
     .from("notification_settings")
     .update({
@@ -198,8 +218,30 @@ export async function fetchUnreadNotifications(): Promise<AppNotification[]> {
 
   if (error) throw error;
 
-  const notifications = (data ?? []) as AppNotification[];
-  return autoResolveNotifications(notifications);
+  return (data ?? []) as AppNotification[];
+}
+
+/**
+ * Resolves stale watering/offline notifications in the background.
+ * Prefers plant statuses already loaded by the dashboard to avoid a duplicate fetch.
+ */
+export async function resolveStaleNotifications(
+  notifications: AppNotification[],
+): Promise<AppNotification[]> {
+  if (notifications.length === 0) return [];
+
+  const plantIds = collectPlantIdsFromNotifications(notifications);
+  if (plantIds.length === 0) return notifications;
+
+  let statusByPlantId =
+    getCachedPlantStatuses(plantIds) ??
+    (await waitForCachedPlantStatuses(plantIds));
+
+  if (!statusByPlantId) {
+    statusByPlantId = await fetchPlantStatusesByIds(plantIds);
+  }
+
+  return autoResolveNotifications(notifications, statusByPlantId);
 }
 
 function collectPlantIdsFromNotifications(notifications: AppNotification[]): number[] {
@@ -218,13 +260,10 @@ function collectPlantIdsFromNotifications(notifications: AppNotification[]): num
   return [...ids];
 }
 
-async function autoResolveNotifications(notifications: AppNotification[]): Promise<AppNotification[]> {
-  if (notifications.length === 0) return [];
-
-  const plantIds = collectPlantIdsFromNotifications(notifications);
-  const statusByPlantId = plantIds.length > 0
-    ? await fetchPlantStatusesByIds(plantIds)
-    : new Map<number, PlantStatus[]>();
+async function autoResolveNotifications(
+  notifications: AppNotification[],
+  statusByPlantId: Map<number, PlantStatus[]>,
+): Promise<AppNotification[]> {
   const toResolve = notifications.filter((n) => shouldResolveNotification(n, statusByPlantId));
 
   if (toResolve.length > 0) {
