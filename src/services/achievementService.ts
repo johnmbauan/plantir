@@ -2,6 +2,7 @@ import { notifications } from "@mantine/notifications";
 import supabase from "@/supabase";
 import type { AchievementKey, GardenElementId } from "@/constants/achievements";
 import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
+import { requireUser } from "@/utils/requireUser";
 
 export interface AchievementDefinition {
   key: AchievementKey;
@@ -64,8 +65,7 @@ export async function fetchAllDefinitions(): Promise<AchievementDefinition[]> {
 }
 
 export async function fetchGardenState(): Promise<GardenState> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const user = await requireUser();
 
   const { data, error } = await supabase
     .from("user_achievements")

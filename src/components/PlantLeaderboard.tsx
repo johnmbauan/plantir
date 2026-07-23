@@ -54,6 +54,15 @@ function snoozeTimeLeft(isoString: string): string {
   return `${mins}m left`;
 }
 
+/** True when the last reading is older than one reporting interval (or the plant is offline). */
+function isReadingStale(plant: EnrichedPlant): boolean {
+  if (plant.statuses.includes("OFFLINE")) return true;
+  if (!plant.lastMeasuredAt) return true;
+  if (plant.sleepDurationSeconds == null) return false;
+  const ageMs = Date.now() - new Date(plant.lastMeasuredAt).getTime();
+  return ageMs > plant.sleepDurationSeconds * 1000;
+}
+
 interface PlantLeaderboardProps {
   plants: EnrichedPlant[];
   loading: boolean;
@@ -88,6 +97,7 @@ function PlantLeaderboardRow({
   const primaryStatus = SEVERITY.find((s) => plant.statuses.includes(s)) ?? "HEALTHY";
   const { barColor } = STATUS_CONFIG[primaryStatus];
   const timeAgo = relativeTime(plant.lastMeasuredAt);
+  const readingStale = isReadingStale(plant);
 
   return (
     <div
@@ -96,8 +106,6 @@ function PlantLeaderboardRow({
       style={{ animationDelay: `${index * 70}ms`, cursor: onClick ? "pointer" : undefined }}
       onClick={onClick}
     >
-      <span className="leaderboard-rank">{index + 1}</span>
-
       <div className="leaderboard-info">
         <div className="leaderboard-avatar">
           {plant.image_url ? (
@@ -134,14 +142,6 @@ function PlantLeaderboardRow({
             animationDelay={`${index * 70}ms`}
             style={{ flex: 1 }}
           />
-          <div className="leaderboard-meta">
-            <span className="leaderboard-pct">
-              {plant.humidityPercent != null ? `${plant.humidityPercent}%` : "—"}
-            </span>
-            {timeAgo && (
-              <span className="leaderboard-time">{timeAgo}</span>
-            )}
-          </div>
         </div>
 
         <div className="leaderboard-badges-row">
@@ -151,7 +151,7 @@ function PlantLeaderboardRow({
               variant={STATUS_CHIP[s].variant}
               icon={STATUS_CHIP[s].icon}
               label={STATUS_CONFIG[s].label}
-              iconOnly
+              iconOnly={s === "HEALTHY"}
             />
           ))}
           {snoozedUntil && (
@@ -159,7 +159,6 @@ function PlantLeaderboardRow({
               variant="snooze"
               icon={<IconBellOff size={12} />}
               label={`Snoozed · ${snoozeTimeLeft(snoozedUntil)}`}
-              iconOnly
               rightSection={
                 <Tooltip label="Remove snooze" withArrow position="top">
                   <ActionIcon
@@ -180,6 +179,17 @@ function PlantLeaderboardRow({
             />
           )}
         </div>
+      </div>
+
+      <div className="leaderboard-meta">
+        <span className="leaderboard-pct">
+          {plant.humidityPercent != null ? `${plant.humidityPercent}%` : "—"}
+        </span>
+        {timeAgo && (
+          <span className={`leaderboard-time${readingStale ? " leaderboard-time--stale" : ""}`}>
+            {timeAgo}
+          </span>
+        )}
       </div>
     </div>
   );

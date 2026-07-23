@@ -11,6 +11,7 @@ import {
   IconChevronRight,
 } from "@tabler/icons-react";
 import supabase from "@/supabase";
+import { useAuth } from "@/context/AuthContext";
 import { useWeatherCity } from "@/context/WeatherCityContext";
 
 const DISMISSED_KEY = "onboarding_dismissed";
@@ -28,6 +29,7 @@ interface ChecklistStep {
 
 export default function OnboardingChecklist() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { city } = useWeatherCity();
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
   const [hasPlants, setHasPlants] = useState(false);
@@ -37,15 +39,13 @@ export default function OnboardingChecklist() {
   const hasLocation = city !== null;
 
   useEffect(() => {
-    if (dismissed) return;
+    if (dismissed || !user) return;
+    const userId = user.id;
 
     async function checkProgress() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
       const [plantsRes, devicesRes] = await Promise.all([
-        supabase.from("plants").select("id, createdAt").eq("user_id", user.id).order("createdAt", { ascending: true }).limit(1),
-        supabase.from("devices").select("id").eq("user_id", user.id).limit(1),
+        supabase.from("plants").select("id, createdAt").eq("user_id", userId).order("createdAt", { ascending: true }).limit(1),
+        supabase.from("devices").select("id").eq("user_id", userId).limit(1),
       ]);
 
       const plantCount = plantsRes.data?.length ?? 0;
@@ -64,7 +64,7 @@ export default function OnboardingChecklist() {
     }
 
     void checkProgress();
-  }, [dismissed]);
+  }, [dismissed, user]);
 
   const steps: ChecklistStep[] = [
     {

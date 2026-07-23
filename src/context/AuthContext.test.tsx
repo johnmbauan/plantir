@@ -72,6 +72,7 @@ describe('AuthContext', () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
     await waitFor(() => expect(result.current.loading).toBe(false));
 
+    mockGetUser.mockClear();
     const newSession = buildSession({ user: buildUser({ email: 'signed-in@example.com' }) });
     await act(async () => {
       mockSession(newSession);
@@ -82,6 +83,7 @@ describe('AuthContext', () => {
       expect(result.current.session).toEqual(newSession);
       expect(result.current.user).toEqual(newSession.user);
     });
+    expect(mockGetUser).not.toHaveBeenCalled();
   });
 
   it('clears session when auth state changes to signed out', async () => {

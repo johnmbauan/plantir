@@ -38,7 +38,7 @@ export default function HumidityBar({ humidityPercent, threshold, barColor, anim
               color: "var(--green-700)",
               whiteSpace: "nowrap",
             }}>
-              {threshold}%
+              min {threshold}%
             </span>
           </div>
         )}

@@ -8,7 +8,7 @@ describe('HumidityBar', () => {
       <HumidityBar humidityPercent={45} threshold={30} barColor="var(--green-400)" />,
     );
 
-    expect(screen.getByText('30%')).toBeInTheDocument();
+    expect(screen.getByText('min 30%')).toBeInTheDocument();
   });
 
   it('does not show threshold label when threshold is null', () => {
