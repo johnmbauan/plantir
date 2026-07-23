@@ -29,20 +29,6 @@ vi.mock('react-router-dom', async (importOriginal) => {
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
-const emptyProgress = {
-  plantsLoaded: true,
-  hasPlants: false,
-  hasDevices: false,
-  oldestPlantCreatedAt: null as string | null,
-};
-
-const plantsAndDevicesProgress = {
-  plantsLoaded: true,
-  hasPlants: true,
-  hasDevices: true,
-  oldestPlantCreatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-};
-
 describe('OnboardingChecklist', () => {
   beforeEach(() => {
     resetSupabaseMocks();
@@ -51,12 +37,13 @@ describe('OnboardingChecklist', () => {
     mockSession(buildSession());
     mockAuthenticatedUser();
     setupFromMocks({
-      notification_settings: { data: null, error: null },
+      plants: { data: [], error: null },
+      devices: { data: [], error: null },
     });
   });
 
   it('shows onboarding steps for a new user', async () => {
-    renderWithProviders(<OnboardingChecklist {...emptyProgress} />);
+    renderWithProviders(<OnboardingChecklist />);
 
     expect(await screen.findByText('Get started with Plantir')).toBeInTheDocument();
     expect(screen.getByText('Add your first plant')).toBeInTheDocument();
@@ -67,7 +54,7 @@ describe('OnboardingChecklist', () => {
 
   it('hides checklist when dismissed', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<OnboardingChecklist {...emptyProgress} />);
+    renderWithProviders(<OnboardingChecklist />);
 
     await screen.findByText('Get started with Plantir');
     await user.click(screen.getByRole('button', { name: 'Dismiss onboarding' }));
@@ -79,13 +66,19 @@ describe('OnboardingChecklist', () => {
 
   it('does not render when previously dismissed', () => {
     localStorage.setItem('onboarding_dismissed', 'true');
-    renderWithProviders(<OnboardingChecklist {...emptyProgress} />);
+    renderWithProviders(<OnboardingChecklist />);
 
     expect(screen.queryByText('Get started with Plantir')).not.toBeInTheDocument();
   });
 
   it('marks completed steps when user has plants and devices', async () => {
-    renderWithProviders(<OnboardingChecklist {...plantsAndDevicesProgress} />);
+    const recentDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    setupFromMocks({
+      plants: { data: [{ id: 1, createdAt: recentDate }], error: null },
+      devices: { data: [{ id: 1 }], error: null },
+    });
+
+    renderWithProviders(<OnboardingChecklist />);
 
     expect(await screen.findByText(/2 of 4 steps complete/)).toBeInTheDocument();
     expect(screen.getByText('Set your location')).toBeInTheDocument();
@@ -95,15 +88,12 @@ describe('OnboardingChecklist', () => {
   it('hides checklist when all steps are complete', async () => {
     localStorage.setItem('settings_visited', 'true');
     localStorage.setItem(WEATHER_CITY_STORAGE_KEY, JSON.stringify({ name: 'Rome', lat: 41.89, lng: 12.49 }));
+    setupFromMocks({
+      plants: { data: [{ id: 1, createdAt: '2026-01-01' }], error: null },
+      devices: { data: [{ id: 1 }], error: null },
+    });
 
-    renderWithProviders(
-      <OnboardingChecklist
-        plantsLoaded
-        hasPlants
-        hasDevices
-        oldestPlantCreatedAt="2026-01-01"
-      />,
-    );
+    renderWithProviders(<OnboardingChecklist />);
 
     await waitFor(() => {
       expect(screen.queryByText('Get started with Plantir')).not.toBeInTheDocument();
@@ -112,7 +102,7 @@ describe('OnboardingChecklist', () => {
 
   it('navigates to the dashboard when the location step is clicked', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<OnboardingChecklist {...emptyProgress} />);
+    renderWithProviders(<OnboardingChecklist />);
 
     await screen.findByText('Get started with Plantir');
     await user.click(screen.getByText('Set your location'));
@@ -121,9 +111,14 @@ describe('OnboardingChecklist', () => {
   });
 
   it('marks location complete when weather city is stored', async () => {
+    const recentDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     localStorage.setItem(WEATHER_CITY_STORAGE_KEY, JSON.stringify({ name: 'Rome', lat: 41.89, lng: 12.49 }));
+    setupFromMocks({
+      plants: { data: [{ id: 1, createdAt: recentDate }], error: null },
+      devices: { data: [{ id: 1 }], error: null },
+    });
 
-    renderWithProviders(<OnboardingChecklist {...plantsAndDevicesProgress} />);
+    renderWithProviders(<OnboardingChecklist />);
 
     expect(await screen.findByText(/3 of 4 steps complete/)).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Go' })).toHaveLength(1);
@@ -131,10 +126,15 @@ describe('OnboardingChecklist', () => {
 
   it('marks location complete when weather city is set after mount', async () => {
     const user = userEvent.setup();
+    const recentDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    setupFromMocks({
+      plants: { data: [{ id: 1, createdAt: recentDate }], error: null },
+      devices: { data: [{ id: 1 }], error: null },
+    });
 
     renderWithProviders(
       <>
-        <OnboardingChecklist {...plantsAndDevicesProgress} />
+        <OnboardingChecklist />
         <WeatherCitySetter />
       </>,
     );
@@ -148,7 +148,7 @@ describe('OnboardingChecklist', () => {
 
   it('navigates when an incomplete step is clicked', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<OnboardingChecklist {...emptyProgress} />);
+    renderWithProviders(<OnboardingChecklist />);
 
     await screen.findByText('Get started with Plantir');
     await user.click(screen.getByText('Add your first plant'));
@@ -158,7 +158,7 @@ describe('OnboardingChecklist', () => {
 
   it('navigates when Go button is clicked', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<OnboardingChecklist {...emptyProgress} />);
+    renderWithProviders(<OnboardingChecklist />);
 
     await screen.findByText('Get started with Plantir');
     const goButtons = screen.getAllByRole('button', { name: 'Go' });
@@ -168,33 +168,28 @@ describe('OnboardingChecklist', () => {
   });
 
   it('marks notifications complete when plant is old enough', async () => {
-    localStorage.setItem(WEATHER_CITY_STORAGE_KEY, JSON.stringify({ name: 'Rome', lat: 41.89, lng: 12.49 }));
     const oldDate = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString();
+    localStorage.setItem(WEATHER_CITY_STORAGE_KEY, JSON.stringify({ name: 'Rome', lat: 41.89, lng: 12.49 }));
+    setupFromMocks({
+      plants: { data: [{ id: 1, createdAt: oldDate }], error: null },
+      devices: { data: [{ id: 1 }], error: null },
+    });
 
-    renderWithProviders(
-      <OnboardingChecklist
-        plantsLoaded
-        hasPlants
-        hasDevices
-        oldestPlantCreatedAt={oldDate}
-      />,
-    );
+    renderWithProviders(<OnboardingChecklist />);
 
     await waitFor(() => {
       expect(screen.queryByText('Get started with Plantir')).not.toBeInTheDocument();
     });
   });
 
-  it('does not render before plants have loaded', () => {
-    renderWithProviders(
-      <OnboardingChecklist
-        plantsLoaded={false}
-        hasPlants={false}
-        hasDevices={false}
-        oldestPlantCreatedAt={null}
-      />,
-    );
+  it('does not render when user is not authenticated', async () => {
+    const { mockUnauthenticated } = await import('@/test/mocks/supabase');
+    mockUnauthenticated();
 
-    expect(screen.queryByText('Get started with Plantir')).not.toBeInTheDocument();
+    renderWithProviders(<OnboardingChecklist />);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Get started with Plantir')).not.toBeInTheDocument();
+    });
   });
 });

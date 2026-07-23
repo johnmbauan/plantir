@@ -12,13 +12,9 @@ const fetchActiveSnoozedPlants = vi.fn();
 const unsnoozeNotification = vi.fn();
 const weatherWidgetMock = vi.hoisted(() => vi.fn());
 
-vi.mock('@/services/plantService', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/services/plantService')>();
-  return {
-    ...actual,
-    fetchPlants: (...args: unknown[]) => fetchPlants(...args),
-  };
-});
+vi.mock('@/services/plantService', () => ({
+  fetchPlants: (...args: unknown[]) => fetchPlants(...args),
+}));
 
 vi.mock('@/services/notificationService', () => ({
   fetchActiveSnoozedPlants: (...args: unknown[]) => fetchActiveSnoozedPlants(...args),
@@ -54,7 +50,7 @@ vi.mock('@mantine/notifications', () => ({
   notifications: { show: vi.fn() },
 }));
 
-type PostgresHandler = (payload: { new: Record<string, unknown> }) => void
+type PostgresHandler = () => void
 type SubscribeCallback = (status: string) => void
 
 let humidityInsertHandler: PostgresHandler | undefined;
@@ -370,46 +366,46 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('button', { name: /Snoozed · \d+h left/ })).not.toBeInTheDocument();
   });
 
-  it('patches plant humidity after realtime humidity insert', async () => {
-    fetchPlants.mockResolvedValue([
-      buildPlant({ id: 1, name: 'Monstera', deviceId: 10, humidityPercent: 40, threshold: 15, sleepDurationSeconds: 3600 }),
-    ]);
+  it('reloads plants after realtime humidity insert', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      renderWithProviders(<Dashboard />);
 
-    renderWithProviders(<Dashboard />);
+      await waitFor(() => {
+        expect(fetchPlants).toHaveBeenCalledTimes(1);
+      });
 
-    await waitFor(() => {
-      expect(screen.getByText('Monstera')).toBeInTheDocument();
-    });
+      humidityInsertHandler?.();
 
-    humidityInsertHandler?.({
-      new: { deviceId: 10, humidityPercentage: 12, createdAt: '2026-07-06T12:00:00Z' },
-    });
+      await vi.advanceTimersByTimeAsync(800);
 
-    await waitFor(() => {
-      expect(screen.getByText('12%')).toBeInTheDocument();
-    });
-    expect(fetchPlants).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(fetchPlants).toHaveBeenCalledTimes(2);
+      });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it('patches plant battery after realtime battery insert', async () => {
-    fetchPlants.mockResolvedValue([
-      buildPlant({ id: 1, name: 'Monstera', deviceId: 10, batteryPercent: 80 }),
-    ]);
+  it('reloads plants after realtime battery insert', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      renderWithProviders(<Dashboard />);
 
-    renderWithProviders(<Dashboard />);
+      await waitFor(() => {
+        expect(fetchPlants).toHaveBeenCalledTimes(1);
+      });
 
-    await waitFor(() => {
-      expect(screen.getByText('Monstera')).toBeInTheDocument();
-    });
+      batteryInsertHandler?.();
 
-    batteryInsertHandler?.({
-      new: { deviceId: 10, batteryPercent: 5, createdAt: '2026-07-06T12:00:00Z' },
-    });
+      await vi.advanceTimersByTimeAsync(800);
 
-    await waitFor(() => {
-      expect(screen.getByText('5%')).toBeInTheDocument();
-    });
-    expect(fetchPlants).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(fetchPlants).toHaveBeenCalledTimes(2);
+      });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('persists sort preference to localStorage', async () => {

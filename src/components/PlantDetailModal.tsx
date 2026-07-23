@@ -25,7 +25,7 @@ import {
 } from "@mantine/core";
 import { IconBattery, IconClock, IconDroplet, IconPencil, IconTool } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import type { EnrichedPlant, HistoryRange, PlantHistory, PlantSpeciesSummary } from "@/types";
+import type { EnrichedPlant, HistoryRange, PlantHistory } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { batteryMantineColor } from "@/utils/color-utils";
 import { formatInterval } from "@/utils/time";
@@ -33,7 +33,7 @@ import HumidityBar from "@/components/HumidityBar";
 import HistoryLineChart from "@/components/HistoryLineChart";
 import { ModalSection } from "@/components/shared/ModalSection";
 import { SpeciesCareCard } from "@/components/shared/SpeciesCareCard";
-import { fetchPlantHistory, fetchSpeciesCareById } from "@/services/plantService";
+import { fetchPlantHistory } from "@/services/plantService";
 import { getErrorMessage } from "@/utils/error";
 import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
 
@@ -76,7 +76,6 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [imageExpanded, setImageExpanded] = useState(false);
-  const [speciesCare, setSpeciesCare] = useState<PlantSpeciesSummary | null>(null);
 
   const loadHistory = useCallback(async (plantId: number, selectedRange: HistoryRange) => {
     setHistoryLoading(true);
@@ -100,27 +99,6 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
   }, [opened, plant?.id, plant?.deviceId, range, loadHistory]);
 
   useEffect(() => {
-    if (!opened || !plant?.speciesId) {
-      setSpeciesCare(null);
-      return;
-    }
-
-    let cancelled = false;
-    void fetchSpeciesCareById(plant.speciesId)
-      .then((species) => {
-        if (!cancelled) setSpeciesCare(species);
-      })
-      .catch((err) => {
-        console.error("Failed to load species care details:", err);
-        if (!cancelled) setSpeciesCare(plant.species ?? null);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [opened, plant?.speciesId, plant?.species]);
-
-  useEffect(() => {
     if (!opened || range !== "30d") return;
     void recordClientEvent("viewed_30d_history")
       .then((newly) => showUnlockToasts(newly))
@@ -134,8 +112,6 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
   }, [opened]);
 
   if (!plant) return null;
-
-  const careSpecies = speciesCare ?? plant.species ?? null;
 
   const SEVERITY = ["OFFLINE", "WATERING_NEEDED", "HEALTHY"] as const;
   const primaryStatus = SEVERITY.find((s) => plant.statuses.includes(s)) ?? "HEALTHY";
@@ -222,7 +198,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
           </SimpleGrid>
         </ModalSection>
 
-        {careSpecies && <SpeciesCareCard species={careSpecies} />}
+        {plant.species && <SpeciesCareCard species={plant.species} />}
 
         {plant.deviceId == null && (
           <Alert color="green" variant="light" title="Connect a device to track history">
