@@ -118,9 +118,11 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
     <Stack gap="md" pos="relative">
       <div className="filter-toolbar center-tab-toolbar">
         <PlantFilterSearch value={search} onChange={setSearch} />
-        <Button leftSection={<IconPlus size={16} />} onClick={() => handleOpenEdit()}>
-          Add Plant
-        </Button>
+        <div className="center-tab-toolbar__actions" data-testid="center-tab-toolbar-actions">
+          <Button leftSection={<IconPlus size={16} />} onClick={() => handleOpenEdit()}>
+            Add Plant
+          </Button>
+        </div>
       </div>
 
       <Table.ScrollContainer minWidth={560}>

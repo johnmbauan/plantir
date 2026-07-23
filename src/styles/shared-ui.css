@@ -149,7 +149,50 @@
 
 .center-tab-toolbar {
   justify-content: space-between;
+  align-items: center;
   width: 100%;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.center-tab-toolbar__actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .center-tab-toolbar {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .center-tab-toolbar .filter-search {
+    align-self: center;
+  }
+
+  .center-tab-toolbar .filter-search--open {
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .center-tab-toolbar__actions {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .center-tab-toolbar__actions > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
 }
 
 @media (max-width: 600px) {

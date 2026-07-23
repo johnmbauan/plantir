@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import {
   Table,
   Button,
-  Group,
   Stack,
   Text,
 } from "@mantine/core";
@@ -163,14 +162,14 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
           placeholder="Search by serial or plant…"
           searchLabel="Search devices"
         />
-        <Group gap="xs">
-          <Button variant="subtle" onClick={() => handleOpenEdit()}>
+        <div className="center-tab-toolbar__actions" data-testid="center-tab-toolbar-actions">
+          <Button variant="default" onClick={() => handleOpenEdit()}>
             Add manually
           </Button>
           <Button leftSection={<IconCpu size={16} />} onClick={openWizard}>
             Register new device
           </Button>
-        </Group>
+        </div>
       </div>
 
       <Table.ScrollContainer minWidth={550}>

@@ -328,6 +328,24 @@ describe('DevicesTab', () => {
     });
   });
 
+  it('renders the toolbar with search and both action buttons', async () => {
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    expect(screen.getByRole('button', { name: 'Search devices' })).toBeInTheDocument();
+
+    const addManually = screen.getByRole('button', { name: 'Add manually' });
+    const register = screen.getByRole('button', { name: 'Register new device' });
+    expect(addManually).toBeInTheDocument();
+    expect(register).toBeInTheDocument();
+
+    const actions = screen.getByTestId('center-tab-toolbar-actions');
+    expect(actions).toContainElement(addManually);
+    expect(actions).toContainElement(register);
+    expect(addManually).toHaveAttribute('data-variant', 'default');
+    expect(register).not.toHaveAttribute('data-variant', 'default');
+  });
+
   it('opens add device modal from Add manually button', async () => {
     const user = userEvent.setup();
 
