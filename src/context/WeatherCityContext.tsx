@@ -46,9 +46,6 @@ export function WeatherCityProvider({ children }: { children: React.ReactNode })
       setCity(parsed);
       setLocationSource("stored");
       void loadForecast(parsed);
-      void updateWeatherLocation(parsed.lat, parsed.lng).catch((err) =>
-        console.error("Failed to sync weather location:", err),
-      );
     } catch {
       localStorage.removeItem(WEATHER_CITY_STORAGE_KEY);
     }

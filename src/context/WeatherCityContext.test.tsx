@@ -42,7 +42,7 @@ describe('WeatherCityContext', () => {
     localStorage.clear();
   });
 
-  it('restores city from localStorage and loads forecast', async () => {
+  it('restores city from localStorage and loads forecast without writing weather location', async () => {
     const storedCity = { name: 'Rome, Lazio, Italy', lat: 41.89, lng: 12.49 };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(storedCity));
 
@@ -53,11 +53,11 @@ describe('WeatherCityContext', () => {
     expect(result.current.locationSource).toBe('stored');
     expect(result.current.forecast).toHaveLength(mockForecastResponse.daily.time.length);
     expect(result.current.error).toBeNull();
-    expect(mockUpdateWeatherLocation).toHaveBeenCalledWith(41.89, 12.49);
+    expect(mockUpdateWeatherLocation).not.toHaveBeenCalled();
     expect(mockRecordClientEvent).not.toHaveBeenCalled();
   });
 
-  it('selectCity records weather_city_set without notification_settings_saved', async () => {
+  it('selectCity syncs weather location and records weather_city_set without notification_settings_saved', async () => {
     const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
     act(() => {

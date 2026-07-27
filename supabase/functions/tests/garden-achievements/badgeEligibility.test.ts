@@ -10,19 +10,35 @@ import type { GardenProgress } from "../../garden-achievements/achievementTypes.
 // Mock Supabase client
 // ---------------------------------------------------------------------------
 
+type BuilderCalls = {
+  orderArgs: Array<[string, { ascending?: boolean }?]>;
+  limitArgs: number[];
+};
+
 /**
  * Returns a thenable query builder that resolves to `{ data, error }`.
  * Every fluent method (select, eq, not, limit, order, in) returns the same
  * builder so arbitrary chains can be awaited directly or via `.maybeSingle()`.
+ * When `calls` is provided, `order` / `limit` arguments are recorded for assertions.
  */
-function makeBuilder(data: unknown, error: unknown = null) {
+function makeBuilder(
+  data: unknown,
+  error: unknown = null,
+  calls?: BuilderCalls,
+) {
   const p = Promise.resolve({ data, error });
   const b: Record<string, unknown> = {
     select: () => b,
     eq: () => b,
     not: () => b,
-    limit: () => b,
-    order: () => b,
+    limit: (n: number) => {
+      calls?.limitArgs.push(n);
+      return b;
+    },
+    order: (column: string, opts?: { ascending?: boolean }) => {
+      calls?.orderArgs.push([column, opts]);
+      return b;
+    },
     in: () => b,
     maybeSingle: () => p,
     then: (
@@ -44,7 +60,10 @@ type TableSpec = { data: unknown; error?: unknown };
  * matches only the N-th call. Call-scoped keys take precedence.
  * Falls back to `{ data: [], error: null }` when no key matches.
  */
-function createClient(tables: Record<string, TableSpec>) {
+function createClient(
+  tables: Record<string, TableSpec>,
+  tableCalls: Record<string, BuilderCalls> = {},
+) {
   const counts: Record<string, number> = {};
   return {
     from(table: string) {
@@ -53,7 +72,10 @@ function createClient(tables: Record<string, TableSpec>) {
         tables[`${table}:${counts[table]}`] ??
         tables[table] ??
         { data: [], error: null };
-      return makeBuilder(r.data, r.error ?? null);
+      if (!tableCalls[table]) {
+        tableCalls[table] = { orderArgs: [], limitArgs: [] };
+      }
+      return makeBuilder(r.data, r.error ?? null, tableCalls[table]);
     },
   };
 }
@@ -405,18 +427,27 @@ describe("computeEligibleBadgeKeys", () => {
 
   describe("battery badge", () => {
     it("earns juice_box_refiller when a device battery recovers past 20% after dropping to ≤10%", async () => {
-      const client = createClient({
-        ...EMPTY_TABLES,
-        devices: { data: [{ id: 1, plantId: null, humidity_sensors_config: null }] },
-        battery_measurements: {
-          data: [
-            { deviceId: 1, batteryPercent: 8, createdAt: "2024-01-01T00:00:00Z" },  // ≤10 → low
-            { deviceId: 1, batteryPercent: 25, createdAt: "2024-01-02T00:00:00Z" }, // >20 → recharged
-          ],
+      const tableCalls: Record<string, BuilderCalls> = {};
+      // Query returns newest-first (ORDER BY createdAt DESC LIMIT 500).
+      const client = createClient(
+        {
+          ...EMPTY_TABLES,
+          devices: { data: [{ id: 1, plantId: null, humidity_sensors_config: null }] },
+          battery_measurements: {
+            data: [
+              { deviceId: 1, batteryPercent: 25, createdAt: "2024-01-02T00:00:00Z" }, // >20 → recharged
+              { deviceId: 1, batteryPercent: 8, createdAt: "2024-01-01T00:00:00Z" }, // ≤10 → low
+            ],
+          },
         },
-      });
+        tableCalls,
+      );
       const keys = await computeEligibleBadgeKeys(client as any, "user-1", BASE_PROGRESS);
       assert(keys.includes("juice_box_refiller"));
+      assertEquals(tableCalls.battery_measurements.orderArgs, [
+        ["createdAt", { ascending: false }],
+      ]);
+      assertEquals(tableCalls.battery_measurements.limitArgs, [500]);
     });
 
     it("does not earn juice_box_refiller when battery never recovers", async () => {
@@ -425,13 +456,29 @@ describe("computeEligibleBadgeKeys", () => {
         devices: { data: [{ id: 1, plantId: null, humidity_sensors_config: null }] },
         battery_measurements: {
           data: [
-            { deviceId: 1, batteryPercent: 8, createdAt: "2024-01-01T00:00:00Z" },
             { deviceId: 1, batteryPercent: 9, createdAt: "2024-01-02T00:00:00Z" },
+            { deviceId: 1, batteryPercent: 8, createdAt: "2024-01-01T00:00:00Z" },
           ],
         },
       });
       const keys = await computeEligibleBadgeKeys(client as any, "user-1", BASE_PROGRESS);
       assert(!keys.includes("juice_box_refiller"));
+    });
+
+    it("still detects recharge after reversing newest-first rows into chronological order", async () => {
+      const client = createClient({
+        ...EMPTY_TABLES,
+        devices: { data: [{ id: 1, plantId: null, humidity_sensors_config: null }] },
+        battery_measurements: {
+          data: [
+            { deviceId: 1, batteryPercent: 50, createdAt: "2024-01-03T00:00:00Z" },
+            { deviceId: 1, batteryPercent: 5, createdAt: "2024-01-02T00:00:00Z" },
+            { deviceId: 1, batteryPercent: 80, createdAt: "2024-01-01T00:00:00Z" },
+          ],
+        },
+      });
+      const keys = await computeEligibleBadgeKeys(client as any, "user-1", BASE_PROGRESS);
+      assert(keys.includes("juice_box_refiller"));
     });
   });
 
