@@ -121,15 +121,17 @@ export async function computeEligibleBadgeKeys(
 
   const deviceIds = deviceRows.map((d) => d.id);
   if (deviceIds.length > 0) {
+    // Cap to the most recent 500 rows (DESC), then walk chronologically.
     const { data: batteryRows, error: batteryError } = await admin
       .from("battery_measurements")
       .select("deviceId, batteryPercent, createdAt")
       .in("deviceId", deviceIds)
-      .order("createdAt", { ascending: true });
+      .order("createdAt", { ascending: false })
+      .limit(500);
     if (batteryError) throw batteryError;
 
     const byDevice = new Map<number, Array<{ pct: number }>>();
-    for (const row of batteryRows ?? []) {
+    for (const row of [...(batteryRows ?? [])].reverse()) {
       const id = Number(row.deviceId);
       const list = byDevice.get(id) ?? [];
       list.push({ pct: Number(row.batteryPercent) });
