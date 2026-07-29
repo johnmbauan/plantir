@@ -11,7 +11,7 @@ import { evaluateAndToastUnlocks } from "@/services/achievementService";
 import { getSessionUser, requireUser } from "@/utils/requireUser";
 
 // ---------------------------------------------------------------------------
-// Raw DB shapes (reflect actual Supabase column names after migrations)
+// Raw DB shapes (reflect get_user_plants RPC + history table rows)
 // ---------------------------------------------------------------------------
 
 interface RawMeasurement {
@@ -33,16 +33,14 @@ interface RawPlantDevice {
   id: number;
 }
 
-interface RawDeviceMeasurements {
-  id: number;
-  humidity_measurements: RawMeasurement[];
-  battery_measurements: RawBatteryMeasurement[];
-}
-
 interface RawDevice {
   id: number;
   serialNumber: string;
   humidity_sensors_config: RawSensorConfig[];
+  humidityPercentage?: number | null;
+  humidity_created_at?: string | null;
+  batteryPercent?: number | null;
+  battery_created_at?: string | null;
 }
 
 interface RawPlant {
@@ -104,11 +102,23 @@ function computeStatuses(
   return ["HEALTHY"];
 }
 
-function enrichPlant(
-  plant: RawPlant,
-  humidityByDevice: Record<number, RawMeasurement>,
-  batteryByDevice: Record<number, RawBatteryMeasurement>,
-): EnrichedPlant {
+function deviceHumidity(device: RawDevice): RawMeasurement | null {
+  if (device.humidityPercentage == null || !device.humidity_created_at) return null;
+  return {
+    humidityPercentage: device.humidityPercentage,
+    createdAt: device.humidity_created_at,
+  };
+}
+
+function deviceBattery(device: RawDevice): RawBatteryMeasurement | null {
+  if (device.batteryPercent == null || !device.battery_created_at) return null;
+  return {
+    batteryPercent: device.batteryPercent,
+    createdAt: device.battery_created_at,
+  };
+}
+
+function enrichPlant(plant: RawPlant): EnrichedPlant {
   const species: PlantSpeciesSummary | null = plant.plant_species
     ? {
         id: plant.plant_species.id,
@@ -152,8 +162,8 @@ function enrichPlant(
   }
 
   const config = humidityDevice.humidity_sensors_config[0];
-  const latest = humidityByDevice[humidityDevice.id] ?? null;
-  const latestBattery = batteryByDevice[humidityDevice.id] ?? null;
+  const latest = deviceHumidity(humidityDevice);
+  const latestBattery = deviceBattery(humidityDevice);
 
   const statuses = computeStatuses(latest, config.minHumidityThreshold, config.sleepDurationSeconds);
   if (latestBattery !== null && latestBattery.batteryPercent < BATTERY_WARNING_THRESHOLD) {
@@ -190,99 +200,33 @@ function sortPlants(plants: EnrichedPlant[]): EnrichedPlant[] {
   });
 }
 
+async function fetchUserPlantsRaw(plantIds?: number[]): Promise<RawPlant[]> {
+  await requireUser();
+
+  const { data, error } = await supabase.rpc("get_user_plants", {
+    p_plant_ids: plantIds ?? null,
+  });
+
+  if (error) throw error;
+  return (data ?? []) as RawPlant[];
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
 export async function fetchPlants(): Promise<EnrichedPlant[]> {
-  const user = await requireUser();
-
-  // Query 1: plant structure and device config — no measurements
-  const { data: plantsData, error: plantsError } = await supabase
-    .from("plants")
-    .select(
-      `id, name, imageUrl, createdAt, is_outdoor, species_id,
-       plant_species(id, source, sourceSpeciesId, scientificName, displayName, imageUrl, minSoilMoisture, maxSoilMoisture, minTemperatureCelsius, maxTemperatureCelsius, sunlight, soil, watering, fertilization, pruning),
-       devices(id, serialNumber, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
-    )
-    .eq("user_id", user.id);
-
-  if (plantsError) throw plantsError;
-
-  const plants = plantsData as unknown as RawPlant[];
-  const deviceIds = plants.flatMap((p) => (p.devices ?? []).map((d) => d.id));
-
-  const humidityByDevice: Record<number, RawMeasurement> = {};
-  const batteryByDevice: Record<number, RawBatteryMeasurement> = {};
-
-  if (deviceIds.length > 0) {
-    // Query 2: only the single latest measurement per device for each type
-    const { data: devicesData, error: devicesError } = await supabase
-      .from("devices")
-      .select(`id, humidity_measurements(humidityPercentage, createdAt), battery_measurements(batteryPercent, createdAt)`)
-      .in("id", deviceIds)
-      .order("createdAt", { referencedTable: "humidity_measurements", ascending: false })
-      .limit(1, { referencedTable: "humidity_measurements" })
-      .order("createdAt", { referencedTable: "battery_measurements", ascending: false })
-      .limit(1, { referencedTable: "battery_measurements" });
-
-    if (devicesError) throw devicesError;
-
-    for (const device of devicesData as unknown as RawDeviceMeasurements[]) {
-      if (device.humidity_measurements?.[0]) humidityByDevice[device.id] = device.humidity_measurements[0];
-      if (device.battery_measurements?.[0]) batteryByDevice[device.id] = device.battery_measurements[0];
-    }
-  }
-
-  return sortPlants(plants.map((p) => enrichPlant(p, humidityByDevice, batteryByDevice)));
+  const plants = await fetchUserPlantsRaw();
+  return sortPlants(plants.map(enrichPlant));
 }
 
 export async function fetchPlantStatusesByIds(plantIds: number[]): Promise<Map<number, PlantStatus[]>> {
   if (plantIds.length === 0) return new Map();
 
-  const user = await requireUser();
-
   const uniqueIds = [...new Set(plantIds)];
+  const plants = await fetchUserPlantsRaw(uniqueIds);
 
-  const { data: plantsData, error: plantsError } = await supabase
-    .from("plants")
-    .select(
-      `id, name, imageUrl, createdAt, is_outdoor, species_id,
-       plant_species(id, source, sourceSpeciesId, scientificName, displayName, imageUrl, minSoilMoisture, maxSoilMoisture, minTemperatureCelsius, maxTemperatureCelsius, sunlight, soil, watering, fertilization, pruning),
-       devices(id, serialNumber, humidity_sensors_config(minHumidityThreshold, sleepDurationSeconds))`,
-    )
-    .in("id", uniqueIds)
-    .eq("user_id", user.id);
-
-  if (plantsError) throw plantsError;
-
-  const plants = plantsData as unknown as RawPlant[];
-  const deviceIds = plants.flatMap((p) => (p.devices ?? []).map((d) => d.id));
-
-  const humidityByDevice: Record<number, RawMeasurement> = {};
-  const batteryByDevice: Record<number, RawBatteryMeasurement> = {};
-
-  if (deviceIds.length > 0) {
-    const { data: devicesData, error: devicesError } = await supabase
-      .from("devices")
-      .select(`id, humidity_measurements(humidityPercentage, createdAt), battery_measurements(batteryPercent, createdAt)`)
-      .in("id", deviceIds)
-      .order("createdAt", { referencedTable: "humidity_measurements", ascending: false })
-      .limit(1, { referencedTable: "humidity_measurements" })
-      .order("createdAt", { referencedTable: "battery_measurements", ascending: false })
-      .limit(1, { referencedTable: "battery_measurements" });
-
-    if (devicesError) throw devicesError;
-
-    for (const device of devicesData as unknown as RawDeviceMeasurements[]) {
-      if (device.humidity_measurements?.[0]) humidityByDevice[device.id] = device.humidity_measurements[0];
-      if (device.battery_measurements?.[0]) batteryByDevice[device.id] = device.battery_measurements[0];
-    }
-  }
-
-  return new Map(
-    plants.map((plant) => [plant.id, enrichPlant(plant, humidityByDevice, batteryByDevice).statuses]),
-  );
+  return new Map(plants.map((plant) => [plant.id, enrichPlant(plant).statuses]));
 }
 
 function rangeStartIso(range: HistoryRange): string {
