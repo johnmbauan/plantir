@@ -5,7 +5,6 @@ import type { EnrichedPlant, PlantStatus } from "@/types";
 import { fetchPlants } from "@/services/plantService";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/error";
-import supabase from "@/supabase";
 import PlantFilterBar from "@/components/PlantFilterBar";
 import PlantLeaderboard from "@/components/PlantLeaderboard";
 import PlantDetailModal from "@/components/PlantDetailModal";
@@ -42,7 +41,7 @@ export default function Dashboard() {
     setActiveFilter((prev) => (prev === status ? "all" : status));
   }
 
-  const reloadPlants = useCallback(async (source: "initial" | "manual" | "realtime" = "manual") => {
+  const reloadPlants = useCallback(async (source: "initial" | "manual" = "manual") => {
     if (source === "initial") setLoading(true);
     if (source !== "initial") setRefreshing(true);
 
@@ -137,38 +136,6 @@ export default function Dashboard() {
       window.clearTimeout(clearTimer);
     };
   }, [highlightedPlantId, loading, plants]);
-
-  useEffect(() => {
-    let debounceTimer: number | undefined;
-    let warned = false;
-    const triggerReload = () => {
-      if (debounceTimer) return;
-      debounceTimer = window.setTimeout(() => {
-        debounceTimer = undefined;
-        void reloadPlants("realtime");
-      }, 800);
-    };
-
-    const channel = supabase
-      .channel("dashboard-measurements")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "humidity_measurements" }, triggerReload)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "battery_measurements" }, triggerReload)
-      .subscribe((status) => {
-        if (status === "CHANNEL_ERROR" && !warned) {
-          warned = true;
-          notifications.show({
-            color: "yellow",
-            title: "Realtime unavailable",
-            message: "Live updates are temporarily unavailable. You can still use manual refresh.",
-          });
-        }
-      });
-
-    return () => {
-      if (debounceTimer) window.clearTimeout(debounceTimer);
-      void supabase.removeChannel(channel);
-    };
-  }, [reloadPlants]);
 
   const counts = useMemo(() => ({
     healthy: plants.filter((p) => p.statuses.includes("HEALTHY")).length,
