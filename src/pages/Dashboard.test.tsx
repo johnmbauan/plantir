@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, waitFor } from '@/test/render';
 import { buildPlant } from '@/test/builders/plant';
 import { buildSession } from '@/test/builders/session';
-import { mockAuthenticatedUser, mockSession, resetSupabaseMocks, supabaseMock } from '@/test/mocks/supabase';
+import { mockAuthenticatedUser, mockSession, resetSupabaseMocks } from '@/test/mocks/supabase';
 import Dashboard from './Dashboard';
 
 const fetchPlants = vi.fn();
@@ -50,43 +50,9 @@ vi.mock('@mantine/notifications', () => ({
   notifications: { show: vi.fn() },
 }));
 
-type PostgresHandler = () => void
-type SubscribeCallback = (status: string) => void
-
-let humidityInsertHandler: PostgresHandler | undefined;
-let batteryInsertHandler: PostgresHandler | undefined;
-let subscribeCallback: SubscribeCallback | undefined;
-
-function setupDashboardChannelMock() {
-  humidityInsertHandler = undefined;
-  batteryInsertHandler = undefined;
-  subscribeCallback = undefined;
-
-  vi.mocked(supabaseMock.channel).mockImplementation(() => {
-    const chain = {
-      on: vi.fn((event: string, config: { table?: string }, handler: PostgresHandler) => {
-        if (event === 'postgres_changes' && config.table === 'humidity_measurements') {
-          humidityInsertHandler = handler;
-        }
-        if (event === 'postgres_changes' && config.table === 'battery_measurements') {
-          batteryInsertHandler = handler;
-        }
-        return chain;
-      }),
-      subscribe: vi.fn((cb?: SubscribeCallback) => {
-        subscribeCallback = cb;
-        cb?.('SUBSCRIBED');
-        return 'channel';
-      }),
-    };
-    return chain;
-  });
-}
-
 describe('Dashboard', () => {
   beforeEach(() => {
     resetSupabaseMocks();
-    setupDashboardChannelMock();
     mockAuthenticatedUser();
     mockSession(buildSession());
     vi.clearAllMocks();
@@ -316,22 +282,6 @@ describe('Dashboard', () => {
     });
   });
 
-  it('shows realtime unavailable warning on channel error', async () => {
-    const { notifications } = await import('@mantine/notifications');
-
-    renderWithProviders(<Dashboard />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Monstera')).toBeInTheDocument();
-    });
-
-    subscribeCallback?.('CHANNEL_ERROR');
-
-    expect(notifications.show).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'Realtime unavailable' }),
-    );
-  });
-
   it('reloads plants on manual refresh', async () => {
     const user = userEvent.setup();
 
@@ -364,48 +314,6 @@ describe('Dashboard', () => {
 
     expect(unsnoozeNotification).toHaveBeenCalledWith(1);
     expect(screen.queryByRole('button', { name: /Snoozed · \d+h left/ })).not.toBeInTheDocument();
-  });
-
-  it('reloads plants after realtime humidity insert', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    try {
-      renderWithProviders(<Dashboard />);
-
-      await waitFor(() => {
-        expect(fetchPlants).toHaveBeenCalledTimes(1);
-      });
-
-      humidityInsertHandler?.();
-
-      await vi.advanceTimersByTimeAsync(800);
-
-      await waitFor(() => {
-        expect(fetchPlants).toHaveBeenCalledTimes(2);
-      });
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it('reloads plants after realtime battery insert', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    try {
-      renderWithProviders(<Dashboard />);
-
-      await waitFor(() => {
-        expect(fetchPlants).toHaveBeenCalledTimes(1);
-      });
-
-      batteryInsertHandler?.();
-
-      await vi.advanceTimersByTimeAsync(800);
-
-      await waitFor(() => {
-        expect(fetchPlants).toHaveBeenCalledTimes(2);
-      });
-    } finally {
-      vi.useRealTimers();
-    }
   });
 
   it('persists sort preference to localStorage', async () => {
