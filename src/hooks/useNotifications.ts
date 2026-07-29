@@ -3,6 +3,7 @@ import { notifications } from "@mantine/notifications";
 import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
 import {
+  autoResolveNotifications,
   fetchUnreadNotifications,
   type AppNotification,
 } from "@/services/notificationService";
@@ -16,18 +17,17 @@ export function useNotifications() {
   const [realtimeAvailable, setRealtimeAvailable] = useState(true);
 
   const refresh = useCallback(async () => {
-    if (!session) {
-      setItems([]);
-      setLoading(false);
-      return;
-    }
+    if (!session) return;
 
     try {
       const unread = await fetchUnreadNotifications();
       setItems(unread);
+      setLoading(false);
+      void autoResolveNotifications(unread)
+        .then((resolved) => setItems(resolved))
+        .catch((err) => console.error("Failed to auto-resolve notifications:", err));
     } catch (err) {
       console.error("Failed to fetch notifications:", err);
-    } finally {
       setLoading(false);
     }
   }, [session]);
@@ -50,16 +50,26 @@ export function useNotifications() {
   }, []);
 
   useEffect(() => {
-    if (!session?.user) {
-      // Explicitly clear notification state on sign-out/session loss.
+    if (!session?.user) return;
 
-      setItems([]);
-      setLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    // Initial fetch for active authenticated session.
-    void refresh();
+    void (async () => {
+      try {
+        const unread = await fetchUnreadNotifications();
+        if (cancelled) return;
+        setItems(unread);
+        setLoading(false);
+        void autoResolveNotifications(unread)
+          .then((resolved) => {
+            if (!cancelled) setItems(resolved);
+          })
+          .catch((err) => console.error("Failed to auto-resolve notifications:", err));
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+        if (!cancelled) setLoading(false);
+      }
+    })();
 
     const userId = session.user.id;
     const channelName = `user:${userId}`;
@@ -83,9 +93,10 @@ export function useNotifications() {
       });
 
     return () => {
+      cancelled = true;
       void supabase.removeChannel(channel);
     };
-  }, [session, refresh, handleIncoming]);
+  }, [session, handleIncoming]);
 
   useEffect(() => {
     if (!session?.user || realtimeAvailable) return;
@@ -105,10 +116,12 @@ export function useNotifications() {
     setItems([]);
   }, []);
 
+  const signedIn = Boolean(session?.user);
+
   return {
-    items,
-    loading,
-    unreadCount: items.length,
+    items: signedIn ? items : [],
+    loading: signedIn ? loading : false,
+    unreadCount: signedIn ? items.length : 0,
     refresh,
     removeItem,
     clearAll,

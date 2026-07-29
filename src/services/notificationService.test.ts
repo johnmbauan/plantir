@@ -25,6 +25,7 @@ import {
 import {
   fetchSettings,
   fetchUnreadNotifications,
+  autoResolveNotifications,
   getNotificationHref,
   markNotificationRead,
   markAllNotificationsRead,
@@ -85,20 +86,32 @@ describe('notificationService', () => {
       await expect(fetchUnreadNotifications()).resolves.toEqual([wateringNotification]);
     });
 
-    it('auto-resolves notifications when plant is healthy again', async () => {
+    it('returns unread notifications without waiting for auto-resolve', async () => {
       mockAuthenticatedUser();
       mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[1, ['HEALTHY']]]));
       setupFromMocks({
-        notifications: [
-          { data: [wateringNotification], error: null },
-          { data: null, error: null },
-        ],
+        notifications: { data: [wateringNotification], error: null },
       });
 
-      await expect(fetchUnreadNotifications()).resolves.toEqual([]);
+      await expect(fetchUnreadNotifications()).resolves.toEqual([wateringNotification]);
+      expect(mockFetchPlantStatusesByIds).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('autoResolveNotifications', () => {
+    it('resolves watering notifications when plant is healthy again', async () => {
+      mockAuthenticatedUser();
+      mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[1, ['HEALTHY']]]));
+      setupFromMocks({
+        notifications: { data: null, error: null },
+      });
+
+      await expect(autoResolveNotifications([wateringNotification])).resolves.toEqual([]);
+      expect(mockFetchPlantStatusesByIds).toHaveBeenCalledWith([1]);
+      expect(mockEvaluateAndToastUnlocks).toHaveBeenCalled();
     });
 
-    it('auto-resolves offline notifications when all plants are back online', async () => {
+    it('resolves offline notifications when all plants are back online', async () => {
       mockAuthenticatedUser();
       const offlineNotification: AppNotification = {
         id: 'n-offline',
@@ -110,13 +123,21 @@ describe('notificationService', () => {
       };
       mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[2, ['HEALTHY']]]));
       setupFromMocks({
-        notifications: [
-          { data: [offlineNotification], error: null },
-          { data: null, error: null },
-        ],
+        notifications: { data: null, error: null },
       });
 
-      await expect(fetchUnreadNotifications()).resolves.toEqual([]);
+      await expect(autoResolveNotifications([offlineNotification])).resolves.toEqual([]);
+      expect(mockFetchPlantStatusesByIds).toHaveBeenCalledWith([2]);
+    });
+
+    it('keeps notifications that still need attention', async () => {
+      mockAuthenticatedUser();
+      mockFetchPlantStatusesByIds.mockResolvedValue(new Map([[1, ['WATERING_NEEDED']]]));
+
+      await expect(autoResolveNotifications([wateringNotification])).resolves.toEqual([
+        wateringNotification,
+      ]);
+      expect(mockEvaluateAndToastUnlocks).not.toHaveBeenCalled();
     });
   });
 
