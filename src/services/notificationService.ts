@@ -198,8 +198,7 @@ export async function fetchUnreadNotifications(): Promise<AppNotification[]> {
 
   if (error) throw error;
 
-  const notifications = (data ?? []) as AppNotification[];
-  return autoResolveNotifications(notifications);
+  return (data ?? []) as AppNotification[];
 }
 
 function collectPlantIdsFromNotifications(notifications: AppNotification[]): number[] {
@@ -218,7 +217,7 @@ function collectPlantIdsFromNotifications(notifications: AppNotification[]): num
   return [...ids];
 }
 
-async function autoResolveNotifications(notifications: AppNotification[]): Promise<AppNotification[]> {
+export async function autoResolveNotifications(notifications: AppNotification[]): Promise<AppNotification[]> {
   if (notifications.length === 0) return [];
 
   const plantIds = collectPlantIdsFromNotifications(notifications);

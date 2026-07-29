@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Paper, Stack, Group, Text, ThemeIcon, ActionIcon, Button } from "@mantine/core";
 import {
@@ -10,6 +10,7 @@ import {
   IconX,
   IconChevronRight,
 } from "@tabler/icons-react";
+import type { EnrichedPlant } from "@/types";
 import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { useWeatherCity } from "@/context/WeatherCityContext";
@@ -17,6 +18,11 @@ import { useWeatherCity } from "@/context/WeatherCityContext";
 const DISMISSED_KEY = "onboarding_dismissed";
 const SETTINGS_VISITED_KEY = "settings_visited";
 const SETTINGS_IMPLICIT_DAYS = 3;
+
+interface Props {
+  plants: EnrichedPlant[];
+  plantsLoaded: boolean;
+}
 
 interface ChecklistStep {
   key: string;
@@ -27,44 +33,51 @@ interface ChecklistStep {
   done: boolean;
 }
 
-export default function OnboardingChecklist() {
+export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { city } = useWeatherCity();
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
-  const [hasPlants, setHasPlants] = useState(false);
   const [hasDevices, setHasDevices] = useState(false);
-  const [hasNotifications, setHasNotifications] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const hasLocation = city !== null;
+  const [devicesLoaded, setDevicesLoaded] = useState(false);
+  // Capture once at mount — Date.now() during render violates react-hooks/purity.
+  const [nowMs] = useState(() => Date.now());
 
   useEffect(() => {
     if (dismissed || !user) return;
+
     const userId = user.id;
+    let cancelled = false;
 
-    async function checkProgress() {
-      const [plantsRes, devicesRes] = await Promise.all([
-        supabase.from("plants").select("id, createdAt").eq("user_id", userId).order("createdAt", { ascending: true }).limit(1),
-        supabase.from("devices").select("id").eq("user_id", userId).limit(1),
-      ]);
+    async function checkDevices() {
+      // Devices may exist without a plant association, so query devices directly.
+      const { data } = await supabase
+        .from("devices")
+        .select("id")
+        .eq("user_id", userId)
+        .limit(1);
 
-      const plantCount = plantsRes.data?.length ?? 0;
-      const deviceCount = devicesRes.data?.length ?? 0;
-      setHasPlants(plantCount > 0);
-      setHasDevices(deviceCount > 0);
-
-      const explicitlyVisited = localStorage.getItem(SETTINGS_VISITED_KEY) === "true";
-      const oldestPlantDate = plantsRes.data?.[0]?.createdAt;
-      const plantIsOldEnough = oldestPlantDate
-        ? Date.now() - new Date(oldestPlantDate).getTime() >= SETTINGS_IMPLICIT_DAYS * 24 * 60 * 60 * 1000
-        : false;
-      setHasNotifications(explicitlyVisited || (plantCount > 0 && deviceCount > 0 && plantIsOldEnough));
-
-      setLoaded(true);
+      if (cancelled) return;
+      setHasDevices((data?.length ?? 0) > 0);
+      setDevicesLoaded(true);
     }
 
-    void checkProgress();
+    void checkDevices();
+    return () => {
+      cancelled = true;
+    };
   }, [dismissed, user]);
+
+  const hasLocation = city !== null;
+  const hasPlants = plantsLoaded && plants.length > 0;
+
+  const oldestPlantDate = plants.length > 0
+    ? plants.reduce((oldest, p) => (p.created_at < oldest ? p.created_at : oldest), plants[0].created_at)
+    : null;
+  const plantIsOldEnough = oldestPlantDate !== null
+    && nowMs - new Date(oldestPlantDate).getTime() >= SETTINGS_IMPLICIT_DAYS * 24 * 60 * 60 * 1000;
+  const hasNotifications = localStorage.getItem(SETTINGS_VISITED_KEY) === "true"
+    || (hasPlants && hasDevices && plantIsOldEnough);
 
   const steps: ChecklistStep[] = [
     {
@@ -103,7 +116,7 @@ export default function OnboardingChecklist() {
 
   const allDone = hasPlants && hasDevices && hasLocation && hasNotifications;
 
-  if (dismissed || !loaded || allDone) return null;
+  if (dismissed || !user || !plantsLoaded || !devicesLoaded || allDone) return null;
 
   const completedCount = steps.filter((s) => s.done).length;
 

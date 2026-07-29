@@ -6,9 +6,11 @@ import { buildSession } from '@/test/builders/session';
 import type { AppNotification } from '@/services/notificationService';
 
 const mockFetchUnreadNotifications = vi.fn();
+const mockAutoResolveNotifications = vi.fn();
 
 vi.mock('@/services/notificationService', () => ({
   fetchUnreadNotifications: (...args: unknown[]) => mockFetchUnreadNotifications(...args),
+  autoResolveNotifications: (...args: unknown[]) => mockAutoResolveNotifications(...args),
 }));
 
 const mockUseAuth = vi.fn();
@@ -65,8 +67,12 @@ describe('useNotifications', () => {
     resetSupabaseMocks();
     setupChannelMock();
     mockFetchUnreadNotifications.mockReset();
+    mockAutoResolveNotifications.mockReset();
     mockUseAuth.mockReset();
     mockNotificationsShow.mockReset();
+    mockAutoResolveNotifications.mockImplementation((items: AppNotification[]) =>
+      Promise.resolve(items),
+    );
   });
 
   it('clears items when there is no session', async () => {
@@ -90,6 +96,31 @@ describe('useNotifications', () => {
     expect(result.current.loading).toBe(false);
     expect(result.current.unreadCount).toBe(1);
     expect(mockFetchUnreadNotifications).toHaveBeenCalledTimes(1);
+  });
+
+  it('auto-resolves stale notifications in background after fetch', async () => {
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([wateringNotification]);
+
+    let resolveAuto: (value: AppNotification[]) => void = () => undefined;
+    mockAutoResolveNotifications.mockReturnValue(
+      new Promise<AppNotification[]>((resolve) => {
+        resolveAuto = resolve;
+      }),
+    );
+
+    const { result } = renderHook(() => useNotifications());
+
+    // Immediately after fetch, the raw list is shown.
+    await waitFor(() => expect(result.current.items).toEqual([wateringNotification]));
+    expect(mockAutoResolveNotifications).toHaveBeenCalledWith([wateringNotification]);
+
+    // After auto-resolve completes, stale items are removed.
+    await act(async () => {
+      resolveAuto([]);
+    });
+
+    await waitFor(() => expect(result.current.items).toEqual([]));
   });
 
   it('refresh without session clears items', async () => {
@@ -190,9 +221,7 @@ describe('useNotifications', () => {
       broadcastHandler?.({ payload: achievementNotification });
     });
 
-    // The item is still added to the list
     expect(result.current.items).toContainEqual(achievementNotification);
-    // But no toast is fired (the achievementService already handles that)
     expect(mockNotificationsShow).not.toHaveBeenCalled();
 
     vi.mocked(document.hasFocus).mockRestore();
