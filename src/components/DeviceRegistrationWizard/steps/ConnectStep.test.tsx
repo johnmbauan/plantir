@@ -10,6 +10,9 @@ describe('ConnectStep', () => {
     renderWithProviders(<ConnectStep />);
 
     expect(screen.getByText('Connect to device hotspot')).toBeInTheDocument();
+    expect(screen.getByText(/Make sure the setup code from the previous step is copied/i)).toBeInTheDocument();
+    expect(screen.getByText(/Open the cap of the device/i)).toBeInTheDocument();
+    expect(screen.getByText('RESTART')).toBeInTheDocument();
     expect(screen.getAllByText(/Plantir-Device-Setup/i).length).toBeGreaterThan(0);
     expect(screen.getByAltText('WiFi portal home screen')).toBeInTheDocument();
     expect(screen.getByAltText('WiFi portal configure screen')).toBeInTheDocument();

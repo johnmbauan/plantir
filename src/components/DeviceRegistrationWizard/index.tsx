@@ -6,7 +6,6 @@ import type { PairingBundle } from "@/types";
 import { getErrorMessage } from "@/utils/error";
 import { evaluateAndToastUnlocks } from "@/services/achievementService";
 import PrepareStep from "./steps/PrepareStep";
-import OpenDeviceStep from "./steps/OpenDeviceStep";
 import SetupCodeStep from "./steps/SetupCodeStep";
 import ConnectStep from "./steps/ConnectStep";
 import WaitingStep from "./steps/WaitingStep";
@@ -80,14 +79,14 @@ export default function DeviceRegistrationWizard({
 
   useEffect(() => {
     if (!opened) return;
-    if (active === 2 && !pairing && !pairingLoading) {
+    if (active === 1 && !pairing && !pairingLoading) {
       // Trigger one bundle generation when setup-code step is first reached.
       void generateBundle();
     }
   }, [opened, active, pairing, pairingLoading, generateBundle]);
 
   useEffect(() => {
-    if (!opened || active !== 4 || !pairing) return;
+    if (!opened || active !== 3 || !pairing) return;
 
 
     pollStartedAtRef.current = Date.now();
@@ -107,7 +106,7 @@ export default function DeviceRegistrationWizard({
           window.clearInterval(intervalId);
           setRegisteredSerial(result.serialNumber ?? null);
           setRegisteredDeviceId(result.deviceId ?? null);
-          setActive(5);
+          setActive(4);
           onRegistered();
           void evaluateAndToastUnlocks();
         } else if (result.failed) {
@@ -130,7 +129,7 @@ export default function DeviceRegistrationWizard({
     };
   }, [opened, active, pairing, onRegistered, pollGeneration]);
 
-  const nextStep = () => setActive((current) => Math.min(current + 1, 5));
+  const nextStep = () => setActive((current) => Math.min(current + 1, 4));
   const prevStep = () => setActive((current) => Math.max(current - 1, 0));
 
   return (
@@ -147,10 +146,6 @@ export default function DeviceRegistrationWizard({
           <PrepareStep plantOptions={plantOptions} plantId={plantId} onPlantChange={setPlantId} />
         </Stepper.Step>
 
-        <Stepper.Step label="Open device">
-          <OpenDeviceStep />
-        </Stepper.Step>
-
         <Stepper.Step label="Setup code">
           <SetupCodeStep pairing={pairing} loading={pairingLoading} onGenerate={() => void generateBundle()} />
         </Stepper.Step>
@@ -164,7 +159,7 @@ export default function DeviceRegistrationWizard({
             timedOut={waitingTimedOut}
             error={waitingError}
             onKeepWaiting={() => { setWaitingTimedOut(false); setPollGeneration((n) => n + 1); }}
-            onRegenerateCode={() => { setActive(2); setPairing(null); }}
+            onRegenerateCode={() => { setActive(1); setPairing(null); }}
           />
         </Stepper.Step>
 
@@ -174,16 +169,16 @@ export default function DeviceRegistrationWizard({
       </Stepper>
 
       <Group justify="space-between" mt="xl">
-        {active < 5 ? (
+        {active < 4 ? (
           <>
             <Button variant="default" onClick={active === 0 ? handleClose : prevStep}>
               {active === 0 ? "Cancel" : "Back"}
             </Button>
             <Button
               onClick={nextStep}
-              disabled={(active === 2 && (!pairing || pairingLoading)) || active === 4}
+              disabled={(active === 1 && (!pairing || pairingLoading)) || active === 3}
             >
-              {active === 3 ? "I've connected the device" : "Next"}
+              {active === 2 ? "I've connected the device" : "Next"}
             </Button>
           </>
         ) : (

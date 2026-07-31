@@ -10,7 +10,11 @@ describe('CalibrationExpiredPrompt', () => {
 
     renderWithProviders(<CalibrationExpiredPrompt onRetry={onRetry} />);
 
-    expect(screen.getByText(/calibration window has ended after 2 minutes/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "The device's calibration window has ended after 2 minutes. Restart calibration to try again.",
+      ),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Restart calibration' }));
 

@@ -30,7 +30,7 @@ export default function DryReadingStep({
       ) : timedOut ? (
         <Stack gap="xs" mt="xs">
           <Text size="sm" c="orange" fw={500}>
-            No reading received. Make sure you pressed the reset button and the device connected to Wi-Fi.
+            No reading received. Make sure you pressed the restart button and the device connected to Wi-Fi.
           </Text>
           <Button variant="default" size="sm" onClick={onRetry}>
             Try again

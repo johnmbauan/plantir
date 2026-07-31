@@ -8,6 +8,9 @@ import DeviceCalibrationWizard from './index';
 const onClose = vi.fn();
 const onCalibrated = vi.fn();
 
+const WAKE_INSTRUCTION =
+  'Remove the cap. Press the Restart button on your Plantir device to wake it up, then put the cap back on.';
+
 vi.mock('@mantine/notifications', () => ({
   notifications: { show: vi.fn() },
 }));
@@ -51,20 +54,21 @@ function getDialog() {
   return screen.getByRole('dialog');
 }
 
-async function advanceToOpenDeviceStep(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(within(getDialog()).getByRole('button', { name: 'Next' }));
+function expectWakeInstructions(dialog: HTMLElement = getDialog()) {
+  expect(within(dialog).getByText('Wake the device')).toBeInTheDocument();
+  expect(within(dialog).getByText('Restart').parentElement?.textContent).toBe(WAKE_INSTRUCTION);
 }
 
 async function startCalibration(user: ReturnType<typeof userEvent.setup>) {
   await user.click(within(getDialog()).getByRole('button', { name: 'Start calibration' }));
   await waitFor(() => expect(deviceService.startCalibrationMode).toHaveBeenCalledWith(1));
   await waitFor(() => {
-    expect(within(getDialog()).getByText(/Waiting for the device to connect/i)).toBeInTheDocument();
+    expectWakeInstructions();
+    expect(within(getDialog()).getByText('Waiting for the device to connect…')).toBeInTheDocument();
   });
 }
 
 async function reachDryReadingStep(user: ReturnType<typeof userEvent.setup>) {
-  await advanceToOpenDeviceStep(user);
   await startCalibration(user);
   vi.mocked(deviceService.getLatestCalibrationReading).mockResolvedValue(connectivityReading);
   await vi.advanceTimersByTimeAsync(2000);
@@ -97,7 +101,9 @@ describe('DeviceCalibrationWizard', () => {
 
     const dialog = getDialog();
     expect(within(dialog).getByText('Before you start')).toBeInTheDocument();
-    expect(within(dialog).getByRole('button', { name: 'Next' })).toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Start calibration' })).toBeInTheDocument();
+    expect(within(dialog).queryByText('Wake the device')).not.toBeInTheDocument();
+    expect(within(dialog).queryByText('Restart')).not.toBeInTheDocument();
   });
 
   it('calls onClose when cancel is clicked on first step', async () => {
@@ -113,35 +119,34 @@ describe('DeviceCalibrationWizard', () => {
     expect(deviceService.clearCalibrationMode).not.toHaveBeenCalled();
   });
 
-  it('advances to open device step', async () => {
+  it('starts calibration and advances to wake device step with restart instructions', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     renderWithProviders(
       <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
     );
-
-    const dialog = getDialog();
-    await user.click(within(dialog).getByRole('button', { name: 'Next' }));
-
-    expect(within(dialog).getByText('Open the device')).toBeInTheDocument();
-    expect(within(dialog).getByRole('button', { name: 'Start calibration' })).toBeInTheDocument();
-  });
-
-  it('starts calibration and advances to wake device step from open device step', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
-    renderWithProviders(
-      <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
-    );
-
-    await advanceToOpenDeviceStep(user);
 
     const dialog = getDialog();
     await startCalibration(user);
 
-    expect(within(dialog).getByText('Wake the device')).toBeInTheDocument();
-    expect(within(dialog).queryByRole('button', { name: 'Next' })).not.toBeInTheDocument();
+    expectWakeInstructions(dialog);
     expect(within(dialog).queryByRole('button', { name: 'Start calibration' })).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Back' })).toBeInTheDocument();
+  });
+
+  it('returns to prepare when Back is clicked on wake step', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    renderWithProviders(
+      <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
+    );
+
+    await startCalibration(user);
+    await user.click(within(getDialog()).getByRole('button', { name: 'Back' }));
+
+    expect(within(getDialog()).getByText('Before you start')).toBeInTheDocument();
+    expect(within(getDialog()).getByRole('button', { name: 'Start calibration' })).toBeInTheDocument();
+    expect(within(getDialog()).queryByText('Wake the device')).not.toBeInTheDocument();
   });
 
   it('shows error notification when startCalibrationMode fails', async () => {
@@ -152,7 +157,6 @@ describe('DeviceCalibrationWizard', () => {
       <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
     );
 
-    await advanceToOpenDeviceStep(user);
     await user.click(within(getDialog()).getByRole('button', { name: 'Start calibration' }));
 
     await waitFor(() => {
@@ -160,7 +164,8 @@ describe('DeviceCalibrationWizard', () => {
         expect.objectContaining({ color: 'red', message: 'Device offline' }),
       );
     });
-    expect(within(getDialog()).getByText('Open the device')).toBeInTheDocument();
+    expect(within(getDialog()).getByText('Before you start')).toBeInTheDocument();
+    expect(within(getDialog()).queryByText('Wake the device')).not.toBeInTheDocument();
   });
 
   it('does not start calibration when deviceId is null', async () => {
@@ -170,7 +175,7 @@ describe('DeviceCalibrationWizard', () => {
       <DeviceCalibrationWizard opened onClose={onClose} deviceId={null} />,
     );
 
-    await advanceToOpenDeviceStep(user);
+    expect(within(getDialog()).getByRole('button', { name: 'Start calibration' })).toBeDisabled();
     await user.click(within(getDialog()).getByRole('button', { name: 'Start calibration' }));
 
     expect(deviceService.startCalibrationMode).not.toHaveBeenCalled();
@@ -183,16 +188,42 @@ describe('DeviceCalibrationWizard', () => {
       <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
     );
 
-    await advanceToOpenDeviceStep(user);
     await startCalibration(user);
 
     vi.mocked(deviceService.isCalibrationModeActive).mockResolvedValue(false);
     await vi.advanceTimersByTimeAsync(2000);
 
     await waitFor(() => {
-      expect(within(getDialog()).getByText(/calibration window has ended after 2 minutes/i)).toBeInTheDocument();
+      expect(
+        within(getDialog()).getByText(
+          "The device's calibration window has ended after 2 minutes. Restart calibration to try again.",
+        ),
+      ).toBeInTheDocument();
     });
     expect(within(getDialog()).getByRole('button', { name: 'Restart calibration' })).toBeInTheDocument();
+  });
+
+  it('returns to prepare after restarting from expired prompt', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    renderWithProviders(
+      <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
+    );
+
+    await startCalibration(user);
+
+    vi.mocked(deviceService.isCalibrationModeActive).mockResolvedValue(false);
+    await vi.advanceTimersByTimeAsync(2000);
+
+    await waitFor(() => {
+      expect(within(getDialog()).getByRole('button', { name: 'Restart calibration' })).toBeInTheDocument();
+    });
+
+    await user.click(within(getDialog()).getByRole('button', { name: 'Restart calibration' }));
+
+    expect(within(getDialog()).getByText('Before you start')).toBeInTheDocument();
+    expect(within(getDialog()).getByRole('button', { name: 'Start calibration' })).toBeEnabled();
+    expect(within(getDialog()).queryByText('Wake the device')).not.toBeInTheDocument();
   });
 
   it('auto-advances to dry reading when first reading arrives', async () => {
@@ -296,7 +327,6 @@ describe('DeviceCalibrationWizard', () => {
       <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
     );
 
-    await advanceToOpenDeviceStep(user);
     await startCalibration(user);
     vi.mocked(deviceService.getLatestCalibrationReading).mockResolvedValue(connectivityReading);
     await vi.advanceTimersByTimeAsync(2000);
@@ -313,6 +343,7 @@ describe('DeviceCalibrationWizard', () => {
 
     await user.click(within(getDialog()).getByRole('button', { name: 'Try again' }));
 
+    expect(within(getDialog()).getByText('Before you start')).toBeInTheDocument();
     expect(within(getDialog()).getByRole('button', { name: 'Start calibration' })).toBeEnabled();
   }, 15000);
 
@@ -340,6 +371,7 @@ describe('DeviceCalibrationWizard', () => {
 
     await user.click(within(getDialog()).getByRole('button', { name: 'Restart calibration' }));
 
+    expect(within(getDialog()).getByText('Before you start')).toBeInTheDocument();
     expect(within(getDialog()).getByRole('button', { name: 'Start calibration' })).toBeEnabled();
   }, 15000);
 
@@ -350,7 +382,6 @@ describe('DeviceCalibrationWizard', () => {
       <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
     );
 
-    await advanceToOpenDeviceStep(user);
     await startCalibration(user);
 
     // Mantine modal close button is aria-hidden; query by its aria-label attribute.
@@ -358,6 +389,29 @@ describe('DeviceCalibrationWizard', () => {
 
     expect(deviceService.clearCalibrationMode).toHaveBeenCalledWith(1);
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('logs when clearing calibration mode fails on close', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    vi.mocked(deviceService.clearCalibrationMode).mockRejectedValue(new Error('Clear failed'));
+
+    renderWithProviders(
+      <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
+    );
+
+    await startCalibration(user);
+    await user.click(screen.getByLabelText('Close calibration wizard'));
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to clear calibration mode on close:',
+        expect.any(Error),
+      );
+    });
+    expect(onClose).toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
   });
 
   it('logs poll errors without crashing', async () => {
@@ -369,7 +423,6 @@ describe('DeviceCalibrationWizard', () => {
       <DeviceCalibrationWizard opened onClose={onClose} deviceId={1} />,
     );
 
-    await advanceToOpenDeviceStep(user);
     await startCalibration(user);
 
     await vi.advanceTimersByTimeAsync(2000);
