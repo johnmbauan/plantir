@@ -1,8 +1,6 @@
 import { Modal, Stepper, Button, Group } from "@mantine/core";
 import { useCalibrationWizard } from "./hooks/useCalibrationWizard";
-import { STEP } from "./calibrationSteps";
 import PrepareStep from "./steps/PrepareStep";
-import OpenDeviceStep from "./steps/OpenDeviceStep";
 import WakeDeviceStep from "./steps/WakeDeviceStep";
 import DryReadingStep from "./steps/DryReadingStep";
 import WetReadingStep from "./steps/WetReadingStep";
@@ -52,10 +50,6 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
           <PrepareStep />
         </Stepper.Step>
 
-        <Stepper.Step label="Open device">
-          <OpenDeviceStep />
-        </Stepper.Step>
-
         <Stepper.Step label="Wake device">
           <WakeDeviceStep
             calibrationExpired={calibrationExpired}
@@ -99,15 +93,15 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
           <Button variant="default" onClick={prevStep}>Back</Button>
         ) : (
           <>
-            <Button variant="default" onClick={step === STEP.PREPARE ? handleClose : prevStep}>
-              {step === STEP.PREPARE ? "Cancel" : "Back"}
+            <Button variant="default" onClick={handleClose}>
+              Cancel
             </Button>
             <Button
               onClick={() => void handleNext()}
-              loading={step === STEP.OPEN_DEVICE && calibrationStarting}
-              disabled={step === STEP.OPEN_DEVICE && !deviceId}
+              loading={calibrationStarting}
+              disabled={!deviceId}
             >
-              {step === STEP.OPEN_DEVICE ? "Start calibration" : "Next"}
+              Start calibration
             </Button>
           </>
         )}

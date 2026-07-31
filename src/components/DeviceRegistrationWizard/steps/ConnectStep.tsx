@@ -1,5 +1,5 @@
 import { Stack, Text, List, ThemeIcon } from "@mantine/core";
-import { IconCpu, IconWifi, IconClipboard } from "@tabler/icons-react";
+import { IconCpu, IconWifi, IconClipboard, IconBox } from "@tabler/icons-react";
 import wifiPortalHome from "@/assets/wifi-portal-home.png";
 import wifiPortalConfigure from "@/assets/wifi-portal-configure.png";
 
@@ -26,11 +26,20 @@ export default function ConnectStep() {
         <List.Item
           icon={
             <ThemeIcon radius="xl" size="sm" color="var(--green-700)" variant="light">
+              <IconBox size={14} />
+            </ThemeIcon>
+          }
+        >
+          Open the cap of the device.
+        </List.Item>
+        <List.Item
+          icon={
+            <ThemeIcon radius="xl" size="sm" color="var(--green-700)" variant="light">
               <IconCpu size={14} />
             </ThemeIcon>
           }
         >
-          Press the board <strong>Reset</strong> button (not Boot). The device will open a Wi-Fi hotspot named <strong>Plantir-Device-Setup</strong>.
+          Press the <strong>RESTART</strong> button on the side of the device. The device will open a Wi-Fi hotspot named <strong>Plantir-Device-Setup</strong>.
         </List.Item>
         <List.Item
           icon={

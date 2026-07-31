@@ -3,13 +3,16 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/render';
 import WakeDeviceStep from './WakeDeviceStep';
 
+const WAKE_INSTRUCTION =
+  'Remove the cap. Press the Restart button on your Plantir device to wake it up, then put the cap back on.';
+
 describe('WakeDeviceStep', () => {
   it('shows waiting state while waiting for the device', () => {
     renderWithProviders(<WakeDeviceStep calibrationExpired={false} timedOut={false} onRetry={vi.fn()} />);
 
     expect(screen.getByText('Wake the device')).toBeInTheDocument();
-    expect(screen.getByText(/Press the/i)).toBeInTheDocument();
-    expect(screen.getByText(/Waiting for the device to connect/i)).toBeInTheDocument();
+    expect(screen.getByText('Restart').parentElement?.textContent).toBe(WAKE_INSTRUCTION);
+    expect(screen.getByText('Waiting for the device to connect…')).toBeInTheDocument();
   });
 
   it('shows retry action when timed out', async () => {
@@ -17,6 +20,13 @@ describe('WakeDeviceStep', () => {
     const onRetry = vi.fn();
 
     renderWithProviders(<WakeDeviceStep calibrationExpired={false} timedOut onRetry={onRetry} />);
+
+    expect(screen.getByText('Restart').parentElement?.textContent).toBe(WAKE_INSTRUCTION);
+    expect(
+      screen.getByText(
+        'No reading received. Make sure you pressed the restart button and the device connected to Wi-Fi.',
+      ),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Try again' }));
 
@@ -29,7 +39,9 @@ describe('WakeDeviceStep', () => {
 
     renderWithProviders(<WakeDeviceStep calibrationExpired timedOut={false} onRetry={onRetry} />);
 
-    expect(screen.getByText(/calibration window has ended after 2 minutes/i)).toBeInTheDocument();
+    expect(
+      screen.getByText("The device's calibration window has ended after 2 minutes. Restart calibration to try again."),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Restart calibration' }));
 

@@ -1,11 +1,10 @@
 /** Wizard step indices — keep in sync with the Stepper order in index.tsx. */
 export const STEP = {
   PREPARE: 0,
-  OPEN_DEVICE: 1,
-  WAKE_DEVICE: 2,
-  DRY_READING: 3,
-  WET_READING: 4,
-  COMPLETE: 5,
+  WAKE_DEVICE: 1,
+  DRY_READING: 2,
+  WET_READING: 3,
+  COMPLETE: 4,
 } as const;
 
 /** Steps that poll the device and advance automatically (no Next button). */

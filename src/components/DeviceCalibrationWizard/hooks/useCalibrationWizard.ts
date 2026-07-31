@@ -89,13 +89,13 @@ export function useCalibrationWizard({ opened, deviceId, onClose, onCalibrated }
     onClose();
   }, [deviceId, calibrationStarted, step, resetState, onClose]);
 
-  /** Return to the "Open device" step so the user can start calibration again. */
+  /** Return to the prepare step so the user can start calibration again. */
   const restartCalibration = useCallback(() => {
     setTimedOut(false);
     setReadingRejected(false);
     setCalibrationExpired(false);
     setDryValue(null);
-    setStep(STEP.OPEN_DEVICE);
+    setStep(STEP.PREPARE);
     setCalibrationStarted(false);
     setPollingSince(null);
     pollingSinceRef.current = null;
@@ -227,25 +227,19 @@ export function useCalibrationWizard({ opened, deviceId, onClose, onCalibrated }
   ]);
 
   const handleNext = useCallback(async () => {
-    // Open-device step: start calibration mode on the device, then wait for wake.
-    if (step === STEP.OPEN_DEVICE) {
-      if (!deviceId || calibrationStarting) return;
+    if (step !== STEP.PREPARE || !deviceId || calibrationStarting) return;
 
-      setCalibrationStarting(true);
-      try {
-        await startCalibrationMode(deviceId);
-        beginPollingFrom(new Date().toISOString());
-        setCalibrationStarted(true);
-        setStep(STEP.WAKE_DEVICE);
-      } catch (err) {
-        notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
-      } finally {
-        setCalibrationStarting(false);
-      }
-      return;
+    setCalibrationStarting(true);
+    try {
+      await startCalibrationMode(deviceId);
+      beginPollingFrom(new Date().toISOString());
+      setCalibrationStarted(true);
+      setStep(STEP.WAKE_DEVICE);
+    } catch (err) {
+      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+    } finally {
+      setCalibrationStarting(false);
     }
-
-    setStep((s) => s + 1);
   }, [step, deviceId, calibrationStarting, beginPollingFrom]);
 
   const prevStep = () => setStep((s) => Math.max(s - 1, STEP.PREPARE));

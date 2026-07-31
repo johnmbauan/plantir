@@ -12,7 +12,7 @@ export default function WakeDeviceStep({ calibrationExpired, timedOut, onRetry }
     <Stack gap="sm" mt="md">
       <Text fw={600}>Wake the device</Text>
       <Text size="sm">
-        Press the <strong>Reset</strong> button on your Plantir device to wake it up,
+        Remove the cap. Press the <strong>Restart</strong> button on your Plantir device to wake it up,
         then put the cap back on.
       </Text>
 
@@ -21,7 +21,7 @@ export default function WakeDeviceStep({ calibrationExpired, timedOut, onRetry }
       ) : timedOut ? (
         <Stack gap="xs" mt="xs">
           <Text size="sm" c="orange" fw={500}>
-            No reading received. Make sure you pressed the reset button and the device connected to Wi-Fi.
+            No reading received. Make sure you pressed the restart button and the device connected to Wi-Fi.
           </Text>
           <Button variant="default" size="sm" onClick={onRetry}>
             Try again

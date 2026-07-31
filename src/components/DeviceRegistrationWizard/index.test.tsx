@@ -34,7 +34,6 @@ function getDialog() {
 async function advanceToSetupCode(user: ReturnType<typeof userEvent.setup>) {
   const dialog = getDialog();
   await user.click(within(dialog).getByRole('button', { name: 'Next' }));
-  await user.click(within(dialog).getByRole('button', { name: 'Next' }));
   await waitFor(() => expect(createPairingBundle).toHaveBeenCalled());
 }
 
@@ -93,7 +92,7 @@ describe('DeviceRegistrationWizard', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('advances through prepare and open device steps', async () => {
+  it('advances from prepare to setup code step', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     renderWithProviders(
@@ -106,9 +105,6 @@ describe('DeviceRegistrationWizard', () => {
     );
 
     const dialog = getDialog();
-    await user.click(within(dialog).getByRole('button', { name: 'Next' }));
-    expect(within(dialog).getByText(/Open the cap of the device/i)).toBeInTheDocument();
-
     await user.click(within(dialog).getByRole('button', { name: 'Next' }));
     await waitFor(() => {
       expect(within(dialog).getByText(/Copy this setup code/i)).toBeInTheDocument();
@@ -128,7 +124,6 @@ describe('DeviceRegistrationWizard', () => {
       />,
     );
 
-    await user.click(within(getDialog()).getByRole('button', { name: 'Next' }));
     await user.click(within(getDialog()).getByRole('button', { name: 'Next' }));
 
     await waitFor(() => {
@@ -154,7 +149,6 @@ describe('DeviceRegistrationWizard', () => {
       />,
     );
 
-    await user.click(within(getDialog()).getByRole('button', { name: 'Next' }));
     await user.click(within(getDialog()).getByRole('button', { name: 'Next' }));
 
     expect(within(getDialog()).getByRole('button', { name: 'Next' })).toBeDisabled();
@@ -390,7 +384,6 @@ describe('DeviceRegistrationWizard', () => {
     const dialog = getDialog();
     await user.click(screen.getByPlaceholderText('You can assign a plant now or later'));
     await user.click(await screen.findByText('Monstera'));
-    await user.click(within(dialog).getByRole('button', { name: 'Next' }));
     await user.click(within(dialog).getByRole('button', { name: 'Next' }));
 
     await waitFor(() => {
