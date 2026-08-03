@@ -58,16 +58,38 @@ void setup() {
     goToSleep("WiFi or provisioning failed.");
   }
 
+  auto configLooksValid = [](const DynamicJsonDocument& doc) {
+    return !doc.isNull() && doc.containsKey("deviceId");
+  };
+
   if (!pairingToken.isEmpty()) {
-    if (!registerDevice(pairingToken, config)) {
-      goToSleep("Device registration failed. Fix the setup and try again.", &config);
-    }
+    registerDevice(pairingToken, config);
   }
 
   DynamicJsonDocument remoteConfig = fetchRemoteConfig(config);
-  if (remoteConfig.isNull() || !remoteConfig.containsKey("deviceId")) {
-    goToSleep("No remote configuration found for this device.", &config);
+  if (!configLooksValid(remoteConfig)) {
+    // Post-portal DNS/network is often broken; one clean STA reboot usually
+    // fixes it. Only restart once so a persistent failure cannot loop.
+    if (!pairingToken.isEmpty() && !registrationRestartUsed()) {
+      markRegistrationRestartUsed();
+      Serial.println("Registration incomplete — restarting once for clean WiFi...");
+      Serial.flush();
+      delay(200);
+      ESP.restart();
+    }
+
+    // Keep pairing token so a later deep-sleep wake can still retry.
+    goToSleep(
+      pairingToken.isEmpty()
+        ? "No remote configuration found for this device."
+        : "Device not registered yet. Will retry after sleep.",
+      &config
+    );
   }
+
+  // Registration confirmed — clear pairing state.
+  clearPairingToken();
+  clearRegistrationRestartFlag();
 
   const bool inCalibrationMode = !remoteConfig["calibrationModeStartedAt"].isNull();
   if (inCalibrationMode) {
@@ -75,10 +97,10 @@ void setup() {
     // Clear the flag immediately so stale state can never re-trigger calibration
     // on the next wake, even if the web app fails to clear it.
     clearCalibrationMode(remoteConfig["deviceId"], config);
-    // Give the user 60 seconds to place the device back in the soil before
+    // Give the user 2 minutes to place the device back in the soil before
     // taking the first real reading post-calibration.
-    Serial.println("Calibration complete. Waiting 60 s for device to be re-planted...");
-    delay(60000);
+    Serial.println("Calibration complete. Waiting 2 mins for device to be re-planted...");
+    delay(120000);
     // Re-fetch so checkHumidity uses the newly saved airValue/waterValue.
     remoteConfig = fetchRemoteConfig(config);
     if (remoteConfig.isNull() || !remoteConfig.containsKey("deviceId")) {

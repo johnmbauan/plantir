@@ -25,3 +25,47 @@ void clearConfig() {
   prefs.clear();
   prefs.end();
 }
+
+String loadPairingToken() {
+  Preferences prefs;
+  prefs.begin("app", true);
+  const String token = prefs.getString("pairToken", "");
+  prefs.end();
+  return token;
+}
+
+void savePairingToken(const String& token) {
+  Preferences prefs;
+  prefs.begin("app", false);
+  prefs.putString("pairToken", token);
+  prefs.end();
+}
+
+void clearPairingToken() {
+  Preferences prefs;
+  prefs.begin("app", false);
+  prefs.remove("pairToken");
+  prefs.end();
+}
+
+bool registrationRestartUsed() {
+  Preferences prefs;
+  prefs.begin("app", true);
+  const bool used = prefs.getBool("regReset", false);
+  prefs.end();
+  return used;
+}
+
+void markRegistrationRestartUsed() {
+  Preferences prefs;
+  prefs.begin("app", false);
+  prefs.putBool("regReset", true);
+  prefs.end();
+}
+
+void clearRegistrationRestartFlag() {
+  Preferences prefs;
+  prefs.begin("app", false);
+  prefs.remove("regReset");
+  prefs.end();
+}

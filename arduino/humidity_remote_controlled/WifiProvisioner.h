@@ -8,7 +8,8 @@
 //
 // On return:
 //   - config is populated (and persisted) with the server URL and API key.
-//   - pairingToken is non-empty if a new pairing bundle was submitted.
+//   - pairingToken is non-empty if a new pairing bundle was submitted, or if
+//     a previous unpaired token is still stored for retry after restart.
 //
 // Returns false if WiFi failed to connect or credentials are missing.
 bool connectAndProvision(AppConfig& config, String& pairingToken);
