@@ -3,7 +3,7 @@
  */
 
 // Pin a cui è collegato il cavo "AUOUT" o "SIG" del sensore
-const int sensorPin = A0; 
+const int sensorPin = A2; 
 
 // Valori di calibrazione (modificali dopo i tuoi test)
 const int AirValue = 590;   // Valore letto con sensore all'asciutto

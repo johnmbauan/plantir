@@ -13,6 +13,7 @@
   #error "Unsupported target: set the board to FireBeetle 2 ESP32-C5 or ESP32-C6 in Arduino IDE."
 #endif
 #define FACTORY_RESET_HOLD_MS  3000
+#define WIFI_CONNECT_TIMEOUT_SEC 30  // STA join timeout during portal save / autoconnect
 #define PLANTIR_BUNDLE_MAX_LEN 1024
 #define BUNDLE_DELIMITER       "###"
 #define BOOT_LED_BLINK_COUNT   3

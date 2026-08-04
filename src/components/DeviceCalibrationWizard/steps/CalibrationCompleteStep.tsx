@@ -9,7 +9,7 @@ export default function CalibrationCompleteStep() {
       </ThemeIcon>
       <Text fw={600}>Sensor calibrated!</Text>
       <Text size="sm" c="dimmed" ta="center">
-        Place the device back in the soil. It will take a reading in about a minute.
+        Place the device back in the soil. It will take a reading in about 2 minutes.
       </Text>
     </Stack>
   );

@@ -54,6 +54,7 @@ bool connectAndProvision(AppConfig& config, String& pairingToken) {
 
   WiFiManager wm;
   wm.setConfigPortalTimeout(600);
+  wm.setConnectTimeout(WIFI_CONNECT_TIMEOUT_SEC);
   if (factoryReset) {
     wm.resetSettings();
   }
@@ -120,9 +121,13 @@ bool connectAndProvision(AppConfig& config, String& pairingToken) {
     config.apiKey    = parsedKey;
     pairingToken     = parsedToken;
     saveConfig(config);
+    savePairingToken(pairingToken);
   } else if (config.serverUrl.isEmpty() || config.apiKey.isEmpty()) {
     Serial.println("Missing Supabase credentials. Paste the Plantir Setup code from the web app.");
     return false;
+  } else {
+    // Resume an unfinished pairing after restart / deep sleep.
+    pairingToken = loadPairingToken();
   }
 
   Serial.println("Saved server URL: " + config.serverUrl);
