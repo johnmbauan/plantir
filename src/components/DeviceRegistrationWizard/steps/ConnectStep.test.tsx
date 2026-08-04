@@ -16,5 +16,12 @@ describe('ConnectStep', () => {
     expect(screen.getAllByText(/Plantir-Device-Setup/i).length).toBeGreaterThan(0);
     expect(screen.getByAltText('WiFi portal home screen')).toBeInTheDocument();
     expect(screen.getByAltText('WiFi portal configure screen')).toBeInTheDocument();
+    expect(
+      screen.getByText((_, element) => {
+        const expected = 'Wait for the Plantir-Device-Setup portal to close automatically.';
+        if (element?.textContent !== expected) return false;
+        return !Array.from(element.children).some((child) => child.textContent === expected);
+      }),
+    ).toBeInTheDocument();
   });
 });
