@@ -14,6 +14,7 @@ import {
   updatePlant,
   deletePlant,
   fetchPlantHistory,
+  fetchLastWateredAt,
   fetchPlantStatusesByIds,
   uploadPlantImage,
   deletePlantImage,
@@ -591,6 +592,53 @@ describe('plantService', () => {
         humidity: [],
         battery: [],
       });
+    });
+  });
+
+  describe('fetchLastWateredAt', () => {
+    it('returns null when plant has no devices', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({
+        plants: { data: { devices: [] }, error: null },
+      });
+
+      await expect(fetchLastWateredAt(1)).resolves.toBeNull();
+    });
+
+    it('returns null when humidity never rises by the watering threshold', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({
+        plants: { data: { devices: [{ id: 10 }] }, error: null },
+        humidity_measurements: {
+          data: [
+            { humidityPercentage: 20, createdAt: '2026-07-01T10:00:00Z' },
+            { humidityPercentage: 35, createdAt: '2026-07-02T10:00:00Z' },
+          ],
+          error: null,
+        },
+        battery_measurements: { data: [], error: null },
+      });
+
+      await expect(fetchLastWateredAt(1)).resolves.toBeNull();
+    });
+
+    it('returns the timestamp of the most recent watering rise', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({
+        plants: { data: { devices: [{ id: 10 }] }, error: null },
+        humidity_measurements: {
+          data: [
+            { humidityPercentage: 15, createdAt: '2026-06-01T10:00:00Z' },
+            { humidityPercentage: 50, createdAt: '2026-06-01T18:00:00Z' },
+            { humidityPercentage: 20, createdAt: '2026-07-04T10:00:00Z' },
+            { humidityPercentage: 60, createdAt: '2026-07-04T18:00:00Z' },
+          ],
+          error: null,
+        },
+        battery_measurements: { data: [], error: null },
+      });
+
+      await expect(fetchLastWateredAt(1)).resolves.toBe('2026-07-04T18:00:00Z');
     });
   });
 

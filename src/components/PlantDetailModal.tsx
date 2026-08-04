@@ -23,17 +23,17 @@ import {
   ThemeIcon,
   UnstyledButton,
 } from "@mantine/core";
-import { IconBattery, IconClock, IconDroplet, IconPencil, IconTool } from "@tabler/icons-react";
+import { IconBattery, IconBucketDroplet, IconClock, IconDroplet, IconPencil, IconTool } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import type { EnrichedPlant, HistoryRange, PlantHistory } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { batteryMantineColor } from "@/utils/color-utils";
-import { formatInterval } from "@/utils/time";
+import { formatInterval, relativeTime } from "@/utils/time";
 import HumidityBar from "@/components/HumidityBar";
 import HistoryLineChart from "@/components/HistoryLineChart";
 import { ModalSection } from "@/components/shared/ModalSection";
 import { SpeciesCareCard } from "@/components/shared/SpeciesCareCard";
-import { fetchPlantHistory } from "@/services/plantService";
+import { fetchLastWateredAt, fetchPlantHistory } from "@/services/plantService";
 import { getErrorMessage } from "@/utils/error";
 import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
 
@@ -75,6 +75,8 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
   const [history, setHistory] = useState<PlantHistory | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [lastWateredAt, setLastWateredAt] = useState<string | null>(null);
+  const [lastWateredLoading, setLastWateredLoading] = useState(false);
   const [imageExpanded, setImageExpanded] = useState(false);
 
   const loadHistory = useCallback(async (plantId: number, selectedRange: HistoryRange) => {
@@ -91,12 +93,37 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
     }
   }, []);
 
+  const loadLastWatered = useCallback(async (plantId: number) => {
+    setLastWateredLoading(true);
+    setLastWateredAt(null);
+
+    try {
+      const wateredAt = await fetchLastWateredAt(plantId);
+      setLastWateredAt(wateredAt);
+    } catch (error) {
+      console.error("Failed to load last watered:", error);
+      setLastWateredAt(null);
+    } finally {
+      setLastWateredLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (!opened || !plant?.deviceId) return;
     // Loading depends on runtime plant/range state and is intentionally effect-driven.
 
     void loadHistory(plant.id, range);
   }, [opened, plant?.id, plant?.deviceId, range, loadHistory]);
+
+  useEffect(() => {
+    if (!opened || !plant?.deviceId) {
+      setLastWateredAt(null);
+      setLastWateredLoading(false);
+      return;
+    }
+
+    void loadLastWatered(plant.id);
+  }, [opened, plant?.id, plant?.deviceId, loadLastWatered]);
 
   useEffect(() => {
     if (!opened || range !== "30d") return;
@@ -170,7 +197,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
         )}
 
         <ModalSection title="Current status">
-          <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
             <MetricCard
               icon={<IconDroplet size={14} />}
               label="Humidity"
@@ -183,6 +210,18 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
                 barColor={barColor}
               />
             </MetricCard>
+            <MetricCard
+              icon={<IconBucketDroplet size={14} />}
+              label="Last watered"
+              value={
+                plant.deviceId == null
+                  ? "No device"
+                  : lastWateredLoading
+                    ? "…"
+                    : (relativeTime(lastWateredAt) ?? "Unknown")
+              }
+              color="blue"
+            />
             <MetricCard
               icon={<IconBattery size={14} />}
               label="Battery"

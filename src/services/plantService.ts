@@ -9,6 +9,7 @@ import type {
 } from "@/types";
 import { evaluateAndToastUnlocks } from "@/services/achievementService";
 import { getSessionUser, requireUser } from "@/utils/requireUser";
+import { findLastWateredAt } from "@/utils/watering";
 
 // ---------------------------------------------------------------------------
 // Raw DB shapes (reflect get_user_plants RPC + history table rows)
@@ -284,6 +285,12 @@ export async function fetchPlantHistory(plantId: number, range: HistoryRange): P
     humidity: toHumidityPoints((humidityRows ?? []) as RawMeasurement[]),
     battery: toBatteryPoints((batteryRows ?? []) as RawBatteryMeasurement[]),
   };
+}
+
+/** Detects the most recent watering from humidity history (90-day lookback). */
+export async function fetchLastWateredAt(plantId: number): Promise<string | null> {
+  const { humidity } = await fetchPlantHistory(plantId, "90d");
+  return findLastWateredAt(humidity);
 }
 
 // ---------------------------------------------------------------------------
