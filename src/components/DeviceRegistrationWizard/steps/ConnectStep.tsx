@@ -1,5 +1,5 @@
 import { Stack, Text, List, ThemeIcon } from "@mantine/core";
-import { IconCpu, IconWifi, IconClipboard, IconBox } from "@tabler/icons-react";
+import { IconCpu, IconWifi, IconClipboard, IconBox, IconHourglass } from "@tabler/icons-react";
 import wifiPortalHome from "@/assets/wifi-portal-home.png";
 import wifiPortalConfigure from "@/assets/wifi-portal-configure.png";
 
@@ -64,6 +64,17 @@ export default function ConnectStep() {
         </List.Item>
       </List>
       <img src={wifiPortalConfigure} alt="WiFi portal configure screen" style={portalImageStyle} />
+      <List spacing="sm" size="sm" center>
+        <List.Item
+          icon={
+            <ThemeIcon radius="xl" size="sm" color="var(--green-700)" variant="light">
+              <IconHourglass size={14} />
+            </ThemeIcon>
+          }
+        >
+          Wait for the <strong>Plantir-Device-Setup</strong> portal to close automatically.
+        </List.Item>
+      </List>
     </Stack>
   );
 }
