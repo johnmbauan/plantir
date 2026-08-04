@@ -1,23 +1,32 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, waitFor } from '@/test/render';
 import { buildPlant } from '@/test/builders/plant';
 import PlantDetailModal from './PlantDetailModal';
 
 const fetchPlantHistory = vi.fn();
+const fetchLastWateredAt = vi.fn();
 const onClose = vi.fn();
 
 vi.mock('@/services/plantService', () => ({
   fetchPlantHistory: (...args: unknown[]) => fetchPlantHistory(...args),
+  fetchLastWateredAt: (...args: unknown[]) => fetchLastWateredAt(...args),
 }));
 
 describe('PlantDetailModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(new Date('2026-07-06T12:00:00Z'));
     fetchPlantHistory.mockResolvedValue({
       humidity: [{ value: 55, createdAt: '2026-07-06T08:00:00Z' }],
       battery: [{ value: 80, createdAt: '2026-07-06T08:00:00Z' }],
     });
+    fetchLastWateredAt.mockResolvedValue(null);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('returns null when plant is not provided', () => {
@@ -46,11 +55,14 @@ describe('PlantDetailModal', () => {
     expect(screen.getByText('Needs recharge')).toBeInTheDocument();
     expect(screen.getByText('55%')).toBeInTheDocument();
     expect(screen.getByText('80%')).toBeInTheDocument();
+    expect(screen.getByText('Last watered')).toBeInTheDocument();
+    expect(screen.getByText('No device')).toBeInTheDocument();
     expect(screen.queryByText('Measurement history')).not.toBeInTheDocument();
+    expect(fetchLastWateredAt).not.toHaveBeenCalled();
   });
 
   it('renders species guidance when species data is available', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const plant = buildPlant({
       species: {
         id: 7,
@@ -116,7 +128,7 @@ describe('PlantDetailModal', () => {
   });
 
   it('opens a full size image view when the plant photo is clicked', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const plant = buildPlant({
       name: 'Monstera',
       image_url: 'https://example.com/plant.jpg',
@@ -153,8 +165,43 @@ describe('PlantDetailModal', () => {
     });
   });
 
+  it('fetches and shows last watered when a device is assigned', async () => {
+    fetchLastWateredAt.mockResolvedValue('2026-07-04T12:00:00Z');
+    const plant = buildPlant({ id: 3, deviceId: 10 });
+
+    renderWithProviders(
+      <PlantDetailModal plant={plant} opened onClose={onClose} />,
+    );
+
+    await waitFor(() => {
+      expect(fetchLastWateredAt).toHaveBeenCalledWith(3);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Last watered')).toBeInTheDocument();
+      expect(screen.getByText('2d ago')).toBeInTheDocument();
+    });
+  });
+
+  it('shows Unknown when last watered cannot be detected', async () => {
+    fetchLastWateredAt.mockResolvedValue(null);
+    const plant = buildPlant({ id: 3, deviceId: 10 });
+
+    renderWithProviders(
+      <PlantDetailModal plant={plant} opened onClose={onClose} />,
+    );
+
+    await waitFor(() => {
+      expect(fetchLastWateredAt).toHaveBeenCalledWith(3);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Unknown')).toBeInTheDocument();
+    });
+  });
+
   it('fetches history for a different range when selected', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const plant = buildPlant({ id: 3, deviceId: 10 });
 
     renderWithProviders(
@@ -173,7 +220,7 @@ describe('PlantDetailModal', () => {
   });
 
   it('fetches 90-day history when that range is selected', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const plant = buildPlant({ id: 3, deviceId: 10 });
 
     renderWithProviders(
