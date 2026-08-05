@@ -2,23 +2,30 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/render';
 import { LogsTab } from '@/admin/components/LogsTab';
-import type { AdminFilterOptions, AdminLog } from '@/admin/adminService';
+import type { AdminLog } from '@/admin/adminService';
 import { ADMIN_PAGE_SIZE } from '@/admin/constants';
 
 const mockRefresh = vi.fn();
+const mockRefreshFilterOptions = vi.fn();
 const mockUseAdminLogsPage = vi.fn();
 
 vi.mock('@/admin/hooks/useAdminLogsPage', () => ({
   useAdminLogsPage: (...args: unknown[]) => mockUseAdminLogsPage(...args),
 }));
 
-const filterOptions: AdminFilterOptions = {
-  serials: ['SN-001', 'SN-002'],
-  owners: ['alice@example.com', 'bob@example.com'],
-  plants: ['Monstera', 'Fern'],
-  hasUnassignedOwner: false,
-  hasUnassignedPlant: false,
-};
+vi.mock('@/admin/hooks/useAdminFilterOptions', () => ({
+  useAdminFilterOptions: () => ({
+    filterOptions: {
+      serials: ['SN-001', 'SN-002'],
+      owners: ['alice@example.com', 'bob@example.com'],
+      plants: ['Monstera', 'Fern'],
+      hasUnassignedOwner: false,
+      hasUnassignedPlant: false,
+    },
+    loading: false,
+    refresh: mockRefreshFilterOptions,
+  }),
+}));
 
 const logs: AdminLog[] = [
   {
@@ -70,7 +77,7 @@ describe('Admin LogsTab', () => {
   });
 
   it('renders log entries', () => {
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     expect(screen.getByText('Device Logs')).toBeInTheDocument();
     expect(screen.getByText('Device connected')).toBeInTheDocument();
@@ -86,14 +93,14 @@ describe('Admin LogsTab', () => {
       currentPage: 1,
     });
 
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     expect(screen.getByText('No logs found.')).toBeInTheDocument();
   });
 
   it('calls refresh when refresh button is clicked', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     await user.click(screen.getByRole('button', { name: 'Refresh logs' }));
     expect(mockRefresh).toHaveBeenCalledOnce();
@@ -108,7 +115,7 @@ describe('Admin LogsTab', () => {
       currentPage: 1,
     });
 
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     expect(screen.queryByText('No logs found.')).not.toBeInTheDocument();
     expect(screen.getByText('Loading…')).toBeInTheDocument();
@@ -116,7 +123,7 @@ describe('Admin LogsTab', () => {
 
   it('requests logs filtered by device serial', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     expect(mockUseAdminLogsPage).toHaveBeenCalledWith(
       expect.objectContaining({ serialNumber: null }),
@@ -131,7 +138,7 @@ describe('Admin LogsTab', () => {
 
   it('requests logs filtered by owner', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     await selectComboboxOption(user, 1, 'alice@example.com');
 
@@ -142,7 +149,7 @@ describe('Admin LogsTab', () => {
 
   it('requests logs filtered by level', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     await selectComboboxOption(user, 2, 'Error');
 
@@ -162,7 +169,7 @@ describe('Admin LogsTab', () => {
       currentPage: query.page,
     }));
 
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     await selectComboboxOption(user, 2, 'Warning');
 
@@ -178,7 +185,7 @@ describe('Admin LogsTab', () => {
       currentPage: 1,
     });
 
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     expect(screen.getByText('debug')).toBeInTheDocument();
   });
@@ -192,14 +199,14 @@ describe('Admin LogsTab', () => {
       currentPage: query.page,
     }));
 
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     expect(screen.getByText(`Showing 1–${ADMIN_PAGE_SIZE} of ${ADMIN_PAGE_SIZE + 3}`)).toBeInTheDocument();
   });
 
   it('requests sort changes from the server', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<LogsTab filterOptions={filterOptions} />);
+    renderWithProviders(<LogsTab />);
 
     await user.click(screen.getByRole('button', { name: 'Sort by Message' }));
 

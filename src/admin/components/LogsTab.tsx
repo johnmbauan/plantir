@@ -3,7 +3,7 @@ import {
   Table,
   Text,
 } from "@mantine/core";
-import type { AdminFilterOptions, AdminLogSortKey } from "@/admin/adminService";
+import type { AdminLogSortKey } from "@/admin/adminService";
 import { AdminLogRow } from "@/admin/components/AdminLogRow";
 import { AdminTabLayout } from "@/admin/components/AdminTabLayout";
 import { LogsTabHeader } from "@/admin/components/LogsTabHeader";
@@ -15,14 +15,10 @@ import {
   buildOwnerOptions,
   buildSerialOptions,
 } from "@/admin/filterOptions";
+import { useAdminFilterOptions } from "@/admin/hooks/useAdminFilterOptions";
 import { useAdminLogsPage } from "@/admin/hooks/useAdminLogsPage";
 import { paginationMeta } from "@/utils/pagination";
 import type { SortDirection } from "@/utils/sort";
-
-interface LogsTabProps {
-  filterOptions: AdminFilterOptions;
-  onRefreshFilters?: () => void;
-}
 
 const LOG_COLUMNS: { key: AdminLogSortKey; label: string }[] = [
   { key: "createdAt", label: "Timestamp" },
@@ -31,7 +27,8 @@ const LOG_COLUMNS: { key: AdminLogSortKey; label: string }[] = [
   { key: "message", label: "Message" },
 ];
 
-export function LogsTab({ filterOptions, onRefreshFilters }: LogsTabProps) {
+export function LogsTab() {
+  const { filterOptions, refresh: refreshFilterOptions } = useAdminFilterOptions();
   const [selectedSerial, setSelectedSerial] = useState<string | null>(null);
   const [selectedOwner, setSelectedOwner] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -65,7 +62,7 @@ export function LogsTab({ filterOptions, onRefreshFilters }: LogsTabProps) {
 
   function handleRefresh() {
     void refresh();
-    void onRefreshFilters?.();
+    void refreshFilterOptions();
   }
 
   function handleSort(key: string) {
