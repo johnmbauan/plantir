@@ -199,12 +199,14 @@ Devices may only:
 - **SELECT** `devices` and `humidity_sensors_config` (fetch config by `serialNumber`)
 - **INSERT** `humidity_measurements` and `battery_measurements` (readings must reference a valid `deviceId`)
 - **EXECUTE** `clear_calibration_mode(deviceId)` after an on-device calibration loop
+- **EXECUTE** `device_wake_sync(serial, board, firmware_version)` for the normal wake path (returns humidity config + firmware target and records the reported version in one round-trip)
+- **SELECT** `firmware_releases` / `firmware_channels` (staged builds and the per-board “fleet default” pointer; binary bytes live in the public `firmware` storage bucket)
 
-Devices have **no** write access to `devices`, `plants`, or `humidity_sensors_config`, and **no** access to `notification_settings` or admin RPCs. Device registration and pairing go through edge functions that use the service role.
+Devices have **no** write access to `devices`, `plants`, or `humidity_sensors_config`, and **no** access to `notification_settings` or admin RPCs. Device registration and pairing go through edge functions that use the service role. Per-device firmware test overrides (“pilot” assigns) are applied via admin-only RPCs (`admin_assign_firmware_override`, `admin_clear_firmware_overrides`, `admin_clear_firmware_overrides_for_release`).
 
 > **Important — intentional RLS trade-offs for device access:**
 >
-> The `anon` SELECT policies on `devices` and `humidity_sensors_config` use `USING (true)` with **no user-scoping**. This means any client that holds the publishable anon key can read all device records and sensor configurations across all users. This is a deliberate trade-off: firmware only knows its own serial number and needs to look itself up in `devices` to retrieve its `deviceId` and then fetch the matching row in `humidity_sensors_config`. Scoping these reads to a specific user is not feasible without authenticating the device itself.
+> The `anon` SELECT policies on `devices`, `humidity_sensors_config`, `firmware_releases`, and `firmware_channels` use `USING (true)` with **no user-scoping**. This means any client that holds the publishable anon key can read all device records, sensor configurations, and firmware channel metadata across all users. This is a deliberate trade-off: firmware only knows its own serial number and needs to look itself up in `devices` to retrieve its `deviceId` and then fetch the matching row in `humidity_sensors_config`. Scoping these reads to a specific user is not feasible without authenticating the device itself.
 >
 > Similarly, the `anon` INSERT policies on `humidity_measurements` and `battery_measurements` only verify that the target `deviceId` exists — they do not authenticate the device. This means any anon client that knows a valid `deviceId` can submit readings for it. For a home deployment this is an acceptable trade-off; if stronger guarantees are needed, consider issuing per-device JWT tokens or using a dedicated device-auth scheme.
 
@@ -217,6 +219,8 @@ Admins (`app_metadata.role = 'admin'`) get additional SELECT policies plus `SECU
 ### Storage
 
 `avatars` and `plant-images` are public buckets, so image URLs work without auth. Listing is restricted: authenticated users can only list objects under their own `<user_id>/` folder. Broad public SELECT policies that allowed full-bucket enumeration were removed in the hardening migration above.
+
+`firmware` is a public bucket used for HTTPS OTA binaries (`{board}/{version}.bin`). Admins may upload/update/delete objects; devices download via the public URL returned from `device_wake_sync`.
 
 > **Note:** Edge functions such as `telegram-notifier` and `register-device` connect with the service role and bypass RLS, so scheduled alerts and device provisioning continue to work across all users.
 

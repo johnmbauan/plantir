@@ -2,70 +2,70 @@
 #include <Preferences.h>
 
 AppConfig loadConfig() {
-  Preferences prefs;
-  prefs.begin("app", true);
-  AppConfig config;
-  config.serverUrl = prefs.getString("serverUrl", "");
-  config.apiKey    = prefs.getString("apiKey", "");
-  prefs.end();
-  return config;
+  Preferences preferences;
+  preferences.begin("app", true);
+  AppConfig appConfig;
+  appConfig.serverUrl = preferences.getString("serverUrl", "");
+  appConfig.apiKey = preferences.getString("apiKey", "");
+  preferences.end();
+  return appConfig;
 }
 
-void saveConfig(const AppConfig& config) {
-  Preferences prefs;
-  prefs.begin("app", false);
-  prefs.putString("serverUrl", config.serverUrl);
-  prefs.putString("apiKey",    config.apiKey);
-  prefs.end();
+void saveConfig(const AppConfig& appConfig) {
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.putString("serverUrl", appConfig.serverUrl);
+  preferences.putString("apiKey", appConfig.apiKey);
+  preferences.end();
 }
 
 void clearConfig() {
-  Preferences prefs;
-  prefs.begin("app", false);
-  prefs.clear();
-  prefs.end();
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.clear();
+  preferences.end();
 }
 
 String loadPairingToken() {
-  Preferences prefs;
-  prefs.begin("app", true);
-  const String token = prefs.getString("pairToken", "");
-  prefs.end();
-  return token;
+  Preferences preferences;
+  preferences.begin("app", true);
+  const String pairingToken = preferences.getString("pairToken", "");
+  preferences.end();
+  return pairingToken;
 }
 
-void savePairingToken(const String& token) {
-  Preferences prefs;
-  prefs.begin("app", false);
-  prefs.putString("pairToken", token);
-  prefs.end();
+void savePairingToken(const String& pairingToken) {
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.putString("pairToken", pairingToken);
+  preferences.end();
 }
 
 void clearPairingToken() {
-  Preferences prefs;
-  prefs.begin("app", false);
-  prefs.remove("pairToken");
-  prefs.end();
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.remove("pairToken");
+  preferences.end();
 }
 
 bool registrationRestartUsed() {
-  Preferences prefs;
-  prefs.begin("app", true);
-  const bool used = prefs.getBool("regReset", false);
-  prefs.end();
-  return used;
+  Preferences preferences;
+  preferences.begin("app", true);
+  const bool restartAlreadyUsed = preferences.getBool("regReset", false);
+  preferences.end();
+  return restartAlreadyUsed;
 }
 
 void markRegistrationRestartUsed() {
-  Preferences prefs;
-  prefs.begin("app", false);
-  prefs.putBool("regReset", true);
-  prefs.end();
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.putBool("regReset", true);
+  preferences.end();
 }
 
 void clearRegistrationRestartFlag() {
-  Preferences prefs;
-  prefs.begin("app", false);
-  prefs.remove("regReset");
-  prefs.end();
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.remove("regReset");
+  preferences.end();
 }

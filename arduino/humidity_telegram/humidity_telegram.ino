@@ -7,64 +7,72 @@
 // !!WARNING!! This sketch has not been tested with FireBeetle 2 ESP32-C5 and is very much outdated
 
 const String plantName = "Pothos - Salone";
-const String plantPicLink = "https://photos.app.goo.gl/hfw8fVBE2hGxkENx9";
-#define TIME_TO_SLEEP  21600  // Tempo di riposo: 6 ore (6 * 60 * 60 secondi)
+const String plantPhotoUrl = "https://photos.app.goo.gl/hfw8fVBE2hGxkENx9";
+#define TIME_TO_SLEEP  21600  // Deep sleep duration: 6 hours (6 * 60 * 60 seconds)
 const int minHumidityThreshold = 10;
 
-// --- Configurazione Wi-Fi e Telegram (Inserisci i tuoi dati) ---
+// --- Wi-Fi and Telegram configuration ---
 
 #define BOTtoken "8618854061:AAE9grd1PBzL0U9IsYQD_XFvCT9G6oSb5RY"
 #define CHAT_ID "-1003844603248"
-const char* ssid = "wifi_ssid";
-const char* password = "password";
-WiFiClientSecure client;
-UniversalTelegramBot bot(BOTtoken, client);
+const char* wifiSsid = "wifi_ssid";
+const char* wifiPassword = "password";
+WiFiClientSecure secureWifiClient;
+UniversalTelegramBot telegramBot(BOTtoken, secureWifiClient);
 
-//const int powerPin = 14; // Pin opzionale per alimentare il sensore solo quando serve
+//const int powerPin = 14; // Optional pin to power the sensor only when needed
 const int sensorPin = A0;
-const int airValue = 2540;
-const int waterValue = 870;
+const int airCalibrationValue = 2540;
+const int waterCalibrationValue = 870;
 
-#define uS_TO_S_FACTOR 1000000ULL  // Fattore di conversione da microsecondi a secondi
+#define uS_TO_S_FACTOR 1000000ULL  // Microseconds → seconds
+
+void measureAndSendLowHumidityAlert();
 
 void setup() {
   Serial.begin(115200);
-  client.setInsecure();
+  secureWifiClient.setInsecure();
 
-  // Configura il pin per alimentare il sensore (opzionale ma consigliato)
+  // Optional: power the sensor only for the reading window
   //pinMode(powerPin, OUTPUT);
-  //digitalWrite(powerPin, HIGH); // Accendi il sensore
-  delay(500); // Aspetta che il sensore si stabilizzi
+  //digitalWrite(powerPin, HIGH);
+  delay(500); // Wait for the sensor to stabilize
 
-  checkHumidity();
+  measureAndSendLowHumidityAlert();
 
   Serial.println("Entering in deep sleep...");
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
   Serial.flush();
 
-  // 4. Vai a dormire
   esp_deep_sleep_start();
 }
 
 void loop() {
-  // Il loop rimarrà vuoto perché l'ESP32 si resetta dopo il sonno
+  // Empty — device resets after deep sleep
 }
 
-void checkHumidity() {
-  float avgHumidity = readAvgHumidityPercent(sensorPin, airValue, waterValue, 5);
-  //digitalWrite(powerPin, LOW); // Spegni subito il sensore per risparmiare energia e corrosione
+void measureAndSendLowHumidityAlert() {
+  const float averageHumidityPercent = readAvgHumidityPercent(
+    sensorPin,
+    airCalibrationValue,
+    waterCalibrationValue,
+    5
+  );
+  //digitalWrite(powerPin, LOW); // Power off immediately to save energy and reduce corrosion
 
-  // Logica di controllo Soglia (> 90%)
-  if (avgHumidity < minHumidityThreshold) {
-    bool isConnected = connectToWifi(ssid, password, "Humidity Sensor = " + WiFi.macAddress());
-    if (isConnected) {
-      String messaggio = "🪴 '" + plantName + "' needs water!💦 \n";
-      messaggio += "Current humidity: " + String(avgHumidity) + "% 🥀";
-      if (bot.sendPhoto(CHAT_ID, plantPicLink , messaggio)) {
+  if (averageHumidityPercent < minHumidityThreshold) {
+    const bool wifiConnected = connectToWifi(
+      wifiSsid,
+      wifiPassword,
+      "Humidity Sensor = " + WiFi.macAddress()
+    );
+    if (wifiConnected) {
+      String telegramMessage = "🪴 '" + plantName + "' needs water!💦 \n";
+      telegramMessage += "Current humidity: " + String(averageHumidityPercent) + "% 🥀";
+      if (telegramBot.sendPhoto(CHAT_ID, plantPhotoUrl, telegramMessage)) {
         Serial.println("Message sent to Telegram!");
-      }
-      else {
-         Serial.println("Failed to send message to Telegram 😖");
+      } else {
+        Serial.println("Failed to send message to Telegram 😖");
       }
     }
   }

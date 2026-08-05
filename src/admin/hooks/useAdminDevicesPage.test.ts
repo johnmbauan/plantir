@@ -28,6 +28,11 @@ const devices: AdminDevice[] = [
     lastHumidity: 42,
     lastBattery: 90,
     lastSeenAt: '2026-07-06T10:00:00Z',
+    firmwareVersion: null,
+    firmwareBoard: null,
+    firmwareReportedAt: null,
+    firmwareOverrideReleaseId: null,
+    firmwareOverrideVersion: null,
   },
 ];
 

@@ -8,7 +8,7 @@ function createChain(result: QueryResult = { data: null, error: null }) {
 
   const methods = [
     'select', 'insert', 'update', 'delete', 'upsert',
-    'eq', 'in', 'is', 'gte', 'gt', 'order', 'limit',
+    'eq', 'in', 'is', 'gte', 'gt', 'or', 'order', 'limit',
     'single', 'maybeSingle',
   ] as const;
 

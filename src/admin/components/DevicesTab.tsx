@@ -33,6 +33,7 @@ const DEVICE_COLUMNS: { key: AdminDeviceSortKey; label: string }[] = [
   { key: "lastHumidity", label: "Humidity" },
   { key: "lastBattery", label: "Battery" },
   { key: "lastSeenAt", label: "Last Seen" },
+  { key: "firmwareVersion", label: "Firmware" },
 ];
 
 export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps) {
@@ -121,7 +122,7 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
 
   return (
     <AdminTabLayout header={header} footer={footer}>
-      <Table.ScrollContainer minWidth={700}>
+      <Table.ScrollContainer minWidth={900}>
         <Table verticalSpacing="sm">
           <Table.Thead>
             <Table.Tr>
@@ -145,7 +146,7 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
               />
             ) : items.length === 0 ? (
               <Table.Tr>
-                <Table.Td colSpan={7}>
+                <Table.Td colSpan={DEVICE_COLUMNS.length}>
                   <Text ta="center" c="dimmed" py="xl" size="sm">
                     {hasActiveFilters
                       ? "No devices match your filters."
@@ -155,7 +156,11 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
               </Table.Tr>
             ) : (
               items.map((device) => (
-                <AdminDeviceRow key={device.id} device={device} />
+                <AdminDeviceRow
+                  key={device.id}
+                  device={device}
+                  onOverrideCleared={() => void refresh()}
+                />
               ))
             )}
           </Table.Tbody>

@@ -39,6 +39,7 @@ arduino/libraries/HttpClient/
 arduino/libraries/Preferences/
 arduino/libraries/UniversalTelegramBot/
 arduino/libraries/WiFiManager/
+arduino/*/build/
 
 # Local notes
 dimensioni

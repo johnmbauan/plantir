@@ -20,6 +20,14 @@ const filterOptions: AdminFilterOptions = {
   hasUnassignedPlant: false,
 };
 
+const firmwareDefaults = {
+  firmwareVersion: null as number | null,
+  firmwareBoard: null as string | null,
+  firmwareReportedAt: null as string | null,
+  firmwareOverrideReleaseId: null as number | null,
+  firmwareOverrideVersion: null as number | null,
+};
+
 const devices: AdminDevice[] = [
   {
     id: 1,
@@ -31,6 +39,7 @@ const devices: AdminDevice[] = [
     lastHumidity: 55,
     lastBattery: 80,
     lastSeenAt: '2026-07-06T08:00:00Z',
+    ...firmwareDefaults,
   },
   {
     id: 2,
@@ -42,6 +51,7 @@ const devices: AdminDevice[] = [
     lastHumidity: 40,
     lastBattery: 60,
     lastSeenAt: '2026-07-05T08:00:00Z',
+    ...firmwareDefaults,
   },
 ];
 
@@ -265,4 +275,36 @@ describe('Admin DevicesTab', () => {
       expect.objectContaining({ sortKey: 'serialNumber', sortDir: 'asc', page: 1 }),
     );
   });
+
+  it('renders the Firmware column and reported version', () => {
+    mockUseAdminDevicesPage.mockReturnValue({
+      items: [
+        sampleDevice({
+          firmwareVersion: 3,
+          firmwareBoard: 'esp32c6',
+        }),
+      ],
+      totalCount: 1,
+      loading: false,
+      refresh: mockRefresh,
+      currentPage: 1,
+    });
+
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+
+    expect(screen.getByRole('button', { name: 'Sort by Firmware' })).toBeInTheDocument();
+    expect(screen.getByText('v3 (esp32c6)')).toBeInTheDocument();
+  });
+
+  it('requests firmware version sort from the server', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+
+    await user.click(screen.getByRole('button', { name: 'Sort by Firmware' }));
+
+    expect(mockUseAdminDevicesPage).toHaveBeenLastCalledWith(
+      expect.objectContaining({ sortKey: 'firmwareVersion', sortDir: 'asc', page: 1 }),
+    );
+  });
 });
+

@@ -4,6 +4,11 @@ default_fqbn: esp32:esp32:esp32dev
 #   - WifiUtils
 #   - HumiditySensorUtils
 
+# Required Arduino IDE board settings for OTA (FireBeetle 2 ESP32-C5/C6, 4MB flash):
+#   Tools → Partition Scheme → Minimal SPIFFS (1.9MB APP with OTA / 190KB SPIFFS)
+#   Tools → Flash Size → 4MB
+# Export compiled binary with the same settings before publishing to Admin → Firmware.
+
 dependencies:
   - name: WiFiManager
     version: 2.0.17
@@ -13,3 +18,4 @@ dependencies:
     version: 2.2.2
   - name: HttpClient
     version: 2.2.0
+  # HTTPUpdate ships with the esp32 Arduino core (no Library Manager install).

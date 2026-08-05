@@ -20,6 +20,10 @@ vi.mock('@/admin/components/LogsTab', () => ({
   LogsTab: () => <div>Admin logs tab</div>,
 }));
 
+vi.mock('@/admin/components/FirmwareTab', () => ({
+  FirmwareTab: () => <div>Admin firmware tab</div>,
+}));
+
 import { useAdminFilterOptions } from '@/admin/hooks/useAdminFilterOptions';
 
 const mockedUseAdminFilterOptions = vi.mocked(useAdminFilterOptions);
@@ -83,4 +87,24 @@ describe('AdminPage', () => {
     expect(screen.getByRole('tab', { name: 'Logs', selected: true })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Devices', selected: false })).toBeInTheDocument();
   });
+
+  it('switches to firmware tab and updates the URL', async () => {
+    const user = userEvent.setup();
+    const memoryRouter = createAdminPageRouter('/admin');
+    renderAdminPage(memoryRouter);
+
+    await user.click(screen.getByRole('tab', { name: 'Firmware' }));
+
+    expect(screen.getByText('Admin firmware tab')).toBeInTheDocument();
+    expect(memoryRouter.state.location.search).toBe('?tab=firmware');
+  });
+
+  it('opens the firmware tab when the URL includes tab=firmware', () => {
+    renderAdminPage(createAdminPageRouter('/admin?tab=firmware'));
+
+    expect(screen.getByText('Admin firmware tab')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Firmware', selected: true })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Devices', selected: false })).toBeInTheDocument();
+  });
 });
+

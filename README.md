@@ -66,6 +66,8 @@ To edit and upload the firmware code for the humidity sensors, it's suggested to
 
 #### Upload the code
 
+For FireBeetle 2 ESP32-C5/C6 remote firmware updates (over the air), set **Tools → Partition Scheme** to **Minimal SPIFFS (1.9MB APP with OTA / 190KB SPIFFS)** and **Flash Size** to **4MB** before uploading. See [Firmware releases](./docs/firmware-releases.md) for the full release workflow.
+
 Double click on the board button to switch in "Bootloader" mode (stable green light), then Upload the code from the IDE by clicking _Sketch_ > _Upload_ in the toolbar.
 
 #### Execute the code
@@ -74,4 +76,4 @@ Remove the USB cable from your board and then plug it again, the code will run a
 
 ## Documentation
 
-[Supabase](./docs/supabase.md) • [Electronics](./docs/electronics.md) • [Roadmap](./docs/roadmap/index.md)
+[Supabase](./docs/supabase.md) • [Electronics](./docs/electronics.md) • [Assembling](./docs/assembling.md) • [Firmware releases](./docs/firmware-releases.md) • [Roadmap](./docs/roadmap/index.md)

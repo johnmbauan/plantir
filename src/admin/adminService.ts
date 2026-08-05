@@ -1,6 +1,8 @@
 import supabase from "@/supabase";
 import type { SortDirection } from "@/utils/sort";
 
+export type FirmwareBoard = "esp32c5" | "esp32c6";
+
 export type AdminDeviceSortKey =
   | "serialNumber"
   | "owner_email"
@@ -8,7 +10,8 @@ export type AdminDeviceSortKey =
   | "type"
   | "lastHumidity"
   | "lastBattery"
-  | "lastSeenAt";
+  | "lastSeenAt"
+  | "firmwareVersion";
 
 export type AdminLogSortKey = "createdAt" | "serialNumber" | "level" | "message";
 
@@ -22,6 +25,29 @@ export interface AdminDevice {
   lastHumidity: number | null;
   lastBattery: number | null;
   lastSeenAt: string | null;
+  firmwareVersion: number | null;
+  firmwareBoard: string | null;
+  firmwareReportedAt: string | null;
+  firmwareOverrideReleaseId: number | null;
+  firmwareOverrideVersion: number | null;
+}
+
+export interface FirmwareRelease {
+  id: number;
+  board: FirmwareBoard;
+  version: number;
+  semver: string;
+  binary_url: string;
+  label: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FirmwareChannel {
+  board: FirmwareBoard;
+  release_id: number;
+  updatedAt: string;
+  release?: FirmwareRelease | null;
 }
 
 export interface AdminLog {
@@ -133,4 +159,120 @@ export async function fetchAdminLogsPage(
   });
   if (error) throw error;
   return parsePaginatedResult<AdminLog>(data);
+}
+
+const FIRMWARE_BUCKET = "firmware";
+
+export async function fetchFirmwareReleases(): Promise<FirmwareRelease[]> {
+  const { data, error } = await supabase
+    .from("firmware_releases")
+    .select("*")
+    .order("board", { ascending: true })
+    .order("version", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as FirmwareRelease[];
+}
+
+export async function fetchFirmwareChannels(): Promise<FirmwareChannel[]> {
+  const { data, error } = await supabase
+    .from("firmware_channels")
+    .select("*, release:firmware_releases(*)");
+  if (error) throw error;
+  return (data ?? []) as FirmwareChannel[];
+}
+
+export async function uploadFirmwareRelease(
+  board: FirmwareBoard,
+  version: number,
+  semver: string,
+  file: File,
+  label?: string | null,
+): Promise<FirmwareRelease> {
+  const path = `${board}/${version}.bin`;
+  const { error: uploadError } = await supabase.storage
+    .from(FIRMWARE_BUCKET)
+    .upload(path, file, {
+      upsert: true,
+      contentType: "application/octet-stream",
+    });
+  if (uploadError) throw uploadError;
+
+  const { data: publicUrlData } = supabase.storage
+    .from(FIRMWARE_BUCKET)
+    .getPublicUrl(path);
+
+  const { data, error } = await supabase
+    .from("firmware_releases")
+    .upsert(
+      {
+        board,
+        version,
+        semver: semver.trim(),
+        binary_url: publicUrlData.publicUrl,
+        label: label?.trim() || null,
+        updatedAt: new Date().toISOString(),
+      },
+      { onConflict: "board,version" },
+    )
+    .select("*")
+    .single();
+  if (error) throw error;
+  return data as FirmwareRelease;
+}
+
+export async function publishFirmwareToFleet(
+  board: FirmwareBoard,
+  releaseId: number,
+): Promise<void> {
+  const { error } = await supabase.from("firmware_channels").upsert(
+    {
+      board,
+      release_id: releaseId,
+      updatedAt: new Date().toISOString(),
+    },
+    { onConflict: "board" },
+  );
+  if (error) throw error;
+}
+
+export async function assignFirmwareOverride(
+  deviceIds: number[],
+  releaseId: number,
+): Promise<void> {
+  if (deviceIds.length === 0) return;
+  const { error } = await supabase.rpc("admin_assign_firmware_override", {
+    p_device_ids: deviceIds,
+    p_release_id: releaseId,
+  });
+  if (error) throw error;
+}
+
+export async function clearFirmwareOverrides(deviceIds: number[]): Promise<void> {
+  if (deviceIds.length === 0) return;
+  const { error } = await supabase.rpc("admin_clear_firmware_overrides", {
+    p_device_ids: deviceIds,
+  });
+  if (error) throw error;
+}
+
+export async function clearFirmwareOverridesForRelease(releaseId: number): Promise<void> {
+  const { error } = await supabase.rpc("admin_clear_firmware_overrides_for_release", {
+    p_release_id: releaseId,
+  });
+  if (error) throw error;
+}
+
+export async function fetchAdminDevicesForBoard(
+  board: FirmwareBoard,
+): Promise<Pick<AdminDevice, "id" | "serialNumber" | "firmwareBoard" | "firmwareVersion" | "firmwareOverrideReleaseId">[]> {
+  const { data, error } = await supabase
+    .from("devices")
+    .select("id, serialNumber, firmwareBoard, firmwareVersion, firmwareOverrideReleaseId")
+    .or(`firmwareBoard.eq.${board},firmwareBoard.is.null`)
+    .order("serialNumber", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as Pick<
+    AdminDevice,
+    "id" | "serialNumber" | "firmwareBoard" | "firmwareVersion" | "firmwareOverrideReleaseId"
+  >[];
 }

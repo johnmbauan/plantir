@@ -4,25 +4,43 @@
 #include "StorageManager.h"
 #include <WiFiManager.h>
 
-static bool parsePlantirBundle(const String& bundle, String& url, String& apiKey, String& token) {
-  const int first = bundle.indexOf(BUNDLE_DELIMITER);
-  if (first < 0) return false;
+// Accepts:
+//   url###apiKey###token  — first-time pairing
+//   url###apiKey          — reconnect for an already-registered device (no pairing)
+static bool parsePlantirBundle(
+  const String& setupBundle,
+  String& serverUrl,
+  String& apiKey,
+  String& pairingToken
+) {
+  const int firstDelimiterIndex = setupBundle.indexOf(BUNDLE_DELIMITER);
+  if (firstDelimiterIndex < 0) return false;
 
-  const int second = bundle.indexOf(BUNDLE_DELIMITER, first + 3);
-  if (second < 0) return false;
+  const int secondDelimiterIndex = setupBundle.indexOf(BUNDLE_DELIMITER, firstDelimiterIndex + 3);
+  const bool hasPairingToken = secondDelimiterIndex >= 0;
 
-  if (bundle.indexOf(BUNDLE_DELIMITER, second + 3) >= 0) return false;
+  if (hasPairingToken
+      && setupBundle.indexOf(BUNDLE_DELIMITER, secondDelimiterIndex + 3) >= 0) {
+    return false; // More than two delimiters
+  }
 
-  url    = bundle.substring(0, first);
-  apiKey = bundle.substring(first + 3, second);
-  token  = bundle.substring(second + 3);
-  url.trim();
+  serverUrl = setupBundle.substring(0, firstDelimiterIndex);
+  if (hasPairingToken) {
+    apiKey = setupBundle.substring(firstDelimiterIndex + 3, secondDelimiterIndex);
+    pairingToken = setupBundle.substring(secondDelimiterIndex + 3);
+  } else {
+    apiKey = setupBundle.substring(firstDelimiterIndex + 3);
+    pairingToken = "";
+  }
+  serverUrl.trim();
   apiKey.trim();
-  token.trim();
+  pairingToken.trim();
 
-  if (!url.startsWith("https://")) return false;
+  if (!serverUrl.startsWith("https://")) return false;
 
-  return !url.isEmpty() && !apiKey.isEmpty() && !token.isEmpty();
+  if (serverUrl.isEmpty() || apiKey.isEmpty()) return false;
+  if (hasPairingToken && pairingToken.isEmpty()) return false;
+  return true;
 }
 
 static bool isFactoryResetRequested() {
@@ -30,8 +48,8 @@ static bool isFactoryResetRequested() {
   if (digitalRead(BOOT_BUTTON_PIN) != LOW) return false;
 
   Serial.println("Hold BOOT for 3 seconds to factory reset...");
-  const unsigned long holdStart = millis();
-  while (millis() - holdStart < FACTORY_RESET_HOLD_MS) {
+  const unsigned long holdStartMs = millis();
+  while (millis() - holdStartMs < FACTORY_RESET_HOLD_MS) {
     if (digitalRead(BOOT_BUTTON_PIN) != LOW) return false;
     delay(100);
   }
@@ -42,29 +60,29 @@ void onPortalConfigReset() {
   clearConfig();
 }
 
-bool connectAndProvision(AppConfig& config, String& pairingToken) {
-  const bool factoryReset = isFactoryResetRequested();
-  if (factoryReset) {
+bool connectAndProvision(AppConfig& appConfig, String& pairingToken) {
+  const bool factoryResetRequested = isFactoryResetRequested();
+  if (factoryResetRequested) {
     Serial.println("Factory reset: clearing WiFi and Supabase credentials");
     clearConfig();
   }
 
   pairingToken = "";
-  config = loadConfig();
+  appConfig = loadConfig();
 
-  WiFiManager wm;
-  wm.setConfigPortalTimeout(600);
-  wm.setConnectTimeout(WIFI_CONNECT_TIMEOUT_SEC);
-  if (factoryReset) {
-    wm.resetSettings();
+  WiFiManager wifiManager;
+  wifiManager.setConfigPortalTimeout(600);
+  wifiManager.setConnectTimeout(WIFI_CONNECT_TIMEOUT_SEC);
+  if (factoryResetRequested) {
+    wifiManager.resetSettings();
   }
-  wm.setConfigResetCallback(onPortalConfigReset);
+  wifiManager.setConfigResetCallback(onPortalConfigReset);
 
   // Override WiFiManager's default blue theme with Plantir's green palette.
   // !important is required because WiFiManager appends its own <style> block
   // after this element in some library versions, so equal-specificity rules lose.
   const String deviceSerial = getDeviceId();
-  const String portalHead = String(
+  const String portalHeadHtml = String(
     "<style>"
     "body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif !important;"
          "background:#f2f7f2 !important;color:#1c3320 !important}"
@@ -98,40 +116,46 @@ bool connectAndProvision(AppConfig& config, String& pairingToken) {
     "</style>"
     "<div class='plantir-header'><b>Plantir</b><small>Device Setup</small></div>"
     "<div class='plantir-id'><span>Device ID</span><b>") + deviceSerial + "</b></div>";
-  wm.setCustomHeadElement(portalHead.c_str());
+  wifiManager.setCustomHeadElement(portalHeadHtml.c_str());
 
-  WiFiManagerParameter paramBundle(
+  WiFiManagerParameter setupBundleParameter(
     "plantirBundle",
-    "Plantir Setup (paste setup code from the web app)",
+    "Setup or reconnect code from Plants Center (setup for new devices; reconnect if already registered)",
     "",
     PLANTIR_BUNDLE_MAX_LEN
   );
-  wm.addParameter(&paramBundle);
+  wifiManager.addParameter(&setupBundleParameter);
 
-  wm.autoConnect("Plantir-Device-Setup");
+  wifiManager.autoConnect("Plantir-Device-Setup");
 
-  const String bundle = String(paramBundle.getValue());
-  if (!bundle.isEmpty()) {
-    String parsedUrl, parsedKey, parsedToken;
-    if (!parsePlantirBundle(bundle, parsedUrl, parsedKey, parsedToken)) {
-      Serial.println("Invalid Plantir Setup code. Expected url###apiKey###token");
+  const String setupBundle = String(setupBundleParameter.getValue());
+  if (!setupBundle.isEmpty()) {
+    String parsedServerUrl, parsedApiKey, parsedPairingToken;
+    if (!parsePlantirBundle(setupBundle, parsedServerUrl, parsedApiKey, parsedPairingToken)) {
+      Serial.println("Invalid Plantir code. Expected url###apiKey or url###apiKey###token");
       return false;
     }
-    config.serverUrl = parsedUrl;
-    config.apiKey    = parsedKey;
-    pairingToken     = parsedToken;
-    saveConfig(config);
-    savePairingToken(pairingToken);
-  } else if (config.serverUrl.isEmpty() || config.apiKey.isEmpty()) {
-    Serial.println("Missing Supabase credentials. Paste the Plantir Setup code from the web app.");
+    appConfig.serverUrl = parsedServerUrl;
+    appConfig.apiKey = parsedApiKey;
+    pairingToken = parsedPairingToken;
+    saveConfig(appConfig);
+    if (pairingToken.isEmpty()) {
+      clearPairingToken();
+    } else {
+      savePairingToken(pairingToken);
+    }
+  } else if (appConfig.serverUrl.isEmpty() || appConfig.apiKey.isEmpty()) {
+    Serial.println(
+      "Missing Supabase credentials. Paste a setup or reconnect code from Plants Center."
+    );
     return false;
   } else {
     // Resume an unfinished pairing after restart / deep sleep.
     pairingToken = loadPairingToken();
   }
 
-  Serial.println("Saved server URL: " + config.serverUrl);
-  Serial.println("Saved API Key length: " + String(config.apiKey.length()));
+  Serial.println("Saved server URL: " + appConfig.serverUrl);
+  Serial.println("Saved API Key length: " + String(appConfig.apiKey.length()));
 
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("Failed to connect to Wi-Fi 😭");
