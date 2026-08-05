@@ -3,7 +3,7 @@ import {
   Table,
   Text,
 } from "@mantine/core";
-import type { AdminDeviceSortKey, AdminFilterOptions } from "@/admin/adminService";
+import type { AdminDeviceSortKey } from "@/admin/adminService";
 import { AdminDeviceRow } from "@/admin/components/AdminDeviceRow";
 import { DevicesTabHeader } from "@/admin/components/DevicesTabHeader";
 import { AdminTabLayout } from "@/admin/components/AdminTabLayout";
@@ -17,13 +17,9 @@ import {
   buildSerialOptions,
 } from "@/admin/filterOptions";
 import { useAdminDevicesPage } from "@/admin/hooks/useAdminDevicesPage";
+import { useAdminFilterOptions } from "@/admin/hooks/useAdminFilterOptions";
 import { paginationMeta } from "@/utils/pagination";
 import type { SortDirection } from "@/utils/sort";
-
-interface DevicesTabProps {
-  filterOptions: AdminFilterOptions;
-  onRefreshFilters?: () => void;
-}
 
 const DEVICE_COLUMNS: { key: AdminDeviceSortKey; label: string }[] = [
   { key: "serialNumber", label: "Serial Number" },
@@ -33,9 +29,11 @@ const DEVICE_COLUMNS: { key: AdminDeviceSortKey; label: string }[] = [
   { key: "lastHumidity", label: "Humidity" },
   { key: "lastBattery", label: "Battery" },
   { key: "lastSeenAt", label: "Last Seen" },
+  { key: "firmwareVersion", label: "Firmware" },
 ];
 
-export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps) {
+export function DevicesTab() {
+  const { filterOptions, refresh: refreshFilterOptions } = useAdminFilterOptions();
   const [selectedSerial, setSelectedSerial] = useState<string | null>(null);
   const [selectedOwner, setSelectedOwner] = useState<string | null>(null);
   const [selectedPlant, setSelectedPlant] = useState<string | null>(null);
@@ -70,7 +68,7 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
 
   function handleRefresh() {
     void refresh();
-    void onRefreshFilters?.();
+    void refreshFilterOptions();
   }
 
   function handleSort(key: string) {
@@ -121,7 +119,7 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
 
   return (
     <AdminTabLayout header={header} footer={footer}>
-      <Table.ScrollContainer minWidth={700}>
+      <Table.ScrollContainer minWidth={900}>
         <Table verticalSpacing="sm">
           <Table.Thead>
             <Table.Tr>
@@ -145,7 +143,7 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
               />
             ) : items.length === 0 ? (
               <Table.Tr>
-                <Table.Td colSpan={7}>
+                <Table.Td colSpan={DEVICE_COLUMNS.length}>
                   <Text ta="center" c="dimmed" py="xl" size="sm">
                     {hasActiveFilters
                       ? "No devices match your filters."
@@ -155,7 +153,11 @@ export function DevicesTab({ filterOptions, onRefreshFilters }: DevicesTabProps)
               </Table.Tr>
             ) : (
               items.map((device) => (
-                <AdminDeviceRow key={device.id} device={device} />
+                <AdminDeviceRow
+                  key={device.id}
+                  device={device}
+                  onOverrideCleared={() => void refresh()}
+                />
               ))
             )}
           </Table.Tbody>

@@ -2,22 +2,37 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/render';
 import { DevicesTab } from '@/admin/components/DevicesTab';
-import type { AdminDevice, AdminFilterOptions } from '@/admin/adminService';
+import type { AdminDevice } from '@/admin/adminService';
 import { ADMIN_PAGE_SIZE } from '@/admin/constants';
 
 const mockRefresh = vi.fn();
+const mockRefreshFilterOptions = vi.fn();
 const mockUseAdminDevicesPage = vi.fn();
 
 vi.mock('@/admin/hooks/useAdminDevicesPage', () => ({
   useAdminDevicesPage: (...args: unknown[]) => mockUseAdminDevicesPage(...args),
 }));
 
-const filterOptions: AdminFilterOptions = {
-  serials: ['SN-001', 'SN-002'],
-  owners: ['alice@example.com', 'bob@example.com'],
-  plants: ['Monstera', 'Fern'],
-  hasUnassignedOwner: false,
-  hasUnassignedPlant: false,
+vi.mock('@/admin/hooks/useAdminFilterOptions', () => ({
+  useAdminFilterOptions: () => ({
+    filterOptions: {
+      serials: ['SN-001', 'SN-002'],
+      owners: ['alice@example.com', 'bob@example.com'],
+      plants: ['Monstera', 'Fern'],
+      hasUnassignedOwner: false,
+      hasUnassignedPlant: false,
+    },
+    loading: false,
+    refresh: mockRefreshFilterOptions,
+  }),
+}));
+
+const firmwareDefaults = {
+  firmwareVersion: null as number | null,
+  firmwareBoard: null as string | null,
+  firmwareReportedAt: null as string | null,
+  firmwareOverrideReleaseId: null as number | null,
+  firmwareOverrideVersion: null as number | null,
 };
 
 const devices: AdminDevice[] = [
@@ -31,6 +46,7 @@ const devices: AdminDevice[] = [
     lastHumidity: 55,
     lastBattery: 80,
     lastSeenAt: '2026-07-06T08:00:00Z',
+    ...firmwareDefaults,
   },
   {
     id: 2,
@@ -42,6 +58,7 @@ const devices: AdminDevice[] = [
     lastHumidity: 40,
     lastBattery: 60,
     lastSeenAt: '2026-07-05T08:00:00Z',
+    ...firmwareDefaults,
   },
 ];
 
@@ -85,7 +102,7 @@ describe('Admin DevicesTab', () => {
   });
 
   it('renders device rows', () => {
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     expect(screen.getByText('All Devices')).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'SN-001' })).toBeInTheDocument();
@@ -95,7 +112,7 @@ describe('Admin DevicesTab', () => {
 
   it('requests devices filtered by serial', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     expect(mockUseAdminDevicesPage).toHaveBeenCalledWith(
       expect.objectContaining({ serialNumber: null }),
@@ -110,7 +127,7 @@ describe('Admin DevicesTab', () => {
 
   it('requests devices filtered by owner', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     await selectComboboxOption(user, 1, 'alice@example.com');
 
@@ -121,7 +138,7 @@ describe('Admin DevicesTab', () => {
 
   it('requests devices filtered by plant', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     await selectComboboxOption(user, 2, 'Fern');
 
@@ -139,21 +156,18 @@ describe('Admin DevicesTab', () => {
       currentPage: 1,
     });
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     expect(screen.getByText('No devices registered.')).toBeInTheDocument();
   });
 
   it('calls refresh when refresh button is clicked', async () => {
     const user = userEvent.setup();
-    const mockRefreshFilters = vi.fn();
-    renderWithProviders(
-      <DevicesTab filterOptions={filterOptions} onRefreshFilters={mockRefreshFilters} />,
-    );
+    renderWithProviders(<DevicesTab />);
 
     await user.click(screen.getByRole('button', { name: 'Refresh devices' }));
     expect(mockRefresh).toHaveBeenCalledOnce();
-    expect(mockRefreshFilters).toHaveBeenCalledOnce();
+    expect(mockRefreshFilterOptions).toHaveBeenCalledOnce();
   });
 
   it('shows loading skeletons', () => {
@@ -165,7 +179,7 @@ describe('Admin DevicesTab', () => {
       currentPage: 1,
     });
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     expect(screen.queryByRole('cell', { name: 'SN-001' })).not.toBeInTheDocument();
     expect(screen.getByText('Loading…')).toBeInTheDocument();
@@ -182,7 +196,7 @@ describe('Admin DevicesTab', () => {
       currentPage: query.page,
     }));
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     await selectComboboxOption(user, 2, 'Fern');
 
@@ -205,7 +219,7 @@ describe('Admin DevicesTab', () => {
       currentPage: 1,
     });
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     expect(screen.getByText('Unassigned')).toBeInTheDocument();
     expect(screen.getAllByText('—').length).toBeGreaterThan(0);
@@ -220,7 +234,7 @@ describe('Admin DevicesTab', () => {
       currentPage: query.page,
     }));
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     expect(screen.getByText(`Showing 1–${ADMIN_PAGE_SIZE} of ${ADMIN_PAGE_SIZE + 5}`)).toBeInTheDocument();
   });
@@ -235,7 +249,7 @@ describe('Admin DevicesTab', () => {
       currentPage: query.page,
     }));
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     await user.click(screen.getByRole('button', { name: '2' }));
 
@@ -257,7 +271,7 @@ describe('Admin DevicesTab', () => {
       currentPage: 1,
     });
 
-    renderWithProviders(<DevicesTab filterOptions={filterOptions} />);
+    renderWithProviders(<DevicesTab />);
 
     await user.click(screen.getByRole('button', { name: 'Sort by Serial Number' }));
 
@@ -265,4 +279,36 @@ describe('Admin DevicesTab', () => {
       expect.objectContaining({ sortKey: 'serialNumber', sortDir: 'asc', page: 1 }),
     );
   });
+
+  it('renders the Firmware column and reported version', () => {
+    mockUseAdminDevicesPage.mockReturnValue({
+      items: [
+        sampleDevice({
+          firmwareVersion: 3,
+          firmwareBoard: 'esp32c6',
+        }),
+      ],
+      totalCount: 1,
+      loading: false,
+      refresh: mockRefresh,
+      currentPage: 1,
+    });
+
+    renderWithProviders(<DevicesTab />);
+
+    expect(screen.getByRole('button', { name: 'Sort by Firmware' })).toBeInTheDocument();
+    expect(screen.getByText('v3 (esp32c6)')).toBeInTheDocument();
+  });
+
+  it('requests firmware version sort from the server', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<DevicesTab />);
+
+    await user.click(screen.getByRole('button', { name: 'Sort by Firmware' }));
+
+    expect(mockUseAdminDevicesPage).toHaveBeenLastCalledWith(
+      expect.objectContaining({ sortKey: 'firmwareVersion', sortDir: 'asc', page: 1 }),
+    );
+  });
 });
+

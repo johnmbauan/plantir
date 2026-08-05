@@ -40,8 +40,8 @@
 #define BATTERY_VOLTAGE_MAX 4.2f  // LiPo full charge
 
 inline void initBatteryAdc() {
-  static bool initialized = false;
-  if (initialized) return;
+  static bool batteryAdcInitialized = false;
+  if (batteryAdcInitialized) return;
   analogReadResolution(12);
 #if defined(CONFIG_IDF_TARGET_ESP32C6)
   // GPIO0 must be an input for the divider to drive the ADC pin.  If any code
@@ -49,7 +49,7 @@ inline void initBatteryAdc() {
   pinMode(BAT_ADC_PIN, INPUT);
   analogSetPinAttenuation(BAT_ADC_PIN, ADC_11db);
 #endif
-  initialized = true;
+  batteryAdcInitialized = true;
 }
 
 // Average ADC pin voltage in millivolts (before the 2× divider correction).
@@ -63,9 +63,9 @@ inline uint32_t readBatteryAdcPinMilliVolts() {
   pinMode(BAT_ADC_PIN, INPUT);
   delay(BATTERY_ADC_SETTLE_MS);
 #endif
-  uint32_t mvSum = 0;
-  for (int i = 0; i < BATTERY_ADC_SAMPLES; i++) {
-    mvSum += analogReadMilliVolts(BAT_ADC_PIN);
+  uint32_t milliVoltsSum = 0;
+  for (int sampleIndex = 0; sampleIndex < BATTERY_ADC_SAMPLES; sampleIndex++) {
+    milliVoltsSum += analogReadMilliVolts(BAT_ADC_PIN);
     if (BATTERY_ADC_SAMPLE_DELAY_MS > 0) {
       delay(BATTERY_ADC_SAMPLE_DELAY_MS);
     }
@@ -73,7 +73,7 @@ inline uint32_t readBatteryAdcPinMilliVolts() {
 #if BAT_HAS_CTRL_PIN
   digitalWrite(BAT_CTRL_PIN, LOW);
 #endif
-  return mvSum / BATTERY_ADC_SAMPLES;
+  return milliVoltsSum / BATTERY_ADC_SAMPLES;
 }
 
 // Returns the battery voltage in volts (e.g. 3.7).
@@ -82,9 +82,13 @@ inline float readBatteryVoltage() {
 }
 
 // Returns the estimated battery charge level as a percentage (0-100).
-inline int batteryPercentFromVoltage(float voltage) {
-  int pct = (int)((voltage - BATTERY_VOLTAGE_MIN) / (BATTERY_VOLTAGE_MAX - BATTERY_VOLTAGE_MIN) * 100.0f);
-  return constrain(pct, 0, 100);
+inline int batteryPercentFromVoltage(float batteryVoltage) {
+  const int batteryPercent = (int)(
+    (batteryVoltage - BATTERY_VOLTAGE_MIN)
+    / (BATTERY_VOLTAGE_MAX - BATTERY_VOLTAGE_MIN)
+    * 100.0f
+  );
+  return constrain(batteryPercent, 0, 100);
 }
 
 inline int readBatteryPercent() {

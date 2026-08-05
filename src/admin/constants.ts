@@ -9,4 +9,4 @@ export const LOG_LEVEL_COLOR: Record<string, string> = {
   info: "blue",
 };
 
-export type AdminTab = "devices" | "logs";
+export type AdminTab = "devices" | "logs" | "firmware";

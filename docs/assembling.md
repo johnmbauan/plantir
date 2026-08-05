@@ -1,41 +1,39 @@
-# Assembling all the components
+# Assembling and setting up a Plantir device
 
-This guide provides detailed, step-by-step instructions for assembling all the components needed to build your Plantir sensor device.
+Step-by-step guide to build a humidity sensor and register it in the Plantir app.
 
-## Step 1: Hardware Connection
-Connect the humidity sensor to the ESP32 board. Please follow the specific instructions for your device, as the wiring depends entirely on the hardware components you are using.
+## Step 1: Hardware connection
 
-## Step 2: Firmware Upload
-Upload the Arduino sketch to the ESP32 board. Pay close attention during this step: make sure to read the README file located inside the Plantir repository for notes and guidance on how to properly use the specific ESP32 model you are currently deploying.
+Connect the humidity sensor to the ESP32 board. Wiring depends on your board; for FireBeetle 2 ESP32-C5/C6 see [Electronics](./electronics.md).
+
+## Step 2: Firmware upload
+
+Upload the `humidity_remote_controlled` sketch with the [Arduino IDE](https://www.arduino.cc/en/software/). Follow the board-specific notes in the [README](../README.md) and [Electronics](./electronics.md).
+
+For FireBeetle 2 ESP32-C5/C6, use **Partition Scheme → Minimal SPIFFS (1.9MB APP with OTA)** so the device can receive future firmware updates over the air (HTTPS) after this one-time USB flash. Later release steps are in [Firmware releases](./firmware-releases.md).
 
 > **ESP32-C6 — entering download mode:**
-> Before the Arduino IDE can flash the sketch, the board must be put into download mode manually.
-> 1. Press boot and reset button together and release them immediately
+> Before the Arduino IDE can flash the sketch, put the board in download mode manually:
+> 1. Press the boot and reset buttons together, then release them immediately.
 >
-> The board is now in download mode. Start the upload from the Arduino IDE immediately.
+> Start **Sketch → Upload** right away.
 
-## Step 3: Portal Registration
-Register the device on the Plantir portal under the **Plants Center** section. For the Device ID, use the unique identifier that is printed in the Arduino IDE serial logs when the sketch runs after the upload of the sketch itself.
+## Step 3: Register the device
 
-## Step 4: Wi-Fi and Supabase Configuration
-The ESP32 sketch is programmed to spin up a temporary Wi-Fi network upon initialization. Connect to this temporary network and input the required configuration details:
-- The SSID and password of the actual Wi-Fi network the ESP32 should connect to.
-- The Supabase URL and API Key (these credentials can be found either in the Plantir repository README or within its local environment file).
+In the Plantir web app, open **Plants Center → Devices** and follow the **Register new device** wizard.
 
-## Step 5: Sensor Calibration
-Calibrate the humidity sensor by restarting the ESP32 so it performs an execution cycle. Look at the logs to read the raw data:
-- **Air Value**: Leave the sensor out in the air without touching it. Note the reading from the Arduino IDE logs, enter it as the "air value" in the device settings on the Plantir portal.
-- **Water Value**: Restart the device again, this time with the sensor immersed in water up to where it is allowed to be immersed. Note the reading from the logs, enter it as the "water value" in the portal, and save your settings.
-- **Reading frequency**: Set the appropriate reading frequency according to the needs of the plant (a suggested value is between 8 and 24 hours).
+## Step 4: Calibrate the sensor
 
-> **⚠️ Warning:**
-> The air value and water value **should be very different** (as an example, you might see values like ~2500 for air and ~880 for water).
-> If these two readings are **the same or their difference is less than 100**, there is likely a problem with the sensor, the wiring, or how the sensor is connected to the ESP32 board. Double-check the sensor's connections and make sure it is functioning properly before proceeding.
+Still in the Plantir web app, follow the **Calibrate sensor** wizard (offered at the end of registration, or later from the Devices list / device settings).
 
+## Step 5: Reporting interval and plant assignment
 
-## Step 6: Power Connection
-Connect the battery to the ESP32 board. Depending on your battery pack and your specific ESP32 model, you may need to check the polarity. For example, if you are using the ESP FireBeetle, which comes with a JST PH 2.0 battery connector, and your rechargeable battery also has a male JST PH 2.0 connector, you might need to cut the battery wires and invert them to match the correct polarity of the board's female connector.
+In the device settings (Plants Center), set how often the device should wake and measure (commonly between 8 and 24 hours) and assign a plant if you skipped that during registration.
 
-## Step 7: Final Assembly
-Place all the connected electronics and components into the case, mount everything securely, and close it up.
-The setup is now complete!
+## Step 6: Power connection
+
+Connect the battery to the ESP32 board. Check polarity for your pack and board. For example, FireBeetle boards use a JST PH 2.0 battery connector; some batteries ship with reversed polarity and need the wires swapped to match the board.
+
+## Step 7: Final assembly
+
+Place the electronics in the case, mount them securely, and close it. Setup is complete.

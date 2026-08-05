@@ -9,28 +9,32 @@ inline bool isConnectedToWifi() {
 }
 
 // Connect to Wi-Fi using the provided SSID and password.
-inline bool connectToWifi(const String& ssid, const String& password, const String& deviceName = "ESP32-Sensore") {
-  Serial.println("Attempting to connect to " + ssid + " as " + deviceName);
-  WiFi.setHostname(deviceName.c_str());
-  WiFi.begin(ssid.c_str(), password.c_str());
+inline bool connectToWifi(
+  const String& wifiSsid,
+  const String& wifiPassword,
+  const String& deviceHostname = "ESP32-Sensore"
+) {
+  Serial.println("Attempting to connect to " + wifiSsid + " as " + deviceHostname);
+  WiFi.setHostname(deviceHostname.c_str());
+  WiFi.begin(wifiSsid.c_str(), wifiPassword.c_str());
 
-  int attempts = 0;
-  const int maxAttempts = 20;
+  int connectAttemptCount = 0;
+  const int maxConnectAttempts = 20;
 
-  while (!isConnectedToWifi() && attempts < maxAttempts) {
+  while (!isConnectedToWifi() && connectAttemptCount < maxConnectAttempts) {
     delay(1000);
     Serial.print(".");
-    attempts++;
+    connectAttemptCount++;
   }
 
   Serial.println(""); // new line
   if (!isConnectedToWifi()) {
     Serial.println("Wi-FI connection failed 😞");
     return false;
-  } else {
-    Serial.print("Connected to Wi-FI 😁!");
-    return true;
   }
+
+  Serial.print("Connected to Wi-FI 😁!");
+  return true;
 }
 
 /**
@@ -46,20 +50,17 @@ inline bool connectToWifi(const String& ssid, const String& password, const Stri
  * @return false if failed to connect to Wi-Fi.
  */
 inline bool connectToWifiManager(const String& hotspotName) {
-  WiFiManager wm;
-  wm.setConfigPortalTimeout(600);
-  wm.autoConnect(hotspotName.c_str());
+  WiFiManager wifiManager;
+  wifiManager.setConfigPortalTimeout(600);
+  wifiManager.autoConnect(hotspotName.c_str());
 
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("Failed to connect to Wi-Fi 😭");
     return false;
   }
 
-
   Serial.println("Connected to Wi-Fi 😁!");
   return true;
 }
-
-
 
 #endif

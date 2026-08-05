@@ -8,14 +8,14 @@ struct AppConfig {
 };
 
 AppConfig loadConfig();
-void saveConfig(const AppConfig& config);
+void saveConfig(const AppConfig& appConfig);
 void clearConfig();
 
 // Pairing token is kept until the device successfully loads remote config
 // (proving registration completed), so a failed first attempt can retry
 // after deep-sleep / restart without re-running the captive portal.
 String loadPairingToken();
-void savePairingToken(const String& token);
+void savePairingToken(const String& pairingToken);
 void clearPairingToken();
 
 // One-shot guard: after a failed post-portal registration we force ESP.restart()

@@ -25,9 +25,13 @@ Some breadboards have, in addition to the hole layout supplementary rows of hole
 
 [Board](#board) • Humidity Sensor • Charge-Boost module • Battery
 
-### Board
+Current production devices use **FireBeetle 2 ESP32-C5** or **FireBeetle 2 ESP32-C6** (see board sections below). Older notes for Arduino Nano ESP32 and DIYMore boards are kept for reference.
 
-The project uses the Arduino `Nano ESP32` board, a compact development board based on the u-blox NORA-W106-10B module, which contains an ESP32-S3 processor. It is the first Arduino board fully based on an ESP32 chip as its main processor.
+For assembling hardware and registering/calibrating a device in the app, see [Assembling](./assembling.md). For building and rolling out new device firmware, see [Firmware releases](./firmware-releases.md).
+
+### Board (legacy: Arduino Nano ESP32)
+
+Earlier prototypes used the Arduino `Nano ESP32` board, a compact development board based on the u-blox NORA-W106-10B module (ESP32-S3).
 
 #### Processor and memory
 
@@ -110,6 +114,7 @@ Connections with the Board:
 - **Tools → Flash Mode**: `QIO` — required for the C5; using DIO causes a checksum failure at boot (`Checksum failure. Calculated 0xa0 stored 0xff`) and the sketch won't run
 - **Tools → Upload Speed**: `460800`
 - **Tools → Flash Size**: `4MB`
+- **Tools → Partition Scheme**: `Minimal SPIFFS (1.9MB APP with OTA / 190KB SPIFFS)` — **required for remote firmware updates** (over-the-air). The default ~1.25MB app slot is too small for this sketch once update support is included.
 
 ### Serial Monitor
 
@@ -140,7 +145,15 @@ To factory-reset saved WiFi and Supabase settings: press **RST**, then within a 
 
 ## Using [FireBeetle 2 ESP32-C6](https://wiki.dfrobot.com/dfr1075/) with Arduino IDE
 
+### Required board settings
+
+- **Tools → Board**: `ESP32C6 Dev Module` (or the FireBeetle C6 board entry if present)
+- **Tools → Flash Size**: `4MB` (onboard flash on the FireBeetle 2 ESP32-C6 / ESP32-C6FH4)
+- **Tools → Partition Scheme**: `Minimal SPIFFS (1.9MB APP with OTA / 190KB SPIFFS)` — **required for remote firmware updates** (over-the-air)
+- **Tools → USB CDC On Boot**: `Enabled` when using the built-in USB serial
+
 ### Factory reset
 
 To factory-reset saved WiFi and Supabase settings: press **RST**, then within a few seconds hold **BOOT** for 3 seconds until the `HumiditySensor-Setup` WiFi network appears. Do not hold BOOT while pressing RST (that enters flash mode for uploading sketches).
 
+Remote firmware updates (over the air) for both FireBeetle boards are documented in [Firmware releases](./firmware-releases.md).

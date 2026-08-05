@@ -1,9 +1,9 @@
 import { Box, Paper, Tabs, Title } from "@mantine/core";
 import { useSearchParams } from "react-router-dom";
 import { DevicesTab } from "@/admin/components/DevicesTab";
+import { FirmwareTab } from "@/admin/components/FirmwareTab";
 import { LogsTab } from "@/admin/components/LogsTab";
 import type { AdminTab } from "@/admin/constants";
-import { useAdminFilterOptions } from "@/admin/hooks/useAdminFilterOptions";
 import classes from "@/admin/AdminPage.module.css";
 
 const cardStyle = {
@@ -17,11 +17,11 @@ const cardStyle = {
 } as const;
 
 function parseTab(value: string | null): AdminTab {
-  return value === "logs" ? "logs" : "devices";
+  if (value === "logs" || value === "firmware") return value;
+  return "devices";
 }
 
 export default function AdminPage() {
-  const { filterOptions, refresh: refreshFilterOptions } = useAdminFilterOptions();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = parseTab(searchParams.get("tab"));
 
@@ -42,6 +42,7 @@ export default function AdminPage() {
         <Tabs
           value={tab}
           onChange={handleTabChange}
+          keepMounted={false}
           classNames={{
             list: classes.list,
             tab: classes.tab,
@@ -55,35 +56,38 @@ export default function AdminPage() {
             <Tabs.List>
               <Tabs.Tab value="devices">Devices</Tabs.Tab>
               <Tabs.Tab value="logs">Logs</Tabs.Tab>
+              <Tabs.Tab value="firmware">Firmware</Tabs.Tab>
             </Tabs.List>
           </Box>
 
           <Tabs.Panel
             value="devices"
-            keepMounted={false}
             px="lg"
             pb="lg"
             pt="md"
             style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}
           >
-            <DevicesTab
-              filterOptions={filterOptions}
-              onRefreshFilters={refreshFilterOptions}
-            />
+            <DevicesTab />
           </Tabs.Panel>
 
           <Tabs.Panel
             value="logs"
-            keepMounted={false}
             px="lg"
             pb="lg"
             pt="md"
             style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}
           >
-            <LogsTab
-              filterOptions={filterOptions}
-              onRefreshFilters={refreshFilterOptions}
-            />
+            <LogsTab />
+          </Tabs.Panel>
+
+          <Tabs.Panel
+            value="firmware"
+            px="lg"
+            pb="lg"
+            pt="md"
+            style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}
+          >
+            <FirmwareTab />
           </Tabs.Panel>
         </Tabs>
       </Paper>

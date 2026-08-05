@@ -3,13 +3,14 @@
 #include "StorageManager.h"
 #include "WifiProvisioner.h"
 #include "ApiClient.h"
+#include "OtaUpdater.h"
 #include "SensorRunner.h"
 #include "CalibrationRunner.h"
 
 // FireBeetle 2 ESP32-C5/C6: LED_BUILTIN is GPIO15 (active HIGH per DFRobot examples).
 static void blinkBootLed() {
   pinMode(LED_BUILTIN, OUTPUT);
-  for (int i = 0; i < BOOT_LED_BLINK_COUNT; i++) {
+  for (int blinkIndex = 0; blinkIndex < BOOT_LED_BLINK_COUNT; blinkIndex++) {
     digitalWrite(LED_BUILTIN, HIGH);
     delay(BOOT_LED_ON_MS);
     digitalWrite(LED_BUILTIN, LOW);
@@ -25,10 +26,10 @@ static void bootLedOff() {
 // Logs the reason to Serial (and to the server when config is available), powers
 // off the sensor, and enters deep sleep for ERROR_SLEEP_SEC seconds.
 // Marked [[noreturn]] so the compiler knows execution never continues past this call.
-[[noreturn]] static void goToSleep(const String& reason, const AppConfig* config = nullptr) {
+[[noreturn]] static void goToSleep(const String& reason, const AppConfig* appConfig = nullptr) {
   Serial.println("[ERROR] " + reason);
-  if (config != nullptr) {
-    sendDeviceLog("error", reason, *config);
+  if (appConfig != nullptr) {
+    sendDeviceLog("error", reason, *appConfig);
   }
   if (powerPin >= 0) digitalWrite(powerPin, LOW);
   bootLedOff();
@@ -51,23 +52,24 @@ void setup() {
   Serial.println("I'm starting.... ");
   Serial.println("Device ID: " + getDeviceId());
 
-  AppConfig config;
+  AppConfig appConfig;
   String pairingToken;
-  if (!connectAndProvision(config, pairingToken)) {
+  if (!connectAndProvision(appConfig, pairingToken)) {
     // No network — can't log remotely; just sleep and retry later.
     goToSleep("WiFi or provisioning failed.");
   }
 
-  auto configLooksValid = [](const DynamicJsonDocument& doc) {
-    return !doc.isNull() && doc.containsKey("deviceId");
+  auto deviceSyncPayloadLooksValid = [](const DynamicJsonDocument& deviceSyncPayload) {
+    return !deviceSyncPayload.isNull() && deviceSyncPayload.containsKey("deviceId");
   };
 
   if (!pairingToken.isEmpty()) {
-    registerDevice(pairingToken, config);
+    registerDevice(pairingToken, appConfig);
   }
 
-  DynamicJsonDocument remoteConfig = fetchRemoteConfig(config);
-  if (!configLooksValid(remoteConfig)) {
+  // One RPC: humidity config + firmware target + report local FIRMWARE_VERSION.
+  DynamicJsonDocument deviceSyncPayload = fetchDeviceSyncPayload(appConfig);
+  if (!deviceSyncPayloadLooksValid(deviceSyncPayload)) {
     // Post-portal DNS/network is often broken; one clean STA reboot usually
     // fixes it. Only restart once so a persistent failure cannot loop.
     if (!pairingToken.isEmpty() && !registrationRestartUsed()) {
@@ -83,7 +85,7 @@ void setup() {
       pairingToken.isEmpty()
         ? "No remote configuration found for this device."
         : "Device not registered yet. Will retry after sleep.",
-      &config
+      &appConfig
     );
   }
 
@@ -91,27 +93,42 @@ void setup() {
   clearPairingToken();
   clearRegistrationRestartFlag();
 
-  const bool inCalibrationMode = !remoteConfig["calibrationModeStartedAt"].isNull();
+  // Confirm the running image before deep sleep so OTA rollback does not undo it.
+  markFirmwareValid();
+
+  const FirmwareTarget firmwareTarget = firmwareTargetFromSyncPayload(deviceSyncPayload);
+  if (firmwareTarget.valid
+      && firmwareTarget.version != FIRMWARE_VERSION
+      && firmwareTarget.binaryUrl.length() > 0) {
+    Serial.println(
+      "Firmware update available: local v" + String(FIRMWARE_VERSION)
+      + " → remote v" + String(firmwareTarget.version)
+    );
+    downloadAndApplyFirmwareUpdate(firmwareTarget.binaryUrl, appConfig);
+    // On success downloadAndApplyFirmwareUpdate restarts and never returns.
+  }
+
+  const bool inCalibrationMode = !deviceSyncPayload["calibrationModeStartedAt"].isNull();
   if (inCalibrationMode) {
-    runCalibrationLoop(remoteConfig, config);
+    runCalibrationLoop(deviceSyncPayload, appConfig);
     // Clear the flag immediately so stale state can never re-trigger calibration
     // on the next wake, even if the web app fails to clear it.
-    clearCalibrationMode(remoteConfig["deviceId"], config);
+    clearCalibrationMode(deviceSyncPayload["deviceId"], appConfig);
     // Give the user 2 minutes to place the device back in the soil before
     // taking the first real reading post-calibration.
     Serial.println("Calibration complete. Waiting 2 mins for device to be re-planted...");
     delay(120000);
-    // Re-fetch so checkHumidity uses the newly saved airValue/waterValue.
-    remoteConfig = fetchRemoteConfig(config);
-    if (remoteConfig.isNull() || !remoteConfig.containsKey("deviceId")) {
-      goToSleep("Failed to re-fetch config after calibration.", &config);
+    // Re-sync so measureAndSendHumidityReadings uses the newly saved airValue/waterValue.
+    deviceSyncPayload = fetchDeviceSyncPayload(appConfig);
+    if (!deviceSyncPayloadLooksValid(deviceSyncPayload)) {
+      goToSleep("Failed to re-fetch config after calibration.", &appConfig);
     }
   }
 
   // Always take a normal reading: first soil reading after calibration, or regular periodic reading.
-  checkHumidity(remoteConfig, config);
+  measureAndSendHumidityReadings(deviceSyncPayload, appConfig);
 
-  const int sleepDurationSeconds = remoteConfig["sleepDurationSeconds"] | DEFAULT_SLEEP_DURATION;
+  const int sleepDurationSeconds = deviceSyncPayload["sleepDurationSeconds"] | DEFAULT_SLEEP_DURATION;
   Serial.println("Entering in deep sleep for " + String(sleepDurationSeconds) + " seconds... 😴");
 
   // Power off the sensor before sleeping to avoid draining the battery (C5 only).

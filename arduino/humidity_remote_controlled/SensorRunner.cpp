@@ -3,19 +3,26 @@
 #include "Config.h"
 #include <HumiditySensorUtils.h>
 
-void checkHumidity(const DynamicJsonDocument& config, const AppConfig& appConfig) {
-  const int airValue   = config["airValue"];
-  const int waterValue = config["waterValue"];
+void measureAndSendHumidityReadings(
+  const DynamicJsonDocument& deviceSyncPayload,
+  const AppConfig& appConfig
+) {
+  const int airCalibrationValue = deviceSyncPayload["airValue"];
+  const int waterCalibrationValue = deviceSyncPayload["waterValue"];
 
-  if (airValue == waterValue) {
+  if (airCalibrationValue == waterCalibrationValue) {
     Serial.println("Invalid sensor calibration values. Check the configuration.");
     return;
   }
 
-  const int   minHumidityThreshold = config["minHumidityThreshold"] | 5; // Default to 5%
-  const int   deviceId             = config["deviceId"];
-  const float avgHumidity          = readAvgHumidityPercent(sensorPin, airValue, waterValue, readsPerRun);
+  const int deviceId = deviceSyncPayload["deviceId"];
+  const float averageHumidityPercent = readAvgHumidityPercent(
+    sensorPin,
+    airCalibrationValue,
+    waterCalibrationValue,
+    readsPerRun
+  );
 
-  sendHumidityReading(avgHumidity, deviceId, appConfig);
+  sendHumidityReading(averageHumidityPercent, deviceId, appConfig);
   sendBatteryReading(deviceId, appConfig);
 }

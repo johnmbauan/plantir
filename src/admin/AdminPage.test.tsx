@@ -6,12 +6,6 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import AdminPage from './AdminPage';
 
-const refresh = vi.fn();
-
-vi.mock('@/admin/hooks/useAdminFilterOptions', () => ({
-  useAdminFilterOptions: vi.fn(),
-}));
-
 vi.mock('@/admin/components/DevicesTab', () => ({
   DevicesTab: () => <div>Admin devices tab</div>,
 }));
@@ -20,9 +14,9 @@ vi.mock('@/admin/components/LogsTab', () => ({
   LogsTab: () => <div>Admin logs tab</div>,
 }));
 
-import { useAdminFilterOptions } from '@/admin/hooks/useAdminFilterOptions';
-
-const mockedUseAdminFilterOptions = vi.mocked(useAdminFilterOptions);
+vi.mock('@/admin/components/FirmwareTab', () => ({
+  FirmwareTab: () => <div>Admin firmware tab</div>,
+}));
 
 function createAdminPageRouter(route = '/admin') {
   return createMemoryRouter(
@@ -44,17 +38,6 @@ function renderAdminPage(router: ReturnType<typeof createAdminPageRouter>) {
 describe('AdminPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockedUseAdminFilterOptions.mockReturnValue({
-      filterOptions: {
-        serials: ['SN-001'],
-        owners: ['a@example.com'],
-        plants: ['Monstera'],
-        hasUnassignedOwner: false,
-        hasUnassignedPlant: false,
-      },
-      loading: false,
-      refresh,
-    });
   });
 
   it('renders admin portal with devices tab by default', () => {
@@ -62,6 +45,8 @@ describe('AdminPage', () => {
 
     expect(screen.getByRole('heading', { name: 'Admin Portal' })).toBeInTheDocument();
     expect(screen.getByText('Admin devices tab')).toBeInTheDocument();
+    expect(screen.queryByText('Admin logs tab')).not.toBeInTheDocument();
+    expect(screen.queryByText('Admin firmware tab')).not.toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Devices', selected: true })).toBeInTheDocument();
   });
 
@@ -73,6 +58,7 @@ describe('AdminPage', () => {
     await user.click(screen.getByRole('tab', { name: 'Logs' }));
 
     expect(screen.getByText('Admin logs tab')).toBeInTheDocument();
+    expect(screen.queryByText('Admin devices tab')).not.toBeInTheDocument();
     expect(memoryRouter.state.location.search).toBe('?tab=logs');
   });
 
@@ -80,7 +66,29 @@ describe('AdminPage', () => {
     renderAdminPage(createAdminPageRouter('/admin?tab=logs'));
 
     expect(screen.getByText('Admin logs tab')).toBeInTheDocument();
+    expect(screen.queryByText('Admin devices tab')).not.toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Logs', selected: true })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Devices', selected: false })).toBeInTheDocument();
+  });
+
+  it('switches to firmware tab and updates the URL', async () => {
+    const user = userEvent.setup();
+    const memoryRouter = createAdminPageRouter('/admin');
+    renderAdminPage(memoryRouter);
+
+    await user.click(screen.getByRole('tab', { name: 'Firmware' }));
+
+    expect(screen.getByText('Admin firmware tab')).toBeInTheDocument();
+    expect(screen.queryByText('Admin devices tab')).not.toBeInTheDocument();
+    expect(memoryRouter.state.location.search).toBe('?tab=firmware');
+  });
+
+  it('opens the firmware tab when the URL includes tab=firmware', () => {
+    renderAdminPage(createAdminPageRouter('/admin?tab=firmware'));
+
+    expect(screen.getByText('Admin firmware tab')).toBeInTheDocument();
+    expect(screen.queryByText('Admin devices tab')).not.toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Firmware', selected: true })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Devices', selected: false })).toBeInTheDocument();
   });
 });
