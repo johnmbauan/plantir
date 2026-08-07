@@ -42,19 +42,26 @@ describe('WeatherCityContext', () => {
     localStorage.clear();
   });
 
-  it('restores city from localStorage and loads forecast without writing weather location', async () => {
+  it('restores city from localStorage without loading forecast until ensured', async () => {
     const storedCity = { name: 'Rome, Lazio, Italy', lat: 41.89, lng: 12.49 };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(storedCity));
 
     const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current.city).toEqual(storedCity);
+    await waitFor(() => expect(result.current.city).toEqual(storedCity));
     expect(result.current.locationSource).toBe('stored');
-    expect(result.current.forecast).toHaveLength(mockForecastResponse.daily.time.length);
-    expect(result.current.error).toBeNull();
+    expect(result.current.forecast).toBeNull();
+    expect(result.current.loading).toBe(false);
     expect(mockUpdateWeatherLocation).not.toHaveBeenCalled();
     expect(mockRecordClientEvent).not.toHaveBeenCalled();
+
+    act(() => {
+      result.current.ensureForecast();
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.forecast).toHaveLength(mockForecastResponse.daily.time.length);
+    expect(result.current.error).toBeNull();
   });
 
   it('selectCity syncs weather location and records weather_city_set without notification_settings_saved', async () => {
@@ -116,9 +123,80 @@ describe('WeatherCityContext', () => {
 
     const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
+    await waitFor(() => expect(result.current.city).toEqual(storedCity));
+
+    act(() => {
+      result.current.ensureForecast();
+    });
+
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe('Could not load forecast.');
     expect(result.current.forecast).toBeNull();
+  });
+
+  it('does not fetch forecast when ensureForecast is called without a city', () => {
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+
+    act(() => {
+      result.current.ensureForecast();
+    });
+
+    expect(result.current.loading).toBe(false);
+    expect(result.current.forecast).toBeNull();
+  });
+
+  it('loads forecast only once for the same city', async () => {
+    let forecastCalls = 0;
+    server.use(
+      http.get('https://api.open-meteo.com/v1/forecast', () => {
+        forecastCalls += 1;
+        return HttpResponse.json(mockForecastResponse);
+      }),
+    );
+
+    const storedCity = { name: 'Rome, Lazio, Italy', lat: 41.89, lng: 12.49 };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(storedCity));
+
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+    await waitFor(() => expect(result.current.city).toEqual(storedCity));
+
+    act(() => {
+      result.current.ensureForecast();
+      result.current.ensureForecast();
+    });
+
+    await waitFor(() => expect(result.current.forecast).not.toBeNull());
+    expect(forecastCalls).toBe(1);
+  });
+
+  it('logs when weather location sync fails after selectCity', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockUpdateWeatherLocation.mockRejectedValueOnce(new Error('sync failed'));
+
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+
+    act(() => {
+      result.current.selectCity(mockGeocodingResults[0]);
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    await waitFor(() => expect(consoleError).toHaveBeenCalled());
+    consoleError.mockRestore();
+  });
+
+  it('logs when weather achievement event fails after selectCity', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockRecordClientEvent.mockRejectedValueOnce(new Error('achievement failed'));
+
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+
+    act(() => {
+      result.current.selectCity(mockGeocodingResults[0]);
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    await waitFor(() => expect(consoleError).toHaveBeenCalled());
+    consoleError.mockRestore();
   });
 
   it('throws when used outside WeatherCityProvider', () => {

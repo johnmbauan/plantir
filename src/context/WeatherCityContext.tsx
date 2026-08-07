@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { GeocodingResult, WeatherForecast } from "@/services/weatherService";
 import { getWeatherForecast } from "@/services/weatherService";
 import type { StoredCity, LocationSource } from "@/components/WeatherWidget/types";
@@ -14,9 +14,15 @@ interface WeatherCityContextValue {
   loading: boolean;
   error: string | null;
   selectCity: (result: GeocodingResult) => void;
+  /** Load forecast for the current city. Safe to call from weather UI only. */
+  ensureForecast: () => void;
 }
 
 const WeatherCityContext = createContext<WeatherCityContextValue | null>(null);
+
+function cityKey(city: StoredCity): string {
+  return `${city.lat},${city.lng}`;
+}
 
 export function WeatherCityProvider({ children }: { children: React.ReactNode }) {
   const [city, setCity] = useState<StoredCity | null>(null);
@@ -24,6 +30,7 @@ export function WeatherCityProvider({ children }: { children: React.ReactNode })
   const [forecast, setForecast] = useState<WeatherForecast | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const forecastAttemptKeyRef = useRef<string | null>(null);
 
   const loadForecast = useCallback(async (c: StoredCity) => {
     setLoading(true);
@@ -33,6 +40,7 @@ export function WeatherCityProvider({ children }: { children: React.ReactNode })
       setForecast(data);
     } catch {
       setError("Could not load forecast.");
+      setForecast(null);
     } finally {
       setLoading(false);
     }
@@ -45,11 +53,18 @@ export function WeatherCityProvider({ children }: { children: React.ReactNode })
       const parsed = JSON.parse(stored) as StoredCity;
       setCity(parsed);
       setLocationSource("stored");
-      void loadForecast(parsed);
     } catch {
       localStorage.removeItem(WEATHER_CITY_STORAGE_KEY);
     }
-  }, [loadForecast]);
+  }, []);
+
+  const ensureForecast = useCallback(() => {
+    if (!city) return;
+    const key = cityKey(city);
+    if (forecastAttemptKeyRef.current === key) return;
+    forecastAttemptKeyRef.current = key;
+    void loadForecast(city);
+  }, [city, loadForecast]);
 
   const selectCity = useCallback(
     (result: GeocodingResult) => {
@@ -62,6 +77,7 @@ export function WeatherCityProvider({ children }: { children: React.ReactNode })
       setCity(newCity);
       setLocationSource("manual");
       localStorage.setItem(WEATHER_CITY_STORAGE_KEY, JSON.stringify(newCity));
+      forecastAttemptKeyRef.current = cityKey(newCity);
       void loadForecast(newCity);
       void updateWeatherLocation(newCity.lat, newCity.lng).catch((err) =>
         console.error("Failed to sync weather location:", err),
@@ -75,7 +91,7 @@ export function WeatherCityProvider({ children }: { children: React.ReactNode })
 
   return (
     <WeatherCityContext.Provider
-      value={{ city, locationSource, forecast, loading, error, selectCity }}
+      value={{ city, locationSource, forecast, loading, error, selectCity, ensureForecast }}
     >
       {children}
     </WeatherCityContext.Provider>

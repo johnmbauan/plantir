@@ -79,6 +79,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
   });
 
@@ -96,6 +97,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -103,8 +105,25 @@ describe('NotificationBell', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
   });
 
-  it('calls refresh when the menu opens', async () => {
+  it('does not refresh when the menu opens and realtime is available', async () => {
     const user = userEvent.setup({ pointerEventsCheck: 0 });
+    renderBell();
+
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+    expect(mockRefresh).not.toHaveBeenCalled();
+  });
+
+  it('refreshes when the menu opens and realtime is unavailable', async () => {
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    vi.mocked(useNotifications).mockReturnValue({
+      items: [],
+      loading: false,
+      unreadCount: 0,
+      refresh: mockRefresh,
+      removeItem: mockRemoveItem,
+      clearAll: mockClearAll,
+      realtimeAvailable: false,
+    });
     renderBell();
 
     await user.click(screen.getByRole('button', { name: 'Notifications' }));
@@ -120,6 +139,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -137,6 +157,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -158,6 +179,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -188,6 +210,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -213,6 +236,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -244,6 +268,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -271,6 +296,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -288,6 +314,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -304,6 +331,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -323,6 +351,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -351,6 +380,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -374,6 +404,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();
@@ -404,6 +435,7 @@ describe('NotificationBell', () => {
       refresh: mockRefresh,
       removeItem: mockRemoveItem,
       clearAll: mockClearAll,
+      realtimeAvailable: true,
     });
 
     renderBell();

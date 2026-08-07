@@ -39,7 +39,8 @@ describe('UserMenu', () => {
     renderUserMenu();
 
     expect(await screen.findByRole('button', { name: 'Account menu' })).toBeInTheDocument();
-    expect(screen.getByText('PF')).toBeInTheDocument();
+    expect(await screen.findByText('PF')).toBeInTheDocument();
+    expect(fetchProfile).toHaveBeenCalledTimes(1);
   });
 
   it('navigates to profile from the menu', async () => {

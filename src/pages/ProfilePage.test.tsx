@@ -1,7 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, screen, waitFor } from '@/test/render';
+import { renderWithProviders, screen, waitFor, within } from '@/test/render';
+import { useProfile } from '@/context/ProfileContext';
 import ProfilePage from './ProfilePage';
+
+function ProfileContextProbe() {
+  const { nickname, avatarUrl } = useProfile();
+  return (
+    <div>
+      <span data-testid="shared-nickname">{nickname}</span>
+      <span data-testid="shared-avatar">{avatarUrl}</span>
+    </div>
+  );
+}
 
 const fetchProfile = vi.fn();
 const upsertProfile = vi.fn();
@@ -72,6 +83,42 @@ describe('ProfilePage', () => {
     });
   });
 
+  it('loads profile once through shared context', async () => {
+    renderWithProviders(<ProfilePage />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Nickname')).toHaveValue('PlantFan');
+    });
+
+    expect(fetchProfile).toHaveBeenCalledTimes(1);
+  });
+
+  it('updates shared profile context after a successful save', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(
+      <>
+        <ProfilePage />
+        <ProfileContextProbe />
+      </>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Nickname')).toHaveValue('PlantFan');
+      expect(screen.getByTestId('shared-nickname')).toHaveTextContent('PlantFan');
+    });
+
+    await user.clear(screen.getByLabelText('Nickname'));
+    await user.type(screen.getByLabelText('Nickname'), 'GreenThumb');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('shared-nickname')).toHaveTextContent('GreenThumb');
+      expect(screen.getByTestId('shared-avatar')).toHaveTextContent('https://cdn/avatar.jpg');
+    });
+    expect(fetchProfile).toHaveBeenCalledTimes(1);
+  });
+
   it('shows error when fetchProfile fails', async () => {
     const { notifications } = await import('@mantine/notifications');
     fetchProfile.mockRejectedValue(new Error('Load failed'));
@@ -117,6 +164,12 @@ describe('ProfilePage', () => {
       'src',
       'https://cdn/avatar.jpg',
     );
+
+    const dialog = screen.getByRole('dialog', { name: 'Profile photo' });
+    await user.click(within(dialog).getByRole('button'));
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: 'Profile photo' })).not.toBeInTheDocument();
+    });
   });
 
   it('does not offer photo expansion when no avatar is set', async () => {

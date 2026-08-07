@@ -6,6 +6,7 @@ import NavDrawer from "@/components/NavDrawer";
 import NotificationBell from "@/components/NotificationBell";
 import UserMenu from "@/components/UserMenu";
 import { useAuth } from "@/context/AuthContext";
+import { ProfileProvider } from "@/context/ProfileContext";
 import { WeatherCityProvider } from "@/context/WeatherCityContext";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
@@ -31,68 +32,70 @@ export default function Layout() {
   }, []);
 
   return (
-    <AppShell
-      header={{ height: 56 }}
-      padding="md"
-      styles={{
-        main: { background: "transparent", paddingTop: "calc(56px + var(--mantine-spacing-md))" },
-        header: {
-          background: "var(--terracotta-50)",
-          borderBottom: "1px solid var(--terracotta-100)",
-          boxShadow: scrolled ? "0 2px 16px rgba(74, 43, 28, 0.1)" : "none",
-          transition: "box-shadow 0.3s ease",
-        },
-      }}
-    >
-      <NavDrawer opened={drawerOpened} onClose={closeDrawer} isAdmin={isAdmin} />
+    <ProfileProvider>
+      <AppShell
+        header={{ height: 56 }}
+        padding="md"
+        styles={{
+          main: { background: "transparent", paddingTop: "calc(56px + var(--mantine-spacing-md))" },
+          header: {
+            background: "var(--terracotta-50)",
+            borderBottom: "1px solid var(--terracotta-100)",
+            boxShadow: scrolled ? "0 2px 16px rgba(74, 43, 28, 0.1)" : "none",
+            transition: "box-shadow 0.3s ease",
+          },
+        }}
+      >
+        <NavDrawer opened={drawerOpened} onClose={closeDrawer} isAdmin={isAdmin} />
 
-      <AppShell.Header>
-        <Group h="100%" px="lg" justify="space-between">
-          <UnstyledButton
-            component={Link}
-            to="/"
-            aria-label="Plantir home"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-              🪴 Plantir
-            </Text>
-          </UnstyledButton>
-          <Group gap="md">
-            <NotificationBell />
-            <Group gap="lg" visibleFrom="sm">
-              <NavLink to="/" end style={navLinkStyle}>
-                Dashboard
-              </NavLink>
-              <NavLink to="/plants-center" style={navLinkStyle}>
-                Plants Center
-              </NavLink>
-              <NavLink to="/settings" style={navLinkStyle}>
-                Settings
-              </NavLink>
-              {isAdmin && (
-                <NavLink to="/admin" style={navLinkStyle}>
-                  Admin
+        <AppShell.Header>
+          <Group h="100%" px="lg" justify="space-between">
+            <UnstyledButton
+              component={Link}
+              to="/"
+              aria-label="Plantir home"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
+                🪴 Plantir
+              </Text>
+            </UnstyledButton>
+            <Group gap="md">
+              <NotificationBell />
+              <Group gap="lg" visibleFrom="sm">
+                <NavLink to="/" end style={navLinkStyle}>
+                  Dashboard
                 </NavLink>
-              )}
+                <NavLink to="/plants-center" style={navLinkStyle}>
+                  Plants Center
+                </NavLink>
+                <NavLink to="/settings" style={navLinkStyle}>
+                  Settings
+                </NavLink>
+                {isAdmin && (
+                  <NavLink to="/admin" style={navLinkStyle}>
+                    Admin
+                  </NavLink>
+                )}
+              </Group>
+              <UserMenu />
+              <Burger
+                opened={drawerOpened}
+                onClick={openDrawer}
+                hiddenFrom="sm"
+                aria-label="Toggle navigation"
+                color="var(--green-700)"
+              />
             </Group>
-            <UserMenu />
-            <Burger
-              opened={drawerOpened}
-              onClick={openDrawer}
-              hiddenFrom="sm"
-              aria-label="Toggle navigation"
-              color="var(--green-700)"
-            />
           </Group>
-        </Group>
-      </AppShell.Header>
+        </AppShell.Header>
 
-      <AppShell.Main>
-        <WeatherCityProvider>
-          <Outlet />
-        </WeatherCityProvider>
-      </AppShell.Main>
-    </AppShell>
+        <AppShell.Main>
+          <WeatherCityProvider>
+            <Outlet />
+          </WeatherCityProvider>
+        </AppShell.Main>
+      </AppShell>
+    </ProfileProvider>
   );
 }
