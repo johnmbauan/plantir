@@ -104,41 +104,39 @@ export default function ProfilePage() {
       </Title>
 
       <form onSubmit={handleSubmit}>
-        <Stack gap="md">
-          <Paper shadow="xs" radius="md" p="lg" style={cardStyle}>
-            <Stack gap="lg">
-              <Text size="sm" c="dimmed">
-                Set how you appear in Plantir.
-              </Text>
+        <Paper shadow="xs" radius="md" p="lg" style={cardStyle}>
+          <Stack gap="lg">
+            <Text size="sm" c="dimmed">
+              Set how you appear in Plantir.
+            </Text>
 
-              <Group align="flex-start" wrap="wrap" gap="xl">
-                <ProfileAvatarSection
-                  previewSrc={previewSrc}
-                  initials={initials}
-                  avatarFile={avatarFile}
-                  showRemovePhoto={showRemovePhoto}
+            <Group align="flex-start" wrap="wrap" gap="xl">
+              <ProfileAvatarSection
+                previewSrc={previewSrc}
+                initials={initials}
+                avatarFile={avatarFile}
+                showRemovePhoto={showRemovePhoto}
+                loading={loading}
+                saving={saving}
+                resetFileRef={resetFileRef}
+                onExpand={() => setAvatarExpanded(true)}
+                onFileChange={handleFileChange}
+                onRemovePhoto={handleRemovePhoto}
+              />
+
+              <Box flex={1} miw={240} maw="100%">
+                <ProfileIdentityFields
+                  nickname={nickname}
+                  email={email}
                   loading={loading}
-                  saving={saving}
-                  resetFileRef={resetFileRef}
-                  onExpand={() => setAvatarExpanded(true)}
-                  onFileChange={handleFileChange}
-                  onRemovePhoto={handleRemovePhoto}
+                  onNicknameChange={handleNicknameChange}
                 />
+              </Box>
+            </Group>
 
-                <Box flex={1} miw={240} maw="100%">
-                  <ProfileIdentityFields
-                    nickname={nickname}
-                    email={email}
-                    loading={loading}
-                    onNicknameChange={handleNicknameChange}
-                  />
-                </Box>
-              </Group>
-            </Stack>
-          </Paper>
-
-          <ProfileSaveFooter loading={loading} saving={saving} />
-        </Stack>
+            <ProfileSaveFooter loading={loading} saving={saving} />
+          </Stack>
+        </Paper>
       </form>
 
       <Box mt="md">
