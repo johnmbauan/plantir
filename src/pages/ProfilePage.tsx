@@ -9,9 +9,9 @@ import GardenSection from "@/components/Garden/GardenSection";
 import { cardStyle, NICKNAME_MAX_LENGTH } from "@/pages/profile/constants";
 import { useProfileAvatarPreview } from "@/pages/profile/hooks/useProfileAvatarPreview";
 import { useAuth } from "@/context/AuthContext";
+import { useProfile } from "@/context/ProfileContext";
 import {
   deleteAvatar,
-  fetchProfile,
   uploadAvatar,
   upsertProfile,
 } from "@/services/profileService";
@@ -21,6 +21,13 @@ import { profileInitials } from "@/utils/profile";
 export default function ProfilePage() {
   const { session } = useAuth();
   const email = session?.user.email ?? "";
+  const {
+    nickname: savedNickname,
+    avatarUrl: contextAvatarUrl,
+    loading: profileLoading,
+    error: profileError,
+    setLocalProfile,
+  } = useProfile();
 
   const [nickname, setNickname] = useState("");
   const [savedAvatarUrl, setSavedAvatarUrl] = useState<string | null>(null);
@@ -29,23 +36,23 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [avatarExpanded, setAvatarExpanded] = useState(false);
+  const hydratedRef = useRef(false);
 
   const resetFileRef = useRef<(() => void) | null>(null);
   const previewSrc = useProfileAvatarPreview(avatarFile, savedAvatarUrl, avatarRemoved);
 
   useEffect(() => {
-    fetchProfile()
-      .then((profile) => {
-        if (profile) {
-          setNickname(profile.nickname ?? "");
-          setSavedAvatarUrl(profile.avatar_url);
-        }
-      })
-      .catch((err) => {
-        notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    if (profileLoading || hydratedRef.current) return;
+    hydratedRef.current = true;
+    setNickname(savedNickname ?? "");
+    setSavedAvatarUrl(contextAvatarUrl);
+    setLoading(false);
+  }, [profileLoading, savedNickname, contextAvatarUrl]);
+
+  useEffect(() => {
+    if (!profileError) return;
+    notifications.show({ color: "red", title: "Error", message: profileError });
+  }, [profileError]);
 
   function handleFileChange(file: File | null) {
     setAvatarFile(file);
@@ -81,6 +88,7 @@ export default function ProfilePage() {
       setAvatarFile(null);
       setAvatarRemoved(false);
       resetFileRef.current?.();
+      setLocalProfile({ nickname: trimmedNickname, avatar_url: finalAvatarUrl });
 
       if (previousAvatarUrl && previousAvatarUrl !== finalAvatarUrl) {
         void deleteAvatar(previousAvatarUrl);

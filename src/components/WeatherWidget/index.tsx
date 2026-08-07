@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Paper, Group, Divider } from "@mantine/core";
 import type { GeocodingResult } from "@/services/weatherService";
 import { useWeatherCity } from "@/context/WeatherCityContext";
@@ -16,8 +16,13 @@ export default function WeatherWidget({
   locationSetupPrompt = false,
   onLocationSet,
 }: WeatherWidgetProps) {
-  const { city, locationSource, forecast, loading, error, selectCity } = useWeatherCity();
+  const { city, locationSource, forecast, loading, error, selectCity, ensureForecast } =
+    useWeatherCity();
   const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    ensureForecast();
+  }, [ensureForecast]);
 
   // Search panel is open on first visit (no city yet) or when the user opens it manually.
   const searchOpen = !city || editMode;

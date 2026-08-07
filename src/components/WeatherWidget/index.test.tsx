@@ -37,7 +37,10 @@ vi.mock('@/components/WeatherWidget/WeatherCitySearch', () => ({
 import { useWeatherCity } from '@/context/WeatherCityContext';
 
 describe('WeatherWidget', () => {
+  const mockEnsureForecast = vi.fn();
+
   beforeEach(() => {
+    mockEnsureForecast.mockClear();
     vi.mocked(useWeatherCity).mockReturnValue({
       city: null,
       locationSource: 'none',
@@ -45,7 +48,14 @@ describe('WeatherWidget', () => {
       loading: false,
       error: null,
       selectCity: mockSelectCity,
+      ensureForecast: mockEnsureForecast,
     });
+  });
+
+  it('requests forecast on mount', () => {
+    renderWithProviders(<WeatherWidget />);
+
+    expect(mockEnsureForecast).toHaveBeenCalledTimes(1);
   });
 
   it('shows city search when no city is selected', () => {
@@ -65,6 +75,7 @@ describe('WeatherWidget', () => {
       loading: false,
       error: null,
       selectCity: mockSelectCity,
+      ensureForecast: vi.fn(),
     });
 
     renderWithProviders(<WeatherWidget />);
@@ -83,6 +94,7 @@ describe('WeatherWidget', () => {
       loading: false,
       error: null,
       selectCity: mockSelectCity,
+      ensureForecast: vi.fn(),
     });
 
     renderWithProviders(<WeatherWidget />);
@@ -103,6 +115,7 @@ describe('WeatherWidget', () => {
       loading: false,
       error: null,
       selectCity: mockSelectCity,
+      ensureForecast: vi.fn(),
     });
 
     renderWithProviders(<WeatherWidget />);

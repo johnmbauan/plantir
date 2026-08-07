@@ -95,7 +95,43 @@ describe('useNotifications', () => {
     await waitFor(() => expect(result.current.items).toEqual([wateringNotification]));
     expect(result.current.loading).toBe(false);
     expect(result.current.unreadCount).toBe(1);
+    expect(result.current.realtimeAvailable).toBe(true);
     expect(mockFetchUnreadNotifications).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not re-fetch unread notifications when only the access token changes', async () => {
+    const session = buildSession();
+    mockUseAuth.mockReturnValue({ session, loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([]);
+
+    const { rerender } = renderHook(() => useNotifications());
+    await waitFor(() => expect(mockFetchUnreadNotifications).toHaveBeenCalledTimes(1));
+
+    mockUseAuth.mockReturnValue({
+      session: { ...session, access_token: 'rotated-token' },
+      loading: false,
+    });
+    rerender();
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(mockFetchUnreadNotifications).toHaveBeenCalledTimes(1);
+  });
+
+  it('marks realtime unavailable on channel timeout', async () => {
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([]);
+
+    const { result } = renderHook(() => useNotifications());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => {
+      subscribeCallback?.('TIMED_OUT');
+    });
+
+    await waitFor(() => expect(result.current.realtimeAvailable).toBe(false));
   });
 
   it('auto-resolves stale notifications in background after fetch', async () => {
@@ -200,6 +236,34 @@ describe('useNotifications', () => {
     vi.mocked(document.hasFocus).mockRestore();
   });
 
+  it('shows a red toast for offline notifications when document has focus', async () => {
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([]);
+    vi.spyOn(document, 'hasFocus').mockReturnValue(true);
+
+    const { result } = renderHook(() => useNotifications());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    const offlineNotification: AppNotification = {
+      id: 'n-offline',
+      type: 'offline',
+      title: 'Device offline',
+      body: 'Sensor lost connection',
+      payload: { plants: [{ plantId: 1, plantName: 'Monstera', lastSeenAt: null }] },
+      created_at: '2026-07-06T08:00:00Z',
+    };
+
+    act(() => {
+      broadcastHandler?.({ payload: offlineNotification });
+    });
+
+    expect(mockNotificationsShow).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Device offline', color: 'red' }),
+    );
+
+    vi.mocked(document.hasFocus).mockRestore();
+  });
+
   it('does not show a toast for incoming achievement notifications even when document has focus', async () => {
     mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
     mockFetchUnreadNotifications.mockResolvedValue([]);
@@ -265,5 +329,81 @@ describe('useNotifications', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('stops loading when the initial unread fetch fails', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockRejectedValue(new Error('Inbox unavailable'));
+
+    const { result } = renderHook(() => useNotifications());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.items).toEqual([]);
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+
+  it('keeps items when refresh fails', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([wateringNotification]);
+
+    const { result } = renderHook(() => useNotifications());
+    await waitFor(() => expect(result.current.items).toHaveLength(1));
+
+    mockFetchUnreadNotifications.mockRejectedValue(new Error('Refresh failed'));
+    await act(async () => {
+      await result.current.refresh();
+    });
+
+    expect(result.current.items).toEqual([wateringNotification]);
+    expect(result.current.loading).toBe(false);
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+
+  it('logs when auto-resolve fails after the initial fetch', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([wateringNotification]);
+    mockAutoResolveNotifications.mockRejectedValue(new Error('Resolve failed'));
+
+    const { result } = renderHook(() => useNotifications());
+
+    await waitFor(() => expect(result.current.items).toEqual([wateringNotification]));
+    await waitFor(() => expect(consoleError).toHaveBeenCalled());
+    consoleError.mockRestore();
+  });
+
+  it('logs when auto-resolve fails during refresh', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([wateringNotification]);
+
+    const { result } = renderHook(() => useNotifications());
+    await waitFor(() => expect(result.current.items).toHaveLength(1));
+
+    mockAutoResolveNotifications.mockRejectedValue(new Error('Resolve failed'));
+    await act(async () => {
+      await result.current.refresh();
+    });
+
+    await waitFor(() => expect(consoleError).toHaveBeenCalled());
+    consoleError.mockRestore();
+  });
+
+  it('ignores broadcast payloads without an id', async () => {
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([]);
+
+    const { result } = renderHook(() => useNotifications());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => {
+      broadcastHandler?.({ payload: { ...wateringNotification, id: '' } });
+    });
+
+    expect(result.current.items).toEqual([]);
   });
 });

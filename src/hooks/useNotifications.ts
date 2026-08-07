@@ -12,12 +12,15 @@ const POLL_INTERVAL_MS = 30 * 60 * 1000;
 
 export function useNotifications() {
   const { session } = useAuth();
+  const userId = session?.user?.id ?? null;
+  const accessToken = session?.access_token ?? null;
+
   const [items, setItems] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [realtimeAvailable, setRealtimeAvailable] = useState(true);
 
   const refresh = useCallback(async () => {
-    if (!session) return;
+    if (!userId) return;
 
     try {
       const unread = await fetchUnreadNotifications();
@@ -30,7 +33,7 @@ export function useNotifications() {
       console.error("Failed to fetch notifications:", err);
       setLoading(false);
     }
-  }, [session]);
+  }, [userId]);
 
   const handleIncoming = useCallback((notification: AppNotification) => {
     setItems((current) => {
@@ -50,7 +53,11 @@ export function useNotifications() {
   }, []);
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (!userId) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
 
     let cancelled = false;
 
@@ -71,10 +78,17 @@ export function useNotifications() {
       }
     })();
 
-    const userId = session.user.id;
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId || !accessToken) return;
+
     const channelName = `user:${userId}`;
 
-    void supabase.realtime.setAuth(session.access_token);
+    void supabase.realtime.setAuth(accessToken);
 
     const channel = supabase
       .channel(channelName, { config: { private: true } })
@@ -93,20 +107,19 @@ export function useNotifications() {
       });
 
     return () => {
-      cancelled = true;
       void supabase.removeChannel(channel);
     };
-  }, [session, handleIncoming]);
+  }, [userId, accessToken, handleIncoming]);
 
   useEffect(() => {
-    if (!session?.user || realtimeAvailable) return;
+    if (!userId || realtimeAvailable) return;
 
     const pollTimer = window.setInterval(() => {
       void refresh();
     }, POLL_INTERVAL_MS);
 
     return () => window.clearInterval(pollTimer);
-  }, [session, realtimeAvailable, refresh]);
+  }, [userId, realtimeAvailable, refresh]);
 
   const removeItem = useCallback((id: string) => {
     setItems((current) => current.filter((item) => item.id !== id));
@@ -116,12 +129,13 @@ export function useNotifications() {
     setItems([]);
   }, []);
 
-  const signedIn = Boolean(session?.user);
+  const signedIn = Boolean(userId);
 
   return {
     items: signedIn ? items : [],
     loading: signedIn ? loading : false,
     unreadCount: signedIn ? items.length : 0,
+    realtimeAvailable,
     refresh,
     removeItem,
     clearAll,

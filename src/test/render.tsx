@@ -3,6 +3,7 @@ import { MantineProvider } from '@mantine/core';
 import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom';
 import type { ReactElement, ReactNode } from 'react';
 import { AuthProvider } from '@/context/AuthContext';
+import { ProfileProvider } from '@/context/ProfileContext';
 import { WeatherCityProvider } from '@/context/WeatherCityContext';
 
 export { screen, waitFor, within } from '@testing-library/react';
@@ -25,7 +26,9 @@ function AllProviders({
     <MantineProvider>
       <MemoryRouter initialEntries={[route]} {...routerProps}>
         <AuthProvider>
-          <WeatherCityProvider>{children}</WeatherCityProvider>
+          <ProfileProvider>
+            <WeatherCityProvider>{children}</WeatherCityProvider>
+          </ProfileProvider>
         </AuthProvider>
       </MemoryRouter>
     </MantineProvider>

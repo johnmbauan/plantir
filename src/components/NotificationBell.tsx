@@ -110,7 +110,8 @@ function NotificationItem({
 
 export default function NotificationBell() {
   const navigate = useNavigate();
-  const { items, unreadCount, removeItem, clearAll, refresh } = useNotifications();
+  const { items, unreadCount, removeItem, clearAll, refresh, realtimeAvailable } =
+    useNotifications();
   const [markingAll, setMarkingAll] = useState(false);
   const [snoozingId, setSnoozingId] = useState<string | null>(null);
 
@@ -160,7 +161,10 @@ export default function NotificationBell() {
       position="bottom-end"
       width={360}
       shadow="md"
-      onOpen={() => void refresh()}
+      onOpen={() => {
+        // Realtime keeps the inbox fresh; only re-fetch when that channel is down.
+        if (!realtimeAvailable) void refresh();
+      }}
     >
       <Menu.Target>
         <Indicator

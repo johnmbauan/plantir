@@ -1,33 +1,17 @@
-import { useEffect, useState } from "react";
 import { Menu, UnstyledButton } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import LeafAvatar from "@/components/LeafAvatar";
 import { HEADER_AVATAR_HEIGHT, HEADER_AVATAR_WIDTH } from "@/pages/profile/leafShape";
 import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
-import { fetchProfile } from "@/services/profileService";
+import { useProfile } from "@/context/ProfileContext";
 import { profileInitials } from "@/utils/profile";
 
 export default function UserMenu() {
   const navigate = useNavigate();
   const { session } = useAuth();
   const email = session?.user.email;
-
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [nickname, setNickname] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchProfile()
-      .then((profile) => {
-        if (profile) {
-          setAvatarUrl(profile.avatar_url);
-          setNickname(profile.nickname);
-        }
-      })
-      .catch(() => {
-        // Avatar falls back to initials; profile page shows load errors.
-      });
-  }, []);
+  const { nickname, avatarUrl } = useProfile();
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut();
