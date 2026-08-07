@@ -40,3 +40,32 @@ export function profileLeafAvatarStyle(
     clipPath: profileLeafClipPath(width, height),
   } as const;
 }
+
+/** Leaf outline painted behind a slightly smaller clipped avatar. */
+export const PROFILE_AVATAR_BORDER_WIDTH = 3;
+export const HEADER_AVATAR_BORDER_WIDTH = 2;
+
+export const LEAF_AVATAR_SIZES = {
+  profile: {
+    width: PROFILE_AVATAR_WIDTH,
+    height: PROFILE_AVATAR_HEIGHT,
+    borderWidth: PROFILE_AVATAR_BORDER_WIDTH,
+  },
+  header: {
+    width: HEADER_AVATAR_WIDTH,
+    height: HEADER_AVATAR_HEIGHT,
+    borderWidth: HEADER_AVATAR_BORDER_WIDTH,
+  },
+} as const;
+
+export type LeafAvatarSize = keyof typeof LEAF_AVATAR_SIZES;
+
+export function profileLeafBorderStyle(
+  width: number = PROFILE_AVATAR_WIDTH,
+  height: number = PROFILE_AVATAR_HEIGHT,
+) {
+  return {
+    ...profileLeafAvatarStyle(width, height),
+    background: "var(--green-500)",
+  } as const;
+}

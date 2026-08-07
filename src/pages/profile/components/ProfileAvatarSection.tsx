@@ -1,20 +1,7 @@
 import { useRef, type MutableRefObject } from "react";
-import {
-  ActionIcon,
-  Avatar,
-  Box,
-  FileButton,
-  Menu,
-  Stack,
-  Text,
-  UnstyledButton,
-} from "@mantine/core";
+import { ActionIcon, FileButton, Menu, Stack, Text } from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
-import {
-  PROFILE_AVATAR_HEIGHT,
-  PROFILE_AVATAR_WIDTH,
-  profileLeafAvatarStyle,
-} from "@/pages/profile/leafShape";
+import LeafAvatar from "@/components/LeafAvatar";
 
 interface ProfileAvatarSectionProps {
   previewSrc: string | null;
@@ -44,7 +31,6 @@ export default function ProfileAvatarSection({
   const openFilePickerRef = useRef<(() => void) | null>(null);
   const actionsDisabled = loading || saving;
   const uploadLabel = previewSrc ? "Replace photo" : "Upload photo";
-  const leafStyle = profileLeafAvatarStyle();
 
   return (
     <Stack gap="xs" align="flex-start">
@@ -71,34 +57,13 @@ export default function ProfileAvatarSection({
         }}
       </FileButton>
 
-      <Box pos="relative" w={PROFILE_AVATAR_WIDTH} h={PROFILE_AVATAR_HEIGHT}>
-        {previewSrc ? (
-          <UnstyledButton
-            onClick={onExpand}
-            aria-label="View profile photo"
-            style={{ ...leafStyle, lineHeight: 0, cursor: "pointer", border: "none", padding: 0 }}
-          >
-            <Avatar
-              src={previewSrc}
-              alt="Profile avatar"
-              radius={0}
-              w={PROFILE_AVATAR_WIDTH}
-              h={PROFILE_AVATAR_HEIGHT}
-              style={leafStyle}
-            />
-          </UnstyledButton>
-        ) : (
-          <Avatar
-            alt="Profile avatar"
-            radius={0}
-            w={PROFILE_AVATAR_WIDTH}
-            h={PROFILE_AVATAR_HEIGHT}
-            style={leafStyle}
-          >
-            {initials}
-          </Avatar>
-        )}
-
+      <LeafAvatar
+        src={previewSrc}
+        initials={initials}
+        alt="Profile avatar"
+        onClick={previewSrc ? onExpand : undefined}
+        clickAriaLabel="View profile photo"
+      >
         <Menu
           trigger="click-hover"
           openDelay={100}
@@ -141,7 +106,7 @@ export default function ProfileAvatarSection({
             )}
           </Menu.Dropdown>
         </Menu>
-      </Box>
+      </LeafAvatar>
 
       {avatarFile && (
         <Text size="sm" c="dimmed" truncate maw={240}>
