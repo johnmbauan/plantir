@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
-import { Avatar, Menu, UnstyledButton } from "@mantine/core";
+import { Menu, UnstyledButton } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import {
-  HEADER_AVATAR_HEIGHT,
-  HEADER_AVATAR_WIDTH,
-  profileLeafAvatarStyle,
-} from "@/pages/profile/leafShape";
+import LeafAvatar from "@/components/LeafAvatar";
+import { HEADER_AVATAR_HEIGHT, HEADER_AVATAR_WIDTH } from "@/pages/profile/leafShape";
 import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { fetchProfile } from "@/services/profileService";
@@ -39,7 +36,6 @@ export default function UserMenu() {
   }
 
   const initials = profileInitials(nickname, email);
-  const leafStyle = profileLeafAvatarStyle(HEADER_AVATAR_WIDTH, HEADER_AVATAR_HEIGHT);
 
   return (
     <Menu
@@ -53,18 +49,15 @@ export default function UserMenu() {
       <Menu.Target>
         <UnstyledButton
           aria-label="Account menu"
-          style={{ ...leafStyle, lineHeight: 0, border: "none", padding: 0 }}
+          style={{
+            width: HEADER_AVATAR_WIDTH,
+            height: HEADER_AVATAR_HEIGHT,
+            lineHeight: 0,
+            border: "none",
+            padding: 0,
+          }}
         >
-          <Avatar
-            src={avatarUrl ?? undefined}
-            alt="Your profile"
-            radius={0}
-            w={HEADER_AVATAR_WIDTH}
-            h={HEADER_AVATAR_HEIGHT}
-            style={leafStyle}
-          >
-            {initials}
-          </Avatar>
+          <LeafAvatar size="header" src={avatarUrl} initials={initials} alt="Your profile" />
         </UnstyledButton>
       </Menu.Target>
 

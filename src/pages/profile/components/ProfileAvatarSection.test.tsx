@@ -45,6 +45,19 @@ describe('ProfileAvatarSection', () => {
     expect(await screen.findByRole('menuitem', { name: 'Upload photo' })).toBeInTheDocument();
   });
 
+  it('opens the file picker from the upload menu item', async () => {
+    const user = userEvent.setup();
+    renderSection();
+
+    const fileInput = screen.getByLabelText('Profile photo file');
+    const clickSpy = vi.spyOn(fileInput, 'click');
+
+    await openPhotoMenu(user);
+    await user.click(await screen.findByRole('menuitem', { name: 'Upload photo' }));
+
+    expect(clickSpy).toHaveBeenCalled();
+  });
+
   it('shows an expandable avatar and replace action when preview is available', async () => {
     const user = userEvent.setup();
     renderSection({ previewSrc: 'https://cdn/avatar.jpg', showRemovePhoto: true });

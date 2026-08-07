@@ -1,4 +1,4 @@
-import { TextInput } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { NICKNAME_MAX_LENGTH } from "@/pages/profile/constants";
 
 interface ProfileIdentityFieldsProps {
@@ -15,7 +15,7 @@ export default function ProfileIdentityFields({
   onNicknameChange,
 }: ProfileIdentityFieldsProps) {
   return (
-    <>
+    <Stack gap="md">
       <TextInput
         label="Nickname"
         placeholder="How should we call you?"
@@ -32,6 +32,6 @@ export default function ProfileIdentityFields({
         disabled
         description="Managed through your account administrator."
       />
-    </>
+    </Stack>
   );
 }
