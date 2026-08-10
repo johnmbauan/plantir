@@ -48,7 +48,19 @@ describe('speciesLabel', () => {
 });
 
 describe('plantThumbnailUrl', () => {
-  it('prefers plant image over species image', () => {
+  it('prefers a plant Storage thumbnail over species image', () => {
+    expect(
+      plantThumbnailUrl(
+        buildPlant({
+          image_url:
+            'https://x.supabase.co/storage/v1/object/public/plant-images/user/abc.jpg',
+          species: buildSpecies({ imageUrl: 'https://cdn/species.jpg' }),
+        }),
+      ),
+    ).toBe('https://x.supabase.co/storage/v1/object/public/plant-images/user/abc_thumb.jpg');
+  });
+
+  it('leaves non-storage plant URLs unchanged', () => {
     expect(
       plantThumbnailUrl(
         buildPlant({

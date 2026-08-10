@@ -28,13 +28,13 @@ import { Link } from "react-router-dom";
 import type { EnrichedPlant, HistoryRange, PlantHistory } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { batteryMantineColor } from "@/utils/color-utils";
+import { getErrorMessage } from "@/utils/error";
 import { formatInterval, relativeTime } from "@/utils/time";
 import HumidityBar from "@/components/HumidityBar";
 import HistoryLineChart from "@/components/HistoryLineChart";
 import { ModalSection } from "@/components/shared/ModalSection";
 import { SpeciesCareCard } from "@/components/shared/SpeciesCareCard";
 import { fetchLastWateredAt, fetchPlantHistory } from "@/services/plantService";
-import { getErrorMessage } from "@/utils/error";
 import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
 
 interface Props {

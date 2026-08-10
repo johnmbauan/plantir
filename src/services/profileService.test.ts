@@ -14,6 +14,17 @@ import {
   deleteAvatar,
 } from './profileService';
 
+vi.mock('@/utils/imageVariants', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/utils/imageVariants')>();
+  return {
+    ...actual,
+    prepareImageVariants: vi.fn(async () => ({
+      full: new File(['full'], 'id.jpg', { type: 'image/jpeg' }),
+      thumb: new File(['thumb'], 'id_thumb.jpg', { type: 'image/jpeg' }),
+    })),
+  };
+});
+
 describe('profileService', () => {
   beforeEach(() => {
     resetSupabaseMocks();
@@ -56,15 +67,36 @@ describe('profileService', () => {
   });
 
   describe('avatar storage', () => {
-    it('uploads avatar and returns public URL', async () => {
+    it('uploads full and thumb variants and returns the full public URL', async () => {
       mockAuthenticatedUser();
-      mockStorageFrom.mockReturnValue({
-        upload: vi.fn().mockResolvedValue({ error: null }),
-        getPublicUrl: vi.fn().mockReturnValue({ data: { publicUrl: 'https://cdn/avatar.jpg' } }),
+      const upload = vi.fn().mockResolvedValue({ error: null });
+      const getPublicUrl = vi.fn().mockReturnValue({
+        data: {
+          publicUrl: 'https://x.supabase.co/storage/v1/object/public/avatars/user-1/abc.jpg',
+        },
       });
+      mockStorageFrom.mockReturnValue({ upload, getPublicUrl });
+
+      const file = new File(['x'], 'avatar.png', { type: 'image/png' });
+      await expect(uploadAvatar(file)).resolves.toBe(
+        'https://x.supabase.co/storage/v1/object/public/avatars/user-1/abc.jpg',
+      );
+      expect(upload).toHaveBeenCalledTimes(2);
+      expect(upload.mock.calls[1][0]).toMatch(/_thumb\.jpg$/);
+    });
+
+    it('rolls back the full object when thumb upload fails', async () => {
+      mockAuthenticatedUser();
+      const remove = vi.fn().mockResolvedValue({ error: null });
+      const upload = vi
+        .fn()
+        .mockResolvedValueOnce({ error: null })
+        .mockResolvedValueOnce({ error: new Error('Thumb failed') });
+      mockStorageFrom.mockReturnValue({ upload, getPublicUrl: vi.fn(), remove });
 
       const file = new File(['x'], 'avatar.jpg', { type: 'image/jpeg' });
-      await expect(uploadAvatar(file)).resolves.toBe('https://cdn/avatar.jpg');
+      await expect(uploadAvatar(file)).rejects.toThrow('Thumb failed');
+      expect(remove).toHaveBeenCalledWith([expect.stringMatching(/\.jpg$/)]);
     });
 
     it('skips delete for non-storage URLs', async () => {
@@ -72,14 +104,25 @@ describe('profileService', () => {
       await expect(deleteAvatar('https://example.com/img.jpg')).resolves.toBeUndefined();
     });
 
-    it('deletes avatar from storage when URL matches bucket', async () => {
+    it('skips delete when there is no public URL', async () => {
       mockAuthenticatedUser();
-      mockStorageFrom.mockReturnValue({
-        remove: vi.fn().mockResolvedValue({ error: null }),
-      });
+      await expect(deleteAvatar(null)).resolves.toBeUndefined();
+    });
+
+    it('skips delete when the session user is missing', async () => {
+      mockUnauthenticated();
+      const url = 'https://x.supabase.co/storage/v1/object/public/avatars/user-1/abc.jpg';
+      await expect(deleteAvatar(url)).resolves.toBeUndefined();
+    });
+
+    it('deletes full and thumb objects when URL matches bucket', async () => {
+      mockAuthenticatedUser();
+      const remove = vi.fn().mockResolvedValue({ error: null });
+      mockStorageFrom.mockReturnValue({ remove });
 
       const url = 'https://x.supabase.co/storage/v1/object/public/avatars/user-1/abc.jpg';
       await expect(deleteAvatar(url)).resolves.toBeUndefined();
+      expect(remove).toHaveBeenCalledWith(['user-1/abc.jpg', 'user-1/abc_thumb.jpg']);
     });
   });
 });

@@ -5,6 +5,7 @@ import { HEADER_AVATAR_HEIGHT, HEADER_AVATAR_WIDTH } from "@/pages/profile/leafS
 import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/context/ProfileContext";
+import { AVATARS_BUCKET, isStorageImageUrl, toThumbnailUrl } from "@/utils/imageVariants";
 import { profileInitials } from "@/utils/profile";
 
 export default function UserMenu() {
@@ -12,6 +13,10 @@ export default function UserMenu() {
   const { session } = useAuth();
   const email = session?.user.email;
   const { nickname, avatarUrl } = useProfile();
+  const avatarThumbUrl =
+    avatarUrl && isStorageImageUrl(avatarUrl, AVATARS_BUCKET)
+      ? (toThumbnailUrl(avatarUrl) ?? avatarUrl)
+      : avatarUrl;
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut();
@@ -41,7 +46,7 @@ export default function UserMenu() {
             padding: 0,
           }}
         >
-          <LeafAvatar size="header" src={avatarUrl} initials={initials} alt="Your profile" />
+          <LeafAvatar size="header" src={avatarThumbUrl} initials={initials} alt="Your profile" />
         </UnstyledButton>
       </Menu.Target>
 

@@ -3,6 +3,7 @@ import { IconBellOff, IconSun } from "@tabler/icons-react";
 import type { EnrichedPlant, PlantStatus } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { relativeTime } from "@/utils/time";
+import { plantThumbnailUrl } from "@/utils/plantDisplay";
 import HumidityBar from "@/components/HumidityBar";
 import FilterChip from "@/components/shared/FilterChip";
 import PlantStatusChips from "@/components/shared/PlantStatusChips";
@@ -91,6 +92,7 @@ function PlantLeaderboardRow({
   const { barColor } = STATUS_CONFIG[primaryStatus];
   const timeAgo = relativeTime(plant.lastMeasuredAt);
   const readingStale = isReadingStale(plant);
+  const thumbUrl = plantThumbnailUrl(plant);
 
   return (
     <div
@@ -101,8 +103,8 @@ function PlantLeaderboardRow({
     >
       <div className="leaderboard-info">
         <div className="leaderboard-avatar">
-          {plant.image_url ? (
-            <img src={plant.image_url} alt={plant.name} />
+          {thumbUrl ? (
+            <img src={thumbUrl} alt={plant.name} />
           ) : (
             "🪴"
           )}
