@@ -131,7 +131,8 @@ describe('PlantDetailModal', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const plant = buildPlant({
       name: 'Monstera',
-      image_url: 'https://example.com/plant.jpg',
+      image_url:
+        'https://x.supabase.co/storage/v1/object/public/plant-images/user/abc.jpg',
       deviceId: null,
     });
 
@@ -139,11 +140,21 @@ describe('PlantDetailModal', () => {
       <PlantDetailModal plant={plant} opened onClose={onClose} />,
     );
 
+    const preview = screen.getByRole('img', { name: 'Monstera' });
+    expect(preview).toHaveAttribute(
+      'src',
+      'https://x.supabase.co/storage/v1/object/public/plant-images/user/abc.jpg',
+    );
+
     await user.click(screen.getByRole('button', { name: 'View full size photo of Monstera' }));
 
     expect(screen.getByRole('dialog', { name: 'Full size photo of Monstera' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Close full size photo' })).toBeInTheDocument();
     expect(screen.getAllByAltText('Monstera')).toHaveLength(2);
+    expect(screen.getAllByAltText('Monstera')[1]).toHaveAttribute(
+      'src',
+      'https://x.supabase.co/storage/v1/object/public/plant-images/user/abc.jpg',
+    );
   });
 
   it('loads and displays measurement history when device is assigned', async () => {

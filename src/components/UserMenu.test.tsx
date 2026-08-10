@@ -85,13 +85,13 @@ describe('UserMenu', () => {
   it('shows profile avatar image when avatar_url is set', async () => {
     fetchProfile.mockResolvedValue({
       nickname: 'Plant Fan',
-      avatar_url: 'https://cdn/avatar.jpg',
+      avatar_url: 'https://x.supabase.co/storage/v1/object/public/avatars/user/abc.jpg',
     });
     renderUserMenu();
 
     expect(await screen.findByRole('img', { name: 'Your profile' })).toHaveAttribute(
       'src',
-      'https://cdn/avatar.jpg',
+      'https://x.supabase.co/storage/v1/object/public/avatars/user/abc_thumb.jpg',
     );
   });
 

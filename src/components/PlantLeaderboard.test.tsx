@@ -24,6 +24,26 @@ describe('PlantLeaderboard', () => {
     expect(screen.getByText('Monstera')).toBeInTheDocument();
   });
 
+  it('uses the Storage thumbnail URL for plant photos', () => {
+    renderWithProviders(
+      <PlantLeaderboard
+        plants={[
+          buildPlant({
+            name: 'Monstera',
+            image_url:
+              'https://x.supabase.co/storage/v1/object/public/plant-images/user/abc.jpg',
+          }),
+        ]}
+        loading={false}
+      />,
+    );
+
+    expect(screen.getByRole('img', { name: 'Monstera' })).toHaveAttribute(
+      'src',
+      'https://x.supabase.co/storage/v1/object/public/plant-images/user/abc_thumb.jpg',
+    );
+  });
+
   it('shows empty state with action', async () => {
     const user = userEvent.setup();
     const onAction = vi.fn();

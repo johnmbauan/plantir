@@ -39,7 +39,11 @@ export default function ProfilePage() {
   const hydratedRef = useRef(false);
 
   const resetFileRef = useRef<(() => void) | null>(null);
-  const previewSrc = useProfileAvatarPreview(avatarFile, savedAvatarUrl, avatarRemoved);
+  const { leafSrc: previewSrc, expandSrc } = useProfileAvatarPreview(
+    avatarFile,
+    savedAvatarUrl,
+    avatarRemoved,
+  );
 
   useEffect(() => {
     if (profileLoading || hydratedRef.current) return;
@@ -154,7 +158,7 @@ export default function ProfilePage() {
       <ProfilePhotoModal
         opened={avatarExpanded}
         onClose={() => setAvatarExpanded(false)}
-        src={previewSrc}
+        src={expandSrc}
       />
     </Box>
   );

@@ -8,6 +8,12 @@ import type {
   PlantStatus,
 } from "@/types";
 import { evaluateAndToastUnlocks } from "@/services/achievementService";
+import {
+  PLANT_IMAGES_BUCKET,
+  pairedThumbPath,
+  prepareImageVariants,
+  storageObjectPathFromPublicUrl,
+} from "@/utils/imageVariants";
 import { getSessionUser, requireUser } from "@/utils/requireUser";
 import { findLastWateredAt } from "@/utils/watering";
 
@@ -343,27 +349,36 @@ export async function deletePlant(id: number) {
 // Plant Image Storage
 // ---------------------------------------------------------------------------
 
-const PLANT_IMAGES_BUCKET = "plant-images";
-
-/** Uploads a file and returns its public URL. */
+/** Uploads full + thumbnail variants and returns the full-size public URL. */
 export async function uploadPlantImage(file: File): Promise<string> {
   const user = await requireUser();
+  const id = crypto.randomUUID();
+  const fullPath = `${user.id}/${id}.jpg`;
+  const thumbPath = `${user.id}/${id}_thumb.jpg`;
+  const { full, thumb } = await prepareImageVariants(file, id);
 
-  const ext = file.name.split(".").pop();
-  const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+  const bucket = supabase.storage.from(PLANT_IMAGES_BUCKET);
+  const { error: fullError } = await bucket.upload(fullPath, full, {
+    upsert: false,
+    contentType: "image/jpeg",
+  });
+  if (fullError) throw fullError;
 
-  const { error } = await supabase.storage
-    .from(PLANT_IMAGES_BUCKET)
-    .upload(path, file, { upsert: false });
+  const { error: thumbError } = await bucket.upload(thumbPath, thumb, {
+    upsert: false,
+    contentType: "image/jpeg",
+  });
+  if (thumbError) {
+    await bucket.remove([fullPath]);
+    throw thumbError;
+  }
 
-  if (error) throw error;
-
-  const { data } = supabase.storage.from(PLANT_IMAGES_BUCKET).getPublicUrl(path);
+  const { data } = bucket.getPublicUrl(fullPath);
   return data.publicUrl;
 }
 
 /**
- * Deletes a previously uploaded plant image from storage.
+ * Deletes a previously uploaded plant image (full + thumb) from storage.
  * Extracts the storage path from the full public URL.
  * Safe to call with null/undefined (no-op).
  */
@@ -373,11 +388,12 @@ export async function deletePlantImage(publicUrl: string | null | undefined): Pr
   const user = await getSessionUser();
   if (!user) return;
 
-  // Extract path after "/object/public/plant-images/"
-  const marker = `/object/public/${PLANT_IMAGES_BUCKET}/`;
-  const markerIndex = publicUrl.indexOf(marker);
-  if (markerIndex === -1) return; // not a storage URL, skip
+  const path = storageObjectPathFromPublicUrl(publicUrl, PLANT_IMAGES_BUCKET);
+  if (!path) return;
 
-  const path = publicUrl.slice(markerIndex + marker.length);
-  await supabase.storage.from(PLANT_IMAGES_BUCKET).remove([path]);
+  const paths = [path];
+  const thumb = pairedThumbPath(path);
+  if (thumb && thumb !== path) paths.push(thumb);
+
+  await supabase.storage.from(PLANT_IMAGES_BUCKET).remove(paths);
 }

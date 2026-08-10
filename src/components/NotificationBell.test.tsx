@@ -148,6 +148,39 @@ describe('NotificationBell', () => {
     expect(await screen.findByText('Monstera needs water')).toBeInTheDocument();
   });
 
+  it('uses the Storage thumbnail for watering notification photos', async () => {
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    vi.mocked(useNotifications).mockReturnValue({
+      items: [
+        {
+          ...sampleNotification,
+          payload: {
+            plantId: 1,
+            plantName: 'Monstera',
+            humidity: 10,
+            imageUrl:
+              'https://x.supabase.co/storage/v1/object/public/plant-images/user/abc.jpg',
+          },
+        },
+      ],
+      loading: false,
+      unreadCount: 1,
+      refresh: mockRefresh,
+      removeItem: mockRemoveItem,
+      clearAll: mockClearAll,
+      realtimeAvailable: true,
+    });
+
+    renderBell();
+    await user.click(screen.getByRole('button', { name: 'Notifications' }));
+
+    expect(await screen.findByText('Monstera needs water')).toBeInTheDocument();
+    expect(screen.getByAltText('')).toHaveAttribute(
+      'src',
+      'https://x.supabase.co/storage/v1/object/public/plant-images/user/abc_thumb.jpg',
+    );
+  });
+
   it('marks a notification read when selected', async () => {
     const user = userEvent.setup({ pointerEventsCheck: 0 });
     vi.mocked(useNotifications).mockReturnValue({

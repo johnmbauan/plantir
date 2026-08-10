@@ -25,12 +25,19 @@ import {
   type AppNotification,
 } from "@/services/notificationService";
 import { getErrorMessage } from "@/utils/error";
+import { isStorageImageUrl, PLANT_IMAGES_BUCKET, toThumbnailUrl } from "@/utils/imageVariants";
 import { relativeTime } from "@/utils/time";
 
 function notificationAvatar(notification: AppNotification): { color: string; label: string } {
   if (notification.type === "watering") return { color: "yellow", label: "💧" };
   if (notification.type === "offline") return { color: "red", label: "📡" };
   return { color: "green", label: "🌿" };
+}
+
+function notificationImageUrl(raw: string | null): string | null {
+  if (!raw) return null;
+  if (isStorageImageUrl(raw, PLANT_IMAGES_BUCKET)) return toThumbnailUrl(raw) ?? raw;
+  return raw;
 }
 
 function NotificationItem({
@@ -45,7 +52,7 @@ function NotificationItem({
   snoozing: boolean;
 }) {
   const watering = isWateringPayload(notification.payload) ? notification.payload : null;
-  const imageUrl = watering?.imageUrl ?? null;
+  const imageUrl = notificationImageUrl(watering?.imageUrl ?? null);
   const fallback = notificationAvatar(notification);
 
   return (
