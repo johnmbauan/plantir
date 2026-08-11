@@ -429,3 +429,9 @@ enabled = true
 verify_jwt = true
 import_map = "./functions/plant-species-detail/deno.json"
 entrypoint = "./functions/plant-species-detail/index.ts"
+
+[functions.db-keepalive]
+enabled = true
+verify_jwt = false
+import_map = "./functions/db-keepalive/deno.json"
+entrypoint = "./functions/db-keepalive/index.ts"
