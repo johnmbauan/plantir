@@ -6,6 +6,8 @@ export interface WateringRow {
   plantName: string;
   imageUrl: string | null;
   humidity: number;
+  potDepthClass: string | null;
+  minHumidityThreshold: number;
   isOutdoor: boolean;
   weatherLat: number | null;
   weatherLng: number | null;

@@ -1,7 +1,10 @@
+import type { PotDepthClass } from "@/constants/potDepth";
+
 export type PlantStatus = "HEALTHY" | "WATERING_NEEDED" | "OFFLINE" | "RECHARGE_NEEDED";
 export type HistoryRange = "7d" | "14d" | "30d" | "90d";
 
 export type DeviceType = "humidity";
+export type { PotDepthClass };
 
 export interface HumidityConfig {
   id: number;
@@ -36,6 +39,7 @@ export interface EnrichedPlant {
   image_url: string | null;
   created_at: string;
   is_outdoor: boolean;
+  potDepthClass: PotDepthClass | null;
   speciesId?: number | null;
   species?: PlantSpeciesSummary | null;
   statuses: PlantStatus[];
@@ -44,7 +48,10 @@ export interface EnrichedPlant {
   deviceId: number | null;
   serialNumber: string | null;
   sleepDurationSeconds: number | null;
+  /** Effective humidity used on the dashboard and for watering status. */
   humidityPercent: number | null;
+  /** Raw probe reading; set when a pot depth class adjusts the displayed %. */
+  rawHumidityPercent: number | null;
   batteryPercent: number | null;
 }
 

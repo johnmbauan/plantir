@@ -176,6 +176,31 @@ describe('PlantDetailModal', () => {
     });
   });
 
+  it('maps humidity history through pot-depth effective values', async () => {
+    fetchPlantHistory.mockResolvedValue({
+      humidity: [{ value: 15, createdAt: '2026-07-06T08:00:00Z' }],
+      battery: [{ value: 80, createdAt: '2026-07-06T08:00:00Z' }],
+    });
+    const plant = buildPlant({
+      id: 3,
+      deviceId: 10,
+      potDepthClass: 'large',
+      humidityPercent: 24,
+      rawHumidityPercent: 15,
+    });
+
+    renderWithProviders(
+      <PlantDetailModal plant={plant} opened onClose={onClose} />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Humidity trend')).toBeInTheDocument();
+    });
+
+    // History chart summary uses effective humidity (15 raw → 24 for large).
+    expect(screen.getAllByText('24%').length).toBeGreaterThanOrEqual(1);
+  });
+
   it('fetches and shows last watered when a device is assigned', async () => {
     fetchLastWateredAt.mockResolvedValue('2026-07-04T12:00:00Z');
     const plant = buildPlant({ id: 3, deviceId: 10 });

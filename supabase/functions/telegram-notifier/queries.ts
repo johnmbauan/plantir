@@ -15,6 +15,8 @@ export const WATERING_QUERY = `
     p.name AS "plantName",
     p."imageUrl" AS "imageUrl",
     p.is_outdoor AS "isOutdoor",
+    p.pot_depth_class AS "potDepthClass",
+    hsc."minHumidityThreshold" AS "minHumidityThreshold",
     ns.weather_lat AS "weatherLat",
     ns.weather_lng AS "weatherLng",
     hm."humidityPercentage" AS "humidity"
