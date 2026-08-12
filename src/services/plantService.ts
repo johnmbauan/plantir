@@ -7,6 +7,8 @@ import type {
   PlantSpeciesSummary,
   PlantStatus,
 } from "@/types";
+import type { PotDepthClass } from "@/constants/potDepth";
+import { isPotDepthClass } from "@/constants/potDepth";
 import { evaluateAndToastUnlocks } from "@/services/achievementService";
 import {
   PLANT_IMAGES_BUCKET,
@@ -14,6 +16,7 @@ import {
   prepareImageVariants,
   storageObjectPathFromPublicUrl,
 } from "@/utils/imageVariants";
+import { getEffectiveHumidity } from "@/utils/effectiveHumidity";
 import { getSessionUser, requireUser } from "@/utils/requireUser";
 import { findLastWateredAt } from "@/utils/watering";
 
@@ -56,9 +59,14 @@ interface RawPlant {
   imageUrl: string | null;
   createdAt: string;
   is_outdoor?: boolean;
+  pot_depth_class?: string | null;
   species_id?: number | null;
   plant_species?: RawPlantSpeciesSummary | null;
   devices: RawDevice[];
+}
+
+function resolvePotDepthClass(value: string | null | undefined): PotDepthClass | null {
+  return isPotDepthClass(value) ? value : null;
 }
 
 interface RawPlantSpeciesSummary {
@@ -96,12 +104,14 @@ function computeStatuses(
   latestMeasurement: RawMeasurement | null,
   minHumidityThreshold: number,
   sleepDurationSeconds: number,
+  potDepthClass: PotDepthClass | null,
 ): PlantStatus[] {
   if (!latestMeasurement) return ["OFFLINE"];
 
   const ageMs = Date.now() - new Date(latestMeasurement.createdAt).getTime();
   const isOffline = ageMs > sleepDurationSeconds * OFFLINE_SLEEP_MULTIPLIER * 1000;
-  const needsWater = latestMeasurement.humidityPercentage < minHumidityThreshold;
+  const humidity = getEffectiveHumidity(latestMeasurement.humidityPercentage, potDepthClass);
+  const needsWater = humidity < minHumidityThreshold;
 
   if (isOffline && needsWater) return ["OFFLINE", "WATERING_NEEDED"];
   if (isOffline) return ["OFFLINE"];
@@ -146,6 +156,7 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
       }
     : null;
 
+  const potDepthClass = resolvePotDepthClass(plant.pot_depth_class);
   const humidityDevice = plant.devices?.find((d) => d.humidity_sensors_config?.length > 0);
 
   if (!humidityDevice) {
@@ -155,10 +166,12 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
       image_url: plant.imageUrl,
       created_at: plant.createdAt,
       is_outdoor: plant.is_outdoor ?? false,
+      potDepthClass,
       speciesId: plant.species_id ?? null,
       species,
       statuses: ["OFFLINE"],
       humidityPercent: null,
+      rawHumidityPercent: null,
       threshold: null,
       lastMeasuredAt: null,
       deviceId: null,
@@ -171,8 +184,16 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
   const config = humidityDevice.humidity_sensors_config[0];
   const latest = deviceHumidity(humidityDevice);
   const latestBattery = deviceBattery(humidityDevice);
+  const rawHumidity = latest?.humidityPercentage ?? null;
+  const humidityPercent =
+    rawHumidity == null ? null : getEffectiveHumidity(rawHumidity, potDepthClass);
 
-  const statuses = computeStatuses(latest, config.minHumidityThreshold, config.sleepDurationSeconds);
+  const statuses = computeStatuses(
+    latest,
+    config.minHumidityThreshold,
+    config.sleepDurationSeconds,
+    potDepthClass,
+  );
   if (latestBattery !== null && latestBattery.batteryPercent < BATTERY_WARNING_THRESHOLD) {
     statuses.push("RECHARGE_NEEDED");
   }
@@ -183,10 +204,12 @@ function enrichPlant(plant: RawPlant): EnrichedPlant {
     image_url: plant.imageUrl,
     created_at: plant.createdAt,
     is_outdoor: plant.is_outdoor ?? false,
+    potDepthClass,
     speciesId: plant.species_id ?? null,
     species,
     statuses,
-    humidityPercent: latest?.humidityPercentage ?? null,
+    humidityPercent,
+    rawHumidityPercent: potDepthClass != null ? rawHumidity : null,
     threshold: config.minHumidityThreshold,
     lastMeasuredAt: latest?.createdAt ?? null,
     deviceId: humidityDevice.id,
@@ -308,12 +331,20 @@ export async function createPlant(
   imageUrl: string | null,
   speciesId?: number | null,
   isOutdoor = false,
+  potDepthClass: PotDepthClass | null = null,
 ) {
   const user = await requireUser();
 
   const { error } = await supabase
     .from("plants")
-    .insert([{ name, imageUrl, species_id: speciesId ?? null, is_outdoor: isOutdoor, user_id: user.id }]);
+    .insert([{
+      name,
+      imageUrl,
+      species_id: speciesId ?? null,
+      is_outdoor: isOutdoor,
+      pot_depth_class: potDepthClass,
+      user_id: user.id,
+    }]);
 
   if (error) throw error;
   void evaluateAndToastUnlocks();
@@ -325,12 +356,19 @@ export async function updatePlant(
   imageUrl: string | null,
   speciesId?: number | null,
   isOutdoor = false,
+  potDepthClass: PotDepthClass | null = null,
 ) {
   const user = await requireUser();
 
   const { error } = await supabase
     .from("plants")
-    .update({ name, imageUrl, species_id: speciesId ?? null, is_outdoor: isOutdoor })
+    .update({
+      name,
+      imageUrl,
+      species_id: speciesId ?? null,
+      is_outdoor: isOutdoor,
+      pot_depth_class: potDepthClass,
+    })
     .eq("id", id)
     .eq("user_id", user.id);
 

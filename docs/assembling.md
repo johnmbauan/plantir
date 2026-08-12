@@ -30,6 +30,10 @@ Still in the Plantir web app, follow the **Calibrate sensor** wizard (offered at
 
 In the device settings (Plants Center), set how often the device should wake and measure (commonly between 8 and 24 hours) and assign a plant if you skipped that during registration.
 
+When adding or editing the plant, you can optionally set **pot height**. The capacitive probe only senses about **7 cm** of soil. In taller pots, moisture often remains higher toward the bottom, so a dry surface reading can understate how wet the pot still is. Setting pot height lets the app adjust the humidity shown on the dashboard and in watering alerts; the device still stores the raw probe reading.
+
+Insert the probe so the full sensing length (about 7 cm) is in the soil — do not leave half of it above the surface.
+
 ## Step 6: Power connection
 
 Connect the battery to the ESP32 board. Check polarity for your pack and board. For example, FireBeetle boards use a JST PH 2.0 battery connector; some batteries ship with reversed polarity and need the wires swapped to match the board.

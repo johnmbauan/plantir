@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   Alert,
@@ -29,6 +29,7 @@ import type { EnrichedPlant, HistoryRange, PlantHistory } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { batteryMantineColor } from "@/utils/color-utils";
 import { getErrorMessage } from "@/utils/error";
+import { getEffectiveHumidity } from "@/utils/effectiveHumidity";
 import { formatInterval, relativeTime } from "@/utils/time";
 import HumidityBar from "@/components/HumidityBar";
 import HistoryLineChart from "@/components/HistoryLineChart";
@@ -137,6 +138,14 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
       setImageExpanded(false);
     }
   }, [opened]);
+
+  const humidityHistoryPoints = useMemo(() => {
+    if (!history) return [];
+    return history.humidity.map((point) => ({
+      ...point,
+      value: getEffectiveHumidity(point.value, plant?.potDepthClass),
+    }));
+  }, [history, plant?.potDepthClass]);
 
   if (!plant) return null;
 
@@ -284,7 +293,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
                 />
                 <HistoryLineChart
                   title="Humidity trend"
-                  points={history.humidity}
+                  points={humidityHistoryPoints}
                   color="var(--terracotta-500)"
                   unit="%"
                 />

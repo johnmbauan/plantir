@@ -7,6 +7,7 @@ import {
   setupFromMocks,
   mockStorageFrom,
   mockRpc,
+  mockFrom,
 } from '@/test/mocks/supabase';
 import {
   fetchPlants,
@@ -74,11 +75,66 @@ describe('plantService', () => {
       expect(plants[0]).toMatchObject({
         name: 'B',
         humidityPercent: 40,
+        potDepthClass: null,
+        rawHumidityPercent: null,
         statuses: ['HEALTHY'],
       });
       expect(mockRpc).toHaveBeenCalledWith('get_user_plants', {
         p_plant_ids: null,
       });
+    });
+
+    it('applies effective humidity from pot_depth_class', async () => {
+      mockAuthenticatedUser();
+      mockUserPlants([{
+        id: 1,
+        name: 'Tall pot',
+        imageUrl: null,
+        createdAt: '2026-01-01',
+        pot_depth_class: 'large',
+        devices: [{
+          id: 10,
+          serialNumber: 'SN-10',
+          humidity_sensors_config: [{ minHumidityThreshold: 15, sleepDurationSeconds: 3600 }],
+          humidityPercentage: 15,
+          humidity_created_at: '2026-07-06T11:00:00Z',
+          batteryPercent: 90,
+          battery_created_at: '2026-07-06T11:00:00Z',
+        }],
+      }]);
+
+      const plants = await fetchPlants();
+      expect(plants[0]).toMatchObject({
+        humidityPercent: 24,
+        rawHumidityPercent: 15,
+        potDepthClass: 'large',
+        statuses: ['HEALTHY'],
+      });
+    });
+
+    it('keeps WATERING_NEEDED when effective humidity is still below threshold', async () => {
+      mockAuthenticatedUser();
+      mockUserPlants([{
+        id: 1,
+        name: 'Dry deep pot',
+        imageUrl: null,
+        createdAt: '2026-01-01',
+        pot_depth_class: 'deep',
+        devices: [{
+          id: 10,
+          serialNumber: 'SN-10',
+          humidity_sensors_config: [{ minHumidityThreshold: 40, sleepDurationSeconds: 3600 }],
+          humidityPercentage: 10,
+          humidity_created_at: '2026-07-06T11:00:00Z',
+          batteryPercent: 90,
+          battery_created_at: '2026-07-06T11:00:00Z',
+        }],
+      }]);
+
+      const plants = await fetchPlants();
+      // raw 10 → effective ~19 for deep; still below 40
+      expect(plants[0].humidityPercent).toBe(19);
+      expect(plants[0].statuses).toEqual(['WATERING_NEEDED']);
     });
 
     it('maps serialNumber from the humidity device', async () => {
@@ -429,6 +485,23 @@ describe('plantService', () => {
       await expect(createPlant('Patio', null, null, true)).resolves.toBeUndefined();
     });
 
+    it('persists pot_depth_class when provided', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plants: { data: null, error: null } });
+
+      await createPlant('Tall', null, null, false, 'large');
+
+      const chain = mockFrom.mock.results[0]?.value as { insert: ReturnType<typeof vi.fn> };
+      expect(chain.insert).toHaveBeenCalledWith([
+        expect.objectContaining({
+          name: 'Tall',
+          pot_depth_class: 'large',
+          is_outdoor: false,
+          user_id: 'user-1',
+        }),
+      ]);
+    });
+
     it('throws when insert fails', async () => {
       mockAuthenticatedUser();
       setupFromMocks({ plants: { data: null, error: new Error('Insert failed') } });
@@ -456,6 +529,22 @@ describe('plantService', () => {
       setupFromMocks({ plants: { data: null, error: null } });
 
       await expect(updatePlant(1, 'Patio', null, null, true)).resolves.toBeUndefined();
+    });
+
+    it('persists pot_depth_class when provided', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ plants: { data: null, error: null } });
+
+      await updatePlant(1, 'Tall', null, null, false, 'deep');
+
+      const chain = mockFrom.mock.results[0]?.value as { update: ReturnType<typeof vi.fn> };
+      expect(chain.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'Tall',
+          pot_depth_class: 'deep',
+          is_outdoor: false,
+        }),
+      );
     });
 
     it('throws when update fails', async () => {

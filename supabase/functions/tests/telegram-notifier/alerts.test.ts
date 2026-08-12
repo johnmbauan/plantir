@@ -42,6 +42,8 @@ function makeWateringRow(overrides: Partial<WateringRow> = {}): WateringRow {
     plantName: "Monstera",
     imageUrl: null,
     humidity: 20,
+    potDepthClass: null,
+    minHumidityThreshold: 30,
     isOutdoor: false,
     weatherLat: null,
     weatherLng: null,
@@ -74,6 +76,26 @@ describe("sendWateringAlerts", () => {
         await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY),
         [],
       );
+    });
+
+    it("skips rows whose effective humidity is still above the threshold", async () => {
+      // raw 20% with large → effective ~32%, above threshold 30
+      const client = makeClient([
+        {
+          rows: [
+            makeWateringRow({
+              humidity: 20,
+              potDepthClass: "large",
+              minHumidityThreshold: 30,
+            }),
+          ],
+        },
+        { rows: [] },
+      ]);
+      using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
+      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      assertEquals(result, []);
+      assertSpyCalls(fetchStub, 0);
     });
   });
 

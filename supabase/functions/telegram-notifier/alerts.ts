@@ -1,6 +1,7 @@
 import type { PoolClient } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
 import type { OfflineRow, WateringRow } from "./types.ts";
 import { OFFLINE_QUERY, WATERING_QUERY } from "./queries.ts";
+import { getEffectiveHumidity } from "./effectiveHumidity.ts";
 import { loadRainForecastsByCoords, rainNoteText } from "./weather.ts";
 import { sendTelegramMessage, sendTelegramPhoto } from "./telegram.ts";
 import { createInAppNotification } from "./notifications.ts";
@@ -51,6 +52,9 @@ export async function sendWateringAlerts(
     const plantKey = `${row.userId}:${Number(row.plantId)}`;
     if (snoozedKeys.has(plantKey)) continue;
 
+    const humidity = getEffectiveHumidity(Number(row.humidity), row.potDepthClass);
+    if (humidity > Number(row.minHumidityThreshold)) continue;
+
     let rainForecasted = false;
     let rainNote = "";
     if (row.isOutdoor && row.weatherLat != null && row.weatherLng != null) {
@@ -62,8 +66,8 @@ export async function sendWateringAlerts(
     }
 
     const caption = rainForecasted
-      ? `⚠️ Warning! Plant ${row.plantName} needs water! Humidity reading: ${row.humidity}%\n\n🌧️ ${rainNote}`
-      : `⚠️ Warning! Plant ${row.plantName} needs water! Humidity reading: ${row.humidity}%`;
+      ? `⚠️ Warning! Plant ${row.plantName} needs water! Humidity reading: ${humidity}%\n\n🌧️ ${rainNote}`
+      : `⚠️ Warning! Plant ${row.plantName} needs water! Humidity reading: ${humidity}%`;
 
     let telegram = false;
     let browser = false;
@@ -84,12 +88,12 @@ export async function sendWateringAlerts(
     if (row.browserEnabled) {
       const title = `${row.plantName} needs water`;
       const body = rainForecasted
-        ? `Humidity reading: ${row.humidity}%\n${rainNote}`
-        : `Humidity reading: ${row.humidity}%`;
+        ? `Humidity reading: ${humidity}%\n${rainNote}`
+        : `Humidity reading: ${humidity}%`;
       const payload = {
         plantId: Number(row.plantId),
         plantName: row.plantName,
-        humidity: Number(row.humidity),
+        humidity,
         imageUrl: row.imageUrl,
         rain_forecasted: rainForecasted || undefined,
       };
@@ -106,7 +110,7 @@ export async function sendWateringAlerts(
       browser = id !== null;
     }
 
-    alerts.push({ plant: row.plantName, humidity: Number(row.humidity), telegram, browser, rainNote: rainForecasted });
+    alerts.push({ plant: row.plantName, humidity, telegram, browser, rainNote: rainForecasted });
   }
 
   return alerts;

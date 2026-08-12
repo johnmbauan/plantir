@@ -100,7 +100,7 @@ describe('PlantFormModal', () => {
     await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Ficus');
     await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
 
-    expect(createPlant).toHaveBeenCalledWith('Ficus', null, null, false);
+    expect(createPlant).toHaveBeenCalledWith('Ficus', null, null, false, null);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onSaved).toHaveBeenCalledTimes(1);
   });
@@ -119,7 +119,7 @@ describe('PlantFormModal', () => {
     await user.type(nameInput, 'Big Monstera');
     await user.click(within(dialog).getByRole('button', { name: 'Save changes' }));
 
-    expect(updatePlant).toHaveBeenCalledWith(5, 'Big Monstera', null, null, false);
+    expect(updatePlant).toHaveBeenCalledWith(5, 'Big Monstera', null, null, false, null);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onSaved).toHaveBeenCalledTimes(1);
   });
@@ -131,6 +131,52 @@ describe('PlantFormModal', () => {
 
     const dialog = getDialog();
     expect(within(dialog).getByRole('switch', { name: /Outdoor plant/i })).not.toBeChecked();
+  });
+
+  it('renders optional pot height select with info control', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={null} onClose={onClose} onSaved={onSaved} />,
+    );
+
+    const dialog = getDialog();
+    expect(within(dialog).getByText('Pot height')).toBeInTheDocument();
+    const info = within(dialog).getByLabelText('Why pot height matters for moisture readings');
+    expect(info).toBeInTheDocument();
+    expect(within(dialog).getByRole('textbox', { name: 'Pot height' })).toBeInTheDocument();
+
+    await user.hover(info);
+    expect(
+      await screen.findByText(
+        'In taller pots, the surface can dry out sooner than the soil below. Plantir uses pot height to give you more reliable humidity readings and watering alerts.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('prefills pot height when editing a plant', () => {
+    const plant = buildPlant({ name: 'Monstera', potDepthClass: 'large' });
+
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={plant} onClose={onClose} onSaved={onSaved} />,
+    );
+
+    expect(within(getDialog()).getByRole('textbox', { name: 'Pot height' })).toHaveValue('40–60 cm');
+  });
+
+  it('saves selected pot height when creating a plant', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(
+      <PlantFormModal opened editingPlant={null} onClose={onClose} onSaved={onSaved} />,
+    );
+
+    const dialog = getDialog();
+    await user.type(within(dialog).getByPlaceholderText('e.g. Ficus'), 'Fiddle leaf');
+    await user.click(within(dialog).getByRole('textbox', { name: 'Pot height' }));
+    await user.click(await screen.findByRole('option', { name: '40–60 cm', hidden: true }));
+    await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
+
+    expect(createPlant).toHaveBeenCalledWith('Fiddle leaf', null, null, false, 'large');
   });
 
   it('creates an outdoor plant when the switch is enabled', async () => {
@@ -145,7 +191,7 @@ describe('PlantFormModal', () => {
     await user.click(within(dialog).getByRole('switch', { name: /Outdoor plant/i }));
     await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
 
-    expect(createPlant).toHaveBeenCalledWith('Gardenia', null, null, true);
+    expect(createPlant).toHaveBeenCalledWith('Gardenia', null, null, true, null);
   });
 
   it('prefills the outdoor switch when editing an outdoor plant', () => {
@@ -194,7 +240,7 @@ describe('PlantFormModal', () => {
     });
 
     await user.click(saveButton);
-    expect(updatePlant).toHaveBeenCalledWith(5, 'Monstera', null, 7, false);
+    expect(updatePlant).toHaveBeenCalledWith(5, 'Monstera', null, 7, false, null);
   });
 
   it('calls onClose when cancel is clicked', async () => {
@@ -246,7 +292,7 @@ describe('PlantFormModal', () => {
 
     expect(deletePlantImage).toHaveBeenCalledWith(null);
     expect(uploadPlantImage).toHaveBeenCalledWith(file);
-    expect(createPlant).toHaveBeenCalledWith('Ficus', 'https://cdn/plant.jpg', null, false);
+    expect(createPlant).toHaveBeenCalledWith('Ficus', 'https://cdn/plant.jpg', null, false, null);
   });
 
   it('saves selected species without extra confirmation step', async () => {
@@ -286,7 +332,7 @@ describe('PlantFormModal', () => {
     expect(saveButton).toBeEnabled();
 
     await user.click(saveButton);
-    expect(createPlant).toHaveBeenCalledWith('My Plant', null, 7, false);
+    expect(createPlant).toHaveBeenCalledWith('My Plant', null, 7, false, null);
   });
 
   it('clears selected species when user rejects suggestion', async () => {
@@ -322,7 +368,7 @@ describe('PlantFormModal', () => {
     expect(within(dialog).queryByText('Care guidance')).not.toBeInTheDocument();
 
     await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
-    expect(createPlant).toHaveBeenCalledWith('My Plant', null, null, false);
+    expect(createPlant).toHaveBeenCalledWith('My Plant', null, null, false, null);
   });
 
   it('allows using confirmed species image without custom upload', async () => {
@@ -357,6 +403,6 @@ describe('PlantFormModal', () => {
     await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));
 
     expect(uploadPlantImage).not.toHaveBeenCalled();
-    expect(createPlant).toHaveBeenCalledWith('My Plant', 'https://cdn/monstera.jpg', 7, false);
+    expect(createPlant).toHaveBeenCalledWith('My Plant', 'https://cdn/monstera.jpg', 7, false, null);
   });
 });
