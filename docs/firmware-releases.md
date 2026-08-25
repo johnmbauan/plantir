@@ -20,7 +20,7 @@ New or previously non-updatable devices need **one USB flash** with:
 
 - Board: FireBeetle 2 ESP32-C5 or ESP32-C6 (matching the binary you will publish)
 - **Flash Size**: `4MB`
-- **Partition Scheme**: `Minimal SPIFFS (1.9MB APP with OTA / 190KB SPIFFS)`
+- **Partition Scheme**: `Minimal SPIFFS (1.9MB APP with OTA / 128KB SPIFFS)`
 
 Until that bootstrap flash is done, the device cannot install remote updates.
 
