@@ -4,7 +4,27 @@ Step-by-step guide to build a humidity sensor and register it in the Plantir app
 
 ## Step 1: Hardware connection
 
-Connect the humidity sensor to the ESP32 board. Wiring depends on your board; for FireBeetle 2 ESP32-C5/C6 see [Electronics](./electronics.md).
+Connect the capacitive humidity probe to the FireBeetle board. Ground and the analog signal pin are the same on both boards; **sensor power is not**. Board-specific notes are in [Electronics](./electronics.md).
+
+Probe wires are usually: black = ground, red = VCC, yellow = analog out (`AOUT` / `AUOUT`).
+
+### FireBeetle 2 ESP32-C5
+
+The C5 has a switched 3.3 V output (`3V3_C`) that firmware turns off in deep sleep. Wire the probe to that pin, not the always-on `3V3` pin.
+
+- Ground (black) → `GND`
+- VCC (red) → `3V3_C`
+- Analog out (yellow) → `A1`
+
+### FireBeetle 2 ESP32-C6
+
+The C6 `3V3` pin stays powered in deep sleep, so a probe wired there would keep drawing current. Firmware instead powers the probe from **pin A3** (high while measuring, held low during sleep).
+
+- Ground (black) → `GND`
+- VCC (red) → `A3`
+- Analog out (yellow) → `A1`
+
+Do not connect the probe VCC to `3V3`.
 
 ## Step 2: Firmware upload
 

@@ -74,6 +74,15 @@ Double click on the board button to switch in "Bootloader" mode (stable green li
 
 Remove the USB cable from your board and then plug it again, the code will run automatically.
 
+## Hardware wiring
+
+Production devices use **FireBeetle 2 ESP32-C5** or **FireBeetle 2 ESP32-C6**. Ground and the analog signal pin are the same; probe power is not, because the C6 3.3 V pin stays on in deep sleep:
+
+- **C5:** probe VCC → `3V3_C`, analog out → `A1`, ground → `GND`
+- **C6:** probe VCC → `A3`, analog out → `A1`, ground → `GND` — do not use `3V3`
+
+Full assembly steps (including battery and case) are in [Assembling](./docs/assembling.md). Board pin notes are in [Electronics](./docs/electronics.md).
+
 ## Documentation
 
 [Supabase](./docs/supabase.md) • [Electronics](./docs/electronics.md) • [Assembling](./docs/assembling.md) • [Firmware releases](./docs/firmware-releases.md) • [Roadmap](./docs/roadmap/index.md)

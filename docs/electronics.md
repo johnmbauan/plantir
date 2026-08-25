@@ -131,6 +131,14 @@ These messages appear in the Serial Monitor on every boot and can be safely igno
 
 ### Pin notes
 
+#### Humidity probe
+
+- Ground (black) → `GND`
+- VCC (red) → `3V3_C` — firmware turns this rail off in deep sleep
+- Analog out (yellow) → `A1`
+
+Do not connect the probe VCC to the always-on `3V3` pin.
+
 #### 3V3_C
 The `3V3_C` pin is a "controllable 3.3V output", for use cases optimized battery consumption is needed. Hence, it needs to be turned on and off explicitly.
 ```
@@ -151,6 +159,20 @@ To factory-reset saved WiFi and Supabase settings: press **RST**, then within a 
 - **Tools → Flash Size**: `4MB` (onboard flash on the FireBeetle 2 ESP32-C6 / ESP32-C6FH4)
 - **Tools → Partition Scheme**: `Minimal SPIFFS (1.9MB APP with OTA / 190KB SPIFFS)` — **required for remote firmware updates** (over-the-air)
 - **Tools → USB CDC On Boot**: `Enabled` when using the built-in USB serial
+
+### Pin notes
+
+#### Humidity probe
+
+The FireBeetle 2 ESP32-C6 `3V3` pin stays on during deep sleep. A probe wired there would keep drawing current and drain the battery.
+
+Instead, firmware powers the probe from pin `A3` (driven high while measuring, held low during sleep):
+
+- Ground (black) → `GND`
+- VCC (red) → `A3`
+- Analog out (yellow) → `A1`
+
+Do not connect the probe VCC to `3V3`.
 
 ### Factory reset
 
