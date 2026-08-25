@@ -7,6 +7,10 @@
 #include "SensorRunner.h"
 #include "CalibrationRunner.h"
 
+#if defined(CONFIG_IDF_TARGET_ESP32C6)
+#include "driver/gpio.h"
+#endif
+
 // FireBeetle 2 ESP32-C5/C6: LED_BUILTIN is GPIO15 (active HIGH per DFRobot examples).
 static void blinkBootLed() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -23,6 +27,16 @@ static void bootLedOff() {
   digitalWrite(LED_BUILTIN, LOW);
 }
 
+// Drive the sensor supply pin LOW. On the C6 the pad would otherwise float in
+// deep sleep; gpio_hold_en latches that LOW until the next wake.
+static void cutSensorPower() {
+  if (powerPin < 0) return;
+  digitalWrite(powerPin, LOW);
+#if defined(CONFIG_IDF_TARGET_ESP32C6)
+  gpio_hold_en((gpio_num_t)powerPin);
+#endif
+}
+
 // Logs the reason to Serial (and to the server when config is available), powers
 // off the sensor, and enters deep sleep for ERROR_SLEEP_SEC seconds.
 // Marked [[noreturn]] so the compiler knows execution never continues past this call.
@@ -31,7 +45,7 @@ static void bootLedOff() {
   if (appConfig != nullptr) {
     sendDeviceLog("error", reason, *appConfig);
   }
-  if (powerPin >= 0) digitalWrite(powerPin, LOW);
+  cutSensorPower();
   bootLedOff();
   esp_sleep_enable_timer_wakeup((uint64_t)ERROR_SLEEP_SEC * uS_TO_S_FACTOR);
   Serial.flush();
@@ -42,10 +56,16 @@ void setup() {
   Serial.begin(115200);
   blinkBootLed();
 
-  // Power on the sensor via the 3V3_C switched supply (C5 only; C6 has an always-on 3V3 rail).
+  // Power on the sensor: C5 uses GPIO0 to gate 3V3_C; C6 uses A3 because the 3.3 V rail
+  // stays on in deep sleep, so the sensor VCC is wired to A3 instead of 3V3.
   if (powerPin >= 0) {
     pinMode(powerPin, OUTPUT);
     digitalWrite(powerPin, HIGH);
+#if defined(CONFIG_IDF_TARGET_ESP32C6)
+    // Release the deep-sleep latch after the pin is already driven HIGH so it
+    // does not drop to the default input level on wake.
+    gpio_hold_dis((gpio_num_t)powerPin);
+#endif
     delay(1000); // Waiting for the sensor to stabilize.
   }
 
@@ -131,8 +151,8 @@ void setup() {
   const int sleepDurationSeconds = deviceSyncPayload["sleepDurationSeconds"] | DEFAULT_SLEEP_DURATION;
   Serial.println("Entering in deep sleep for " + String(sleepDurationSeconds) + " seconds... 😴");
 
-  // Power off the sensor before sleeping to avoid draining the battery (C5 only).
-  if (powerPin >= 0) digitalWrite(powerPin, LOW);
+  // Power off the sensor before sleeping to avoid draining the battery.
+  cutSensorPower();
   bootLedOff();
   esp_sleep_enable_timer_wakeup(sleepDurationSeconds * uS_TO_S_FACTOR);
   Serial.flush();

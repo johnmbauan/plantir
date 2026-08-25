@@ -1,7 +1,7 @@
 #pragma once
 
 // Increment this version when you make changes that require a new firmware update. See docs/firmware-releases.md
-#define FIRMWARE_VERSION       2
+#define FIRMWARE_VERSION       3
 
 #define DEFAULT_SLEEP_DURATION 21600  // 6 hours in seconds
 #define ERROR_SLEEP_SEC        300    // 5 minutes — retry window after any fatal error
@@ -33,13 +33,14 @@ const int sensorPin   = A1;  // Maps to GPIO2 on ESP32-C5; Arduino resolves the 
 // On the FireBeetle 2 ESP32-C5, GPIO0 gates a MOSFET (Q5) that controls the 3V3_C switched
 // supply powering the moisture sensor. Pulling it LOW during deep sleep eliminates sensor
 // quiescent current.
-// On the FireBeetle 2 ESP32-C6, the 3.3 V rail is always on (HM6245 LDO / TPS62A02); there
-// is no software-controllable power switch. GPIO0 on the C6 is the battery ADC pin and must
-// never be driven as a digital output. Use -1 to signal "no power pin".
+// On the FireBeetle 2 ESP32-C6, the 3.3 V rail stays on in deep sleep (HM6245 LDO /
+// TPS62A02), so the sensor VCC is wired to A3 instead. Drive A3 HIGH to power the
+// sensor and LOW before sleep. GPIO0 on the C6 is the battery ADC pin and must
+// never be driven as a digital output.
 #if defined(CONFIG_IDF_TARGET_ESP32C5)
   const int powerPin = 0;
 #elif defined(CONFIG_IDF_TARGET_ESP32C6)
-  const int powerPin = -1;
+  const int powerPin = A3;
 #endif
 
 const int readsPerRun = 5;   // Number of reads per run; the final result is their average.
