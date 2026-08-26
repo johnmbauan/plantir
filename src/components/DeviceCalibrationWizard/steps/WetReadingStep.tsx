@@ -36,7 +36,7 @@ export default function WetReadingStep({
       </Text>
       <img
         src={sensorSubmergeGuide}
-        alt="Sensor submerged in water up to the white horizontal line"
+        alt="Sensor submerge in water up to the white horizontal line"
         style={guideImageStyle}
       />
 

@@ -39,7 +39,7 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          Press the <strong>RESTART</strong> button on the side of the device. The device will open a Wi-Fi hotspot named <strong>Plantir-Device-Setup</strong>.
+          Press the <strong>RESTART</strong> button on the side of the device. After you press it, the chip inside the Plantir device will light a green LED three times in a row. The device will then open a Wi-Fi hotspot named <strong>Plantir-Device-Setup</strong>.
         </List.Item>
         <List.Item
           icon={

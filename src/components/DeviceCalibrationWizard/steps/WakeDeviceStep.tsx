@@ -12,8 +12,9 @@ export default function WakeDeviceStep({ calibrationExpired, timedOut, onRetry }
     <Stack gap="sm" mt="md">
       <Text fw={600}>Wake the device</Text>
       <Text size="sm">
-        Remove the cap. Press the <strong>Restart</strong> button on your Plantir device to wake it up,
-        then put the cap back on.
+        Remove the cap. Press the <strong>Restart</strong> button on your Plantir device to wake it up.
+        After you press it, the chip inside the Plantir device will light a green LED three times in a row.
+        Then put the cap back on.
       </Text>
 
       {calibrationExpired ? (

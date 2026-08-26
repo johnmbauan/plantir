@@ -9,7 +9,7 @@ const onClose = vi.fn();
 const onCalibrated = vi.fn();
 
 const WAKE_INSTRUCTION =
-  'Remove the cap. Press the Restart button on your Plantir device to wake it up, then put the cap back on.';
+  'Remove the cap. Press the Restart button on your Plantir device to wake it up. After you press it, the chip inside the Plantir device will light a green LED three times in a row. Then put the cap back on.';
 
 vi.mock('@mantine/notifications', () => ({
   notifications: { show: vi.fn() },
