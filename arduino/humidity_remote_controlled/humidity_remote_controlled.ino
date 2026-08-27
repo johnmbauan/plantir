@@ -38,16 +38,20 @@ static void cutSensorPower() {
 }
 
 // Logs the reason to Serial (and to the server when config is available), powers
-// off the sensor, and enters deep sleep for ERROR_SLEEP_SEC seconds.
-// Marked [[noreturn]] so the compiler knows execution never continues past this call.
-[[noreturn]] static void goToSleep(const String& reason, const AppConfig* appConfig = nullptr) {
+// off the sensor, and deep-sleeps with no wake timer. Only RESTART (or power
+// cycle) brings the device back — avoids draining the battery with auto-retries.
+// Default arg keeps Arduino from auto-prototyping this (which would drop [[noreturn]]).
+[[noreturn]] static void goToSleep(
+  const String& reason,
+  const AppConfig* appConfig = nullptr
+) {
   Serial.println("[ERROR] " + reason);
   if (appConfig != nullptr) {
     sendDeviceLog("error", reason, *appConfig);
   }
+  Serial.println("Press RESTART to try again.");
   cutSensorPower();
   bootLedOff();
-  esp_sleep_enable_timer_wakeup((uint64_t)ERROR_SLEEP_SEC * uS_TO_S_FACTOR);
   Serial.flush();
   esp_deep_sleep_start();
 }
@@ -75,7 +79,6 @@ void setup() {
   AppConfig appConfig;
   String pairingToken;
   if (!connectAndProvision(appConfig, pairingToken)) {
-    // No network — can't log remotely; just sleep and retry later.
     goToSleep("WiFi or provisioning failed.");
   }
 
@@ -100,11 +103,11 @@ void setup() {
       ESP.restart();
     }
 
-    // Keep pairing token so a later deep-sleep wake can still retry.
+    // Keep pairing token so RESTART can still retry without re-opening the portal.
     goToSleep(
       pairingToken.isEmpty()
         ? "No remote configuration found for this device."
-        : "Device not registered yet. Will retry after sleep.",
+        : "Device not registered yet. Press RESTART to retry.",
       &appConfig
     );
   }
