@@ -13,7 +13,7 @@ void clearConfig();
 
 // Pairing token is kept until the device successfully loads remote config
 // (proving registration completed), so a failed first attempt can retry
-// after deep-sleep / restart without re-running the captive portal.
+// after RESTART without re-running the captive portal.
 String loadPairingToken();
 void savePairingToken(const String& pairingToken);
 void clearPairingToken();

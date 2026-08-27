@@ -11,7 +11,9 @@ describe('ConnectStep', () => {
 
     expect(screen.getByText('Connect to device hotspot')).toBeInTheDocument();
     expect(screen.getByText(/Make sure the setup code from the previous step is copied/i)).toBeInTheDocument();
-    expect(screen.getByText(/Open the cap of the device/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Slightly twist the cap of the device counter-clockwise, then pull it up/i),
+    ).toBeInTheDocument();
     expect(screen.getByText('RESTART')).toBeInTheDocument();
     expect(screen.getByText(/the chip inside the Plantir device will light a green LED three times in a row/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Plantir-Device-Setup/i).length).toBeGreaterThan(0);

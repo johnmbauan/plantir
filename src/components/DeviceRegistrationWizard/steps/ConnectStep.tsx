@@ -30,7 +30,7 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          Open the cap of the device.
+          Slightly twist the cap of the device counter-clockwise, then pull it up.
         </List.Item>
         <List.Item
           icon={
@@ -48,7 +48,7 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          On your phone or computer, connect to <strong>Plantir-Device-Setup</strong>. A portal will open automatically — it should look like this:
+          On your phone or computer, connect to <strong>Plantir-Device-Setup</strong> hotspot. A portal will open automatically — it should look like this:
         </List.Item>
       </List>
       <img src={wifiPortalHome} alt="WiFi portal home screen" style={portalImageStyle} />

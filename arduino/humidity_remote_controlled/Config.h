@@ -1,10 +1,9 @@
 #pragma once
 
 // Increment this version when you make changes that require a new firmware update. See docs/firmware-releases.md
-#define FIRMWARE_VERSION       3
+#define FIRMWARE_VERSION       4
 
 #define DEFAULT_SLEEP_DURATION 21600  // 6 hours in seconds
-#define ERROR_SLEEP_SEC        300    // 5 minutes — retry window after any fatal error
 #define uS_TO_S_FACTOR         1000000ULL
 #define MAX_API_RETRIES        3
 #define RETRY_DELAY_MS         2000

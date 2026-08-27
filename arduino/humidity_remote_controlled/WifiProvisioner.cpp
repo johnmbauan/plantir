@@ -126,7 +126,7 @@ bool connectAndProvision(AppConfig& appConfig, String& pairingToken) {
   );
   wifiManager.addParameter(&setupBundleParameter);
 
-  wifiManager.autoConnect("Plantir-Device-Setup");
+  const bool connectedToWifi = wifiManager.autoConnect("Plantir-Device-Setup");
 
   const String setupBundle = String(setupBundleParameter.getValue());
   if (!setupBundle.isEmpty()) {
@@ -146,11 +146,13 @@ bool connectAndProvision(AppConfig& appConfig, String& pairingToken) {
     }
   } else if (appConfig.serverUrl.isEmpty() || appConfig.apiKey.isEmpty()) {
     Serial.println(
-      "Missing Supabase credentials. Paste a setup or reconnect code from Plants Center."
+      connectedToWifi
+        ? "Missing Supabase credentials. Paste a setup or reconnect code from Plants Center."
+        : "Setup portal timed out with no configuration. Sleeping until RESTART."
     );
     return false;
   } else {
-    // Resume an unfinished pairing after restart / deep sleep.
+    // Resume an unfinished pairing after RESTART.
     pairingToken = loadPairingToken();
   }
 
