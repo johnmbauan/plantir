@@ -335,7 +335,7 @@ describe('NotificationBell', () => {
     renderBell();
     await user.click(screen.getByRole('button', { name: 'Notifications' }));
 
-    expect(await screen.findByText('Sprout Wars')).toBeInTheDocument();
+    expect(await screen.findByText('Sprout Wars: A New Leaf')).toBeInTheDocument();
     expect(screen.getByText('🌿')).toBeInTheDocument();
   });
 

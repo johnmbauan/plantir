@@ -435,3 +435,15 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/db-keepalive/deno.json"
 entrypoint = "./functions/db-keepalive/index.ts"
+
+[functions.garden-achievements]
+enabled = true
+verify_jwt = false
+import_map = "./functions/garden-achievements/deno.json"
+entrypoint = "./functions/garden-achievements/index.ts"
+
+[functions.translate-species-care]
+enabled = true
+verify_jwt = true
+import_map = "./functions/translate-species-care/deno.json"
+entrypoint = "./functions/translate-species-care/index.ts"

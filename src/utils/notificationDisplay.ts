@@ -1,9 +1,11 @@
 import i18n from "@/i18n";
 import {
+  isAchievementPayload,
   isOfflinePayload,
   isWateringPayload,
   type AppNotification,
 } from "@/services/notificationService";
+import { achievementCopy } from "@/utils/achievementDisplay";
 
 function dateLocale(language: string): string {
   return language.startsWith("it") ? "it-IT" : "en-US";
@@ -46,6 +48,14 @@ export function formatNotificationCopy(
       title,
       body: `${t("notifications.alerts.offlineBodyIntro")}\n\n${lines.join("\n")}`,
     };
+  }
+
+  if (notification.type === "achievement" && isAchievementPayload(notification.payload)) {
+    const copy = achievementCopy(notification.payload.achievementKey, {
+      name: notification.title,
+      description: notification.body,
+    });
+    return { title: copy.name, body: copy.description };
   }
 
   return { title: notification.title, body: notification.body };

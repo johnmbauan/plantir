@@ -4,6 +4,7 @@ import i18n from "@/i18n";
 import type { AchievementKey, GardenElementId } from "@/constants/achievements";
 import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
 import { requireUser } from "@/utils/requireUser";
+import { achievementCopy } from "@/utils/achievementDisplay";
 
 export interface AchievementDefinition {
   key: AchievementKey;
@@ -130,10 +131,11 @@ export function showUnlockToasts(newAchievements: AchievementDefinition[], t: TF
 
   if (newAchievements.length === 1) {
     const a = newAchievements[0];
+    const copy = achievementCopy(a.key, a);
     notifications.show({
       color: "green",
-      title: a.name,
-      message: `${a.description} ${t("garden.unlockToast.singleSuffix")}`,
+      title: copy.name,
+      message: `${copy.description} ${t("garden.unlockToast.singleSuffix")}`,
       autoClose: 8000,
       onClick: openGarden,
     });

@@ -59,6 +59,10 @@ export function isOfflinePayload(payload: NotificationPayload): payload is Offli
   return "plants" in payload;
 }
 
+export function isAchievementPayload(payload: NotificationPayload): payload is AchievementPayload {
+  return "achievementKey" in payload;
+}
+
 function shouldResolveNotification(
   notification: AppNotification,
   statusByPlantId: Map<number, PlantStatus[]>,

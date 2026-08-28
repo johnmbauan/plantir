@@ -382,7 +382,7 @@ describe("sendOfflineAlerts", () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               chat_id: "chat-1",
-              text: "🔴 Attenzione! I dispositivi delle seguenti piante non inviano dati da troppo tempo (possibile batteria scarica o malfunzionamento):\n\n• Monstera (mai rilevato)",
+              text: "🔴 Attenzione! I sensori delle seguenti piante non inviano dati da troppo tempo (possibile batteria scarica o malfunzionamento):\n\n• Monstera (mai rilevato)",
             }),
           },
         ],
