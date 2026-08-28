@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Paper, Stack, Group, Text, ThemeIcon, ActionIcon, Button } from "@mantine/core";
 import {
   IconCheck,
@@ -34,6 +35,7 @@ interface ChecklistStep {
 }
 
 export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { city } = useWeatherCity();
@@ -83,32 +85,32 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
     {
       key: "plants",
       icon: <IconLeaf size={15} />,
-      label: "Add your first plant",
-      description: "Give it a name and optionally a photo.",
+      label: t("onboarding.steps.plants.label"),
+      description: t("onboarding.steps.plants.description"),
       href: "/plants-center?tab=plants",
       done: hasPlants,
     },
     {
       key: "devices",
       icon: <IconCpu size={15} />,
-      label: "Register your first device",
-      description: "Use the guided wizard to link a Plantir sensor to your account.",
+      label: t("onboarding.steps.devices.label"),
+      description: t("onboarding.steps.devices.description"),
       href: "/plants-center?tab=devices&register=1",
       done: hasDevices,
     },
     {
       key: "location",
       icon: <IconMapPin size={15} />,
-      label: "Set your location",
-      description: "Choose your city so outdoor plants can get rain-aware watering alerts.",
+      label: t("onboarding.steps.location.label"),
+      description: t("onboarding.steps.location.description"),
       href: "/?setLocation=1",
       done: hasLocation,
     },
     {
       key: "notifications",
       icon: <IconBell size={15} />,
-      label: "Review notification settings",
-      description: "Choose when to receive watering and offline alerts in the app.",
+      label: t("onboarding.steps.notifications.label"),
+      description: t("onboarding.steps.notifications.description"),
       href: "/settings",
       done: hasNotifications,
     },
@@ -125,16 +127,16 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
       <Group justify="space-between" mb="md" align="flex-start">
         <Stack gap={2}>
           <Text fw={600} c="var(--green-700)">
-            Get started with Plantir
+            {t("onboarding.title")}
           </Text>
           <Text size="sm" c="dimmed">
-            {completedCount} of {steps.length} steps complete — finish setup to start monitoring your plants.
+            {t("onboarding.progress", { completed: completedCount, total: steps.length })}
           </Text>
         </Stack>
         <ActionIcon
           variant="subtle"
           color="gray"
-          aria-label="Dismiss onboarding"
+          aria-label={t("onboarding.dismissAria")}
           onClick={() => {
             localStorage.setItem(DISMISSED_KEY, "true");
             setDismissed(true);
@@ -198,7 +200,7 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
                   navigate(step.href);
                 }}
               >
-                Go
+                {t("common.go")}
               </Button>
             )}
           </Group>

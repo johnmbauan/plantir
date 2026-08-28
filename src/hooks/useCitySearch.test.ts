@@ -37,7 +37,7 @@ describe('useCitySearch', () => {
     });
 
     expect(mockSearchCities).toHaveBeenCalledTimes(1);
-    expect(mockSearchCities).toHaveBeenCalledWith('Rom');
+    expect(mockSearchCities).toHaveBeenCalledWith('Rom', expect.any(String));
     expect(result.current.searchResults).toEqual(mockGeocodingResults);
     expect(result.current.searching).toBe(false);
   });
@@ -89,7 +89,7 @@ describe('useCitySearch', () => {
       await Promise.resolve();
     });
 
-    expect(mockSearchCities).toHaveBeenCalledWith('Rome');
+    expect(mockSearchCities).toHaveBeenCalledWith('Rome', expect.any(String));
     expect(result.current.searchResults).toEqual(mockGeocodingResults);
   });
 

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 import {
   fetchAdminLogsPage,
   type AdminLogsQuery,
@@ -9,6 +10,7 @@ import { getErrorMessage } from "@/utils/error";
 import { paginationMeta } from "@/utils/pagination";
 
 export function useAdminLogsPage(query: AdminLogsQuery) {
+  const { t } = useTranslation();
   const [items, setItems] = useState<AdminLog[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export function useAdminLogsPage(query: AdminLogsQuery) {
       setTotalCount(0);
       notifications.show({
         color: "red",
-        title: "Error loading logs",
+        title: t("admin.logs.loadError"),
         message: getErrorMessage(err),
       });
     } finally {
@@ -46,7 +48,7 @@ export function useAdminLogsPage(query: AdminLogsQuery) {
         setLoading(false);
       }
     }
-  }, [effectiveQuery]);
+  }, [effectiveQuery, t]);
 
   useEffect(() => {
     // Intentionally trigger initial load for current dependencies.

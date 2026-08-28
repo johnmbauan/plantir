@@ -1,5 +1,6 @@
 import { Stack, Text, List, ThemeIcon } from "@mantine/core";
 import { IconCpu, IconWifi, IconClipboard, IconBox, IconHourglass } from "@tabler/icons-react";
+import { Trans, useTranslation } from "react-i18next";
 import wifiPortalHome from "@/assets/wifi-portal-home.png";
 import wifiPortalConfigure from "@/assets/wifi-portal-configure.png";
 
@@ -10,9 +11,10 @@ const portalImageStyle: React.CSSProperties = {
 };
 
 export default function ConnectStep() {
+  const { t } = useTranslation();
   return (
     <Stack gap="sm" mt="md">
-      <Text fw={600}>Connect to device hotspot</Text>
+      <Text fw={600}>{t("registrationWizard.connect.title")}</Text>
       <List spacing="sm" size="sm" center>
         <List.Item
           icon={
@@ -21,7 +23,7 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          Make sure the setup code from the previous step is copied.
+          {t("registrationWizard.connect.copyCodeFirst")}
         </List.Item>
         <List.Item
           icon={
@@ -30,7 +32,7 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          Slightly twist the cap of the device counter-clockwise, then pull it up.
+          {t("registrationWizard.connect.openCap")}
         </List.Item>
         <List.Item
           icon={
@@ -39,7 +41,7 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          Press the <strong>RESTART</strong> button on the side of the device. After you press it, the chip inside the Plantir device will light a green LED three times in a row. The device will then open a Wi-Fi hotspot named <strong>Plantir-Device-Setup</strong>.
+          <Trans i18nKey="registrationWizard.connect.pressRestart" components={{ bold: <strong /> }} />
         </List.Item>
         <List.Item
           icon={
@@ -48,10 +50,10 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          On your phone or computer, connect to <strong>Plantir-Device-Setup</strong> hotspot. A portal will open automatically — it should look like this:
+          <Trans i18nKey="registrationWizard.connect.connectHotspot" components={{ bold: <strong /> }} />
         </List.Item>
       </List>
-      <img src={wifiPortalHome} alt="WiFi portal home screen" style={portalImageStyle} />
+      <img src={wifiPortalHome} alt={t("registrationWizard.connect.portalHomeAlt")} style={portalImageStyle} />
       <List spacing="sm" size="sm" center>
         <List.Item
           icon={
@@ -60,10 +62,10 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          Tap <strong>Configure WiFi</strong>, then select your home network, enter the password, paste the setup code into the <strong>Plantir Setup</strong> field, and tap <strong>Save</strong>:
+          <Trans i18nKey="registrationWizard.connect.configureWifi" components={{ bold: <strong /> }} />
         </List.Item>
       </List>
-      <img src={wifiPortalConfigure} alt="WiFi portal configure screen" style={portalImageStyle} />
+      <img src={wifiPortalConfigure} alt={t("registrationWizard.connect.portalConfigureAlt")} style={portalImageStyle} />
       <List spacing="sm" size="sm" center>
         <List.Item
           icon={
@@ -72,7 +74,7 @@ export default function ConnectStep() {
             </ThemeIcon>
           }
         >
-          Wait for the <strong>Plantir-Device-Setup</strong> portal to close automatically.
+          <Trans i18nKey="registrationWizard.connect.waitPortalClose" components={{ bold: <strong /> }} />
         </List.Item>
       </List>
     </Stack>

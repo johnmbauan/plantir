@@ -1,4 +1,5 @@
 import { Group, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { DayForecast } from "@/services/weatherService";
 import { getWeatherInfo, formatDayLabel, formatShortDate } from "./utils";
 
@@ -8,14 +9,15 @@ interface WeatherDaySlotProps {
 }
 
 export function WeatherDaySlot({ day, index }: WeatherDaySlotProps) {
+  const { t, i18n } = useTranslation();
   const { WeatherIcon, color } = getWeatherInfo(day.weatherCode);
   return (
     <Group gap={6} className={`weather-day-slot${index === 0 ? " weather-day-slot--today" : ""}`} wrap="nowrap">
       <WeatherIcon size={20} color={color} style={{ flexShrink: 0 }} />
       <Stack gap={1}>
         <Group gap={3} wrap="nowrap">
-          <Text className="weather-day-label">{formatDayLabel(day.date, index)}</Text>
-          <Text className="weather-date-sub">{formatShortDate(day.date)}</Text>
+          <Text className="weather-day-label">{formatDayLabel(day.date, index, t, i18n.language)}</Text>
+          <Text className="weather-date-sub">{formatShortDate(day.date, i18n.language)}</Text>
         </Group>
         <Group gap={2} wrap="nowrap">
           <Text className="weather-temp-high">{day.maxTemp}°</Text>

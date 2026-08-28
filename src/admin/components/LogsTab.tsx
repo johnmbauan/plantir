@@ -3,6 +3,7 @@ import {
   Table,
   Text,
 } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { AdminLogSortKey } from "@/admin/adminService";
 import { AdminLogRow } from "@/admin/components/AdminLogRow";
 import { AdminTabLayout } from "@/admin/components/AdminTabLayout";
@@ -20,15 +21,16 @@ import { useAdminLogsPage } from "@/admin/hooks/useAdminLogsPage";
 import { paginationMeta } from "@/utils/pagination";
 import type { SortDirection } from "@/utils/sort";
 
-const LOG_COLUMNS: { key: AdminLogSortKey; label: string }[] = [
-  { key: "createdAt", label: "Timestamp" },
-  { key: "serialNumber", label: "Serial" },
-  { key: "level", label: "Level" },
-  { key: "message", label: "Message" },
-];
-
 export function LogsTab() {
+  const { t } = useTranslation();
   const { filterOptions, refresh: refreshFilterOptions } = useAdminFilterOptions();
+
+  const LOG_COLUMNS: { key: AdminLogSortKey; label: string }[] = [
+    { key: "createdAt", label: t("admin.logs.columns.timestamp") },
+    { key: "serialNumber", label: t("admin.logs.columns.serial") },
+    { key: "level", label: t("admin.logs.columns.level") },
+    { key: "message", label: t("admin.logs.columns.message") },
+  ];
   const [selectedSerial, setSelectedSerial] = useState<string | null>(null);
   const [selectedOwner, setSelectedOwner] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -56,8 +58,8 @@ export function LogsTab() {
     [totalCount, currentPage],
   );
 
-  const serialOptions = buildSerialOptions(filterOptions);
-  const ownerOptions = buildOwnerOptions(filterOptions);
+  const serialOptions = buildSerialOptions(filterOptions, t);
+  const ownerOptions = buildOwnerOptions(filterOptions, t);
   const hasActiveFilters = selectedSerial || selectedOwner || selectedLevel;
 
   function handleRefresh() {
@@ -139,8 +141,8 @@ export function LogsTab() {
                 <Table.Td colSpan={4}>
                   <Text ta="center" c="dimmed" py="xl" size="sm">
                     {hasActiveFilters
-                      ? "No logs match your filters."
-                      : "No logs found."}
+                      ? t("admin.logs.noMatch")
+                      : t("admin.logs.noneFound")}
                   </Text>
                 </Table.Td>
               </Table.Tr>

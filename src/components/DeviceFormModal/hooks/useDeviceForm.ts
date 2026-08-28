@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { Device } from "@/types";
 import { createDevice, updateDevice, type DeviceFormValues } from "@/services/deviceService";
 import { notifications } from "@mantine/notifications";
@@ -28,6 +29,7 @@ export function useDeviceForm({
   onSaved,
   onOpenCalibration,
 }: UseDeviceFormOptions) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<DeviceFormValues>(defaultFormValues());
   const [intervalPreset, setIntervalPreset] = useState(String(DEFAULT_HUMIDITY.sleepDurationSeconds));
   const [saving, setSaving] = useState(false);
@@ -100,18 +102,18 @@ export function useDeviceForm({
   const validation = useMemo((): DeviceFormValidationErrors => {
     const errors: DeviceFormValidationErrors = {};
     if (!isEditing && !form.serialNumber.trim()) {
-      errors.serial = "Serial number is required";
+      errors.serial = t("deviceForm.serialRequired");
     }
     const threshold = form.humidityConfig.minHumidityThreshold;
     if (threshold < 0 || threshold > 100) {
-      errors.threshold = "Threshold must be between 0 and 100";
+      errors.threshold = t("deviceForm.thresholdRangeError");
     }
     const interval = form.humidityConfig.sleepDurationSeconds;
     if (!Number.isFinite(interval) || interval < 1) {
-      errors.interval = "Interval must be at least 1 second";
+      errors.interval = t("deviceForm.intervalMinError");
     }
     return errors;
-  }, [form, isEditing]);
+  }, [form, isEditing, t]);
 
   const isValid = Object.keys(validation).length === 0;
   const isDirty = initialSnapshot != null && serializeFormState(form, intervalPreset) !== initialSnapshot;
@@ -142,8 +144,8 @@ export function useDeviceForm({
         await updateDevice(editingDevice.id, form);
         notifications.show({
           color: "green",
-          title: "Saved",
-          message: "Device updated successfully",
+          title: t("common.saved"),
+          message: t("deviceForm.updatedMessage"),
         });
         onClose();
         onSaved();
@@ -161,7 +163,7 @@ export function useDeviceForm({
       }
     } catch (err) {
       console.error(err);
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setSaving(false);
     }
@@ -174,7 +176,7 @@ export function useDeviceForm({
   };
 
   const handleClose = () => {
-    if (isDirty && !window.confirm("Discard unsaved changes?")) {
+    if (isDirty && !window.confirm(t("common.discardUnsavedChanges"))) {
       return;
     }
     setCreatedDevice(null);

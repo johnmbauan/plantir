@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { PlantStatus } from "@/types";
 import FilterChip from "@/components/shared/FilterChip";
 import IconLeaf from "@/components/icons/IconLeaf";
@@ -38,13 +39,15 @@ export default function PlantFilterBar({
   onSortChange,
   onRefresh,
 }: PlantFilterBarProps) {
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="dashboard-summary">
         <FilterChip
           icon={<IconLeaf />}
           count={counts.healthy}
-          label="healthy"
+          label={t("plantFilter.healthy")}
           variant="healthy"
           active={activeFilter === "HEALTHY"}
           onClick={() => onToggleFilter("HEALTHY")}
@@ -52,7 +55,7 @@ export default function PlantFilterBar({
         <FilterChip
           icon={<IconDrop />}
           count={counts.wateringNeeded}
-          label="need watering"
+          label={t("plantFilter.needWatering")}
           variant="watering"
           active={activeFilter === "WATERING_NEEDED"}
           onClick={() => onToggleFilter("WATERING_NEEDED")}
@@ -60,7 +63,7 @@ export default function PlantFilterBar({
         <FilterChip
           icon={<IconOffline />}
           count={counts.offline}
-          label="offline"
+          label={t("plantFilter.offline")}
           variant="offline"
           active={activeFilter === "OFFLINE"}
           onClick={() => onToggleFilter("OFFLINE")}
@@ -68,7 +71,7 @@ export default function PlantFilterBar({
         <FilterChip
           icon={<IconBattery />}
           count={counts.rechargeNeeded}
-          label="need recharge"
+          label={t("plantFilter.needRecharge")}
           variant="recharge"
           active={activeFilter === "RECHARGE_NEEDED"}
           onClick={() => onToggleFilter("RECHARGE_NEEDED")}
@@ -76,14 +79,19 @@ export default function PlantFilterBar({
       </div>
 
       <div className="filter-toolbar">
-        <PlantFilterSearch value={search} onChange={onSearchChange} />
+        <PlantFilterSearch
+          value={search}
+          onChange={onSearchChange}
+          placeholder={t("plantFilter.searchPlantsPlaceholder")}
+          searchLabel={t("plantFilter.searchPlantsAria")}
+        />
         <PlantSortMenu value={sortBy} onChange={onSortChange} />
         <button
           type="button"
           className={`filter-icon-btn${refreshing ? " filter-icon-btn--spinning" : ""}`}
           onClick={onRefresh}
           disabled={refreshing}
-          aria-label="Refresh dashboard"
+          aria-label={t("dashboard.refreshAria")}
         >
           <IconRefresh />
         </button>

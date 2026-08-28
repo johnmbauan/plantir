@@ -1,5 +1,6 @@
 import { Skeleton, Stack, Text, Button, ActionIcon, Tooltip } from "@mantine/core";
 import { IconBellOff, IconSun } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { EnrichedPlant, PlantStatus } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { relativeTime } from "@/utils/time";
@@ -39,16 +40,18 @@ function BatteryIcon({ percent, size = 15 }: { percent: number; size?: number })
   );
 }
 
-function snoozeTimeLeft(isoString: string): string {
+/** True when the last reading is older than one reporting interval (or the plant is offline). */
+type TFunc = (key: string, opts?: Record<string, unknown>) => string;
+
+function snoozeTimeLeft(isoString: string, t: TFunc): string {
   const diffMs = new Date(isoString).getTime() - Date.now();
-  if (diffMs <= 0) return "expiring";
+  if (diffMs <= 0) return t("plantLeaderboard.expiring");
   const hrs = Math.floor(diffMs / 3_600_000);
   const mins = Math.floor((diffMs % 3_600_000) / 60_000);
-  if (hrs >= 1) return `${hrs}h left`;
-  return `${mins}m left`;
+  if (hrs >= 1) return t("plantLeaderboard.hoursLeft", { hours: hrs });
+  return t("plantLeaderboard.minutesLeft", { minutes: mins });
 }
 
-/** True when the last reading is older than one reporting interval (or the plant is offline). */
 function isReadingStale(plant: EnrichedPlant): boolean {
   if (plant.statuses.includes("OFFLINE")) return true;
   if (!plant.lastMeasuredAt) return true;
@@ -87,10 +90,11 @@ function PlantLeaderboardRow({
   onClick?: () => void;
   onUnsnooze?: (plantId: number) => void;
 }) {
+  const { t } = useTranslation();
   const SEVERITY = ["OFFLINE", "WATERING_NEEDED", "HEALTHY"] as const;
   const primaryStatus = SEVERITY.find((s) => plant.statuses.includes(s)) ?? "HEALTHY";
   const { barColor } = STATUS_CONFIG[primaryStatus];
-  const timeAgo = relativeTime(plant.lastMeasuredAt);
+  const timeAgo = relativeTime(plant.lastMeasuredAt, t);
   const readingStale = isReadingStale(plant);
   const thumbUrl = plantThumbnailUrl(plant);
 
@@ -113,8 +117,8 @@ function PlantLeaderboardRow({
           <span className="leaderboard-name-row">
             <span className="leaderboard-name">{plant.name}</span>
             {plant.is_outdoor && (
-              <Tooltip label="Outdoor plant" withArrow>
-                <span className="leaderboard-outdoor" aria-label="Outdoor plant" onClick={(e) => e.stopPropagation()}>
+              <Tooltip label={t("plantLeaderboard.outdoorPlant")} withArrow>
+                <span className="leaderboard-outdoor" aria-label={t("plantLeaderboard.outdoorPlant")} onClick={(e) => e.stopPropagation()}>
                   <IconSun size={14} color="var(--terracotta-500)" />
                 </span>
               </Tooltip>
@@ -154,15 +158,15 @@ function PlantLeaderboardRow({
             <FilterChip
               variant="snooze"
               icon={<IconBellOff size={12} />}
-              label={`Snoozed · ${snoozeTimeLeft(snoozedUntil)}`}
+              label={t("plantLeaderboard.snoozedWithTime", { timeLeft: snoozeTimeLeft(snoozedUntil, t) })}
               rightSection={
-                <Tooltip label="Remove snooze" withArrow position="top">
+                <Tooltip label={t("plantLeaderboard.removeSnooze")} withArrow position="top">
                   <ActionIcon
                     component="span"
                     size={12}
                     variant="transparent"
                     color="gray"
-                    aria-label="Remove snooze"
+                    aria-label={t("plantLeaderboard.removeSnooze")}
                     onClick={(e) => {
                       e.stopPropagation();
                       onUnsnooze?.(plant.id);
@@ -200,6 +204,8 @@ export default function PlantLeaderboard({
   onUnsnooze,
   emptyState,
 }: PlantLeaderboardProps) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <Stack gap="sm">
@@ -214,7 +220,7 @@ export default function PlantLeaderboard({
     return (
       <Stack align="center" gap={4} mt="xl">
         <Text ta="center" c="var(--green-700)" fw={600}>
-          {emptyState?.title ?? "No plants found."}
+          {emptyState?.title ?? t("plantLeaderboard.noPlantsFound")}
         </Text>
         {emptyState?.description && (
           <Text ta="center" c="dimmed" size="sm">

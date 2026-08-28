@@ -1,4 +1,5 @@
 import { Menu, UnstyledButton } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import LeafAvatar from "@/components/LeafAvatar";
 import { HEADER_AVATAR_HEIGHT, HEADER_AVATAR_WIDTH } from "@/pages/profile/leafShape";
@@ -9,6 +10,7 @@ import { AVATARS_BUCKET, isStorageImageUrl, toThumbnailUrl } from "@/utils/image
 import { profileInitials } from "@/utils/profile";
 
 export default function UserMenu() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { session } = useAuth();
   const email = session?.user.email;
@@ -37,7 +39,7 @@ export default function UserMenu() {
     >
       <Menu.Target>
         <UnstyledButton
-          aria-label="Account menu"
+          aria-label={t("userMenu.accountMenuAria")}
           style={{
             width: HEADER_AVATAR_WIDTH,
             height: HEADER_AVATAR_HEIGHT,
@@ -46,13 +48,13 @@ export default function UserMenu() {
             padding: 0,
           }}
         >
-          <LeafAvatar size="header" src={avatarThumbUrl} initials={initials} alt="Your profile" />
+          <LeafAvatar size="header" src={avatarThumbUrl} initials={initials} alt={t("userMenu.yourProfileAlt")} />
         </UnstyledButton>
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Menu.Item onClick={() => navigate("/profile")}>Profile</Menu.Item>
-        <Menu.Item onClick={() => void handleSignOut()}>Sign out</Menu.Item>
+        <Menu.Item onClick={() => navigate("/profile")}>{t("userMenu.profile")}</Menu.Item>
+        <Menu.Item onClick={() => void handleSignOut()}>{t("userMenu.signOut")}</Menu.Item>
       </Menu.Dropdown>
     </Menu>
   );

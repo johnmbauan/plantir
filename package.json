@@ -21,8 +21,10 @@
     "@mantine/notifications": "^8.3.18",
     "@supabase/supabase-js": "^2.110.4",
     "@tabler/icons-react": "^3.41.1",
+    "i18next": "^26.4.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-i18next": "^17.0.12",
     "react-router-dom": "^7.13.2"
   },
   "devDependencies": {

@@ -1,9 +1,11 @@
 import { Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 export default function AddManualIntro() {
+  const { t } = useTranslation();
   return (
     <Text size="sm" c="dimmed">
-      For most setups, use <strong>Register new device</strong> instead. Manual add is for advanced cases when you already have a serial number.
+      {t("deviceForm.manualIntro")}
     </Text>
   );
 }

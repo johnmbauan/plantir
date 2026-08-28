@@ -1,5 +1,6 @@
 import { Button, FileButton, Group, Image, SegmentedControl, Stack, Text } from "@mantine/core";
 import type { MutableRefObject } from "react";
+import { useTranslation } from "react-i18next";
 
 interface PhotoSectionProps {
   previewSrc: string | null;
@@ -22,6 +23,7 @@ export function PhotoSection({
   onPhotoSourceChange,
   onFileChange,
 }: PhotoSectionProps) {
+  const { t } = useTranslation();
   const selectedPhotoSource = useSpeciesImage ? "species" : "custom";
 
   return (
@@ -30,8 +32,8 @@ export function PhotoSection({
         value={selectedPhotoSource}
         onChange={(value) => onPhotoSourceChange(value as "species" | "custom")}
         data={[
-          { label: "Use species photo", value: "species", disabled: !speciesImageAvailable },
-          { label: "Use custom photo", value: "custom" },
+          { label: t("species.useSpeciesPhoto"), value: "species", disabled: !speciesImageAvailable },
+          { label: t("species.useCustomPhoto"), value: "custom" },
         ]}
         disabled={saving}
         fullWidth
@@ -39,7 +41,7 @@ export function PhotoSection({
       {previewSrc && (
         <Image
           src={previewSrc}
-          alt="Plant preview"
+          alt={t("species.plantPreviewAlt")}
           radius="md"
           h={160}
           w={160}
@@ -48,10 +50,12 @@ export function PhotoSection({
         />
       )}
       <Group gap="sm" align="center">
-        <FileButton resetRef={resetFileRef} onChange={onFileChange} accept="image/*" inputProps={{ "aria-label": "Plant photo file" }}>
+        <FileButton resetRef={resetFileRef} onChange={onFileChange} accept="image/*" inputProps={{ "aria-label": t("species.photoFileAria") }}>
           {(props) => (
             <Button variant="default" disabled={saving} {...props}>
-              {imageFile || (!useSpeciesImage && previewSrc) ? "Replace custom photo" : "Upload custom photo"}
+              {imageFile || (!useSpeciesImage && previewSrc)
+                ? t("species.replaceCustomPhoto")
+                : t("species.uploadCustomPhoto")}
             </Button>
           )}
         </FileButton>
@@ -62,7 +66,7 @@ export function PhotoSection({
         )}
         {useSpeciesImage && speciesImageAvailable && (
           <Text size="sm" c="dimmed">
-            Using species photo
+            {t("species.usingSpeciesPhoto")}
           </Text>
         )}
       </Group>

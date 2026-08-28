@@ -9,6 +9,9 @@ import {
   UNASSIGNED_PLANT_FILTER,
 } from '@/admin/constants';
 import type { AdminFilterOptions } from '@/admin/adminService';
+import i18n from '@/i18n';
+
+const t = i18n.t.bind(i18n);
 
 const baseOptions: AdminFilterOptions = {
   serials: ['SN-B', 'SN-A'],
@@ -20,7 +23,7 @@ const baseOptions: AdminFilterOptions = {
 
 describe('buildSerialOptions', () => {
   it('includes an all-devices option and serials from filter options', () => {
-    expect(buildSerialOptions(baseOptions)).toEqual([
+    expect(buildSerialOptions(baseOptions, t)).toEqual([
       { value: '', label: 'All devices' },
       { value: 'SN-B', label: 'SN-B' },
       { value: 'SN-A', label: 'SN-A' },
@@ -33,11 +36,21 @@ describe('buildOwnerOptions', () => {
     expect(buildOwnerOptions({
       ...baseOptions,
       hasUnassignedOwner: true,
-    })).toEqual([
+    }, t)).toEqual([
       { value: '', label: 'All owners' },
       { value: 'bob@example.com', label: 'bob@example.com' },
       { value: 'alice@example.com', label: 'alice@example.com' },
       { value: UNASSIGNED_OWNER_FILTER, label: 'Unassigned' },
+    ]);
+  });
+
+  it('omits the unassigned option when hasUnassignedOwner is false', () => {
+    const result = buildOwnerOptions({ ...baseOptions, hasUnassignedOwner: false }, t);
+    expect(result.find((o) => o.value === UNASSIGNED_OWNER_FILTER)).toBeUndefined();
+    expect(result).toEqual([
+      { value: '', label: 'All owners' },
+      { value: 'bob@example.com', label: 'bob@example.com' },
+      { value: 'alice@example.com', label: 'alice@example.com' },
     ]);
   });
 });
@@ -47,11 +60,21 @@ describe('buildPlantOptions', () => {
     expect(buildPlantOptions({
       ...baseOptions,
       hasUnassignedPlant: true,
-    })).toEqual([
+    }, t)).toEqual([
       { value: '', label: 'All plants' },
       { value: 'Fern', label: 'Fern' },
       { value: 'Monstera', label: 'Monstera' },
       { value: UNASSIGNED_PLANT_FILTER, label: 'Unassigned' },
+    ]);
+  });
+
+  it('omits the unassigned option when hasUnassignedPlant is false', () => {
+    const result = buildPlantOptions({ ...baseOptions, hasUnassignedPlant: false }, t);
+    expect(result.find((o) => o.value === UNASSIGNED_PLANT_FILTER)).toBeUndefined();
+    expect(result).toEqual([
+      { value: '', label: 'All plants' },
+      { value: 'Fern', label: 'Fern' },
+      { value: 'Monstera', label: 'Monstera' },
     ]);
   });
 });

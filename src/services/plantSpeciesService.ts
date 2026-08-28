@@ -9,6 +9,14 @@ export interface PlantSpeciesSearchItem {
   imageUrl: string | null;
 }
 
+export interface SpeciesCareTranslation {
+  soil: string | null;
+  sunlight: string | null;
+  watering: string | null;
+  fertilization: string | null;
+  pruning: string | null;
+}
+
 interface SearchResponse {
   results?: PlantSpeciesSearchItem[];
   error?: string;
@@ -16,6 +24,11 @@ interface SearchResponse {
 
 interface DetailResponse {
   species?: PlantSpecies;
+  error?: string;
+}
+
+interface TranslationResponse {
+  translation?: SpeciesCareTranslation;
   error?: string;
 }
 
@@ -50,4 +63,23 @@ export async function fetchPlantSpeciesDetail(sourceSpeciesId: string): Promise<
   if (!payload.species) throw new Error("Invalid species detail response");
 
   return payload.species;
+}
+
+export async function fetchSpeciesTranslation(
+  sourceSpeciesId: string,
+  locale: string,
+): Promise<SpeciesCareTranslation | null> {
+  const normalizedId = sourceSpeciesId.trim();
+  if (!normalizedId || locale === "en") return null;
+
+  const { data, error } = await supabase.functions.invoke("translate-species-care", {
+    body: { sourceSpeciesId: normalizedId, locale },
+  });
+
+  if (error) throw error;
+
+  const payload = (data ?? {}) as TranslationResponse;
+  if (payload.error) throw new Error(payload.error);
+
+  return payload.translation ?? null;
 }

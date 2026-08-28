@@ -11,6 +11,7 @@ import { IconCpu } from "@tabler/icons-react";
 import { fetchDevices } from "@/services/deviceService";
 import { notifications } from "@mantine/notifications";
 import { fetchPlants } from "@/services/plantService";
+import { useTranslation } from "react-i18next";
 import type { Device, EnrichedPlant } from "@/types";
 import { buildPlantAssignmentOptions } from "@/components/DeviceFormModal/plantOptions";
 import { getErrorMessage } from "@/utils/error";
@@ -33,13 +34,8 @@ import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
 
 const COLUMN_COUNT = 4;
 
-const SORTABLE_COLUMNS: { key: DevicesTabSortKey; label: string; className?: string }[] = [
-  { key: "serial", label: "Serial Number" },
-  { key: "plant", label: "Plant" },
-  { key: "interval", label: "Interval", className: "col-hide-mobile" },
-];
-
 export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [devices, setDevices] = useState<Device[]>([]);
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
@@ -58,6 +54,12 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
   const [calibratingDevice, setCalibratingDevice] = useState<Device | null>(null);
   const [calibrationOpened, { open: openCalibration, close: closeCalibration }] = useDisclosure(false);
 
+  const SORTABLE_COLUMNS: { key: DevicesTabSortKey; label: string; className?: string }[] = [
+    { key: "serial", label: t("devicesTab.columns.serialNumber") },
+    { key: "plant", label: t("devicesTab.columns.plant") },
+    { key: "interval", label: t("devicesTab.columns.interval"), className: "col-hide-mobile" },
+  ];
+
   const loadData = async () => {
     setLoading(true);
     try {
@@ -66,7 +68,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
       setPlants(plantData);
     } catch (err) {
       console.error(err);
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setLoading(false);
     }
@@ -159,15 +161,15 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
         <PlantFilterSearch
           value={search}
           onChange={setSearch}
-          placeholder="Search by serial or plant…"
-          searchLabel="Search devices"
+          placeholder={t("plantFilter.searchDevicesPlaceholder")}
+          searchLabel={t("plantFilter.searchDevicesAria")}
         />
         <div className="center-tab-toolbar__actions" data-testid="center-tab-toolbar-actions">
           <Button variant="default" onClick={() => handleOpenEdit()}>
-            Add manually
+            {t("devicesTab.addManually")}
           </Button>
           <Button leftSection={<IconCpu size={16} />} onClick={openWizard}>
-            Register new device
+            {t("devicesTab.registerNewDevice")}
           </Button>
         </div>
       </div>
@@ -187,7 +189,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                   className={col.className}
                 />
               ))}
-              <Table.Th w={100}>Actions</Table.Th>
+              <Table.Th w={100}>{t("devicesTab.columns.actions")}</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -199,9 +201,9 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                   <Stack align="center" gap="xs" py="xl">
                     {devices.length === 0 ? (
                       <>
-                        <Text fw={500}>No devices yet</Text>
+                        <Text fw={500}>{t("devicesTab.emptyTitle")}</Text>
                         <Text size="sm" c="dimmed" ta="center" maw={360}>
-                          Register a Plantir sensor with the guided setup wizard, or add a device manually if you already have its serial number.
+                          {t("devicesTab.emptyDescription")}
                         </Text>
                         <Button
                           size="sm"
@@ -209,11 +211,11 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
                           leftSection={<IconCpu size={14} />}
                           onClick={openWizard}
                         >
-                          Register your first device
+                          {t("devicesTab.registerFirstDevice")}
                         </Button>
                       </>
                     ) : (
-                      <Text size="sm" c="dimmed">No devices match your search.</Text>
+                      <Text size="sm" c="dimmed">{t("devicesTab.noSearchMatch")}</Text>
                     )}
                   </Stack>
                 </Table.Td>

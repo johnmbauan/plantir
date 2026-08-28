@@ -7,6 +7,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconSun } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { EnrichedPlant } from "@/types";
 import PlantStatusChips from "@/components/shared/PlantStatusChips";
 import FilterChip from "@/components/shared/FilterChip";
@@ -29,6 +30,7 @@ export default function PlantTableRow({
   onOpenDevice,
   onAssignDevice,
 }: PlantTableRowProps) {
+  const { t } = useTranslation();
   const thumbnail = plantThumbnailUrl(plant);
   const species = speciesLabel(plant);
 
@@ -45,8 +47,8 @@ export default function PlantTableRow({
                 {plant.name}
               </Text>
               {plant.is_outdoor && (
-                <Tooltip label="Outdoor plant" withArrow>
-                  <Text component="span" display="inline-flex" lh={0} aria-label="Outdoor plant">
+                <Tooltip label={t("plantsTab.outdoorPlant")} withArrow>
+                  <Text component="span" display="inline-flex" lh={0} aria-label={t("plantsTab.outdoorPlant")}>
                     <IconSun size={14} color="var(--terracotta-500)" />
                   </Text>
                 </Tooltip>
@@ -96,31 +98,31 @@ export default function PlantTableRow({
         ) : (
           <Group gap={6} wrap="nowrap">
             <Text size="sm" c="dimmed">
-              None
+              {t("common.none")}
             </Text>
             <Anchor size="sm" onClick={onAssignDevice} style={{ cursor: "pointer" }}>
-              Assign
+              {t("plantsTab.assign")}
             </Anchor>
           </Group>
         )}
       </Table.Td>
       <Table.Td>
         <Group gap={4} wrap="nowrap">
-          <Tooltip label="Edit plant" withArrow>
+          <Tooltip label={t("plantsTab.editPlant")} withArrow>
             <FilterChip
               variant="edit"
               icon={<IconEdit size={12} />}
-              label="Edit plant"
+              label={t("plantsTab.editPlant")}
               iconOnly
               expandLabel={false}
               onClick={() => onEdit(plant)}
             />
           </Tooltip>
-          <Tooltip label="Delete plant" withArrow>
+          <Tooltip label={t("plantsTab.deletePlant")} withArrow>
             <FilterChip
               variant="danger"
               icon={<IconTrash size={12} />}
-              label="Delete plant"
+              label={t("plantsTab.deletePlant")}
               iconOnly
               expandLabel={false}
               onClick={() => onDelete(plant)}

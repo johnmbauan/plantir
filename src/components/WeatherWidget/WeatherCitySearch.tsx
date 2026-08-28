@@ -1,5 +1,6 @@
 import { Box, Group, TextInput, ActionIcon, Stack, Text } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { GeocodingResult } from "@/services/weatherService";
 import { useCitySearch } from "@/hooks/useCitySearch";
 
@@ -14,6 +15,7 @@ export function WeatherCitySearch({
   showIntroHint = false,
   showLocationSetupHint = false,
 }: WeatherCitySearchProps) {
+  const { t } = useTranslation();
   const { searchQuery, setSearchQuery, searchResults, searching, noResults, handleSearch } =
     useCitySearch();
 
@@ -21,17 +23,17 @@ export function WeatherCitySearch({
     <Box className="weather-city-search" mt="xs">
       {showLocationSetupHint && (
         <Text size="xs" c="var(--green-700)" mb={6}>
-          Set your city so Plantir can include rain forecasts in watering alerts for outdoor plants.
+          {t("weather.locationSetupHint")}
         </Text>
       )}
       {showIntroHint && !showLocationSetupHint && (
         <Text size="xs" c="dimmed" mb={6}>
-          Choose a city to see the upcoming forecast.
+          {t("weather.introHint")}
         </Text>
       )}
       <Group gap="xs">
         <TextInput
-          placeholder="Search for a city to see the forecast…"
+          placeholder={t("weather.searchPlaceholder")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.currentTarget.value)}
           onKeyDown={(e) => {
@@ -48,7 +50,7 @@ export function WeatherCitySearch({
           size={30}
           onClick={() => void handleSearch()}
           loading={searching}
-          aria-label="Search city for weather forecast"
+          aria-label={t("weather.searchAria")}
         >
           <IconSearch size={14} />
         </ActionIcon>
@@ -56,7 +58,7 @@ export function WeatherCitySearch({
 
       {noResults && (
         <Text size="xs" c="dimmed" ta="center" mt={6}>
-          No cities found. Try a different name.
+          {t("weather.noCitiesFound")}
         </Text>
       )}
 

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Box, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 import ProfilePhotoModal from "@/components/ProfilePhotoModal";
 import ProfileAvatarSection from "@/pages/profile/components/ProfileAvatarSection";
 import ProfileIdentityFields from "@/pages/profile/components/ProfileIdentityFields";
@@ -19,6 +20,7 @@ import { getErrorMessage } from "@/utils/error";
 import { profileInitials } from "@/utils/profile";
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const email = session?.user.email ?? "";
   const {
@@ -55,8 +57,8 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!profileError) return;
-    notifications.show({ color: "red", title: "Error", message: profileError });
-  }, [profileError]);
+    notifications.show({ color: "red", title: t("common.error"), message: profileError });
+  }, [profileError, t]);
 
   function handleFileChange(file: File | null) {
     setAvatarFile(file);
@@ -98,9 +100,9 @@ export default function ProfilePage() {
         void deleteAvatar(previousAvatarUrl);
       }
 
-      notifications.show({ color: "green", title: "Saved", message: "Profile updated." });
+      notifications.show({ color: "green", title: t("profile.saved.title"), message: t("profile.saved.message") });
     } catch (err) {
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setSaving(false);
     }
@@ -112,14 +114,14 @@ export default function ProfilePage() {
   return (
     <Box p="md" maw={720} mx="auto" w="100%">
       <Title order={2} c="var(--green-700)" mb="md">
-        Profile
+        {t("profile.title")}
       </Title>
 
       <form onSubmit={handleSubmit}>
         <Paper shadow="xs" radius="md" p="lg" style={cardStyle}>
           <Stack gap="lg">
             <Text size="sm" c="dimmed">
-              Set how you appear in Plantir.
+              {t("profile.subtitle")}
             </Text>
 
             <Group align="flex-start" wrap="wrap" gap="xl">

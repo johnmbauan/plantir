@@ -1,4 +1,5 @@
 import { Modal, Stepper, Button, Group } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useCalibrationWizard } from "./hooks/useCalibrationWizard";
 import PrepareStep from "./steps/PrepareStep";
 import WakeDeviceStep from "./steps/WakeDeviceStep";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onCalibrated }: Props) {
+  const { t } = useTranslation();
   const {
     step,
     calibrationStarting,
@@ -34,10 +36,10 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Calibrate sensor"
+      title={t("calibrationWizard.title")}
       size="lg"
       closeOnClickOutside={false}
-      closeButtonProps={{ "aria-label": "Close calibration wizard" }}
+      closeButtonProps={{ "aria-label": t("calibrationWizard.closeAria") }}
     >
       <Stepper
         active={step}
@@ -46,11 +48,11 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
         iconSize={22}
         styles={{ stepBody: { display: "none" } }}
       >
-        <Stepper.Step label="Prepare">
+        <Stepper.Step label={t("calibrationWizard.steps.prepare")}>
           <PrepareStep />
         </Stepper.Step>
 
-        <Stepper.Step label="Wake device">
+        <Stepper.Step label={t("calibrationWizard.steps.wakeDevice")}>
           <WakeDeviceStep
             calibrationExpired={calibrationExpired}
             timedOut={timedOut}
@@ -58,7 +60,7 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
           />
         </Stepper.Step>
 
-        <Stepper.Step label="Dry reading">
+        <Stepper.Step label={t("calibrationWizard.steps.dryReading")}>
           <DryReadingStep
             calibrationExpired={calibrationExpired}
             timedOut={timedOut}
@@ -68,7 +70,7 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
           />
         </Stepper.Step>
 
-        <Stepper.Step label="Wet reading">
+        <Stepper.Step label={t("calibrationWizard.steps.wetReading")}>
           <WetReadingStep
             calibrationExpired={calibrationExpired}
             timedOut={timedOut}
@@ -87,21 +89,21 @@ export default function DeviceCalibrationWizard({ opened, onClose, deviceId, onC
       <Group justify="space-between" mt="xl">
         {isCompleted ? (
           <Button fullWidth onClick={handleClose}>
-            Done
+            {t("common.done")}
           </Button>
         ) : isAutoAdvanceStep ? (
-          <Button variant="default" onClick={prevStep}>Back</Button>
+          <Button variant="default" onClick={prevStep}>{t("common.back")}</Button>
         ) : (
           <>
             <Button variant="default" onClick={handleClose}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={() => void handleNext()}
               loading={calibrationStarting}
               disabled={!deviceId}
             >
-              Start calibration
+              {t("calibrationWizard.startCalibration")}
             </Button>
           </>
         )}

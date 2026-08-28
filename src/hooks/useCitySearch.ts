@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import type { GeocodingResult } from "@/services/weatherService";
 import { searchCities } from "@/services/weatherService";
 
@@ -15,6 +16,7 @@ interface UseCitySearchReturn {
 }
 
 export function useCitySearch(): UseCitySearchReturn {
+  const { i18n } = useTranslation();
   const [searchQuery, setSearchQueryRaw] = useState("");
   const [searchResults, setSearchResults] = useState<GeocodingResult[]>([]);
   const [searching, setSearching] = useState(false);
@@ -25,7 +27,7 @@ export function useCitySearch(): UseCitySearchReturn {
     setSearchResults([]);
     setNoResults(false);
     try {
-      const results = await searchCities(query);
+      const results = await searchCities(query, i18n.language);
       setSearchResults(results);
       setNoResults(results.length === 0);
     } catch {
@@ -33,7 +35,7 @@ export function useCitySearch(): UseCitySearchReturn {
     } finally {
       setSearching(false);
     }
-  }, []);
+  }, [i18n.language]);
 
   // Debounced auto-search on every keystroke
   useEffect(() => {

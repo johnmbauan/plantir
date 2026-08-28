@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 import {
   fetchAdminFilterOptions,
   type AdminFilterOptions,
@@ -15,6 +16,7 @@ const EMPTY_FILTER_OPTIONS: AdminFilterOptions = {
 };
 
 export function useAdminFilterOptions() {
+  const { t } = useTranslation();
   const [filterOptions, setFilterOptions] = useState<AdminFilterOptions>(EMPTY_FILTER_OPTIONS);
   const [loading, setLoading] = useState(true);
 
@@ -25,13 +27,13 @@ export function useAdminFilterOptions() {
     } catch (err) {
       notifications.show({
         color: "red",
-        title: "Error loading filters",
+        title: t("admin.filtersLoadError"),
         message: getErrorMessage(err),
       });
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     // Intentionally trigger initial load for current dependencies.

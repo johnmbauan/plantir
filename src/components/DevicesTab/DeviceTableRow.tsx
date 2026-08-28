@@ -1,4 +1,5 @@
 import { Table, Group, Text, Anchor, Avatar, Tooltip } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { Device } from "@/types";
 import { formatInterval } from "@/utils/time";
 import { isDeviceCalibrated } from "@/components/DevicesTab/utils";
@@ -24,6 +25,7 @@ export default function DeviceTableRow({
   onCalibrate,
   onOpenPlant,
 }: DeviceTableRowProps) {
+  const { t } = useTranslation();
   const calibrated = isDeviceCalibrated(device);
 
   return (
@@ -37,7 +39,7 @@ export default function DeviceTableRow({
             <FilterChip
               variant="calibration"
               icon={<IconCalibrate size={12} />}
-              label="Calibration recommended"
+              label={t("devicesTab.calibrationRecommended")}
             />
           )}
         </Group>
@@ -59,13 +61,13 @@ export default function DeviceTableRow({
           </Group>
         ) : (
           <Text size="sm" c="dimmed">
-            Unassigned
+            {t("devicesTab.unassigned")}
           </Text>
         )}
       </Table.Td>
       <Table.Td className="col-hide-mobile">
         {device.humidityConfig ? (
-          formatInterval(device.humidityConfig.sleepDurationSeconds)
+          formatInterval(device.humidityConfig.sleepDurationSeconds, t)
         ) : (
           <Text size="sm" c="dimmed">
             —
@@ -76,34 +78,34 @@ export default function DeviceTableRow({
         <Group gap={4} wrap="nowrap">
           {device.type === "humidity" && (
             <Tooltip
-              label={calibrated ? "Calibrate sensor" : "Calibrate sensor (required)"}
+              label={calibrated ? t("devicesTab.calibrateSensor") : t("devicesTab.calibrateSensorRequired")}
               withArrow
             >
               <FilterChip
                 variant={calibrated ? "healthy" : "calibration"}
                 icon={<IconCalibrate size={12} />}
-                label="Calibrate sensor"
+                label={t("devicesTab.calibrateSensor")}
                 iconOnly
                 expandLabel={false}
                 onClick={() => onCalibrate(device)}
               />
             </Tooltip>
           )}
-          <Tooltip label="Edit device" withArrow>
+          <Tooltip label={t("devicesTab.editDevice")} withArrow>
             <FilterChip
               variant="edit"
               icon={<IconEdit size={12} />}
-              label="Edit device"
+              label={t("devicesTab.editDevice")}
               iconOnly
               expandLabel={false}
               onClick={() => onEdit(device)}
             />
           </Tooltip>
-          <Tooltip label="Delete device" withArrow>
+          <Tooltip label={t("devicesTab.deleteDevice")} withArrow>
             <FilterChip
               variant="danger"
               icon={<IconTrash size={12} />}
-              label="Delete device"
+              label={t("devicesTab.deleteDevice")}
               iconOnly
               expandLabel={false}
               onClick={() => onDelete(device)}

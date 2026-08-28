@@ -1,4 +1,5 @@
 import { Group, Select, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { RefreshButton } from "@/admin/components/RefreshButton";
 
 interface SelectOption {
@@ -31,15 +32,17 @@ export function DevicesTabHeader({
   onPlantChange,
   onRefresh,
 }: DevicesTabHeaderProps) {
+  const { t } = useTranslation();
+
   return (
     <Group justify="space-between">
-      <Text size="lg" fw={600}>All Devices</Text>
+      <Text size="lg" fw={600}>{t("admin.devices.title")}</Text>
       <Group gap="xs">
         <Select
           data={serialOptions}
           value={selectedSerial ?? ""}
           onChange={(v) => onSerialChange(v || null)}
-          placeholder="All devices"
+          placeholder={t("admin.filters.allDevices")}
           style={{ width: 200 }}
           clearable
         />
@@ -47,7 +50,7 @@ export function DevicesTabHeader({
           data={ownerOptions}
           value={selectedOwner ?? ""}
           onChange={(v) => onOwnerChange(v || null)}
-          placeholder="All owners"
+          placeholder={t("admin.filters.allOwners")}
           style={{ width: 220 }}
           clearable
         />
@@ -55,11 +58,11 @@ export function DevicesTabHeader({
           data={plantOptions}
           value={selectedPlant ?? ""}
           onChange={(v) => onPlantChange(v || null)}
-          placeholder="All plants"
+          placeholder={t("admin.filters.allPlants")}
           style={{ width: 180 }}
           clearable
         />
-        <RefreshButton onClick={onRefresh} label="Refresh devices" />
+        <RefreshButton onClick={onRefresh} label={t("admin.devices.refreshLabel")} />
       </Group>
     </Group>
   );

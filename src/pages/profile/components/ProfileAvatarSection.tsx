@@ -1,6 +1,7 @@
 import { useRef, type MutableRefObject } from "react";
 import { ActionIcon, FileButton, Menu, Stack, Text } from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import LeafAvatar from "@/components/LeafAvatar";
 
 interface ProfileAvatarSectionProps {
@@ -28,9 +29,10 @@ export default function ProfileAvatarSection({
   onFileChange,
   onRemovePhoto,
 }: ProfileAvatarSectionProps) {
+  const { t } = useTranslation();
   const openFilePickerRef = useRef<(() => void) | null>(null);
   const actionsDisabled = loading || saving;
-  const uploadLabel = previewSrc ? "Replace photo" : "Upload photo";
+  const uploadLabel = previewSrc ? t("profile.avatar.replacePhoto") : t("profile.avatar.uploadPhoto");
 
   return (
     <Stack gap="xs" align="flex-start">
@@ -39,7 +41,7 @@ export default function ProfileAvatarSection({
         onChange={onFileChange}
         accept="image/*"
         disabled={actionsDisabled}
-        inputProps={{ "aria-label": "Profile photo file" }}
+        inputProps={{ "aria-label": t("profile.avatar.fileAria") }}
       >
         {(props) => {
           openFilePickerRef.current = props.onClick;
@@ -51,7 +53,7 @@ export default function ProfileAvatarSection({
               aria-hidden="true"
               style={{ display: "none" }}
             >
-              Upload
+              {t("profile.avatar.upload")}
             </button>
           );
         }}
@@ -60,9 +62,9 @@ export default function ProfileAvatarSection({
       <LeafAvatar
         src={previewSrc}
         initials={initials}
-        alt="Profile avatar"
+        alt={t("profile.avatar.alt")}
         onClick={previewSrc ? onExpand : undefined}
-        clickAriaLabel="View profile photo"
+        clickAriaLabel={t("profile.avatar.viewAria")}
       >
         <Menu
           trigger="click-hover"
@@ -75,7 +77,7 @@ export default function ProfileAvatarSection({
         >
           <Menu.Target>
             <ActionIcon
-              aria-label="Edit profile photo"
+              aria-label={t("profile.avatar.editAria")}
               size="sm"
               radius="xl"
               variant="filled"
@@ -101,7 +103,7 @@ export default function ProfileAvatarSection({
             </Menu.Item>
             {showRemovePhoto && (
               <Menu.Item onClick={onRemovePhoto} disabled={actionsDisabled} color="red">
-                Remove photo
+                {t("profile.avatar.removePhoto")}
               </Menu.Item>
             )}
           </Menu.Dropdown>

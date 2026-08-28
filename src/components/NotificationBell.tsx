@@ -15,6 +15,7 @@ import {
 } from "@mantine/core";
 import { IconBell } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 import { useNotifications } from "@/hooks/useNotifications";
 import {
   getNotificationHref,
@@ -51,6 +52,7 @@ function NotificationItem({
   onSnooze: (notification: AppNotification, hours: 24 | 48) => void;
   snoozing: boolean;
 }) {
+  const { t } = useTranslation();
   const watering = isWateringPayload(notification.payload) ? notification.payload : null;
   const imageUrl = notificationImageUrl(watering?.imageUrl ?? null);
   const fallback = notificationAvatar(notification);
@@ -78,11 +80,11 @@ function NotificationItem({
           </Text>
           {watering?.rain_forecasted && (
             <Text size="xs" c="blue">
-              Rain expected — watering may not be needed.
+              {t("notifications.rainExpected")}
             </Text>
           )}
           <Text size="xs" c="dimmed">
-            {relativeTime(notification.created_at) ?? ""}
+            {relativeTime(notification.created_at, t) ?? ""}
           </Text>
           {watering && (
             <Group gap="xs" mt={2} onClick={(e) => e.stopPropagation()}>
@@ -94,7 +96,7 @@ function NotificationItem({
                 disabled={snoozing}
                 onClick={() => onSnooze(notification, 24)}
               >
-                Snooze 24h
+                {t("notifications.snooze24h")}
               </Anchor>
               <Text size="xs" c="dimmed">·</Text>
               <Anchor
@@ -105,7 +107,7 @@ function NotificationItem({
                 disabled={snoozing}
                 onClick={() => onSnooze(notification, 48)}
               >
-                Snooze 48h
+                {t("notifications.snooze48h")}
               </Anchor>
             </Group>
           )}
@@ -116,6 +118,7 @@ function NotificationItem({
 }
 
 export default function NotificationBell() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { items, unreadCount, removeItem, clearAll, refresh, realtimeAvailable } =
     useNotifications();
@@ -128,7 +131,7 @@ export default function NotificationBell() {
       removeItem(notification.id);
       navigate(getNotificationHref(notification));
     } catch (err) {
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     }
   }
 
@@ -141,11 +144,14 @@ export default function NotificationBell() {
       removeItem(notification.id);
       notifications.show({
         color: "green",
-        title: "Snoozed",
-        message: `Watering reminders for ${notification.payload.plantName} silenced for ${hours}h`,
+        title: t("notifications.snoozed.title"),
+        message: t("notifications.snoozed.message", {
+          plantName: notification.payload.plantName,
+          hours,
+        }),
       });
     } catch (err) {
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setSnoozingId(null);
     }
@@ -157,7 +163,7 @@ export default function NotificationBell() {
       await markAllNotificationsRead();
       clearAll();
     } catch (err) {
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setMarkingAll(false);
     }
@@ -184,7 +190,7 @@ export default function NotificationBell() {
           <ActionIcon
             variant="subtle"
             color="gray"
-            aria-label="Notifications"
+            aria-label={t("notifications.bellAria")}
             style={{ color: "var(--green-700)" }}
           >
             <IconBell size={20} />
@@ -195,7 +201,7 @@ export default function NotificationBell() {
       <Menu.Dropdown>
         <Group justify="space-between" px="sm" py="xs">
           <Text fw={600} size="sm">
-            Notifications
+            {t("notifications.title")}
           </Text>
           {items.length > 0 && (
             <Button
@@ -204,7 +210,7 @@ export default function NotificationBell() {
               loading={markingAll}
               onClick={() => void handleMarkAllRead()}
             >
-              Mark all as read
+              {t("notifications.markAllAsRead")}
             </Button>
           )}
         </Group>
@@ -212,7 +218,7 @@ export default function NotificationBell() {
         {items.length === 0 ? (
           <Box px="sm" py="md">
             <Text size="sm" c="dimmed" ta="center">
-              No new notifications
+              {t("notifications.empty")}
             </Text>
           </Box>
         ) : (

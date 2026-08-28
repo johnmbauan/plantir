@@ -1,5 +1,6 @@
 import { Drawer, Stack, Text, UnstyledButton } from "@mantine/core";
 import { NavLink, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export default function NavDrawer({ opened, onClose, isAdmin }: Props) {
+  const { t } = useTranslation();
   return (
     <Drawer
       opened={opened}
@@ -28,11 +30,11 @@ export default function NavDrawer({ opened, onClose, isAdmin }: Props) {
           component={Link}
           to="/"
           onClick={onClose}
-          aria-label="Plantir home"
+          aria-label={t("nav.homeAria")}
           style={{ textDecoration: "none", color: "inherit" }}
         >
           <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-            🪴 Plantir
+            {t("common.brandWithEmoji")}
           </Text>
         </UnstyledButton>
       }
@@ -40,17 +42,17 @@ export default function NavDrawer({ opened, onClose, isAdmin }: Props) {
     >
       <Stack gap="xl" pt="md">
         <NavLink to="/" end style={navLinkStyle} onClick={onClose}>
-          Dashboard
+          {t("nav.dashboard")}
         </NavLink>
         <NavLink to="/plants-center" style={navLinkStyle} onClick={onClose}>
-          Plants Center
+          {t("nav.plantsCenter")}
         </NavLink>
         <NavLink to="/settings" style={navLinkStyle} onClick={onClose}>
-          Settings
+          {t("nav.settings")}
         </NavLink>
         {isAdmin && (
           <NavLink to="/admin" style={navLinkStyle} onClick={onClose}>
-            Admin
+            {t("nav.admin")}
           </NavLink>
         )}
       </Stack>

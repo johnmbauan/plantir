@@ -103,9 +103,9 @@ describe('GardenSection', () => {
 
   it('renders the tier name and tagline', () => {
     renderSection();
-    // The tier name and tagline are rendered in a single element separated by " — "
-    expect(screen.getByText(new RegExp(soilTier.name))).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(soilTier.tagline))).toBeInTheDocument();
+    // The tier name and tagline are rendered together separated by " — "
+    expect(screen.getByText(/Seed Packet/)).toBeInTheDocument();
+    expect(screen.getByText(/Empty soil/)).toBeInTheDocument();
   });
 
   it('renders the garden section heading', () => {

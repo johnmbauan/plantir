@@ -1,4 +1,5 @@
 import { Stack, Text, Group, Button, Loader } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import ReadingCountdownBar from "./ReadingCountdownBar";
 import CalibrationExpiredPrompt from "./CalibrationExpiredPrompt";
 
@@ -17,12 +18,12 @@ export default function DryReadingStep({
   countdownKey,
   onRetry,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <Stack gap="sm" mt="md">
-      <Text fw={600}>Dry reading</Text>
+      <Text fw={600}>{t("calibrationWizard.dry.title")}</Text>
       <Text size="sm">
-        Hold the <strong>black sensor tip</strong> in open air, away from any soil or water.
-        Hold position while we capture a stable reading.
+        {t("calibrationWizard.dry.instructions")}
       </Text>
 
       {calibrationExpired ? (
@@ -30,22 +31,22 @@ export default function DryReadingStep({
       ) : timedOut ? (
         <Stack gap="xs" mt="xs">
           <Text size="sm" c="orange" fw={500}>
-            No reading received. Make sure you pressed the restart button and the device connected to Wi-Fi.
+            {t("calibrationWizard.dry.timeout")}
           </Text>
           <Button variant="default" size="sm" onClick={onRetry}>
-            Try again
+            {t("calibrationWizard.wake.tryAgain")}
           </Button>
         </Stack>
       ) : (
         <Stack gap={0} mt="xs">
           {readingRejected ? (
             <Text size="sm" c="orange" fw={500} mb="xs">
-              Make sure the black sensor tip is in open air, away from any soil or water, then hold still.
+              {t("calibrationWizard.dry.rejected")}
             </Text>
           ) : (
             <Group gap="xs">
               <Loader size="xs" color="green" />
-              <Text size="sm" c="dimmed">Waiting for a reading…</Text>
+              <Text size="sm" c="dimmed">{t("calibrationWizard.dry.waiting")}</Text>
             </Group>
           )}
           <ReadingCountdownBar resetKey={countdownKey} />

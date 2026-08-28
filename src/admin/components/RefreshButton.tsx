@@ -1,5 +1,6 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 interface RefreshButtonProps {
   onClick: () => void;
@@ -7,8 +8,9 @@ interface RefreshButtonProps {
 }
 
 export function RefreshButton({ onClick, label }: RefreshButtonProps) {
+  const { t } = useTranslation();
   return (
-    <Tooltip label="Refresh" withArrow>
+    <Tooltip label={t("admin.refresh")} withArrow>
       <ActionIcon
         variant="subtle"
         color="gray"

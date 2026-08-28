@@ -1,0 +1,730 @@
+{
+  "validation": {
+    "required": "Please fill in this field.",
+    "emailInvalid": "Please enter a valid email address."
+  },
+  "common": {
+    "brand": "Plantir",
+    "brandWithEmoji": "🪴 Plantir",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved",
+    "delete": "Delete",
+    "deleted": "Deleted",
+    "done": "Done",
+    "next": "Next",
+    "back": "Back",
+    "go": "Go",
+    "error": "Error",
+    "saving": "Saving...",
+    "optional": "Optional",
+    "none": "None",
+    "unknown": "Unknown",
+    "discardUnsavedChanges": "Discard unsaved changes?",
+    "emDash": "—"
+  },
+  "errors": {
+    "unknown": "An unknown error occurred"
+  },
+  "nav": {
+    "homeAria": "Plantir home",
+    "dashboard": "Dashboard",
+    "plantsCenter": "Plants Center",
+    "settings": "Settings",
+    "admin": "Admin",
+    "toggleNavigation": "Toggle navigation"
+  },
+  "userMenu": {
+    "accountMenuAria": "Account menu",
+    "yourProfileAlt": "Your profile",
+    "profile": "Profile",
+    "signOut": "Sign out"
+  },
+  "auth": {
+    "login": {
+      "subtitle": "Sign in to manage your plants",
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign in",
+      "forgotPassword": "Forgot password?"
+    },
+    "forgotPassword": {
+      "subtitle": "Enter your email and we'll send you a reset link.",
+      "subtitleSubmitted": "Check your email for a password reset link.",
+      "submittedHint": "If an account exists for that email, you will receive a link shortly. The link expires in 1 hour.",
+      "email": "Email",
+      "sendResetLink": "Send reset link",
+      "backToSignIn": "Back to sign in"
+    },
+    "resetPassword": {
+      "subtitle": "Choose a new password. Use at least 8 characters with one uppercase letter and one number.",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "submit": "Reset password",
+      "passwordsDoNotMatch": "Passwords do not match.",
+      "recoveryExpired": "Recovery link expired or invalid.",
+      "passwordUpdated": "Password updated. Sign in with your new password."
+    },
+    "setPassword": {
+      "subtitle": "Set your password to finish setting up your account. Use at least 8 characters with one uppercase letter and one number.",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "submit": "Set password",
+      "passwordsDoNotMatch": "Passwords do not match.",
+      "inviteExpired": "Invite link expired or invalid."
+    },
+    "passwordRequirements": "Password must be at least 8 characters and include one uppercase letter and one number."
+  },
+  "dashboard": {
+    "empty": {
+      "noPlantsTitle": "No plants yet",
+      "noPlantsDescription": "Start by creating your first plant in Plants Center.",
+      "addFirstPlant": "Add first plant",
+      "noMatchTitle": "No plants match your filters",
+      "noMatchDescription": "Try clearing search and filters to see all plants.",
+      "resetFilters": "Reset filters"
+    },
+    "realtimeUnavailable": {
+      "title": "Realtime unavailable",
+      "message": "Live updates are temporarily unavailable. You can still use manual refresh."
+    },
+    "refreshAria": "Refresh dashboard"
+  },
+  "plantFilter": {
+    "healthy": "healthy",
+    "needWatering": "need watering",
+    "offline": "offline",
+    "needRecharge": "need recharge",
+    "searchPlantsPlaceholder": "Search plants…",
+    "searchPlantsAria": "Search plants",
+    "searchDevicesPlaceholder": "Search by serial or plant…",
+    "searchDevicesAria": "Search devices",
+    "clearSearchAria": "Clear search",
+    "sortAria": "Sort plants",
+    "sortHumidityLow": "Humidity (lowest first)",
+    "sortHumidityHigh": "Humidity (highest first)",
+    "sortLastSeen": "Last seen (recent first)",
+    "sortName": "Name (A-Z)"
+  },
+  "plantStatus": {
+    "healthy": "Healthy",
+    "needsWater": "Needs water",
+    "offline": "Offline",
+    "needsRecharge": "Needs recharge"
+  },
+  "humidityBar": {
+    "minThreshold": "min {{threshold}}%"
+  },
+  "plantLeaderboard": {
+    "noPlantsFound": "No plants found.",
+    "outdoorPlant": "Outdoor plant",
+    "removeSnooze": "Remove snooze",
+    "snoozedWithTime": "Snoozed · {{timeLeft}}",
+    "expiring": "expiring",
+    "hoursLeft": "{{hours}}h left",
+    "minutesLeft": "{{minutes}}m left"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "seconds": "{{count}}s",
+    "minutes": "{{count}}min",
+    "minutesAndSeconds": "{{minutes}}min {{seconds}}s",
+    "hours": "{{count}}h",
+    "hoursAndMinutes": "{{hours}}h {{minutes}}min",
+    "customInterval": "Custom…"
+  },
+  "onboarding": {
+    "title": "Get started with Plantir",
+    "progress": "{{completed}} of {{total}} steps complete — finish setup to start monitoring your plants.",
+    "dismissAria": "Dismiss onboarding",
+    "steps": {
+      "plants": {
+        "label": "Add your first plant",
+        "description": "Give it a name and optionally a photo."
+      },
+      "devices": {
+        "label": "Register your first device",
+        "description": "Use the guided wizard to link a Plantir sensor to your account."
+      },
+      "location": {
+        "label": "Set your location",
+        "description": "Choose your city so outdoor plants can get rain-aware watering alerts."
+      },
+      "notifications": {
+        "label": "Review notification settings",
+        "description": "Choose when to receive watering and offline alerts in the app."
+      }
+    }
+  },
+  "notifications": {
+    "bellAria": "Notifications",
+    "title": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "empty": "No new notifications",
+    "rainExpected": "Rain expected — watering may not be needed.",
+    "snooze24h": "Snooze 24h",
+    "snooze48h": "Snooze 48h",
+    "snoozed": {
+      "title": "Snoozed",
+      "message": "Watering reminders for {{plantName}} silenced for {{hours}}h"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": {
+      "title": "Language",
+      "it": "IT",
+      "en": "EN",
+      "saved": {
+        "title": "Language updated",
+        "message": "The interface language has been changed to English."
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Get watering reminders, offline alerts, and garden unlocks in the app.",
+      "inApp": "In-app notifications",
+      "scheduleTitle": "Schedule",
+      "scheduleDescription": "Daily alerts are sent at the chosen hour in your local timezone.",
+      "notificationTime": "Notification time",
+      "timezone": "Timezone"
+    },
+    "telegram": {
+      "title": "Telegram",
+      "description": "Receive alerts on Telegram in addition to the app.",
+      "optionalBadge": "Optional",
+      "chatIdLabel": "Telegram Chat ID",
+      "chatIdPlaceholder": "e.g. 123456789",
+      "chatIdDescription": "Leave blank to receive alerts in the app only."
+    },
+    "footerHint": "Changes apply to all your devices.",
+    "save": "Save",
+    "saved": {
+      "title": "Saved",
+      "message": "Notification settings updated."
+    }
+  },
+  "telegramSetup": {
+    "accordionTitle": "How to set up Telegram notifications",
+    "step1Title": "Find your Chat ID",
+    "step1Body": "Open Telegram and search for <link>@userinfobot</link>. Tap <bold>Start</bold> — it will immediately reply with your numeric Chat ID (e.g. 123456789).",
+    "step1Start": "Start",
+    "step2Title": "Start a conversation with the Plantir bot",
+    "step2Body": "Search for <link>@PlantirAlert_bot</link> in Telegram and tap <bold>Start</bold>. This is required so Telegram allows the bot to send you messages.",
+    "step3Title": "Enter your Chat ID below and save",
+    "step3Body": "Paste the number from Step 1 into the Telegram Chat ID field, pick your preferred notification time, and hit Save.",
+    "groupTitle": "Want alerts for multiple people? Use a group",
+    "groupBody": "Start a conversation with <userinfobot>@userinfobot</userinfobot> and choose one of your groups when prompted — the bot will reply with that group's Chat ID (a negative number, e.g. -1001234567890). Then add <link>@PlantirAlert_bot</link> to the group so it can send messages there. Paste the group ID in the field below and everyone in the group will receive the alerts."
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Set how you appear in Plantir.",
+    "nickname": "Nickname",
+    "nicknamePlaceholder": "How should we call you?",
+    "nicknameOptional": "Optional",
+    "email": "Email",
+    "emailDescription": "Managed through your account administrator.",
+    "save": "Save",
+    "saved": {
+      "title": "Saved",
+      "message": "Profile updated."
+    },
+    "avatar": {
+      "fileAria": "Profile photo file",
+      "alt": "Profile avatar",
+      "viewAria": "View profile photo",
+      "editAria": "Edit profile photo",
+      "upload": "Upload",
+      "uploadPhoto": "Upload photo",
+      "replacePhoto": "Replace photo",
+      "removePhoto": "Remove photo",
+      "modalTitle": "Profile photo",
+      "enlargedAlt": "Profile photo enlarged"
+    }
+  },
+  "plantsCenter": {
+    "title": "Plants Center",
+    "tabs": {
+      "plants": "Plants",
+      "devices": "Devices"
+    }
+  },
+  "plantsTab": {
+    "columns": {
+      "name": "Name",
+      "status": "Status",
+      "moisture": "Moisture",
+      "assignedDevice": "Assigned Device",
+      "actions": "Actions"
+    },
+    "addPlant": "Add Plant",
+    "emptyTitle": "No plants yet",
+    "emptyDescription": "Add a plant to start tracking its humidity. Give it a name and optionally a photo.",
+    "addFirstPlant": "Add your first plant",
+    "noSearchMatch": "No plants match your search.",
+    "assign": "Assign",
+    "editPlant": "Edit plant",
+    "deletePlant": "Delete plant",
+    "outdoorPlant": "Outdoor plant"
+  },
+  "plantForm": {
+    "addTitle": "Add plant",
+    "editTitle": "Edit plant",
+    "name": "Name",
+    "nameDescription": "Give this plant a name you can recognize quickly.",
+    "namePlaceholder": "e.g. Ficus",
+    "outdoorLabel": "Outdoor plant",
+    "outdoorDescription": "Enable for outdoor plants that get rainwater",
+    "potHeight": "Pot height",
+    "potHeightAria": "Pot height",
+    "potHeightWhyAria": "Why pot height matters for moisture readings",
+    "potHeightDescription": "Optional — improves how moisture is interpreted for taller pots.",
+    "speciesSectionTitle": "Species (optional)",
+    "speciesSectionDescription": "Adding species helps unlock more accurate care guidance.",
+    "photoSectionTitle": "Photo",
+    "photoSectionDescription": "Choose either the matched species photo or your own custom image.",
+    "nameRequired": "Plant name is required",
+    "addSubmit": "Add plant",
+    "saveSubmit": "Save changes",
+    "createdMessage": "Plant created successfully",
+    "updatedMessage": "Plant updated successfully"
+  },
+  "potDepth": {
+    "tooltip": "In taller pots, the surface can dry out sooner than the soil below. Plantir uses pot height to give you more reliable humidity readings and watering alerts.",
+    "notSure": "Not sure / skip",
+    "compact": "≤ 15 cm",
+    "small": "15–25 cm",
+    "medium": "25–40 cm",
+    "large": "40–60 cm",
+    "deep": "> 60 cm",
+    "inGround": "In the ground"
+  },
+  "species": {
+    "selectAria": "Plant species (optional)",
+    "placeholder": "Start typing species...",
+    "typeAtLeast2": "Type at least 2 characters",
+    "searching": "Searching...",
+    "noMatches": "No matches",
+    "searchingSpecies": "Searching species...",
+    "loadingDetails": "Loading species details...",
+    "careGuidanceBadge": "Care guidance",
+    "scientificName": "Scientific name: {{name}}",
+    "speciesImageAlt": "Species image",
+    "recommendedSoilMoisture": "Recommended soil moisture",
+    "recommendedTemperature": "Recommended temperature",
+    "viewCareGuidance": "View care guidance",
+    "soil": "Soil:",
+    "sunlight": "Sunlight:",
+    "watering": "Watering:",
+    "fertilization": "Fertilization:",
+    "pruning": "Pruning:",
+    "clearSpecies": "Not the right species",
+    "useSpeciesPhoto": "Use species photo",
+    "useCustomPhoto": "Use custom photo",
+    "plantPreviewAlt": "Plant preview",
+    "photoFileAria": "Plant photo file",
+    "uploadCustomPhoto": "Upload custom photo",
+    "replaceCustomPhoto": "Replace custom photo",
+    "usingSpeciesPhoto": "Using species photo",
+    "translationLoading": "Translating care guidance…"
+  },
+  "plantDelete": {
+    "title": "Delete plant",
+    "confirm": "Are you sure you want to delete <bold>{{name}}</bold>?",
+    "unassignWarning": "Any devices currently assigned to this plant will be unassigned.",
+    "success": {
+      "title": "Deleted",
+      "message": "Plant deleted successfully"
+    }
+  },
+  "plantDetail": {
+    "editPlant": "Edit plant",
+    "editDevice": "Edit device",
+    "viewFullSizeAria": "View full size photo of {{name}}",
+    "fullSizeAria": "Full size photo of {{name}}",
+    "closeFullSizeAria": "Close full size photo",
+    "currentStatus": "Current status",
+    "humidity": "Humidity",
+    "noReading": "No reading",
+    "lastWatered": "Last watered",
+    "noDevice": "No device",
+    "battery": "Battery",
+    "reportingInterval": "Reporting interval",
+    "connectDeviceTitle": "Connect a device to track history",
+    "connectDeviceBody": "Assign a device to this plant to collect humidity, battery, and measurement history.",
+    "measurementHistory": "Measurement history",
+    "range7d": "7 days",
+    "range14d": "14 days",
+    "range30d": "30 days",
+    "range90d": "90 days",
+    "humidityTrend": "Humidity trend",
+    "batteryTrend": "Battery trend"
+  },
+  "historyChart": {
+    "empty": "{{title}}: no measurements in this time range.",
+    "headerStats": "Latest {{latest}} · Min {{min}} · Max {{max}}"
+  },
+  "devicesTab": {
+    "columns": {
+      "serialNumber": "Serial Number",
+      "plant": "Plant",
+      "interval": "Interval",
+      "actions": "Actions"
+    },
+    "addManually": "Add manually",
+    "registerNewDevice": "Register new device",
+    "emptyTitle": "No devices yet",
+    "emptyDescription": "Register a Plantir sensor with the guided setup wizard, or add a device manually if you already have its serial number.",
+    "registerFirstDevice": "Register your first device",
+    "noSearchMatch": "No devices match your search.",
+    "unassigned": "Unassigned",
+    "calibrationRecommended": "Calibration recommended",
+    "calibrateSensor": "Calibrate sensor",
+    "calibrateSensorRequired": "Calibrate sensor (required)",
+    "editDevice": "Edit device",
+    "deleteDevice": "Delete device"
+  },
+  "deviceDelete": {
+    "title": "Delete device",
+    "confirm": "Are you sure you want to delete device <bold>{{serialNumber}}</bold>?",
+    "warning": "Its sensor configuration and all measurements will also be removed.",
+    "success": {
+      "title": "Deleted",
+      "message": "Device deleted successfully"
+    }
+  },
+  "deviceForm": {
+    "createdTitle": "Device created",
+    "editTitle": "Edit device",
+    "addTitle": "Add device manually",
+    "manualIntro": "For most setups, use Register new device instead. Manual add is for advanced cases when you already have a serial number.",
+    "assignment": "Assignment",
+    "serialNumber": "Serial number",
+    "serialPlaceholder": "e.g. SN-001",
+    "serialRequired": "Serial number is required",
+    "humiditySensor": "Humidity sensor",
+    "plant": "Plant",
+    "plantPlaceholder": "Select a plant",
+    "clearPlantAria": "Clear plant",
+    "plantsWithDeviceDisabled": "Plants that already have a device assigned are disabled.",
+    "deviceAssigned": "device assigned",
+    "wateringAlerts": "Watering alerts",
+    "alertWhenBelow": "Alert when humidity drops below this value",
+    "suggestedFromSpecies": "Suggested from species: {{threshold}}%",
+    "thresholdRangeError": "Threshold must be between 0 and 100",
+    "reportingInterval": "Reporting interval",
+    "reportingIntervalDescription": "How often the device wakes up and sends data. Higher frequencies drain the battery faster.",
+    "recommended": "Recommended",
+    "customInterval": "Custom interval (seconds)",
+    "customIntervalDescription": "For testing you can set a short interval (e.g. 10–60 seconds). Lower values use more battery.",
+    "intervalMinError": "Interval must be at least 1 second",
+    "shortIntervalWarning": "Short intervals drain the battery faster.",
+    "calibration": "Calibration",
+    "airDry": "Air (dry):",
+    "waterWet": "Water (wet):",
+    "recalibrateSensor": "Recalibrate sensor",
+    "addSubmit": "Add device",
+    "saveSubmit": "Save changes",
+    "updatedMessage": "Device updated successfully",
+    "calibratePrompt": "Calibrate the sensor for accurate readings.",
+    "calibrateNow": "Calibrate now"
+  },
+  "registrationWizard": {
+    "title": "Register new device",
+    "steps": {
+      "prepare": "Prepare",
+      "setupCode": "Setup code",
+      "connect": "Connect",
+      "waiting": "Waiting"
+    },
+    "prepare": {
+      "title": "Prepare",
+      "pcRecommendation": "For the best experience, we recommend completing this setup from a PC or laptop.",
+      "intro": "This wizard will guide you through registering a Plantir humidity sensor and linking it to your account.",
+      "assignPlant": "Assign to plant (optional)",
+      "assignPlantPlaceholder": "You can assign a plant now or later"
+    },
+    "setupCode": {
+      "title": "Setup code",
+      "intro": "Copy this setup code. You will paste it into the device Wi-Fi portal in the next steps.",
+      "generating": "Generating setup code…",
+      "copy": "Copy setup code",
+      "copied": "Copied",
+      "expiresAt": "Expires at {{time}}",
+      "generate": "Generate setup code"
+    },
+    "connect": {
+      "title": "Connect to device hotspot",
+      "copyCodeFirst": "Make sure the setup code from the previous step is copied.",
+      "openCap": "Slightly twist the cap of the device counter-clockwise, then pull it up.",
+      "pressRestart": "Press the <bold>RESTART</bold> button on the side of the device. After you press it, the chip inside the Plantir device will light a green LED three times in a row. The device will then open a Wi-Fi hotspot named <bold>Plantir-Device-Setup</bold>.",
+      "connectHotspot": "On your phone or computer, connect to <bold>Plantir-Device-Setup</bold> hotspot. A portal will open automatically — it should look like this:",
+      "portalHomeAlt": "WiFi portal home screen",
+      "configureWifi": "Tap <bold>Configure WiFi</bold>, then select your home network, enter the password, paste the setup code into the <bold>Plantir Setup</bold> field, and tap <bold>Save</bold>:",
+      "portalConfigureAlt": "WiFi portal configure screen",
+      "waitPortalClose": "Wait for the <bold>Plantir-Device-Setup</bold> portal to close automatically.",
+      "iveConnected": "I've connected the device"
+    },
+    "waiting": {
+      "title": "Waiting for registration",
+      "body": "Waiting for the device to register… Keep the portal open until the device connects to your Wi-Fi.",
+      "stillWaitingTitle": "Still waiting",
+      "stillWaitingBody": "We have not detected registration yet. Check that the setup code was pasted correctly and the device joined your Wi-Fi.",
+      "keepWaiting": "Keep waiting",
+      "regenerateCode": "Generate a new setup code",
+      "ownedByAnother": "This device is already registered to a different account. If you believe this is your device, contact support.",
+      "registrationFailed": "Registration failed. Please try again or contact support."
+    },
+    "completed": {
+      "title": "Device registered successfully",
+      "serialNumberLabel": "Serial number:",
+      "body": "Your device is registered and will start sending readings shortly.",
+      "skipForNow": "Skip for now",
+      "calibrateSensor": "Calibrate sensor"
+    }
+  },
+  "calibrationWizard": {
+    "title": "Calibrate sensor",
+    "closeAria": "Close calibration wizard",
+    "steps": {
+      "prepare": "Prepare",
+      "wakeDevice": "Wake device",
+      "dryReading": "Dry reading",
+      "wetReading": "Wet reading"
+    },
+    "startCalibration": "Start calibration",
+    "prepare": {
+      "title": "Before you start",
+      "intro": "Calibration teaches the sensor what \"completely dry\" and \"completely wet\" feel like, so it can give you accurate soil moisture readings.",
+      "youllNeed": "You'll need:",
+      "needDevice": "Your Plantir device",
+      "needWater": "A small glass of water",
+      "duration": "The process takes about 1 minute."
+    },
+    "wake": {
+      "title": "Wake the device",
+      "instructions": "Slightly twist the cap counter-clockwise, then pull it up. Press the <bold>Restart</bold> button on your Plantir device to wake it up. After you press it, the chip inside the Plantir device will light a green LED three times in a row. Then put the cap back on.",
+      "timeout": "No reading received. Make sure you pressed the restart button and the device connected to Wi-Fi.",
+      "tryAgain": "Try again",
+      "waiting": "Waiting for the device to connect…"
+    },
+    "dry": {
+      "title": "Dry reading",
+      "instructions": "Hold the black sensor tip in open air, away from any soil or water. Hold position while we capture a stable reading.",
+      "timeout": "No reading received. Make sure you pressed the restart button and the device connected to Wi-Fi.",
+      "rejected": "Make sure the black sensor tip is in open air, away from any soil or water, then hold still.",
+      "waiting": "Waiting for a reading…"
+    },
+    "wet": {
+      "title": "Wet reading",
+      "instructions": "Gently lower the sensor into the glass of water until the white horizontal line on the black tip is just submerged. Hold the sensor steady at this depth while we capture a stable reading.",
+      "guideAlt": "Sensor submerge in water up to the white horizontal line",
+      "timeout": "No reading received. Make sure the sensor is submerged correctly and the device is still connected.",
+      "restart": "Restart calibration",
+      "saving": "Saving calibration…",
+      "rejected": "Make sure the sensor tip is submerged in water down to the white horizontal line, without submerging the rest of the device.",
+      "waiting": "Waiting for a reading…"
+    },
+    "expired": {
+      "message": "The device's calibration window has ended after 2 minutes. Restart calibration to try again.",
+      "restart": "Restart calibration"
+    },
+    "countdownHint": "The device sends a reading every 10 seconds",
+    "complete": {
+      "title": "Sensor calibrated!",
+      "body": "Place the device back in the soil. It will take a reading in about 2 minutes."
+    },
+    "saveErrorTitle": "Error saving calibration"
+  },
+  "weather": {
+    "forecastTitle": "Weather forecast",
+    "changeCityAria": "Change city",
+    "cancelCityChangeAria": "Cancel city change",
+    "locationSetupHint": "Set your city so Plantir can include rain forecasts in watering alerts for outdoor plants.",
+    "introHint": "Choose a city to see the upcoming forecast.",
+    "searchPlaceholder": "Search for a city to see the forecast…",
+    "searchAria": "Search city for weather forecast",
+    "noCitiesFound": "No cities found. Try a different name.",
+    "couldNotLoadForecast": "Could not load forecast.",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "conditions": {
+      "clear": "Clear",
+      "partlyCloudy": "Partly cloudy",
+      "overcast": "Overcast",
+      "foggy": "Foggy",
+      "drizzle": "Drizzle",
+      "rain": "Rain",
+      "snow": "Snow",
+      "showers": "Showers",
+      "storm": "Storm",
+      "unknown": "Unknown"
+    }
+  },
+  "garden": {
+    "title": "Your Garden",
+    "footer": "Keep caring for your plants to grow your garden.",
+    "sceneAria": "Your growing garden",
+    "notYetUnlocked": "Not yet unlocked",
+    "mysteryName": "???",
+    "mysteryBadgeAria": "Mystery badge: {{description}}",
+    "tiers": {
+      "seedPacket": {
+        "name": "Seed Packet",
+        "tagline": "Empty soil. Possibility. A lonely pebble."
+      },
+      "firstPots": {
+        "name": "First Pots",
+        "tagline": "Something green is happening."
+      },
+      "greenfingers": {
+        "name": "Greenfingers",
+        "tagline": "Your garden is getting opinions."
+      },
+      "secretGarden": {
+        "name": "Secret Garden",
+        "tagline": "Vines, trellis, and quiet pride."
+      },
+      "littleForest": {
+        "name": "Little Forest",
+        "tagline": "The canopy has entered the chat."
+      }
+    },
+    "unlockToast": {
+      "singleSuffix": "Tap to open your garden.",
+      "multiTitle": "Your garden grew",
+      "multiMessage": "{{count}} new badges unlocked — tap to open your garden."
+    }
+  },
+  "sortable": {
+    "sortBy": "Sort by {{label}}"
+  },
+  "admin": {
+    "title": "Admin Portal",
+    "refresh": "Refresh",
+    "filtersLoadError": "Error loading filters",
+    "tabs": {
+      "devices": "Devices",
+      "logs": "Logs",
+      "firmware": "Firmware"
+    },
+    "filters": {
+      "allDevices": "All devices",
+      "allOwners": "All owners",
+      "allPlants": "All plants",
+      "allLevels": "All levels"
+    },
+    "pagination": {
+      "loading": "Loading…",
+      "showing": "Showing {{start}}–{{end}} of {{total}}"
+    },
+    "devices": {
+      "title": "All Devices",
+      "refreshLabel": "Refresh devices",
+      "noMatch": "No devices match your filters.",
+      "noneRegistered": "No devices registered.",
+      "loadError": "Error loading devices",
+      "columns": {
+        "serialNumber": "Serial Number",
+        "owner": "Owner",
+        "plant": "Plant",
+        "type": "Type",
+        "humidity": "Humidity",
+        "battery": "Battery",
+        "lastSeen": "Last Seen",
+        "firmware": "Firmware"
+      }
+    },
+    "logs": {
+      "title": "Device Logs",
+      "refreshLabel": "Refresh logs",
+      "noMatch": "No logs match your filters.",
+      "noneFound": "No logs found.",
+      "loadError": "Error loading logs",
+      "levelError": "Error",
+      "levelWarning": "Warning",
+      "levelInfo": "Info",
+      "columns": {
+        "timestamp": "Timestamp",
+        "serial": "Serial",
+        "level": "Level",
+        "message": "Message"
+      }
+    },
+    "firmware": {
+      "title": "Firmware releases",
+      "description": "Upload stages a build. Assign to pilot devices, then publish to the fleet channel.",
+      "refreshLabel": "Refresh firmware releases",
+      "fleetChannels": "Fleet channels",
+      "noPublishedRelease": "No published release",
+      "noReleasesYet": "No firmware releases yet. Upload a .bin to stage the first build.",
+      "channelRelease": "OTA v{{version}} · {{semver}}{{label}}",
+      "colBoard": "Board",
+      "colOta": "OTA",
+      "colSemver": "SemVer",
+      "colLabel": "Label",
+      "colCreated": "Created",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "statusFleet": "Fleet",
+      "statusStaged": "Staged",
+      "publish": "Publish",
+      "assign": "Assign",
+      "clearOverrides": "Clear overrides",
+      "publishedTitle": "Published to fleet",
+      "publishedMessage": "{{board}} channel now points to OTA v{{version}} ({{semver}}).",
+      "publishFailedTitle": "Publish failed",
+      "clearedTitle": "Overrides cleared",
+      "clearedMessage": "Removed pilot overrides for {{board}} OTA v{{version}} ({{semver}}).",
+      "clearFailedTitle": "Clear failed",
+      "unknownError": "Unknown error",
+      "upload": {
+        "missingFieldsTitle": "Missing fields",
+        "missingFieldsMessage": "Board, OTA version (≥ 1), SemVer, and a .bin file are required.",
+        "invalidSemverTitle": "Invalid SemVer",
+        "invalidSemverMessage": "Use MAJOR.MINOR.PATCH (e.g. 1.2.0 or 1.2.0-beta.1).",
+        "stagedTitle": "Release staged",
+        "stagedMessage": "{{board}} OTA v{{version}} ({{semver}}) uploaded. Publish or assign next.",
+        "failedTitle": "Upload failed",
+        "thisBoard": "this board",
+        "currentVersion": "Current version for {{board}}: {{version}}",
+        "noReleases": "No releases for {{board}} yet",
+        "nextOta": "Next OTA version",
+        "semverTooltip": "Human-readable version label shown in Admin (e.g. 1.2.0). Devices use the OTA version, not this.",
+        "semverAria": "What is SemVer?",
+        "description": "Description (optional)",
+        "binary": "Firmware binary",
+        "binaryPlaceholder": "Select .bin exported from Arduino IDE",
+        "binaryAria": "Firmware binary file",
+        "submit": "Upload release"
+      },
+      "assignModal": {
+        "title": "Assign OTA v{{version}} · {{semver}} ({{board}})",
+        "titleFallback": "Assign firmware",
+        "description": "Selected devices will OTA to this release on their next wake, even if the fleet channel points elsewhere.",
+        "loadFailed": "Failed to load devices",
+        "assignedTitle": "Override assigned",
+        "assignedMessage": "Pinned OTA v{{version}} ({{semver}}) on {{count}} device(s).",
+        "failedTitle": "Assign failed",
+        "loading": "Loading devices…",
+        "empty": "No devices found for this board.",
+        "reported": " · reported v{{version}}",
+        "hasOverride": " · has override",
+        "assignTo_one": "Assign to {{count}} device",
+        "assignTo_other": "Assign to {{count}} devices"
+      }
+    },
+    "device": {
+      "unassigned": "Unassigned",
+      "overrideCleared": "Override cleared",
+      "overrideClearedMessage": "{{serial}} will follow the fleet channel.",
+      "clearFailed": "Clear failed",
+      "unknownError": "Unknown error",
+      "clear": "Clear",
+      "overrideVersion": "Override v{{version}}"
+    }
+  }
+}

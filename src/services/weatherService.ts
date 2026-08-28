@@ -43,8 +43,8 @@ interface NominatimReverseResponse {
   };
 }
 
-export async function searchCities(name: string): Promise<GeocodingResult[]> {
-  const url = `${GEOCODING_BASE}/search?name=${encodeURIComponent(name)}&count=5&language=en&format=json`;
+export async function searchCities(name: string, lang = "en"): Promise<GeocodingResult[]> {
+  const url = `${GEOCODING_BASE}/search?name=${encodeURIComponent(name)}&count=5&language=${lang}&format=json`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Geocoding request failed: ${res.status}`);
   const data = (await res.json()) as OpenMeteoGeoResponse;

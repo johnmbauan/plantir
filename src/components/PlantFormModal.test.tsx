@@ -364,7 +364,7 @@ describe('PlantFormModal', () => {
     });
     expect(within(dialog).getByText('Care guidance')).toBeInTheDocument();
 
-    await user.click(within(dialog).getByRole('button', { name: 'Clear species' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Not the right species' }));
     expect(within(dialog).queryByText('Care guidance')).not.toBeInTheDocument();
 
     await user.click(within(dialog).getByRole('button', { name: 'Add plant' }));

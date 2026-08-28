@@ -2,6 +2,7 @@ import { AppShell, Burger, Group, Text, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { Outlet, NavLink, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import NavDrawer from "@/components/NavDrawer";
 import NotificationBell from "@/components/NotificationBell";
 import UserMenu from "@/components/UserMenu";
@@ -20,6 +21,7 @@ const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
 });
 
 export default function Layout() {
+  const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] = useDisclosure(false);
   const { session } = useAuth();
@@ -53,28 +55,28 @@ export default function Layout() {
             <UnstyledButton
               component={Link}
               to="/"
-              aria-label="Plantir home"
+              aria-label={t("nav.homeAria")}
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-                🪴 Plantir
+                {t("common.brandWithEmoji")}
               </Text>
             </UnstyledButton>
             <Group gap="md">
               <NotificationBell />
               <Group gap="lg" visibleFrom="sm">
                 <NavLink to="/" end style={navLinkStyle}>
-                  Dashboard
+                  {t("nav.dashboard")}
                 </NavLink>
                 <NavLink to="/plants-center" style={navLinkStyle}>
-                  Plants Center
+                  {t("nav.plantsCenter")}
                 </NavLink>
                 <NavLink to="/settings" style={navLinkStyle}>
-                  Settings
+                  {t("nav.settings")}
                 </NavLink>
                 {isAdmin && (
                   <NavLink to="/admin" style={navLinkStyle}>
-                    Admin
+                    {t("nav.admin")}
                   </NavLink>
                 )}
               </Group>
@@ -83,7 +85,7 @@ export default function Layout() {
                 opened={drawerOpened}
                 onClick={openDrawer}
                 hiddenFrom="sm"
-                aria-label="Toggle navigation"
+                aria-label={t("nav.toggleNavigation")}
                 color="var(--green-700)"
               />
             </Group>

@@ -1,5 +1,6 @@
 import { Group, Table, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { SortDirection } from "@/utils/sort";
 
 interface SortableThProps {
@@ -21,6 +22,7 @@ export function SortableTh({
   className,
   w,
 }: SortableThProps) {
+  const { t } = useTranslation();
   const isActive = activeKey === columnKey;
   const Icon = isActive
     ? direction === "asc"
@@ -40,7 +42,7 @@ export function SortableTh({
         }}
         role="button"
         tabIndex={0}
-        aria-label={`Sort by ${label}`}
+        aria-label={t("sortable.sortBy", { label })}
         style={{ width: "100%", cursor: "pointer" }}
       >
         <Group gap={4} wrap="nowrap">

@@ -9,12 +9,18 @@ export function formatValue(value: number, unit: string): string {
   return `${Math.round(value)}${unit}`;
 }
 
-export function formatAxisDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+const LOCALE_MAP: Record<string, string> = { it: "it-IT", en: "en-US" };
+
+function toLocaleCode(lang: string): string {
+  return LOCALE_MAP[lang] ?? "en-US";
 }
 
-export function formatHoverDate(iso: string): string {
-  return new Date(iso).toLocaleString("en-US", {
+export function formatAxisDate(iso: string, lang = "en"): string {
+  return new Date(iso).toLocaleDateString(toLocaleCode(lang), { month: "short", day: "numeric" });
+}
+
+export function formatHoverDate(iso: string, lang = "en"): string {
+  return new Date(iso).toLocaleString(toLocaleCode(lang), {
     month: "short",
     day: "numeric",
     hour: "numeric",

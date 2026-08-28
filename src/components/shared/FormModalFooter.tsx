@@ -1,4 +1,5 @@
 import { Button, Group, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 interface FormModalFooterProps {
   helperText?: string;
@@ -14,13 +15,16 @@ interface FormModalFooterProps {
 export function FormModalFooter({
   helperText,
   submitLabel,
-  savingLabel = "Saving...",
+  savingLabel,
   canSubmit,
   saving,
   onCancel,
   onSubmit,
   sticky = true,
 }: FormModalFooterProps) {
+  const { t } = useTranslation();
+  const resolvedSavingLabel = savingLabel ?? t("common.saving");
+
   return (
     <Group
       justify="space-between"
@@ -44,10 +48,10 @@ export function FormModalFooter({
       </Text>
       <Group>
         <Button variant="default" onClick={onCancel} disabled={saving}>
-          Cancel
+          {t("common.cancel")}
         </Button>
         <Button onClick={onSubmit} disabled={!canSubmit || saving} loading={saving}>
-          {saving ? savingLabel : submitLabel}
+          {saving ? resolvedSavingLabel : submitLabel}
         </Button>
       </Group>
     </Group>

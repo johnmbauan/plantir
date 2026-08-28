@@ -1,5 +1,6 @@
 import { Stack, Text, Group, Loader, Code, Button, CopyButton } from "@mantine/core";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { PairingBundle } from "@/types";
 
 interface Props {
@@ -13,16 +14,17 @@ function formatExpiry(expiresAt: string): string {
 }
 
 export default function SetupCodeStep({ pairing, loading, onGenerate }: Props) {
+  const { t } = useTranslation();
   return (
     <Stack gap="sm" mt="md">
-      <Text fw={600}>Setup code</Text>
+      <Text fw={600}>{t("registrationWizard.setupCode.title")}</Text>
       <Text size="sm">
-        Copy this setup code. You will paste it into the device Wi-Fi portal in the next steps.
+        {t("registrationWizard.setupCode.intro")}
       </Text>
       {loading ? (
         <Group gap="sm">
           <Loader size="sm" />
-          <Text size="sm" c="dimmed">Generating setup code…</Text>
+          <Text size="sm" c="dimmed">{t("registrationWizard.setupCode.generating")}</Text>
         </Group>
       ) : pairing ? (
         <>
@@ -37,18 +39,18 @@ export default function SetupCodeStep({ pairing, loading, onGenerate }: Props) {
                   variant="light"
                   onClick={copy}
                 >
-                  {copied ? "Copied" : "Copy setup code"}
+                  {copied ? t("registrationWizard.setupCode.copied") : t("registrationWizard.setupCode.copy")}
                 </Button>
               )}
             </CopyButton>
             <Text size="xs" c="dimmed">
-              Expires at {formatExpiry(pairing.expiresAt)}
+              {t("registrationWizard.setupCode.expiresAt", { time: formatExpiry(pairing.expiresAt) })}
             </Text>
           </Group>
         </>
       ) : (
         <Button variant="light" onClick={onGenerate}>
-          Generate setup code
+          {t("registrationWizard.setupCode.generate")}
         </Button>
       )}
     </Stack>

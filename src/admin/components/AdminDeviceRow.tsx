@@ -1,6 +1,7 @@
 import { Badge, Button, Group, Stack, Table, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { AdminDevice } from "@/admin/adminService";
 import { clearFirmwareOverrides } from "@/admin/adminService";
 import {
@@ -15,6 +16,7 @@ interface AdminDeviceRowProps {
 }
 
 export function AdminDeviceRow({ device, onOverrideCleared }: AdminDeviceRowProps) {
+  const { t } = useTranslation();
   const [clearing, setClearing] = useState(false);
 
   async function handleClearOverride() {
@@ -23,15 +25,15 @@ export function AdminDeviceRow({ device, onOverrideCleared }: AdminDeviceRowProp
       await clearFirmwareOverrides([device.id]);
       notifications.show({
         color: "green",
-        title: "Override cleared",
-        message: `${device.serialNumber} will follow the fleet channel.`,
+        title: t("admin.device.overrideCleared"),
+        message: t("admin.device.overrideClearedMessage", { serial: device.serialNumber }),
       });
       onOverrideCleared?.();
     } catch (err) {
       notifications.show({
         color: "red",
-        title: "Clear failed",
-        message: err instanceof Error ? err.message : "Unknown error",
+        title: t("admin.device.clearFailed"),
+        message: err instanceof Error ? err.message : t("admin.device.unknownError"),
       });
     } finally {
       setClearing(false);
@@ -44,12 +46,12 @@ export function AdminDeviceRow({ device, onOverrideCleared }: AdminDeviceRowProp
       <Table.Td>
         {device.owner_email
           ? <Text size="sm">{device.owner_email}</Text>
-          : <Text size="sm" c="dimmed">—</Text>}
+          : <Text size="sm" c="dimmed">{t("common.emDash")}</Text>}
       </Table.Td>
       <Table.Td>
         {device.plantName
           ? <Text size="sm">{device.plantName}</Text>
-          : <Text size="sm" c="dimmed">Unassigned</Text>}
+          : <Text size="sm" c="dimmed">{t("admin.device.unassigned")}</Text>}
       </Table.Td>
       <Table.Td>
         <Badge variant="light" color="green" size="sm" style={{ textTransform: "capitalize" }}>
@@ -59,26 +61,28 @@ export function AdminDeviceRow({ device, onOverrideCleared }: AdminDeviceRowProp
       <Table.Td>
         {device.lastHumidity !== null
           ? <Text size="sm" c={humidityMantineColor(device.lastHumidity)} fw={600}>{device.lastHumidity}%</Text>
-          : <Text size="sm" c="dimmed">—</Text>}
+          : <Text size="sm" c="dimmed">{t("common.emDash")}</Text>}
       </Table.Td>
       <Table.Td>
         {device.lastBattery !== null
           ? <Text size="sm" c={batteryMantineColor(device.lastBattery)} fw={600}>{device.lastBattery}%</Text>
-          : <Text size="sm" c="dimmed">—</Text>}
+          : <Text size="sm" c="dimmed">{t("common.emDash")}</Text>}
       </Table.Td>
       <Table.Td>
-        <Text size="sm" c="dimmed">{relativeTime(device.lastSeenAt) ?? "—"}</Text>
+        <Text size="sm" c="dimmed">{relativeTime(device.lastSeenAt, t) ?? t("common.emDash")}</Text>
       </Table.Td>
       <Table.Td>
         <Stack gap={4}>
           <Text size="sm" fw={device.firmwareVersion != null ? 600 : undefined} c={device.firmwareVersion == null ? "dimmed" : undefined}>
-            {device.firmwareVersion != null ? `v${device.firmwareVersion}` : "—"}
+            {device.firmwareVersion != null ? `v${device.firmwareVersion}` : t("common.emDash")}
             {device.firmwareBoard ? ` (${device.firmwareBoard})` : ""}
           </Text>
           {device.firmwareOverrideReleaseId != null && (
             <Group gap={6}>
               <Badge color="orange" variant="light" size="xs">
-                Override v{device.firmwareOverrideVersion ?? "?"}
+                {t("admin.device.overrideVersion", {
+                  version: device.firmwareOverrideVersion ?? "?",
+                })}
               </Badge>
               <Button
                 size="compact-xs"
@@ -87,7 +91,7 @@ export function AdminDeviceRow({ device, onOverrideCleared }: AdminDeviceRowProp
                 loading={clearing}
                 onClick={() => void handleClearOverride()}
               >
-                Clear
+                {t("admin.device.clear")}
               </Button>
             </Group>
           )}

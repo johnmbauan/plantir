@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, FileInput, Group, NumberInput, Select, Stack, TextInput, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import {
   uploadFirmwareRelease,
   type FirmwareBoard,
@@ -33,6 +34,7 @@ function latestReleaseForBoard(
 }
 
 export function FirmwareUploadForm({ releases, onUploaded }: FirmwareUploadFormProps) {
+  const { t } = useTranslation();
   const [board, setBoard] = useState<FirmwareBoard | null>("esp32c6");
   const [version, setVersion] = useState<number | string>(1);
   const [semver, setSemver] = useState("1.0.0");
@@ -54,16 +56,16 @@ export function FirmwareUploadForm({ releases, onUploaded }: FirmwareUploadFormP
     if (!board || !file || typeof version !== "number" || version < 1) {
       notifications.show({
         color: "yellow",
-        title: "Missing fields",
-        message: "Board, OTA version (≥ 1), SemVer, and a .bin file are required.",
+        title: t("admin.firmware.upload.missingFieldsTitle"),
+        message: t("admin.firmware.upload.missingFieldsMessage"),
       });
       return;
     }
     if (!isValidSemver(semver)) {
       notifications.show({
         color: "yellow",
-        title: "Invalid SemVer",
-        message: "Use MAJOR.MINOR.PATCH (e.g. 1.2.0 or 1.2.0-beta.1).",
+        title: t("admin.firmware.upload.invalidSemverTitle"),
+        message: t("admin.firmware.upload.invalidSemverMessage"),
       });
       return;
     }
@@ -73,8 +75,12 @@ export function FirmwareUploadForm({ releases, onUploaded }: FirmwareUploadFormP
       await uploadFirmwareRelease(board, version, semver, file, label);
       notifications.show({
         color: "green",
-        title: "Release staged",
-        message: `${board} OTA v${version} (${semver.trim()}) uploaded. Publish or assign next.`,
+        title: t("admin.firmware.upload.stagedTitle"),
+        message: t("admin.firmware.upload.stagedMessage", {
+          board,
+          version,
+          semver: semver.trim(),
+        }),
       });
       setFile(null);
       setLabel("");
@@ -82,27 +88,27 @@ export function FirmwareUploadForm({ releases, onUploaded }: FirmwareUploadFormP
     } catch (err) {
       notifications.show({
         color: "red",
-        title: "Upload failed",
-        message: err instanceof Error ? err.message : "Unknown error",
+        title: t("admin.firmware.upload.failedTitle"),
+        message: err instanceof Error ? err.message : t("admin.firmware.unknownError"),
       });
     } finally {
       setSaving(false);
     }
   }
 
-  const boardLabel = board ?? "this board";
+  const boardLabel = board ?? t("admin.firmware.upload.thisBoard");
   const currentOtaDescription = currentRelease
-    ? `Current version for ${boardLabel}: ${currentRelease.version}`
-    : `No releases for ${boardLabel} yet`;
+    ? t("admin.firmware.upload.currentVersion", { board: boardLabel, version: currentRelease.version })
+    : t("admin.firmware.upload.noReleases", { board: boardLabel });
   const currentSemverDescription = currentRelease
-    ? `Current version for ${boardLabel}: ${currentRelease.semver}`
-    : `No releases for ${boardLabel} yet`;
+    ? t("admin.firmware.upload.currentVersion", { board: boardLabel, version: currentRelease.semver })
+    : t("admin.firmware.upload.noReleases", { board: boardLabel });
 
   return (
     <Stack gap="sm">
       <Group grow align="flex-start">
         <Select
-          label="Board"
+          label={t("admin.firmware.colBoard")}
           description={"\u00a0"}
           inputWrapperOrder={["label", "description", "input", "error"]}
           data={BOARD_OPTIONS}
@@ -111,7 +117,7 @@ export function FirmwareUploadForm({ releases, onUploaded }: FirmwareUploadFormP
           allowDeselect={false}
         />
         <NumberInput
-          label="Next OTA version"
+          label={t("admin.firmware.upload.nextOta")}
           description={currentOtaDescription}
           inputWrapperOrder={["label", "description", "input", "error"]}
           min={1}
@@ -122,15 +128,15 @@ export function FirmwareUploadForm({ releases, onUploaded }: FirmwareUploadFormP
         <TextInput
           label={
             <Group gap={4} align="center" wrap="nowrap" component="span">
-              SemVer
+              {t("admin.firmware.colSemver")}
               <Tooltip
-                label="Human-readable version label shown in Admin (e.g. 1.2.0). Devices use the OTA version, not this."
+                label={t("admin.firmware.upload.semverTooltip")}
                 withArrow
                 maw={260}
                 multiline
               >
                 <span style={{ display: "inline-flex", cursor: "help" }}>
-                  <IconInfoCircle size={14} aria-label="What is SemVer?" />
+                  <IconInfoCircle size={14} aria-label={t("admin.firmware.upload.semverAria")} />
                 </span>
               </Tooltip>
             </Group>
@@ -144,23 +150,23 @@ export function FirmwareUploadForm({ releases, onUploaded }: FirmwareUploadFormP
       </Group>
       <Group grow align="flex-end">
         <TextInput
-          label="Description (optional)"
+          label={t("admin.firmware.upload.description")}
           placeholder="pilot-battery-fix"
           value={label}
           onChange={(event) => setLabel(event.currentTarget.value)}
         />
         <FileInput
-          label="Firmware binary"
-          placeholder="Select .bin exported from Arduino IDE"
+          label={t("admin.firmware.upload.binary")}
+          placeholder={t("admin.firmware.upload.binaryPlaceholder")}
           accept=".bin,application/octet-stream"
           value={file}
           onChange={setFile}
-          fileInputProps={{ "aria-label": "Firmware binary file" }}
+          fileInputProps={{ "aria-label": t("admin.firmware.upload.binaryAria") }}
         />
       </Group>
       <Group justify="flex-end">
         <Button onClick={() => void handleSubmit()} loading={saving}>
-          Upload release
+          {t("admin.firmware.upload.submit")}
         </Button>
       </Group>
     </Stack>

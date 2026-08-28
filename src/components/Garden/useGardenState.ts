@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   evaluateAchievements,
   fetchAllDefinitions,
@@ -20,6 +21,7 @@ export interface UseGardenStateResult {
 }
 
 export function useGardenState(options?: { toastOnEvaluate?: boolean }): UseGardenStateResult {
+  const { t } = useTranslation();
   const toastOnEvaluate = options?.toastOnEvaluate ?? true;
   const [loading, setLoading] = useState(true);
   const [allDefinitions, setAllDefinitions] = useState<AchievementDefinition[]>([]);
@@ -35,7 +37,7 @@ export function useGardenState(options?: { toastOnEvaluate?: boolean }): UseGard
         fetchGardenState(),
       ]);
       if (toastOnEvaluate && newly.length > 0) {
-        showUnlockToasts(newly);
+        showUnlockToasts(newly, t);
         setNewlyUnlockedKeys(newly.map((a) => a.key));
       }
       setAllDefinitions(defs);
@@ -45,7 +47,7 @@ export function useGardenState(options?: { toastOnEvaluate?: boolean }): UseGard
     } finally {
       setLoading(false);
     }
-  }, [toastOnEvaluate]);
+  }, [toastOnEvaluate, t]);
 
   useEffect(() => {
     void refresh();

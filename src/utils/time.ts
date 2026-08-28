@@ -1,30 +1,40 @@
-export function relativeTime(isoString: string | null): string | null {
+type TFunc = (key: string, opts?: Record<string, unknown>) => string;
+
+export function relativeTime(isoString: string | null, t: TFunc): string | null {
   if (!isoString) return null;
   const diffMs = Date.now() - new Date(isoString).getTime();
   const mins = Math.floor(diffMs / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t("time.justNow");
+  if (mins < 60) return t("time.minutesAgo", { count: mins });
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return t("time.hoursAgo", { count: hrs });
+  return t("time.daysAgo", { count: Math.floor(hrs / 24) });
 }
 
-export function formatInterval(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`;
+export function formatInterval(seconds: number, t: TFunc): string {
+  if (seconds < 60) return t("time.seconds", { count: seconds });
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  if (mins < 60) return secs > 0 ? `${mins}min ${secs}s` : `${mins}min`;
+  if (mins < 60) {
+    return secs > 0
+      ? t("time.minutesAndSeconds", { minutes: mins, seconds: secs })
+      : t("time.minutes", { count: mins });
+  }
   const hrs = Math.floor(mins / 60);
   const remMins = mins % 60;
-  return remMins > 0 ? `${hrs}h ${remMins}min` : `${hrs}h`;
+  return remMins > 0
+    ? t("time.hoursAndMinutes", { hours: hrs, minutes: remMins })
+    : t("time.hours", { count: hrs });
 }
 
 export const INTERVAL_PRESET_SECONDS = [3600, 14400, 28800, 43200, 86400] as const;
 
-export const INTERVAL_PRESET_OPTIONS: { value: string; label: string }[] = [
-  ...INTERVAL_PRESET_SECONDS.map((s) => ({ value: String(s), label: formatInterval(s) })),
-  { value: "custom", label: "Custom…" },
-];
+export function getIntervalPresetOptions(t: TFunc): { value: string; label: string }[] {
+  return [
+    ...INTERVAL_PRESET_SECONDS.map((s) => ({ value: String(s), label: formatInterval(s, t) })),
+    { value: "custom", label: t("time.customInterval") },
+  ];
+}
 
 export function isIntervalPreset(seconds: number): boolean {
   return (INTERVAL_PRESET_SECONDS as readonly number[]).includes(seconds);

@@ -5,8 +5,30 @@ import {
   isIntervalPreset,
   intervalPresetSelectValue,
   INTERVAL_PRESET_SECONDS,
-  INTERVAL_PRESET_OPTIONS,
+  getIntervalPresetOptions,
 } from './time';
+
+type TFunc = (key: string, opts?: Record<string, unknown>) => string;
+
+const mockT: TFunc = (key, opts) => {
+  const count = opts?.count as number | undefined;
+  const minutes = opts?.minutes as number | undefined;
+  const seconds = opts?.seconds as number | undefined;
+  const hours = opts?.hours as number | undefined;
+  switch (key) {
+    case 'time.justNow': return 'just now';
+    case 'time.minutesAgo': return `${count}m ago`;
+    case 'time.hoursAgo': return `${count}h ago`;
+    case 'time.daysAgo': return `${count}d ago`;
+    case 'time.seconds': return `${count}s`;
+    case 'time.minutes': return `${count}min`;
+    case 'time.minutesAndSeconds': return `${minutes}min ${seconds}s`;
+    case 'time.hours': return `${count}h`;
+    case 'time.hoursAndMinutes': return `${hours}h ${minutes}min`;
+    case 'time.customInterval': return 'Custom…';
+    default: return key;
+  }
+};
 
 describe('relativeTime', () => {
   beforeEach(() => {
@@ -19,7 +41,7 @@ describe('relativeTime', () => {
   });
 
   it('returns null for null input', () => {
-    expect(relativeTime(null)).toBeNull();
+    expect(relativeTime(null, mockT)).toBeNull();
   });
 
   it.each([
@@ -29,7 +51,7 @@ describe('relativeTime', () => {
     ['2d ago', 2 * 24 * 60 * 60_000],
   ])('returns %s for the right age', (expected, offsetMs) => {
     const iso = new Date(Date.now() - offsetMs).toISOString();
-    expect(relativeTime(iso)).toBe(expected);
+    expect(relativeTime(iso, mockT)).toBe(expected);
   });
 });
 
@@ -41,16 +63,17 @@ describe('formatInterval', () => {
     [3660, '1h 1min'],
     [7200, '2h'],
   ])('formats %i seconds as %s', (seconds, expected) => {
-    expect(formatInterval(seconds)).toBe(expected);
+    expect(formatInterval(seconds, mockT)).toBe(expected);
   });
 });
 
 describe('interval presets', () => {
   it('includes all preset seconds in options', () => {
+    const options = getIntervalPresetOptions(mockT);
     for (const seconds of INTERVAL_PRESET_SECONDS) {
-      expect(INTERVAL_PRESET_OPTIONS.some((o) => o.value === String(seconds))).toBe(true);
+      expect(options.some((o) => o.value === String(seconds))).toBe(true);
     }
-    expect(INTERVAL_PRESET_OPTIONS[INTERVAL_PRESET_OPTIONS.length - 1]?.value).toBe('custom');
+    expect(options[options.length - 1]?.value).toBe('custom');
   });
 
   it('detects preset values', () => {

@@ -1,15 +1,17 @@
 import { Stack, Text, ThemeIcon } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 export default function CalibrationCompleteStep() {
+  const { t } = useTranslation();
   return (
     <Stack gap="sm" mt="md" align="center">
       <ThemeIcon radius="xl" size="xl" color="green" variant="light">
         <IconCheck size={24} />
       </ThemeIcon>
-      <Text fw={600}>Sensor calibrated!</Text>
+      <Text fw={600}>{t("calibrationWizard.complete.title")}</Text>
       <Text size="sm" c="dimmed" ta="center">
-        Place the device back in the soil. It will take a reading in about 2 minutes.
+        {t("calibrationWizard.complete.body")}
       </Text>
     </Stack>
   );

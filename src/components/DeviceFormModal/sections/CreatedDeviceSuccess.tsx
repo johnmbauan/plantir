@@ -1,5 +1,6 @@
 import { Button, Group, Stack, Text, ThemeIcon } from "@mantine/core";
 import { IconAdjustments, IconCheck } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   showCalibrate: boolean;
@@ -8,13 +9,14 @@ interface Props {
 }
 
 export default function CreatedDeviceSuccess({ showCalibrate, onCalibrate, onDone }: Props) {
+  const { t } = useTranslation();
   return (
     <Stack gap="md" align="center" py="sm">
       <ThemeIcon radius="xl" size="xl" color="green" variant="light">
         <IconCheck size={24} />
       </ThemeIcon>
       <Text size="sm" c="dimmed" ta="center">
-        Calibrate the sensor for accurate readings.
+        {t("deviceForm.calibratePrompt")}
       </Text>
       <Group gap="xs" justify="center">
         {showCalibrate && (
@@ -23,11 +25,11 @@ export default function CreatedDeviceSuccess({ showCalibrate, onCalibrate, onDon
             leftSection={<IconAdjustments size={16} />}
             onClick={onCalibrate}
           >
-            Calibrate now
+            {t("deviceForm.calibrateNow")}
           </Button>
         )}
         <Button variant="default" onClick={onDone}>
-          Done
+          {t("common.done")}
         </Button>
       </Group>
     </Stack>

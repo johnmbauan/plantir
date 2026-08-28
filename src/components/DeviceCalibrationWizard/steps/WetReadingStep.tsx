@@ -1,4 +1,5 @@
 import { Stack, Text, Group, Button, Loader } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import sensorSubmergeGuide from "@/assets/sensor-submerge-guide.png";
 import ReadingCountdownBar from "./ReadingCountdownBar";
 import CalibrationExpiredPrompt from "./CalibrationExpiredPrompt";
@@ -26,17 +27,16 @@ export default function WetReadingStep({
   saving,
   onRetry,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <Stack gap="sm" mt="md">
-      <Text fw={600}>Wet reading</Text>
+      <Text fw={600}>{t("calibrationWizard.wet.title")}</Text>
       <Text size="sm">
-        Gently lower the sensor into the glass of water until the <strong>white horizontal line</strong> on
-        the black tip is just submerged. Hold the sensor steady at this depth while we capture a stable reading.
-
+        {t("calibrationWizard.wet.instructions")}
       </Text>
       <img
         src={sensorSubmergeGuide}
-        alt="Sensor submerge in water up to the white horizontal line"
+        alt={t("calibrationWizard.wet.guideAlt")}
         style={guideImageStyle}
       />
 
@@ -45,28 +45,27 @@ export default function WetReadingStep({
       ) : timedOut ? (
         <Stack gap="xs" mt="xs">
           <Text size="sm" c="orange" fw={500}>
-            No reading received. Make sure the sensor is submerged correctly and the device is still connected.
+            {t("calibrationWizard.wet.timeout")}
           </Text>
           <Button variant="default" size="sm" onClick={onRetry}>
-            Restart calibration
+            {t("calibrationWizard.wet.restart")}
           </Button>
         </Stack>
       ) : saving ? (
         <Group gap="xs" mt="xs">
           <Loader size="xs" color="green" />
-          <Text size="sm" c="dimmed">Saving calibration…</Text>
+          <Text size="sm" c="dimmed">{t("calibrationWizard.wet.saving")}</Text>
         </Group>
       ) : (
         <Stack gap={0} mt="xs">
           {readingRejected ? (
             <Text size="sm" c="orange" fw={500} mb="xs">
-              Make sure the sensor tip is submerged in water down to the white horizontal line, without
-              submerging the rest of the device.
+              {t("calibrationWizard.wet.rejected")}
             </Text>
           ) : (
             <Group gap="xs">
               <Loader size="xs" color="green" />
-              <Text size="sm" c="dimmed">Waiting for a reading…</Text>
+              <Text size="sm" c="dimmed">{t("calibrationWizard.wet.waiting")}</Text>
             </Group>
           )}
           <ReadingCountdownBar resetKey={countdownKey} />

@@ -1,5 +1,6 @@
 import { Group, Text, ActionIcon, Skeleton } from "@mantine/core";
 import { IconMapPin, IconPencil, IconX } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { StoredCity, LocationSource } from "./types";
 
 interface WeatherCityHeaderProps {
@@ -10,6 +11,7 @@ interface WeatherCityHeaderProps {
 }
 
 export function WeatherCityHeader({ city, locationSource, editMode, onToggleEdit }: WeatherCityHeaderProps) {
+  const { t } = useTranslation();
   return (
     <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
       <IconMapPin
@@ -17,7 +19,7 @@ export function WeatherCityHeader({ city, locationSource, editMode, onToggleEdit
         color="var(--green-500)"
       />
       {locationSource === "none" ? (
-        <Text className="weather-city-name">Weather forecast</Text>
+        <Text className="weather-city-name">{t("weather.forecastTitle")}</Text>
       ) : city ? (
         <Text className="weather-city-name">{city.name}</Text>
       ) : (
@@ -28,7 +30,7 @@ export function WeatherCityHeader({ city, locationSource, editMode, onToggleEdit
           variant="subtle"
           size={22}
           onClick={onToggleEdit}
-          aria-label={editMode ? "Cancel city change" : "Change city"}
+          aria-label={editMode ? t("weather.cancelCityChangeAria") : t("weather.changeCityAria")}
           styles={{ root: { color: "var(--green-400)" } }}
         >
           {editMode ? <IconX size={12} /> : <IconPencil size={12} />}
