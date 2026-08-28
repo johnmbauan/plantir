@@ -170,6 +170,15 @@
     "snoozed": {
       "title": "Silenziato",
       "message": "Promemoria di annaffiatura per {{plantName}} silenziati per {{hours}}h"
+    },
+    "alerts": {
+      "wateringTitle": "{{plantName}} ha bisogno di acqua",
+      "wateringBody": "Umidità: {{humidity}}%",
+      "lastReading": "ultima lettura {{time}}",
+      "neverSeen": "mai rilevato",
+      "offlineTitleSingle": "{{plantName}} è offline",
+      "offlineTitleMulti": "{{count}} sensori offline",
+      "offlineBodyIntro": "Le seguenti piante non inviano dati da troppo tempo:"
     }
   },
   "settings": {

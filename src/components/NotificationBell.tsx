@@ -28,6 +28,7 @@ import {
 import { getErrorMessage } from "@/utils/error";
 import { isStorageImageUrl, PLANT_IMAGES_BUCKET, toThumbnailUrl } from "@/utils/imageVariants";
 import { relativeTime } from "@/utils/time";
+import { formatNotificationCopy } from "@/utils/notificationDisplay";
 
 function notificationAvatar(notification: AppNotification): { color: string; label: string } {
   if (notification.type === "watering") return { color: "yellow", label: "💧" };
@@ -54,6 +55,7 @@ function NotificationItem({
 }) {
   const { t } = useTranslation();
   const watering = isWateringPayload(notification.payload) ? notification.payload : null;
+  const { title, body } = formatNotificationCopy(notification);
   const imageUrl = notificationImageUrl(watering?.imageUrl ?? null);
   const fallback = notificationAvatar(notification);
 
@@ -73,10 +75,10 @@ function NotificationItem({
         )}
         <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
           <Text size="sm" fw={600} lineClamp={1}>
-            {notification.title}
+            {title}
           </Text>
           <Text size="xs" c="dimmed" lineClamp={2}>
-            {notification.body.split("\n")[0]}
+            {body.split("\n")[0]}
           </Text>
           {watering?.rain_forecasted && (
             <Text size="xs" c="blue">

@@ -32,6 +32,7 @@ export interface OfflinePlantPayload {
 
 export interface OfflinePayload {
   plants: OfflinePlantPayload[];
+  notificationTimezone?: string;
 }
 
 export interface AchievementPayload {
@@ -54,7 +55,7 @@ export function isWateringPayload(payload: NotificationPayload): payload is Wate
   return "plantId" in payload && !("plants" in payload);
 }
 
-function isOfflinePayload(payload: NotificationPayload): payload is OfflinePayload {
+export function isOfflinePayload(payload: NotificationPayload): payload is OfflinePayload {
   return "plants" in payload;
 }
 

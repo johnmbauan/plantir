@@ -25,6 +25,7 @@ function makeWateringRow(overrides: Partial<WateringRow> = {}): WateringRow {
     isOutdoor: true,
     weatherLat: 48.8,
     weatherLng: 2.3,
+    locale: "en",
     ...overrides,
   };
 }
@@ -144,21 +145,21 @@ describe("fetchRainForecast", () => {
 describe("rainNoteText", () => {
   it("returns the today+tomorrow message when both flags are true", () => {
     assertEquals(
-      rainNoteText({ isRainForcastedForToday: true, isRainForcastedForTomorrow: true }),
+      rainNoteText({ isRainForcastedForToday: true, isRainForcastedForTomorrow: true }, "en"),
       "Rain is expected today and tomorrow — watering may not be needed.",
     );
   });
 
   it("returns the today-only message when only today is true", () => {
     assertEquals(
-      rainNoteText({ isRainForcastedForToday: true, isRainForcastedForTomorrow: false }),
+      rainNoteText({ isRainForcastedForToday: true, isRainForcastedForTomorrow: false }, "en"),
       "Rain is expected today — watering may not be needed.",
     );
   });
 
   it("returns the tomorrow-only message when only tomorrow is true", () => {
     assertEquals(
-      rainNoteText({ isRainForcastedForToday: false, isRainForcastedForTomorrow: true }),
+      rainNoteText({ isRainForcastedForToday: false, isRainForcastedForTomorrow: true }, "en"),
       "Rain is expected tomorrow — watering may not be needed.",
     );
   });

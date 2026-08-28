@@ -11,6 +11,7 @@ export interface WateringRow {
   isOutdoor: boolean;
   weatherLat: number | null;
   weatherLng: number | null;
+  locale: string;
 }
 
 export interface OfflineRow {
@@ -21,6 +22,7 @@ export interface OfflineRow {
   plantName: string;
   lastSeenAt: string | null;
   notificationTimezone: string;
+  locale: string;
 }
 
 export interface InsertedNotification {

@@ -19,6 +19,7 @@ export const WATERING_QUERY = `
     hsc."minHumidityThreshold" AS "minHumidityThreshold",
     ns.weather_lat AS "weatherLat",
     ns.weather_lng AS "weatherLng",
+    ns.locale AS "locale",
     hm."humidityPercentage" AS "humidity"
   FROM (
     SELECT DISTINCT ON (hm."deviceId")
@@ -44,7 +45,8 @@ export const OFFLINE_QUERY = `
     p.id AS "plantId",
     p.name AS "plantName",
     MAX(hm."createdAt") AS "lastSeenAt",
-    ns.notification_timezone AS "notificationTimezone"
+    ns.notification_timezone AS "notificationTimezone",
+    ns.locale AS "locale"
   FROM devices d
   JOIN plants p ON p.id = d."plantId"
   JOIN humidity_sensors_config hsc ON hsc."deviceId" = d.id
@@ -52,7 +54,7 @@ export const OFFLINE_QUERY = `
   LEFT JOIN humidity_measurements hm ON hm."deviceId" = d.id
   WHERE true
   GROUP BY d.id, p.id, p.name, hsc."sleepDurationSeconds", ns.user_id, ns.telegram_chat_id,
-    ns.browser_notifications_enabled, ns.notification_timezone, ns.notification_hour
+    ns.browser_notifications_enabled, ns.notification_timezone, ns.notification_hour, ns.locale
   HAVING (
     MAX(hm."createdAt") IS NULL
     OR MAX(hm."createdAt") < NOW() - (hsc."sleepDurationSeconds" * 2 * INTERVAL '1 second')

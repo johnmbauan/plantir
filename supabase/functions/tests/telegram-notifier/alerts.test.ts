@@ -47,6 +47,7 @@ function makeWateringRow(overrides: Partial<WateringRow> = {}): WateringRow {
     isOutdoor: false,
     weatherLat: null,
     weatherLng: null,
+    locale: "en",
     ...overrides,
   };
 }
@@ -60,6 +61,7 @@ function makeOfflineRow(overrides: Partial<OfflineRow> = {}): OfflineRow {
     plantName: "Monstera",
     lastSeenAt: "2024-01-01T12:00:00Z",
     notificationTimezone: "UTC",
+    locale: "en",
     ...overrides,
   };
 }
@@ -119,6 +121,28 @@ describe("sendWateringAlerts", () => {
         ],
       });
       assertEquals(result[0].telegram, true);
+    });
+
+    it("sends Italian copy when the user's locale is it", async () => {
+      const client = makeClient([
+        { rows: [makeWateringRow({ locale: "it" })] },
+        { rows: [] },
+      ]);
+      using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
+      await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      assertSpyCall(fetchStub, 0, {
+        args: [
+          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: "chat-1",
+              text: "⚠️ Attenzione! La pianta Monstera ha bisogno di acqua! Umidità: 20%",
+            }),
+          },
+        ],
+      });
     });
 
     it("sends a photo message when imageUrl is present", async () => {
@@ -340,6 +364,25 @@ describe("sendOfflineAlerts", () => {
             body: JSON.stringify({
               chat_id: "chat-1",
               text: "🔴 Warning! The devices for the following plants haven't sent data in too long (possible low battery or malfunction):\n\n• Monstera (never seen)",
+            }),
+          },
+        ],
+      });
+    });
+
+    it("sends Italian copy when the user's locale is it", async () => {
+      const client = makeClient([{ rows: [makeOfflineRow({ locale: "it", lastSeenAt: null })] }]);
+      using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
+      await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      assertSpyCall(fetchStub, 0, {
+        args: [
+          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: "chat-1",
+              text: "🔴 Attenzione! I dispositivi delle seguenti piante non inviano dati da troppo tempo (possibile batteria scarica o malfunzionamento):\n\n• Monstera (mai rilevato)",
             }),
           },
         ],

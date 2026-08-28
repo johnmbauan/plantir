@@ -8,10 +8,14 @@ import type { AppNotification } from '@/services/notificationService';
 const mockFetchUnreadNotifications = vi.fn();
 const mockAutoResolveNotifications = vi.fn();
 
-vi.mock('@/services/notificationService', () => ({
-  fetchUnreadNotifications: (...args: unknown[]) => mockFetchUnreadNotifications(...args),
-  autoResolveNotifications: (...args: unknown[]) => mockAutoResolveNotifications(...args),
-}));
+vi.mock('@/services/notificationService', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/services/notificationService')>();
+  return {
+    ...actual,
+    fetchUnreadNotifications: (...args: unknown[]) => mockFetchUnreadNotifications(...args),
+    autoResolveNotifications: (...args: unknown[]) => mockAutoResolveNotifications(...args),
+  };
+});
 
 const mockUseAuth = vi.fn();
 
@@ -230,7 +234,7 @@ describe('useNotifications', () => {
     });
 
     expect(mockNotificationsShow).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'Water Monstera', color: 'yellow' }),
+      expect.objectContaining({ title: 'Monstera needs water', color: 'yellow' }),
     );
 
     vi.mocked(document.hasFocus).mockRestore();
@@ -258,7 +262,7 @@ describe('useNotifications', () => {
     });
 
     expect(mockNotificationsShow).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'Device offline', color: 'red' }),
+      expect.objectContaining({ title: 'Monstera is offline', color: 'red' }),
     );
 
     vi.mocked(document.hasFocus).mockRestore();

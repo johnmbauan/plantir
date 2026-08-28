@@ -170,6 +170,15 @@
     "snoozed": {
       "title": "Snoozed",
       "message": "Watering reminders for {{plantName}} silenced for {{hours}}h"
+    },
+    "alerts": {
+      "wateringTitle": "{{plantName}} needs water",
+      "wateringBody": "Humidity reading: {{humidity}}%",
+      "lastReading": "last reading {{time}}",
+      "neverSeen": "never seen",
+      "offlineTitleSingle": "{{plantName}} is offline",
+      "offlineTitleMulti": "{{count}} devices offline",
+      "offlineBodyIntro": "The following plants haven't sent data in too long:"
     }
   },
   "settings": {
