@@ -1,4 +1,5 @@
 import { Box, Group, Slider, Stack, Text, Title } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { DeviceFormValidationErrors } from "@/components/DeviceFormModal/types";
 
 interface Props {
@@ -14,20 +15,21 @@ export default function WateringAlertsSection({
   validation,
   onThresholdChange,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <Stack gap="xs">
       <Group justify="space-between" align="center">
-        <Title order={6}>Watering alerts</Title>
+        <Title order={6}>{t("deviceForm.wateringAlerts")}</Title>
         <Text size="sm" fw={600}>
           {threshold}%
         </Text>
       </Group>
       <Text size="sm" c="dimmed">
-        Alert when humidity drops below this value
+        {t("deviceForm.alertWhenBelow")}
       </Text>
       {recommendedThreshold != null && (
         <Text size="xs" c="dimmed">
-          Suggested from species: {recommendedThreshold}%
+          {t("deviceForm.suggestedFromSpecies", { threshold: recommendedThreshold })}
         </Text>
       )}
       <Box pb="lg">

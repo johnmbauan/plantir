@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import IconSearch from "@/components/icons/IconSearch";
 
 interface PlantFilterSearchProps {
@@ -11,9 +12,13 @@ interface PlantFilterSearchProps {
 export default function PlantFilterSearch({
   value,
   onChange,
-  placeholder = "Search plants…",
-  searchLabel = "Search plants",
+  placeholder,
+  searchLabel,
 }: PlantFilterSearchProps) {
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("plantFilter.searchPlantsPlaceholder");
+  const resolvedSearchLabel = searchLabel ?? t("plantFilter.searchPlantsAria");
+
   const [open, setOpen] = useState(value.length > 0);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,14 +41,14 @@ export default function PlantFilterSearch({
         type="button"
         className="filter-search__icon-btn"
         onClick={() => setOpen(true)}
-        aria-label={searchLabel}
+        aria-label={resolvedSearchLabel}
       >
         <IconSearch />
       </button>
       <input
         ref={inputRef}
         className="filter-search__input"
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={handleBlur}
@@ -54,7 +59,7 @@ export default function PlantFilterSearch({
           className="filter-search__clear"
           onMouseDown={(e) => e.preventDefault()}
           onClick={clear}
-          aria-label="Clear search"
+          aria-label={t("plantFilter.clearSearchAria")}
         >
           ×
         </button>

@@ -7,6 +7,7 @@ import {
   Button,
   Center,
   CloseButton,
+  Divider,
   Group,
   Image,
   Loader,
@@ -25,6 +26,7 @@ import {
 } from "@mantine/core";
 import { IconBattery, IconBucketDroplet, IconClock, IconDroplet, IconPencil, IconTool } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { EnrichedPlant, HistoryRange, PlantHistory } from "@/types";
 import { STATUS_CONFIG } from "@/constants/plantStatus";
 import { batteryMantineColor } from "@/utils/color-utils";
@@ -33,10 +35,16 @@ import { getEffectiveHumidity } from "@/utils/effectiveHumidity";
 import { formatInterval, relativeTime } from "@/utils/time";
 import HumidityBar from "@/components/HumidityBar";
 import HistoryLineChart from "@/components/HistoryLineChart";
-import { ModalSection } from "@/components/shared/ModalSection";
 import { SpeciesCareCard } from "@/components/shared/SpeciesCareCard";
 import { fetchLastWateredAt, fetchPlantHistory } from "@/services/plantService";
 import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
+
+const STATUS_LABEL_KEY: Record<string, string> = {
+  HEALTHY: "plantStatus.healthy",
+  WATERING_NEEDED: "plantStatus.needsWater",
+  OFFLINE: "plantStatus.offline",
+  RECHARGE_NEEDED: "plantStatus.needsRecharge",
+};
 
 interface Props {
   plant: EnrichedPlant | null;
@@ -72,6 +80,7 @@ function MetricCard({ icon, label, value, color = "green", children }: MetricCar
 }
 
 export default function PlantDetailModal({ plant, opened, onClose }: Props) {
+  const { t } = useTranslation();
   const [range, setRange] = useState<HistoryRange>("7d");
   const [history, setHistory] = useState<PlantHistory | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -129,9 +138,9 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
   useEffect(() => {
     if (!opened || range !== "30d") return;
     void recordClientEvent("viewed_30d_history")
-      .then((newly) => showUnlockToasts(newly))
+      .then((newly) => showUnlockToasts(newly, t))
       .catch((err) => console.error("History achievement event failed:", err));
-  }, [opened, range]);
+  }, [opened, range, t]);
 
   useEffect(() => {
     if (!opened) {
@@ -160,7 +169,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
           <Group gap={6}>
             {plant.statuses.map((s) => (
               <Badge key={s} color={STATUS_CONFIG[s].color} variant="light">
-                {STATUS_CONFIG[s].label}
+                {t(STATUS_LABEL_KEY[s] ?? `plantStatus.${s.toLowerCase()}`)}
               </Badge>
             ))}
           </Group>
@@ -173,7 +182,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
               to={`/plants-center?tab=plants&plantId=${plant.id}`}
               onClick={onClose}
             >
-              Edit plant
+              {t("plantDetail.editPlant")}
             </Button>
             {plant.deviceId != null && (
               <Button
@@ -184,7 +193,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
                 to={`/plants-center?tab=devices&deviceId=${plant.deviceId}`}
                 onClick={onClose}
               >
-                Edit device
+                {t("plantDetail.editDevice")}
               </Button>
             )}
           </Group>
@@ -193,7 +202,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
         {plant.image_url ? (
           <UnstyledButton
             onClick={() => setImageExpanded(true)}
-            aria-label={`View full size photo of ${plant.name}`}
+            aria-label={t("plantDetail.viewFullSizeAria", { name: plant.name })}
             w="100%"
             style={{ borderRadius: "var(--mantine-radius-md)", cursor: "zoom-in" }}
           >
@@ -205,12 +214,12 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
           </Paper>
         )}
 
-        <ModalSection title="Current status">
-          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
+        <Divider label={t("plantDetail.currentStatus")} labelPosition="center" mt={10} />
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
             <MetricCard
               icon={<IconDroplet size={14} />}
-              label="Humidity"
-              value={plant.humidityPercent != null ? `${plant.humidityPercent}%` : "No reading"}
+              label={t("plantDetail.humidity")}
+              value={plant.humidityPercent != null ? `${plant.humidityPercent}%` : t("plantDetail.noReading")}
               color={barColor}
             >
               <HumidityBar
@@ -221,41 +230,41 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
             </MetricCard>
             <MetricCard
               icon={<IconBucketDroplet size={14} />}
-              label="Last watered"
+              label={t("plantDetail.lastWatered")}
               value={
                 plant.deviceId == null
-                  ? "No device"
+                  ? t("plantDetail.noDevice")
                   : lastWateredLoading
                     ? "…"
-                    : (relativeTime(lastWateredAt) ?? "Unknown")
+                    : (relativeTime(lastWateredAt, t) ?? t("common.unknown"))
               }
               color="blue"
             />
             <MetricCard
               icon={<IconBattery size={14} />}
-              label="Battery"
-              value={plant.batteryPercent != null ? `${plant.batteryPercent}%` : "No reading"}
+              label={t("plantDetail.battery")}
+              value={plant.batteryPercent != null ? `${plant.batteryPercent}%` : t("plantDetail.noReading")}
               color={batteryMantineColor(plant.batteryPercent)}
             />
             <MetricCard
               icon={<IconClock size={14} />}
-              label="Reporting interval"
-              value={plant.sleepDurationSeconds != null ? formatInterval(plant.sleepDurationSeconds) : "No device"}
+              label={t("plantDetail.reportingInterval")}
+              value={plant.sleepDurationSeconds != null ? formatInterval(plant.sleepDurationSeconds, t) : t("plantDetail.noDevice")}
               color="gray"
             />
           </SimpleGrid>
-        </ModalSection>
 
         {plant.species && <SpeciesCareCard species={plant.species} />}
 
         {plant.deviceId == null && (
-          <Alert color="green" variant="light" title="Connect a device to track history">
-            Assign a device to this plant to collect humidity, battery, and measurement history.
+          <Alert color="green" variant="light" title={t("plantDetail.connectDeviceTitle")}>
+            {t("plantDetail.connectDeviceBody")}
           </Alert>
         )}
 
         {plant.deviceId != null && (
-          <ModalSection title="Measurement history">
+          <Stack gap="xs">
+            <Divider label={t("plantDetail.measurementHistory")} labelPosition="center" mt={10} />
             <Stack gap="xs">
             <Group justify="flex-end" align="center">
               <SegmentedControl
@@ -263,10 +272,10 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
                 value={range}
                 onChange={(value) => setRange(value as HistoryRange)}
                 data={[
-                  { label: "7 days", value: "7d" },
-                  { label: "14 days", value: "14d" },
-                  { label: "30 days", value: "30d" },
-                  { label: "90 days", value: "90d" },
+                  { label: t("plantDetail.range7d"), value: "7d" },
+                  { label: t("plantDetail.range14d"), value: "14d" },
+                  { label: t("plantDetail.range30d"), value: "30d" },
+                  { label: t("plantDetail.range90d"), value: "90d" },
                 ]}
               />
             </Group>
@@ -292,13 +301,13 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
                   overlayProps={{ radius: "sm", blur: 1, backgroundOpacity: 0.35 }}
                 />
                 <HistoryLineChart
-                  title="Humidity trend"
+                  title={t("plantDetail.humidityTrend")}
                   points={humidityHistoryPoints}
                   color="var(--terracotta-500)"
                   unit="%"
                 />
                 <HistoryLineChart
-                  title="Battery trend"
+                  title={t("plantDetail.batteryTrend")}
                   points={history.battery}
                   color="var(--mantine-color-green-6)"
                   unit="%"
@@ -306,7 +315,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
               </Stack>
             )}
             </Stack>
-          </ModalSection>
+          </Stack>
         )}
       </Stack>
 
@@ -324,7 +333,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
             style={{ zIndex: 401, pointerEvents: "none" }}
             role="dialog"
             aria-modal="true"
-            aria-label={`Full size photo of ${plant.name}`}
+            aria-label={t("plantDetail.fullSizeAria", { name: plant.name })}
           >
             <CloseButton
               pos="absolute"
@@ -333,7 +342,7 @@ export default function PlantDetailModal({ plant, opened, onClose }: Props) {
               size="lg"
               variant="filled"
               color="gray"
-              aria-label="Close full size photo"
+              aria-label={t("plantDetail.closeFullSizeAria")}
               onClick={() => setImageExpanded(false)}
               style={{ pointerEvents: "auto" }}
             />

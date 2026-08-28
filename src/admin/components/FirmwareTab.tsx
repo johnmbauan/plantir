@@ -20,10 +20,12 @@ import { AssignFirmwareModal } from "@/admin/components/AssignFirmwareModal";
 import { FirmwareUploadForm } from "@/admin/components/FirmwareUploadForm";
 import { RefreshButton } from "@/admin/components/RefreshButton";
 import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
+import { useTranslation } from "react-i18next";
 import { useFirmwareTab } from "@/admin/hooks/useFirmwareTab";
 import { relativeTime } from "@/utils/time";
 
 export function FirmwareTab() {
+  const { t } = useTranslation();
   const { releases, channels, loading, refresh } = useFirmwareTab();
   const [assignRelease, setAssignRelease] = useState<FirmwareRelease | null>(null);
   const [busyReleaseId, setBusyReleaseId] = useState<number | null>(null);
@@ -42,15 +44,15 @@ export function FirmwareTab() {
       await publishFirmwareToFleet(release.board, release.id);
       notifications.show({
         color: "green",
-        title: "Published to fleet",
-        message: `${release.board} channel now points to OTA v${release.version} (${release.semver}).`,
+        title: t("admin.firmware.publishedTitle"),
+        message: t("admin.firmware.publishedMessage", { board: release.board, version: release.version, semver: release.semver }),
       });
       await refresh();
     } catch (err) {
       notifications.show({
         color: "red",
-        title: "Publish failed",
-        message: err instanceof Error ? err.message : "Unknown error",
+        title: t("admin.firmware.publishFailedTitle"),
+        message: err instanceof Error ? err.message : t("admin.firmware.unknownError"),
       });
     } finally {
       setBusyReleaseId(null);
@@ -63,15 +65,15 @@ export function FirmwareTab() {
       await clearFirmwareOverridesForRelease(release.id);
       notifications.show({
         color: "green",
-        title: "Overrides cleared",
-        message: `Removed pilot overrides for ${release.board} OTA v${release.version} (${release.semver}).`,
+        title: t("admin.firmware.clearedTitle"),
+        message: t("admin.firmware.clearedMessage", { board: release.board, version: release.version, semver: release.semver }),
       });
       await refresh();
     } catch (err) {
       notifications.show({
         color: "red",
-        title: "Clear failed",
-        message: err instanceof Error ? err.message : "Unknown error",
+        title: t("admin.firmware.clearFailedTitle"),
+        message: err instanceof Error ? err.message : t("admin.firmware.unknownError"),
       });
     } finally {
       setBusyReleaseId(null);
@@ -81,12 +83,12 @@ export function FirmwareTab() {
   const header = (
     <Group justify="space-between" align="flex-start" wrap="wrap">
       <Stack gap={4}>
-        <Title order={4} c="var(--green-700)">Firmware releases</Title>
+        <Title order={4} c="var(--green-700)">{t("admin.firmware.title")}</Title>
         <Text size="sm" c="dimmed">
-          Upload stages a build. Assign to pilot devices, then publish to the fleet channel.
+          {t("admin.firmware.description")}
         </Text>
       </Stack>
-      <RefreshButton onClick={() => void refresh()} label="Refresh firmware releases" />
+      <RefreshButton onClick={() => void refresh()} label={t("admin.firmware.refreshLabel")} />
     </Group>
   );
 
@@ -96,7 +98,7 @@ export function FirmwareTab() {
         <FirmwareUploadForm releases={releases} onUploaded={() => void refresh()} />
 
         <Stack gap="xs">
-          <Text fw={600} size="sm">Fleet channels</Text>
+          <Text fw={600} size="sm">{t("admin.firmware.fleetChannels")}</Text>
           {(["esp32c5", "esp32c6"] as const).map((board) => {
             const channel = channels.find((row) => row.board === board);
             const release = channel?.release;
@@ -105,8 +107,12 @@ export function FirmwareTab() {
                 <Badge variant="light">{board}</Badge>
                 <Text size="sm">
                   {release
-                    ? `OTA v${release.version} · ${release.semver}${release.label ? ` (${release.label})` : ""}`
-                    : "No published release"}
+                    ? t("admin.firmware.channelRelease", {
+                        version: release.version,
+                        semver: release.semver,
+                        label: release.label ? ` (${release.label})` : "",
+                      })
+                    : t("admin.firmware.noPublishedRelease")}
                 </Text>
               </Group>
             );
@@ -117,13 +123,13 @@ export function FirmwareTab() {
           <Table verticalSpacing="sm">
             <Table.Thead>
               <Table.Tr>
-                <Table.Th>Board</Table.Th>
-                <Table.Th>OTA</Table.Th>
-                <Table.Th>SemVer</Table.Th>
-                <Table.Th>Label</Table.Th>
-                <Table.Th>Created</Table.Th>
-                <Table.Th>Status</Table.Th>
-                <Table.Th>Actions</Table.Th>
+                <Table.Th>{t("admin.firmware.colBoard")}</Table.Th>
+                <Table.Th>{t("admin.firmware.colOta")}</Table.Th>
+                <Table.Th>{t("admin.firmware.colSemver")}</Table.Th>
+                <Table.Th>{t("admin.firmware.colLabel")}</Table.Th>
+                <Table.Th>{t("admin.firmware.colCreated")}</Table.Th>
+                <Table.Th>{t("admin.firmware.colStatus")}</Table.Th>
+                <Table.Th>{t("admin.firmware.colActions")}</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
@@ -133,7 +139,7 @@ export function FirmwareTab() {
                 <Table.Tr>
                   <Table.Td colSpan={7}>
                     <Text ta="center" c="dimmed" py="xl" size="sm">
-                      No firmware releases yet. Upload a .bin to stage the first build.
+                      {t("admin.firmware.noReleasesYet")}
                     </Text>
                   </Table.Td>
                 </Table.Tr>
@@ -152,19 +158,19 @@ export function FirmwareTab() {
                       </Table.Td>
                       <Table.Td>
                         <Text size="sm" c={release.label ? undefined : "dimmed"}>
-                          {release.label || "—"}
+                          {release.label || t("common.emDash")}
                         </Text>
                       </Table.Td>
                       <Table.Td>
                         <Text size="sm" c="dimmed">
-                          {relativeTime(release.createdAt) ?? "—"}
+                          {relativeTime(release.createdAt, t) ?? t("common.emDash")}
                         </Text>
                       </Table.Td>
                       <Table.Td>
                         {isFleet ? (
-                          <Badge color="green" variant="light" size="sm">Fleet</Badge>
+                          <Badge color="green" variant="light" size="sm">{t("admin.firmware.statusFleet")}</Badge>
                         ) : (
-                          <Badge color="gray" variant="light" size="sm">Staged</Badge>
+                          <Badge color="gray" variant="light" size="sm">{t("admin.firmware.statusStaged")}</Badge>
                         )}
                       </Table.Td>
                       <Table.Td>
@@ -176,7 +182,7 @@ export function FirmwareTab() {
                             disabled={isFleet}
                             onClick={() => void handlePublish(release)}
                           >
-                            Publish
+                            {t("admin.firmware.publish")}
                           </Button>
                           <Button
                             size="xs"
@@ -184,7 +190,7 @@ export function FirmwareTab() {
                             disabled={busy}
                             onClick={() => setAssignRelease(release)}
                           >
-                            Assign
+                            {t("admin.firmware.assign")}
                           </Button>
                           <Button
                             size="xs"
@@ -193,7 +199,7 @@ export function FirmwareTab() {
                             loading={busy}
                             onClick={() => void handleClearOverrides(release)}
                           >
-                            Clear overrides
+                            {t("admin.firmware.clearOverrides")}
                           </Button>
                         </Group>
                       </Table.Td>

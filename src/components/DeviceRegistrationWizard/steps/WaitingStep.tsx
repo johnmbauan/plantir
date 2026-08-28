@@ -1,5 +1,6 @@
 import { Stack, Text, Loader, Alert, Button } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   timedOut: boolean;
@@ -9,34 +10,35 @@ interface Props {
 }
 
 export default function WaitingStep({ timedOut, error, onKeepWaiting, onRegenerateCode }: Props) {
+  const { t } = useTranslation();
   return (
     <Stack gap="sm" mt="md" align="center">
-      <Text fw={600}>Waiting for registration</Text>
+      <Text fw={600}>{t("registrationWizard.waiting.title")}</Text>
       {!timedOut && !error && (
         <>
           <Loader />
           <Text size="sm" ta="center">
-            Waiting for the device to register… Keep the portal open until the device connects to your Wi-Fi.
+            {t("registrationWizard.waiting.body")}
           </Text>
         </>
       )}
       {timedOut && (
-        <Alert color="yellow" icon={<IconAlertCircle size={16} />} title="Still waiting">
+        <Alert color="yellow" icon={<IconAlertCircle size={16} />} title={t("registrationWizard.waiting.stillWaitingTitle")}>
           <Stack gap="sm">
             <Text size="sm">
-              We have not detected registration yet. Check that the setup code was pasted correctly and the device joined your Wi-Fi.
+              {t("registrationWizard.waiting.stillWaitingBody")}
             </Text>
             <Button variant="light" onClick={onKeepWaiting}>
-              Keep waiting
+              {t("registrationWizard.waiting.keepWaiting")}
             </Button>
             <Button variant="subtle" onClick={onRegenerateCode}>
-              Generate a new setup code
+              {t("registrationWizard.waiting.regenerateCode")}
             </Button>
           </Stack>
         </Alert>
       )}
       {error && (
-        <Alert color="red" icon={<IconAlertCircle size={16} />} title="Error">
+        <Alert color="red" icon={<IconAlertCircle size={16} />} title={t("common.error")}>
           {error}
         </Alert>
       )}

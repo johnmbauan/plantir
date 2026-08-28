@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 import {
   fetchAdminDevicesPage,
   type AdminDevicesQuery,
@@ -9,6 +10,7 @@ import { getErrorMessage } from "@/utils/error";
 import { paginationMeta } from "@/utils/pagination";
 
 export function useAdminDevicesPage(query: AdminDevicesQuery) {
+  const { t } = useTranslation();
   const [items, setItems] = useState<AdminDevice[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export function useAdminDevicesPage(query: AdminDevicesQuery) {
       setTotalCount(0);
       notifications.show({
         color: "red",
-        title: "Error loading devices",
+        title: t("admin.devices.loadError"),
         message: getErrorMessage(err),
       });
     } finally {
@@ -46,7 +48,7 @@ export function useAdminDevicesPage(query: AdminDevicesQuery) {
         setLoading(false);
       }
     }
-  }, [effectiveQuery]);
+  }, [effectiveQuery, t]);
 
   useEffect(() => {
     // Intentionally trigger initial load for current dependencies.

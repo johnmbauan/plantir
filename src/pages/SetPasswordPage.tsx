@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Paper, PasswordInput, Button, Title, Text, Stack, Center, Loader } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
 import {
@@ -9,8 +10,11 @@ import {
   validatePassword,
 } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
+import { useNativeValidation } from "@/hooks/useNativeValidation";
 
 export default function SetPasswordPage() {
+  const { t } = useTranslation();
+  const { requiredInputProps } = useNativeValidation();
   const navigate = useNavigate();
   const { session, user, loading } = useAuth();
   const authUser = user ?? session?.user;
@@ -25,7 +29,7 @@ export default function SetPasswordPage() {
     if (!session) {
       navigate("/login", {
         replace: true,
-        state: { message: "Invite link expired or invalid." },
+        state: { message: t("auth.setPassword.inviteExpired") },
       });
       return;
     }
@@ -33,7 +37,7 @@ export default function SetPasswordPage() {
     if (!needsPasswordSetup(authUser)) {
       navigate("/", { replace: true });
     }
-  }, [loading, session, authUser, navigate]);
+  }, [loading, session, authUser, navigate, t]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +50,7 @@ export default function SetPasswordPage() {
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("auth.setPassword.passwordsDoNotMatch"));
       return;
     }
 
@@ -92,10 +96,10 @@ export default function SetPasswordPage() {
         <Stack gap="md">
           <Stack gap={4}>
             <Title order={2} c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-              🪴 Plantir
+              {t("common.brandWithEmoji")}
             </Title>
             <Text size="sm" c="dimmed">
-              Set your password to finish setting up your account. Use at least 8 characters with one uppercase letter and one number.
+              {t("auth.setPassword.subtitle")}
             </Text>
           </Stack>
 
@@ -106,23 +110,25 @@ export default function SetPasswordPage() {
           )}
 
           <PasswordInput
-            label="Password"
+            label={t("auth.setPassword.password")}
             value={password}
             onChange={(e) => setPassword(e.currentTarget.value)}
             required
             autoComplete="new-password"
+            {...requiredInputProps}
           />
 
           <PasswordInput
-            label="Confirm password"
+            label={t("auth.setPassword.confirmPassword")}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.currentTarget.value)}
             required
             autoComplete="new-password"
+            {...requiredInputProps}
           />
 
           <Button type="submit" loading={submitting} fullWidth mt="xs">
-            Set password
+            {t("auth.setPassword.submit")}
           </Button>
         </Stack>
       </Paper>

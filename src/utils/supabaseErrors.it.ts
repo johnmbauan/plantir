@@ -1,0 +1,36 @@
+/**
+ * Italian translations for Supabase AuthApiError codes.
+ * Source: https://supabase.com/docs/guides/auth/debugging/error-codes
+ */
+export const supabaseAuthErrorsIT: Record<string, string> = {
+  invalid_credentials: "Email o password non corretti.",
+  email_not_confirmed: "Conferma la tua email prima di accedere.",
+  user_already_exists: "Esiste già un account con questa email.",
+  email_exists: "Questa email è già in uso.",
+  phone_exists: "Questo numero di telefono è già in uso.",
+  weak_password: "La password è troppo debole. Usa almeno 8 caratteri con una lettera maiuscola e un numero.",
+  too_many_requests: "Troppi tentativi. Riprova tra qualche minuto.",
+  user_not_found: "Nessun account trovato con questa email.",
+  user_banned: "Questo account è stato sospeso.",
+  session_not_found: "Sessione non trovata. Effettua nuovamente l'accesso.",
+  refresh_token_not_found: "Sessione scaduta. Effettua nuovamente l'accesso.",
+  refresh_token_already_used: "Il token di sessione è già stato utilizzato. Effettua nuovamente l'accesso.",
+  flow_state_not_found: "La sessione di autenticazione è scaduta. Riprova dall'inizio.",
+  flow_state_expired: "La sessione di autenticazione è scaduta. Riprova dall'inizio.",
+  signup_disabled: "Le registrazioni sono momentaneamente disabilitate.",
+  email_provider_disabled: "L'accesso via email non è disponibile al momento.",
+  otp_expired: "Il codice di verifica è scaduto. Richiedine uno nuovo.",
+  otp_disabled: "La verifica via codice non è disponibile al momento.",
+  identity_not_found: "Identità non trovata.",
+  invitation_not_found: "Invito non trovato o scaduto.",
+  bad_jwt: "Token di autenticazione non valido. Effettua nuovamente l'accesso.",
+  request_timeout: "La richiesta ha impiegato troppo tempo. Verifica la connessione e riprova.",
+  validation_failed: "Dati non validi. Controlla i campi e riprova.",
+  no_authorization: "Accesso non autorizzato.",
+  unexpected_failure: "Si è verificato un errore imprevisto. Riprova.",
+  captcha_failed: "Verifica captcha non riuscita. Riprova.",
+  email_address_invalid: "L'indirizzo email non è valido.",
+  email_address_not_authorized: "Questo indirizzo email non è autorizzato.",
+  reauthentication_needed: "Devi effettuare nuovamente l'accesso per completare questa operazione.",
+  provider_disabled: "Questo metodo di accesso non è disponibile.",
+};

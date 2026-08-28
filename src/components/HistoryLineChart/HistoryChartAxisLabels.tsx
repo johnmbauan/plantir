@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { PlotPoint } from "./types";
 import { CHART_HEIGHT, formatAxisDate } from "./utils";
 
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function HistoryChartAxisLabels({ plotPoints, indices }: Props) {
+  const { i18n } = useTranslation();
   const lastIndex = plotPoints.length - 1;
 
   return (
@@ -25,7 +27,7 @@ export default function HistoryChartAxisLabels({ plotPoints, indices }: Props) {
             fontSize="11"
             fill="var(--mantine-color-dimmed)"
           >
-            {formatAxisDate(plot.createdAt)}
+            {formatAxisDate(plot.createdAt, i18n.language)}
           </text>
         );
       })}

@@ -1,4 +1,5 @@
 import { Box, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { PlotPoint } from "./types";
 import { CHART_HEIGHT, CHART_WIDTH, formatHoverDate, formatValue } from "./utils";
 
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function HistoryChartTooltip({ point, unit }: Props) {
+  const { i18n } = useTranslation();
   const leftPercent = (point.x / CHART_WIDTH) * 100;
   const topPercent = (point.y / CHART_HEIGHT) * 100;
   const nearRight = point.x > CHART_WIDTH * 0.7;
@@ -35,7 +37,7 @@ export default function HistoryChartTooltip({ point, unit }: Props) {
       }}
     >
       <Text size="xs" fw={600}>{formatValue(point.value, unit)}</Text>
-      <Text size="xs" c="dimmed">{formatHoverDate(point.createdAt)}</Text>
+      <Text size="xs" c="dimmed">{formatHoverDate(point.createdAt, i18n.language)}</Text>
     </Box>
   );
 }

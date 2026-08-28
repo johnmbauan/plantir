@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Paper, PasswordInput, Button, Title, Text, Stack, Center, Loader } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
 import { needsPasswordSetup, validatePassword } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
+import { useNativeValidation } from "@/hooks/useNativeValidation";
 
 export default function ResetPasswordPage() {
+  const { t } = useTranslation();
+  const { requiredInputProps } = useNativeValidation();
   const navigate = useNavigate();
   const { session, user, loading } = useAuth();
   const authUser = user ?? session?.user;
@@ -21,7 +25,7 @@ export default function ResetPasswordPage() {
     if (!session) {
       navigate("/login", {
         replace: true,
-        state: { message: "Recovery link expired or invalid." },
+        state: { message: t("auth.resetPassword.recoveryExpired") },
       });
       return;
     }
@@ -29,7 +33,7 @@ export default function ResetPasswordPage() {
     if (needsPasswordSetup(authUser)) {
       navigate("/set-password", { replace: true });
     }
-  }, [loading, session, authUser, navigate]);
+  }, [loading, session, authUser, navigate, t]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,7 +46,7 @@ export default function ResetPasswordPage() {
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("auth.resetPassword.passwordsDoNotMatch"));
       return;
     }
 
@@ -53,7 +57,7 @@ export default function ResetPasswordPage() {
       await supabase.auth.signOut();
       navigate("/login", {
         replace: true,
-        state: { message: "Password updated. Sign in with your new password." },
+        state: { message: t("auth.resetPassword.passwordUpdated") },
       });
     } catch (err) {
       setError(getErrorMessage(err));
@@ -88,10 +92,10 @@ export default function ResetPasswordPage() {
         <Stack gap="md">
           <Stack gap={4}>
             <Title order={2} c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-              🪴 Plantir
+              {t("common.brandWithEmoji")}
             </Title>
             <Text size="sm" c="dimmed">
-              Choose a new password. Use at least 8 characters with one uppercase letter and one number.
+              {t("auth.resetPassword.subtitle")}
             </Text>
           </Stack>
 
@@ -102,23 +106,25 @@ export default function ResetPasswordPage() {
           )}
 
           <PasswordInput
-            label="New password"
+            label={t("auth.resetPassword.newPassword")}
             value={password}
             onChange={(e) => setPassword(e.currentTarget.value)}
             required
             autoComplete="new-password"
+            {...requiredInputProps}
           />
 
           <PasswordInput
-            label="Confirm new password"
+            label={t("auth.resetPassword.confirmNewPassword")}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.currentTarget.value)}
             required
             autoComplete="new-password"
+            {...requiredInputProps}
           />
 
           <Button type="submit" loading={submitting} fullWidth mt="xs">
-            Reset password
+            {t("auth.resetPassword.submit")}
           </Button>
         </Stack>
       </Paper>

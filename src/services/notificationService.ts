@@ -11,6 +11,7 @@ export interface NotificationSettings {
   notification_hour: number;
   notification_timezone: string;
   browser_notifications_enabled: boolean;
+  locale: string;
 }
 
 export type NotificationType = "watering" | "offline" | "achievement";
@@ -81,7 +82,7 @@ export async function fetchSettings(): Promise<NotificationSettings | null> {
 
   const { data, error } = await supabase
     .from("notification_settings")
-    .select("id, telegram_chat_id, notification_hour, notification_timezone, browser_notifications_enabled")
+    .select("id, telegram_chat_id, notification_hour, notification_timezone, browser_notifications_enabled, locale")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -119,6 +120,17 @@ export async function upsertSettings(
   } catch (err) {
     console.error("Failed to record notification_settings_saved achievement event:", err);
   }
+}
+
+export async function updateLocale(locale: string): Promise<void> {
+  const user = await requireUser();
+
+  const { error } = await supabase
+    .from("notification_settings")
+    .update({ locale, updatedAt: new Date().toISOString() })
+    .eq("user_id", user.id);
+
+  if (error) throw error;
 }
 
 export async function updateWeatherLocation(lat: number, lng: number): Promise<void> {

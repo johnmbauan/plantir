@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { getWeatherInfo, formatDayLabel, formatShortDate } from './utils';
 
+type TFunc = (key: string, opts?: Record<string, unknown>) => string;
+
+const mockT: TFunc = (key) => {
+  switch (key) {
+    case 'weather.today': return 'Today';
+    case 'weather.tomorrow': return 'Tomorrow';
+    default: return key;
+  }
+};
+
 describe('getWeatherInfo', () => {
   it.each([
     [0, 'Clear'],
@@ -20,12 +30,12 @@ describe('getWeatherInfo', () => {
 
 describe('formatDayLabel', () => {
   it('returns Today and Tomorrow for first two indices', () => {
-    expect(formatDayLabel('2026-07-06', 0)).toBe('Today');
-    expect(formatDayLabel('2026-07-07', 1)).toBe('Tomorrow');
+    expect(formatDayLabel('2026-07-06', 0, mockT)).toBe('Today');
+    expect(formatDayLabel('2026-07-07', 1, mockT)).toBe('Tomorrow');
   });
 
   it('returns weekday for later indices', () => {
-    expect(formatDayLabel('2026-07-08', 2)).toMatch(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)$/);
+    expect(formatDayLabel('2026-07-08', 2, mockT)).toMatch(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)$/);
   });
 });
 

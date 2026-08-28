@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Stack } from "@mantine/core";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { EnrichedPlant, PlantStatus } from "@/types";
 import { fetchPlants } from "@/services/plantService";
 import { notifications } from "@mantine/notifications";
@@ -22,6 +23,7 @@ type DashboardFilter = PlantStatus | "all";
 type DashboardSort = "humidity-low" | "humidity-high" | "name" | "last-seen";
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
@@ -56,12 +58,12 @@ export default function Dashboard() {
       });
     } catch (err) {
       console.error(err);
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       if (source === "initial") setLoading(false);
       if (source !== "initial") setRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     // Initial dashboard hydration.
@@ -71,9 +73,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     void recordDashboardVisit()
-      .then((newly) => showUnlockToasts(newly))
+      .then((newly) => showUnlockToasts(newly, t))
       .catch((err) => console.error("Dashboard achievement visit failed:", err));
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     localStorage.setItem("plantir_dashboard_sort", sortBy);
@@ -158,8 +160,8 @@ export default function Dashboard() {
           warned = true;
           notifications.show({
             color: "yellow",
-            title: "Realtime unavailable",
-            message: "Live updates are temporarily unavailable. You can still use manual refresh.",
+            title: t("dashboard.realtimeUnavailable.title"),
+            message: t("dashboard.realtimeUnavailable.message"),
           });
         }
       });
@@ -168,7 +170,7 @@ export default function Dashboard() {
       if (debounceTimer) window.clearTimeout(debounceTimer);
       void supabase.removeChannel(channel);
     };
-  }, [reloadPlants]);
+  }, [reloadPlants, t]);
 
   const counts = useMemo(() => ({
     healthy: plants.filter((p) => p.statuses.includes("HEALTHY")).length,
@@ -211,18 +213,18 @@ export default function Dashboard() {
   const emptyState = useMemo(() => {
     if (plants.length === 0) {
       return {
-        title: "No plants yet",
-        description: "Start by creating your first plant in Plants Center.",
-        actionLabel: "Add first plant",
+        title: t("dashboard.empty.noPlantsTitle"),
+        description: t("dashboard.empty.noPlantsDescription"),
+        actionLabel: t("dashboard.empty.addFirstPlant"),
         onAction: () => navigate("/plants-center?tab=plants"),
       };
     }
 
     if (visible.length === 0) {
       return {
-        title: "No plants match your filters",
-        description: "Try clearing search and filters to see all plants.",
-        actionLabel: "Reset filters",
+        title: t("dashboard.empty.noMatchTitle"),
+        description: t("dashboard.empty.noMatchDescription"),
+        actionLabel: t("dashboard.empty.resetFilters"),
         onAction: () => {
           setSearch("");
           setActiveFilter("all");
@@ -232,7 +234,7 @@ export default function Dashboard() {
     }
 
     return undefined;
-  }, [plants.length, visible.length, navigate]);
+  }, [plants.length, visible.length, navigate, t]);
 
   const handleUnsnooze = useCallback(async (plantId: number) => {
     setSnoozedUntilByPlantId((prev) => {
@@ -244,10 +246,10 @@ export default function Dashboard() {
       await unsnoozeNotification(plantId);
     } catch (err) {
       console.error(err);
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
       void reloadPlants("manual");
     }
-  }, [reloadPlants]);
+  }, [reloadPlants, t]);
 
   return (
     <Stack gap="lg">

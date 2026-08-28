@@ -118,7 +118,7 @@ describe('useGardenState', () => {
       const { result } = renderHook(() => useGardenState());
       await waitFor(() => expect(result.current.loading).toBe(false));
 
-      expect(mockShowUnlockToasts).toHaveBeenCalledWith([sproutDef]);
+      expect(mockShowUnlockToasts).toHaveBeenCalledWith([sproutDef], expect.any(Function));
     });
 
     it('records newly unlocked keys for animation', async () => {

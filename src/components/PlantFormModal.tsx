@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Group, Modal, Select, Stack, Switch, Text, TextInput, Tooltip } from "@mantine/core";
+import { Divider, Group, Modal, Select, Stack, Switch, Text, TextInput, Tooltip } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { EnrichedPlant, PotDepthClass } from "@/types";
 import {
-  POT_DEPTH_INFO_TOOLTIP,
-  POT_DEPTH_SELECT_OPTIONS,
   isPotDepthClass,
 } from "@/constants/potDepth";
 import { createPlant, deletePlantImage, updatePlant, uploadPlantImage } from "@/services/plantService";
@@ -15,8 +14,6 @@ import { PhotoSection } from "@/components/plant-form/PhotoSection";
 import { usePlantSpeciesSelection } from "@/components/plant-form/usePlantSpeciesSelection";
 import { usePlantPreviewSource } from "@/components/plant-form/usePlantPreviewSource";
 import { FormModalFooter } from "@/components/shared/FormModalFooter";
-import { ModalSection } from "@/components/shared/ModalSection";
-
 interface Props {
   opened: boolean;
   onClose: () => void;
@@ -25,6 +22,7 @@ interface Props {
 }
 
 export default function PlantFormModal({ opened, onClose, editingPlant, onSaved }: Props) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [isOutdoor, setIsOutdoor] = useState(false);
   const [potDepthClass, setPotDepthClass] = useState<PotDepthClass | null>(null);
@@ -78,6 +76,16 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
     || initialSnapshot.existingImageUrl !== existingImageUrl,
   );
 
+  const POT_DEPTH_SELECT_OPTIONS: { value: PotDepthClass | ""; label: string }[] = [
+    { value: "", label: t("potDepth.notSure") },
+    { value: "compact", label: t("potDepth.compact") },
+    { value: "small", label: t("potDepth.small") },
+    { value: "medium", label: t("potDepth.medium") },
+    { value: "large", label: t("potDepth.large") },
+    { value: "deep", label: t("potDepth.deep") },
+    { value: "in_ground", label: t("potDepth.inGround") },
+  ];
+
   useEffect(() => {
     if (!opened) return;
 
@@ -110,7 +118,7 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
 
   const requestClose = () => {
     if (saving) return;
-    if (!isDirty || window.confirm("Discard unsaved changes?")) {
+    if (!isDirty || window.confirm(t("common.discardUnsavedChanges"))) {
       onClose();
     }
   };
@@ -153,14 +161,14 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
 
       notifications.show({
         color: "green",
-        title: "Saved",
-        message: `Plant ${editingPlant ? "updated" : "created"} successfully`,
+        title: t("common.saved"),
+        message: editingPlant ? t("plantForm.updatedMessage") : t("plantForm.createdMessage"),
       });
       onClose();
       onSaved();
     } catch (err) {
       console.error(err);
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setSaving(false);
     }
@@ -170,23 +178,23 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
     <Modal
       opened={opened}
       onClose={requestClose}
-      title={editingPlant ? "Edit plant" : "Add plant"}
+      title={editingPlant ? t("plantForm.editTitle") : t("plantForm.addTitle")}
       size="lg"
       styles={{ body: { paddingBottom: 0 } }}
     >
       <Stack gap="md">
         <TextInput
-          label="Name"
-          description="Give this plant a name you can recognize quickly."
-          placeholder="e.g. Ficus"
+          label={t("plantForm.name")}
+          description={t("plantForm.nameDescription")}
+          placeholder={t("plantForm.namePlaceholder")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
         />
 
         <Switch
-          label="Outdoor plant"
-          description="Enable for outdoor plants that get rainwater"
+          label={t("plantForm.outdoorLabel")}
+          description={t("plantForm.outdoorDescription")}
           checked={isOutdoor}
           onChange={(e) => setIsOutdoor(e.currentTarget.checked)}
           disabled={saving}
@@ -195,10 +203,10 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
         <Stack gap={4}>
           <Group gap={6} wrap="nowrap">
             <Text size="sm" fw={500}>
-              Pot height
+              {t("plantForm.potHeight")}
             </Text>
             <Tooltip
-              label={POT_DEPTH_INFO_TOOLTIP}
+              label={t("potDepth.tooltip")}
               multiline
               w={320}
               withArrow
@@ -208,15 +216,15 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
                 component="span"
                 c="dimmed"
                 style={{ display: "inline-flex", cursor: "help" }}
-                aria-label="Why pot height matters for moisture readings"
+                aria-label={t("plantForm.potHeightWhyAria")}
               >
                 <IconInfoCircle size={16} />
               </Text>
             </Tooltip>
           </Group>
           <Select
-            aria-label="Pot height"
-            description="Optional — improves how moisture is interpreted for taller pots."
+            aria-label={t("plantForm.potHeightAria")}
+            description={t("plantForm.potHeightDescription")}
             data={POT_DEPTH_SELECT_OPTIONS}
             value={potDepthClass ?? ""}
             onChange={(value) => {
@@ -227,55 +235,49 @@ export default function PlantFormModal({ opened, onClose, editingPlant, onSaved 
           />
         </Stack>
 
-        <ModalSection
-          title="Species (optional)"
-          description="Adding species helps unlock more accurate care guidance."
-        >
-          <SpeciesSection
-            speciesQuery={speciesQuery}
-            speciesResults={speciesResults}
-            selectedSpeciesId={selectedSpeciesId}
-            selectedSpecies={selectedSpecies}
-            speciesSearchLoading={speciesSearchLoading}
-            speciesDetailLoading={speciesDetailLoading}
-            speciesError={speciesError}
-            saving={saving}
-            onSearchChange={handleSpeciesSearchChange}
-            onSelect={handleSpeciesSelect}
-            onRejectSpecies={clearSpeciesSelection}
-          />
-        </ModalSection>
+        <Divider label={t("plantForm.speciesSectionTitle")} labelPosition="center" mt={10} />
+        <Text size="xs" c="dimmed">{t("plantForm.speciesSectionDescription")}</Text>
+        <SpeciesSection
+          speciesQuery={speciesQuery}
+          speciesResults={speciesResults}
+          selectedSpeciesId={selectedSpeciesId}
+          selectedSpecies={selectedSpecies}
+          speciesSearchLoading={speciesSearchLoading}
+          speciesDetailLoading={speciesDetailLoading}
+          speciesError={speciesError}
+          saving={saving}
+          onSearchChange={handleSpeciesSearchChange}
+          onSelect={handleSpeciesSelect}
+          onRejectSpecies={clearSpeciesSelection}
+        />
 
-        <ModalSection
-          title="Photo"
-          description="Choose either the matched species photo or your own custom image."
-        >
-          <PhotoSection
-            previewSrc={previewSrc}
-            useSpeciesImage={useSpeciesImage}
-            speciesImageAvailable={speciesImageAvailable}
-            imageFile={imageFile}
-            resetFileRef={resetFileRef}
-            saving={saving}
-            onPhotoSourceChange={(source) => {
-              if (source === "species" && speciesImageAvailable) {
-                setUseSpeciesImage(true);
-                setImageFile(null);
-                resetFileRef.current?.();
-                return;
-              }
-              setUseSpeciesImage(false);
-            }}
-            onFileChange={(file) => {
-              setUseSpeciesImage(false);
-              setImageFile(file);
-            }}
-          />
-        </ModalSection>
+        <Divider label={t("plantForm.photoSectionTitle")} labelPosition="center" mt={10} />
+        <Text size="xs" c="dimmed">{t("plantForm.photoSectionDescription")}</Text>
+        <PhotoSection
+          previewSrc={previewSrc}
+          useSpeciesImage={useSpeciesImage}
+          speciesImageAvailable={speciesImageAvailable}
+          imageFile={imageFile}
+          resetFileRef={resetFileRef}
+          saving={saving}
+          onPhotoSourceChange={(source) => {
+            if (source === "species" && speciesImageAvailable) {
+              setUseSpeciesImage(true);
+              setImageFile(null);
+              resetFileRef.current?.();
+              return;
+            }
+            setUseSpeciesImage(false);
+          }}
+          onFileChange={(file) => {
+            setUseSpeciesImage(false);
+            setImageFile(file);
+          }}
+        />
 
         <FormModalFooter
-          helperText={!canSave ? "Plant name is required" : undefined}
-          submitLabel={editingPlant ? "Save changes" : "Add plant"}
+          helperText={!canSave ? t("plantForm.nameRequired") : undefined}
+          submitLabel={editingPlant ? t("plantForm.saveSubmit") : t("plantForm.addSubmit")}
           canSubmit={canSave && isDirty}
           saving={saving}
           onCancel={requestClose}

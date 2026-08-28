@@ -1,4 +1,8 @@
-import { Accordion, Badge, Button, Group, Image, Paper, SimpleGrid, Stack, Text } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { Accordion, Badge, Button, Group, Image, Paper, SimpleGrid, Skeleton, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/context/LanguageContext";
+import { fetchSpeciesTranslation, type SpeciesCareTranslation } from "@/services/plantSpeciesService";
 
 export interface SpeciesCareFields {
   displayName?: string | null;
@@ -23,6 +27,38 @@ interface SpeciesCareCardProps {
 }
 
 export function SpeciesCareCard({ species, showImage = false, onClear }: SpeciesCareCardProps) {
+  const { t } = useTranslation();
+  const { locale } = useLanguage();
+
+  const [translation, setTranslation] = useState<SpeciesCareTranslation | null>(null);
+  const [translating, setTranslating] = useState(false);
+
+  useEffect(() => {
+    if (locale === "en" || !species.sourceSpeciesId) {
+      return;
+    }
+
+    let cancelled = false;
+    setTranslating(true);
+
+    fetchSpeciesTranslation(species.sourceSpeciesId, locale)
+      .then((result) => {
+        if (!cancelled) setTranslation(result);
+      })
+      .catch(() => {
+        // fall back to English on error
+      })
+      .finally(() => {
+        if (!cancelled) setTranslating(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [species.sourceSpeciesId, locale]);
+
+  const care = locale !== "en" && species.sourceSpeciesId && translation ? translation : species;
+
   const scientificName = species.scientificName?.trim() ?? null;
   const primaryName = species.displayName ?? scientificName ?? species.sourceSpeciesId ?? "";
   const showScientificName = scientificName != null && scientificName.toLowerCase() !== primaryName.toLowerCase();
@@ -34,16 +70,16 @@ export function SpeciesCareCard({ species, showImage = false, onClear }: Species
           <Stack gap={2}>
             <Text size="sm" tt="capitalize" fw={600}>{primaryName}</Text>
             {showScientificName && (
-              <Text size="xs" c="dimmed">Scientific name: {scientificName}</Text>
+              <Text size="xs" c="dimmed">{t("species.scientificName", { name: scientificName })}</Text>
             )}
           </Stack>
-          <Badge variant="light" color="green">Care guidance</Badge>
+          <Badge variant="light" color="green">{t("species.careGuidanceBadge")}</Badge>
         </Group>
 
         {showImage && species.imageUrl && (
           <Image
             src={species.imageUrl}
-            alt={species.displayName ?? species.scientificName ?? "Species image"}
+            alt={species.displayName ?? species.scientificName ?? t("species.speciesImageAlt")}
             radius="sm"
             h={160}
             w={160}
@@ -53,13 +89,13 @@ export function SpeciesCareCard({ species, showImage = false, onClear }: Species
 
         <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="xs">
           <Paper withBorder radius="sm" p="xs">
-            <Text size="xs" c="dimmed">Recommended soil moisture</Text>
+            <Text size="xs" c="dimmed">{t("species.recommendedSoilMoisture")}</Text>
             <Text size="sm" fw={600}>
               {species.minSoilMoisture ?? "?"}% - {species.maxSoilMoisture ?? "?"}%
             </Text>
           </Paper>
           <Paper withBorder radius="sm" p="xs">
-            <Text size="xs" c="dimmed">Recommended temperature</Text>
+            <Text size="xs" c="dimmed">{t("species.recommendedTemperature")}</Text>
             <Text size="sm" fw={600}>
               {species.minTemperatureCelsius ?? "?"}°C - {species.maxTemperatureCelsius ?? "?"}°C
             </Text>
@@ -68,15 +104,36 @@ export function SpeciesCareCard({ species, showImage = false, onClear }: Species
 
         <Accordion variant="contained" radius="sm">
           <Accordion.Item value="care-guidance">
-            <Accordion.Control>View care guidance</Accordion.Control>
-            <Accordion.Panel style={{ maxHeight: 220, overflowY: "auto" }}>
-              <Stack gap={6}>
-                {species.soil && <Text size="sm">Soil: <Text span fw={100}>{species.soil}</Text></Text>}
-                {species.sunlight && <Text size="sm">Sunlight: <Text span fw={100}>{species.sunlight}</Text></Text>}
-                {species.watering && <Text size="sm">Watering: <Text span fw={100}>{species.watering}</Text></Text>}
-                {species.fertilization && <Text size="sm">Fertilization: <Text span fw={100}>{species.fertilization}</Text></Text>}
-                {species.pruning && <Text size="sm">Pruning: <Text span fw={100}>{species.pruning}</Text></Text>}
-              </Stack>
+            <Accordion.Control>{t("species.viewCareGuidance")}</Accordion.Control>
+            <Accordion.Panel>
+              <div style={{ maxHeight: 220, overflowY: "auto" }}>
+                {translating ? (
+                  <Stack gap={6}>
+                    <Text size="sm" c="dimmed">{t("species.translationLoading")}</Text>
+                    <Skeleton height={12} radius="sm" />
+                    <Skeleton height={12} radius="sm" width="80%" />
+                    <Skeleton height={12} radius="sm" width="90%" />
+                  </Stack>
+                ) : (
+                  <Stack gap={6}>
+                    {care.soil && (
+                      <Text size="sm">{t("species.soil")} <Text span fw={100}>{care.soil}</Text></Text>
+                    )}
+                    {care.sunlight && (
+                      <Text size="sm">{t("species.sunlight")} <Text span fw={100}>{care.sunlight}</Text></Text>
+                    )}
+                    {care.watering && (
+                      <Text size="sm">{t("species.watering")} <Text span fw={100}>{care.watering}</Text></Text>
+                    )}
+                    {care.fertilization && (
+                      <Text size="sm">{t("species.fertilization")} <Text span fw={100}>{care.fertilization}</Text></Text>
+                    )}
+                    {care.pruning && (
+                      <Text size="sm">{t("species.pruning")} <Text span fw={100}>{care.pruning}</Text></Text>
+                    )}
+                  </Stack>
+                )}
+              </div>
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>
@@ -84,7 +141,7 @@ export function SpeciesCareCard({ species, showImage = false, onClear }: Species
         {onClear && (
           <Group gap="sm">
             <Button size="xs" variant="default" onClick={onClear}>
-              Clear species
+              {t("species.clearSpecies")}
             </Button>
           </Group>
         )}

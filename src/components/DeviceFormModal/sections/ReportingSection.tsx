@@ -1,7 +1,8 @@
 import { Badge, Group, NumberInput, Select, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { DeviceFormValidationErrors } from "@/components/DeviceFormModal/types";
 import { DEFAULT_HUMIDITY_CONFIG } from "@/constants/deviceDefaults";
-import { formatInterval, INTERVAL_PRESET_OPTIONS } from "@/utils/time";
+import { formatInterval, getIntervalPresetOptions } from "@/utils/time";
 
 const RECOMMENDED_INTERVAL = String(DEFAULT_HUMIDITY_CONFIG.sleepDurationSeconds);
 
@@ -20,14 +21,15 @@ export default function ReportingSection({
   onPresetChange,
   onCustomIntervalChange,
 }: Props) {
+  const { t } = useTranslation();
   const showCustomInterval = intervalPreset === "custom";
 
   return (
     <Stack gap="xs">
       <Select
-        label="Reporting interval"
-        description={`How often the device wakes up and sends data. Higher frequencies drain the battery faster.`}
-        data={INTERVAL_PRESET_OPTIONS}
+        label={t("deviceForm.reportingInterval")}
+        description={t("deviceForm.reportingIntervalDescription")}
+        data={getIntervalPresetOptions(t)}
         value={intervalPreset}
         onChange={onPresetChange}
         error={validation.interval}
@@ -36,7 +38,7 @@ export default function ReportingSection({
             <Group justify="space-between" wrap="nowrap" gap="xs" w="100%">
               <span>{option.label}</span>
               <Badge size="xs" variant="light" color="green" style={{ flexShrink: 0 }}>
-                Recommended
+                {t("deviceForm.recommended")}
               </Badge>
             </Group>
           ) : (
@@ -46,8 +48,8 @@ export default function ReportingSection({
       />
       {showCustomInterval && (
         <NumberInput
-          label="Custom interval (seconds)"
-          description="For testing you can set a short interval (e.g. 10–60 seconds). Lower values use more battery."
+          label={t("deviceForm.customInterval")}
+          description={t("deviceForm.customIntervalDescription")}
           min={1}
           step={1}
           value={intervalSeconds}
@@ -57,12 +59,12 @@ export default function ReportingSection({
       )}
       {showCustomInterval && Number.isFinite(intervalSeconds) && intervalSeconds >= 1 && (
         <Text size="xs" c="dimmed">
-          ≈ {formatInterval(intervalSeconds)}
+          ≈ {formatInterval(intervalSeconds, t)}
         </Text>
       )}
       {intervalSeconds < 60 && Number.isFinite(intervalSeconds) && (
         <Text size="xs" c="orange">
-          Short intervals drain the battery faster.
+          {t("deviceForm.shortIntervalWarning")}
         </Text>
       )}
     </Stack>

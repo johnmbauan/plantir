@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Paper, TextInput, Button, Title, Text, Stack, Center, Anchor } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
 import { needsPasswordSetup } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
+import { useNativeValidation } from "@/hooks/useNativeValidation";
 
 function getResetPasswordRedirectUrl(): string {
   return `${window.location.origin}/reset-password`;
 }
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation();
+  const { emailInputProps } = useNativeValidation();
   const navigate = useNavigate();
   const { session, user, loading } = useAuth();
   const authUser = user ?? session?.user;
@@ -65,12 +69,12 @@ export default function ForgotPasswordPage() {
         <Stack gap="md">
           <Stack gap={4}>
             <Title order={2} c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-              🪴 Plantir
+              {t("common.brandWithEmoji")}
             </Title>
             <Text size="sm" c="dimmed">
               {submitted
-                ? "Check your email for a password reset link."
-                : "Enter your email and we'll send you a reset link."}
+                ? t("auth.forgotPassword.subtitleSubmitted")
+                : t("auth.forgotPassword.subtitle")}
             </Text>
           </Stack>
 
@@ -82,27 +86,28 @@ export default function ForgotPasswordPage() {
 
           {submitted ? (
             <Text size="sm" c="dimmed">
-              If an account exists for that email, you will receive a link shortly. The link expires in 1 hour.
+              {t("auth.forgotPassword.submittedHint")}
             </Text>
           ) : (
             <TextInput
-              label="Email"
+              label={t("auth.forgotPassword.email")}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
               required
               autoComplete="email"
+              {...emailInputProps}
             />
           )}
 
           {!submitted && (
             <Button type="submit" loading={submitting} fullWidth mt="xs">
-              Send reset link
+              {t("auth.forgotPassword.sendResetLink")}
             </Button>
           )}
 
           <Anchor component={Link} to="/login" size="sm" ta="center">
-            Back to sign in
+            {t("auth.forgotPassword.backToSignIn")}
           </Anchor>
         </Stack>
       </Paper>

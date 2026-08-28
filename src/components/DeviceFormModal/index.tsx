@@ -1,4 +1,5 @@
 import { Modal, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useDeviceForm } from "@/components/DeviceFormModal/hooks/useDeviceForm";
 import type { DeviceFormModalProps } from "@/components/DeviceFormModal/types";
 import AddManualIntro from "@/components/DeviceFormModal/sections/AddManualIntro";
@@ -17,6 +18,7 @@ export default function DeviceFormModal({
   onSaved,
   onOpenCalibration,
 }: DeviceFormModalProps) {
+  const { t } = useTranslation();
   const {
     form,
     setForm,
@@ -52,16 +54,16 @@ export default function DeviceFormModal({
       onClose={handleClose}
       title={
         createdDevice ? (
-          "Device created"
+          t("deviceForm.createdTitle")
         ) : isEditing ? (
           <Stack gap={2}>
-            <Text fw={600}>Edit device</Text>
+            <Text fw={600}>{t("deviceForm.editTitle")}</Text>
             <Text size="sm" c="dimmed" ff="monospace">
               {editingDevice!.serialNumber}
             </Text>
           </Stack>
         ) : (
-          "Add device manually"
+          t("deviceForm.addTitle")
         )
       }
       size="lg"
@@ -116,7 +118,7 @@ export default function DeviceFormModal({
               isValid={isValid}
               isDirty={isDirty}
               saving={saving}
-              submitLabel={isEditing ? "Save changes" : "Add device"}
+              submitLabel={isEditing ? t("deviceForm.saveSubmit") : t("deviceForm.addSubmit")}
               helperText={helperText}
               onCancel={handleClose}
               onSave={handleSave}

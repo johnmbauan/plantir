@@ -1,5 +1,6 @@
 import { notifications } from "@mantine/notifications";
 import supabase from "@/supabase";
+import i18n from "@/i18n";
 import type { AchievementKey, GardenElementId } from "@/constants/achievements";
 import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
 import { requireUser } from "@/utils/requireUser";
@@ -22,6 +23,7 @@ export interface GardenState {
   earnedCount: number;
 }
 
+type TFunc = (key: string, opts?: Record<string, unknown>) => string;
 type GardenAction = "evaluate" | "record_client_event" | "dashboard_visit";
 
 function mapDefinition(row: Record<string, unknown>): AchievementDefinition {
@@ -104,10 +106,10 @@ export async function recordDashboardVisit(): Promise<AchievementDefinition[]> {
 }
 
 /** Fire-and-forget evaluate that surfaces unlock toasts. Never throws to callers. */
-export async function evaluateAndToastUnlocks(): Promise<AchievementDefinition[]> {
+export async function evaluateAndToastUnlocks(t: TFunc = i18n.t.bind(i18n)): Promise<AchievementDefinition[]> {
   try {
     const newly = await evaluateAchievements();
-    showUnlockToasts(newly);
+    showUnlockToasts(newly, t);
     return newly;
   } catch (err) {
     console.error("Achievement evaluate failed:", err);
@@ -123,7 +125,7 @@ function openGarden(): void {
   }
 }
 
-export function showUnlockToasts(newAchievements: AchievementDefinition[]): void {
+export function showUnlockToasts(newAchievements: AchievementDefinition[], t: TFunc = i18n.t.bind(i18n)): void {
   if (newAchievements.length === 0) return;
 
   if (newAchievements.length === 1) {
@@ -131,7 +133,7 @@ export function showUnlockToasts(newAchievements: AchievementDefinition[]): void
     notifications.show({
       color: "green",
       title: a.name,
-      message: `${a.description} Tap to open your garden.`,
+      message: `${a.description} ${t("garden.unlockToast.singleSuffix")}`,
       autoClose: 8000,
       onClick: openGarden,
     });
@@ -140,8 +142,8 @@ export function showUnlockToasts(newAchievements: AchievementDefinition[]): void
 
   notifications.show({
     color: "green",
-    title: "Your garden grew",
-    message: `${newAchievements.length} new badges unlocked — tap to open your garden.`,
+    title: t("garden.unlockToast.multiTitle"),
+    message: t("garden.unlockToast.multiMessage", { count: newAchievements.length }),
     autoClose: 8000,
     onClick: openGarden,
   });

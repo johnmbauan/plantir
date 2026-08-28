@@ -1,5 +1,6 @@
 import { Stack, Text, Alert } from "@mantine/core";
 import { IconDeviceDesktop } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { PlantOption } from "@/components/DeviceFormModal/types";
 import PlantAssignmentSelect from "@/components/DeviceFormModal/PlantAssignmentSelect";
 
@@ -10,22 +11,23 @@ interface Props {
 }
 
 export default function PrepareStep({ plantOptions, plantId, onPlantChange }: Props) {
+  const { t } = useTranslation();
   return (
     <Stack gap="sm" mt="md">
-      <Text fw={600}>Prepare</Text>
+      <Text fw={600}>{t("registrationWizard.prepare.title")}</Text>
       <Alert
         icon={<IconDeviceDesktop size={16} />}
         color="blue"
         variant="light"
       >
-        For the best experience, we recommend completing this setup from a PC or laptop.
+        {t("registrationWizard.prepare.pcRecommendation")}
       </Alert>
       <Text size="sm">
-        This wizard will guide you through registering a Plantir humidity sensor and linking it to your account.
+        {t("registrationWizard.prepare.intro")}
       </Text>
       <PlantAssignmentSelect
-        label="Assign to plant (optional)"
-        placeholder="You can assign a plant now or later"
+        label={t("registrationWizard.prepare.assignPlant")}
+        placeholder={t("registrationWizard.prepare.assignPlantPlaceholder")}
         plantOptions={plantOptions}
         value={plantId}
         onChange={onPlantChange}

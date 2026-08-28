@@ -49,8 +49,8 @@ export type GardenVisualStage = "soil" | "garden" | "forest";
 
 export interface GardenTier {
   id: number;
-  name: string;
-  tagline: string;
+  nameKey: string;
+  taglineKey: string;
   minUnlocks: number;
   maxUnlocks: number | null;
   visualStage: GardenVisualStage;
@@ -59,40 +59,40 @@ export interface GardenTier {
 export const GARDEN_TIERS: GardenTier[] = [
   {
     id: 0,
-    name: "Seed Packet",
-    tagline: "Empty soil. Possibility. A lonely pebble.",
+    nameKey: "garden.tiers.seedPacket.name",
+    taglineKey: "garden.tiers.seedPacket.tagline",
     minUnlocks: 0,
     maxUnlocks: 0,
     visualStage: "soil",
   },
   {
     id: 1,
-    name: "First Pots",
-    tagline: "Something green is happening.",
+    nameKey: "garden.tiers.firstPots.name",
+    taglineKey: "garden.tiers.firstPots.tagline",
     minUnlocks: 1,
     maxUnlocks: 4,
     visualStage: "soil",
   },
   {
     id: 2,
-    name: "Greenfingers",
-    tagline: "Your garden is getting opinions.",
+    nameKey: "garden.tiers.greenfingers.name",
+    taglineKey: "garden.tiers.greenfingers.tagline",
     minUnlocks: 5,
     maxUnlocks: 8,
     visualStage: "garden",
   },
   {
     id: 3,
-    name: "Secret Garden",
-    tagline: "Vines, trellis, and quiet pride.",
+    nameKey: "garden.tiers.secretGarden.name",
+    taglineKey: "garden.tiers.secretGarden.tagline",
     minUnlocks: 9,
     maxUnlocks: 12,
     visualStage: "garden",
   },
   {
     id: 4,
-    name: "Little Forest",
-    tagline: "The canopy has entered the chat.",
+    nameKey: "garden.tiers.littleForest.name",
+    taglineKey: "garden.tiers.littleForest.tagline",
     minUnlocks: 13,
     maxUnlocks: null,
     visualStage: "forest",

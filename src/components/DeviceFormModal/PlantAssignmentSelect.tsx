@@ -1,4 +1,5 @@
 import { Select, type SelectProps } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { PlantOption } from "@/components/DeviceFormModal/types";
 import { hasAssignedPlantOptions, toPlantSelectData } from "@/components/DeviceFormModal/plantOptions";
 import { renderPlantAssignmentOption } from "@/components/DeviceFormModal/renderPlantAssignmentOption";
@@ -12,17 +13,18 @@ export default function PlantAssignmentSelect({
   description,
   ...selectProps
 }: Props) {
+  const { t } = useTranslation();
   const assignedByValue = new Map(plantOptions.map((option) => [option.value, option]));
 
   return (
     <Select
       {...selectProps}
       data={toPlantSelectData(plantOptions)}
-      clearButtonProps={{ "aria-label": "Clear plant" }}
+      clearButtonProps={{ "aria-label": t("deviceForm.clearPlantAria") }}
       description={
         description ?? (
           hasAssignedPlantOptions(plantOptions)
-            ? "Plants that already have a device assigned are disabled."
+            ? t("deviceForm.plantsWithDeviceDisabled")
             : undefined
         )
       }

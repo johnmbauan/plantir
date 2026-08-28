@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Paper, TextInput, PasswordInput, Button, Title, Text, Stack, Center, Anchor } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
+import { useNativeValidation } from "@/hooks/useNativeValidation";
 import supabase from "@/supabase";
 import { needsPasswordSetup } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
 
 export default function LoginPage() {
+  const { t } = useTranslation();
+  const { emailInputProps, requiredInputProps } = useNativeValidation();
   const navigate = useNavigate();
   const location = useLocation();
   const { session, user, loading } = useAuth();
@@ -61,10 +65,10 @@ export default function LoginPage() {
         <Stack gap="md">
           <Stack gap={4}>
             <Title order={2} c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-              🪴 Plantir
+              {t("common.brandWithEmoji")}
             </Title>
             <Text size="sm" c="dimmed">
-              Sign in to manage your plants
+              {t("auth.login.subtitle")}
             </Text>
           </Stack>
 
@@ -75,28 +79,30 @@ export default function LoginPage() {
           )}
 
           <TextInput
-            label="Email"
+            label={t("auth.login.email")}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.currentTarget.value)}
             required
             autoComplete="email"
+            {...emailInputProps}
           />
 
           <PasswordInput
-            label="Password"
+            label={t("auth.login.password")}
             value={password}
             onChange={(e) => setPassword(e.currentTarget.value)}
             required
             autoComplete="current-password"
+            {...requiredInputProps}
           />
 
           <Button type="submit" loading={submitting} fullWidth mt="xs">
-            Sign in
+            {t("auth.login.signIn")}
           </Button>
 
           <Anchor component={Link} to="/forgot-password" size="sm" ta="center">
-            Forgot password?
+            {t("auth.login.forgotPassword")}
           </Anchor>
         </Stack>
       </Paper>

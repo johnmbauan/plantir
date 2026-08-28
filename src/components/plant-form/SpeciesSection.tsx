@@ -1,4 +1,5 @@
 import { Alert, Group, Loader, Paper, Select, Skeleton, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { PlantSpecies } from "@/types";
 import { SpeciesCareCard } from "@/components/shared/SpeciesCareCard";
 import type { PlantSpeciesOption } from "./usePlantSpeciesSelection";
@@ -30,11 +31,12 @@ export function SpeciesSection({
   onSelect,
   onRejectSpecies,
 }: SpeciesSectionProps) {
+  const { t } = useTranslation();
   return (
     <>
       <Select
-        aria-label="Plant species (optional)"
-        placeholder="Start typing species..."
+        aria-label={t("species.selectAria")}
+        placeholder={t("species.placeholder")}
         searchable
         clearable
         searchValue={speciesQuery}
@@ -45,17 +47,17 @@ export function SpeciesSection({
         disabled={saving}
         nothingFoundMessage={
           speciesQuery.trim().length < 2
-            ? "Type at least 2 characters"
+            ? t("species.typeAtLeast2")
             : speciesSearchLoading
-              ? "Searching..."
-              : "No matches"
+              ? t("species.searching")
+              : t("species.noMatches")
         }
         rightSection={speciesSearchLoading ? <Loader size="xs" /> : null}
         rightSectionPointerEvents="none"
       />
       {speciesSearchLoading && (
         <Text size="xs" c="dimmed">
-          Searching species...
+          {t("species.searchingSpecies")}
         </Text>
       )}
       {speciesError && (
@@ -68,7 +70,7 @@ export function SpeciesSection({
           <Stack gap="xs">
             <Group gap="xs" align="center">
               <Loader size="sm" />
-              <Text size="sm" c="dimmed">Loading species details...</Text>
+              <Text size="sm" c="dimmed">{t("species.loadingDetails")}</Text>
             </Group>
             <Skeleton height={16} radius="sm" />
             <Skeleton height={16} radius="sm" width="80%" />

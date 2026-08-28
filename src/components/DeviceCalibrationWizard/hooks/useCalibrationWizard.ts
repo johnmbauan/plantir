@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
 import {
   startCalibrationMode,
@@ -23,6 +24,7 @@ interface Options {
 }
 
 export function useCalibrationWizard({ opened, deviceId, onClose, onCalibrated }: Options) {
+  const { t } = useTranslation();
   // --- UI / flow state ---
   const [step, setStep] = useState(STEP.PREPARE as number);
   const [calibrationStarting, setCalibrationStarting] = useState(false);
@@ -126,13 +128,13 @@ export function useCalibrationWizard({ opened, deviceId, onClose, onCalibrated }
     } catch (err) {
       notifications.show({
         color: "red",
-        title: "Error saving calibration",
+        title: t("calibrationWizard.saveErrorTitle"),
         message: getErrorMessage(err),
       });
     } finally {
       setSaving(false);
     }
-  }, [deviceId, onCalibrated, beginPollingFrom]);
+  }, [deviceId, onCalibrated, beginPollingFrom, t]);
 
   // Poll while on wake / dry / wet steps. Handles timeout, mode expiry, and
   // advancing when a valid reading arrives.
@@ -236,11 +238,11 @@ export function useCalibrationWizard({ opened, deviceId, onClose, onCalibrated }
       setCalibrationStarted(true);
       setStep(STEP.WAKE_DEVICE);
     } catch (err) {
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setCalibrationStarting(false);
     }
-  }, [step, deviceId, calibrationStarting, beginPollingFrom]);
+  }, [step, deviceId, calibrationStarting, beginPollingFrom, t]);
 
   const prevStep = () => setStep((s) => Math.max(s - 1, STEP.PREPARE));
 

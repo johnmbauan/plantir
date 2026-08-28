@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { GARDEN_LAYOUT, type GardenVisualStage } from "@/constants/achievements";
 import type { AchievementDefinition, EarnedAchievement } from "@/services/achievementService";
 import GardenElement from "./GardenElement";
@@ -320,6 +321,7 @@ function GardenBackdrop({ visualStage }: { visualStage: GardenVisualStage }) {
 }
 
 export default function GardenScene({ visualStage, allDefinitions, earned, newlyUnlockedKeys }: Props) {
+  const { t } = useTranslation();
   const earnedKeys = new Set(earned.map((e) => e.key));
 
   // Stable paint order: back-to-front by layout y so overlaps feel grounded
@@ -333,7 +335,7 @@ export default function GardenScene({ visualStage, allDefinitions, earned, newly
     <div
       className={`garden-scene garden-scene--${visualStage}`}
       role="img"
-      aria-label="Your growing garden"
+      aria-label={t("garden.sceneAria")}
     >
       <div className="garden-backdrop" aria-hidden>
         <GardenBackdrop visualStage={visualStage} />

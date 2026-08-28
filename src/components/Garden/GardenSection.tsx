@@ -1,11 +1,13 @@
 import { Paper, Skeleton, Stack, Text } from "@mantine/core";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useGardenState } from "./useGardenState";
 import GardenScene from "./GardenScene";
 
 const cardStyle = { border: "1px solid var(--terracotta-100)" };
 
 export default function GardenSection() {
+  const { t } = useTranslation();
   const { loading, allDefinitions, earned, tier, newlyUnlockedKeys } = useGardenState({ toastOnEvaluate: true });
 
   useEffect(() => {
@@ -19,13 +21,13 @@ export default function GardenSection() {
       <Stack gap="md">
         <Stack gap={2}>
           <Text fw={600} c="var(--green-700)">
-            Your Garden
+            {t("garden.title")}
           </Text>
           {loading ? (
             <Skeleton height={16} width="60%" />
           ) : (
             <Text size="sm" c="dimmed">
-              {tier.name} — {tier.tagline}
+              {t(tier.nameKey)} — {t(tier.taglineKey)}
             </Text>
           )}
         </Stack>
@@ -42,7 +44,7 @@ export default function GardenSection() {
         )}
 
         <Text size="xs" c="dimmed">
-          Keep caring for your plants to grow your garden.
+          {t("garden.footer")}
         </Text>
       </Stack>
     </Paper>

@@ -1,4 +1,5 @@
 import { Box, Paper, Tabs, Title } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { DevicesTab } from "@/admin/components/DevicesTab";
 import { FirmwareTab } from "@/admin/components/FirmwareTab";
@@ -22,6 +23,7 @@ function parseTab(value: string | null): AdminTab {
 }
 
 export default function AdminPage() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = parseTab(searchParams.get("tab"));
 
@@ -51,12 +53,12 @@ export default function AdminPage() {
         >
           <Box px="lg" pt="lg" pb={0}>
             <Title order={2} c="var(--green-700)" mb="sm" ta="center">
-              Admin Portal
+              {t("admin.title")}
             </Title>
             <Tabs.List>
-              <Tabs.Tab value="devices">Devices</Tabs.Tab>
-              <Tabs.Tab value="logs">Logs</Tabs.Tab>
-              <Tabs.Tab value="firmware">Firmware</Tabs.Tab>
+              <Tabs.Tab value="devices">{t("admin.tabs.devices")}</Tabs.Tab>
+              <Tabs.Tab value="logs">{t("admin.tabs.logs")}</Tabs.Tab>
+              <Tabs.Tab value="firmware">{t("admin.tabs.firmware")}</Tabs.Tab>
             </Tabs.List>
           </Box>
 

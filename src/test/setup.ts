@@ -2,8 +2,13 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 import { server } from './msw/server';
+import i18n from '@/i18n';
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+// Run all tests in English so assertions match English strings.
+beforeAll(() => {
+  void i18n.changeLanguage('en');
+  server.listen({ onUnhandledRequest: 'error' });
+});
 afterEach(() => {
   server.resetHandlers();
   // Required for jsdom isolation when multiple components mount per file.

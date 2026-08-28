@@ -3,6 +3,7 @@ import {
   Table,
   Text,
 } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { AdminDeviceSortKey } from "@/admin/adminService";
 import { AdminDeviceRow } from "@/admin/components/AdminDeviceRow";
 import { DevicesTabHeader } from "@/admin/components/DevicesTabHeader";
@@ -21,19 +22,20 @@ import { useAdminFilterOptions } from "@/admin/hooks/useAdminFilterOptions";
 import { paginationMeta } from "@/utils/pagination";
 import type { SortDirection } from "@/utils/sort";
 
-const DEVICE_COLUMNS: { key: AdminDeviceSortKey; label: string }[] = [
-  { key: "serialNumber", label: "Serial Number" },
-  { key: "owner_email", label: "Owner" },
-  { key: "plantName", label: "Plant" },
-  { key: "type", label: "Type" },
-  { key: "lastHumidity", label: "Humidity" },
-  { key: "lastBattery", label: "Battery" },
-  { key: "lastSeenAt", label: "Last Seen" },
-  { key: "firmwareVersion", label: "Firmware" },
-];
-
 export function DevicesTab() {
+  const { t } = useTranslation();
   const { filterOptions, refresh: refreshFilterOptions } = useAdminFilterOptions();
+
+  const DEVICE_COLUMNS: { key: AdminDeviceSortKey; label: string }[] = [
+    { key: "serialNumber", label: t("admin.devices.columns.serialNumber") },
+    { key: "owner_email", label: t("admin.devices.columns.owner") },
+    { key: "plantName", label: t("admin.devices.columns.plant") },
+    { key: "type", label: t("admin.devices.columns.type") },
+    { key: "lastHumidity", label: t("admin.devices.columns.humidity") },
+    { key: "lastBattery", label: t("admin.devices.columns.battery") },
+    { key: "lastSeenAt", label: t("admin.devices.columns.lastSeen") },
+    { key: "firmwareVersion", label: t("admin.devices.columns.firmware") },
+  ];
   const [selectedSerial, setSelectedSerial] = useState<string | null>(null);
   const [selectedOwner, setSelectedOwner] = useState<string | null>(null);
   const [selectedPlant, setSelectedPlant] = useState<string | null>(null);
@@ -61,9 +63,9 @@ export function DevicesTab() {
     [totalCount, currentPage],
   );
 
-  const serialOptions = buildSerialOptions(filterOptions);
-  const ownerOptions = buildOwnerOptions(filterOptions);
-  const plantOptions = buildPlantOptions(filterOptions);
+  const serialOptions = buildSerialOptions(filterOptions, t);
+  const ownerOptions = buildOwnerOptions(filterOptions, t);
+  const plantOptions = buildPlantOptions(filterOptions, t);
   const hasActiveFilters = selectedSerial || selectedOwner || selectedPlant;
 
   function handleRefresh() {
@@ -146,8 +148,8 @@ export function DevicesTab() {
                 <Table.Td colSpan={DEVICE_COLUMNS.length}>
                   <Text ta="center" c="dimmed" py="xl" size="sm">
                     {hasActiveFilters
-                      ? "No devices match your filters."
-                      : "No devices registered."}
+                      ? t("admin.devices.noMatch")
+                      : t("admin.devices.noneRegistered")}
                   </Text>
                 </Table.Td>
               </Table.Tr>

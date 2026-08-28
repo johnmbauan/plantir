@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface HumidityBarProps {
   humidityPercent: number | null;
@@ -9,6 +10,8 @@ interface HumidityBarProps {
 }
 
 export default function HumidityBar({ humidityPercent, threshold, barColor, animationDelay, style }: HumidityBarProps) {
+  const { t } = useTranslation();
+
   return (
     <div style={{ paddingTop: 22, position: "relative", ...style }}>
       <div style={{ background: "var(--green-100)", borderRadius: 99, height: 12, position: "relative", overflow: "visible" }}>
@@ -38,7 +41,7 @@ export default function HumidityBar({ humidityPercent, threshold, barColor, anim
               color: "var(--green-700)",
               whiteSpace: "nowrap",
             }}>
-              min {threshold}%
+              {t("humidityBar.minThreshold", { threshold })}
             </span>
           </div>
         )}

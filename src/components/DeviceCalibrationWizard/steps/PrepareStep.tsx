@@ -1,15 +1,16 @@
 import { Stack, Text, List, ThemeIcon } from "@mantine/core";
 import { IconDroplet, IconDeviceFloppy } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 export default function PrepareStep() {
+  const { t } = useTranslation();
   return (
     <Stack gap="sm" mt="md">
-      <Text fw={600}>Before you start</Text>
+      <Text fw={600}>{t("calibrationWizard.prepare.title")}</Text>
       <Text size="sm">
-        Calibration teaches the sensor what "completely dry" and "completely wet" feel like,
-        so it can give you accurate soil moisture readings.
+        {t("calibrationWizard.prepare.intro")}
       </Text>
-      <Text size="sm" fw={500}>You'll need:</Text>
+      <Text size="sm" fw={500}>{t("calibrationWizard.prepare.youllNeed")}</Text>
       <List spacing="sm" size="sm" center>
         <List.Item
           icon={
@@ -18,7 +19,7 @@ export default function PrepareStep() {
             </ThemeIcon>
           }
         >
-          Your Plantir device
+          {t("calibrationWizard.prepare.needDevice")}
         </List.Item>
         <List.Item
           icon={
@@ -27,11 +28,11 @@ export default function PrepareStep() {
             </ThemeIcon>
           }
         >
-          A small glass of water
+          {t("calibrationWizard.prepare.needWater")}
         </List.Item>
       </List>
       <Text size="sm" c="dimmed">
-        The process takes about 1 minute.
+        {t("calibrationWizard.prepare.duration")}
       </Text>
     </Stack>
   );

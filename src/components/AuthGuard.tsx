@@ -2,6 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
 import { Center, Loader } from "@mantine/core";
 import { needsPasswordSetup } from "@/pages/password/password-helper";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 export default function AuthGuard() {
   const { session, user, loading } = useAuth();
@@ -22,5 +23,9 @@ export default function AuthGuard() {
     return <Navigate to="/set-password" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <LanguageProvider>
+      <Outlet />
+    </LanguageProvider>
+  );
 }

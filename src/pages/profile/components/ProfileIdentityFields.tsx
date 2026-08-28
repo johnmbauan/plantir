@@ -1,4 +1,5 @@
 import { Stack, TextInput } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { NICKNAME_MAX_LENGTH } from "@/pages/profile/constants";
 
 interface ProfileIdentityFieldsProps {
@@ -14,12 +15,14 @@ export default function ProfileIdentityFields({
   loading,
   onNicknameChange,
 }: ProfileIdentityFieldsProps) {
+  const { t } = useTranslation();
+
   return (
     <Stack gap="md">
       <TextInput
-        label="Nickname"
-        placeholder="How should we call you?"
-        description="Optional"
+        label={t("profile.nickname")}
+        placeholder={t("profile.nicknamePlaceholder")}
+        description={t("profile.nicknameOptional")}
         value={nickname}
         onChange={(e) => onNicknameChange(e.currentTarget.value)}
         disabled={loading}
@@ -27,10 +30,10 @@ export default function ProfileIdentityFields({
       />
 
       <TextInput
-        label="Email"
+        label={t("profile.email")}
         value={email}
         disabled
-        description="Managed through your account administrator."
+        description={t("profile.emailDescription")}
       />
     </Stack>
   );

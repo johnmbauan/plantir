@@ -9,6 +9,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 import { fetchPlants } from "@/services/plantService";
 import type { EnrichedPlant } from "@/types";
 import { getErrorMessage } from "@/utils/error";
@@ -28,14 +29,8 @@ import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
 
 const COLUMN_COUNT = 5;
 
-const SORTABLE_COLUMNS: { key: PlantsTabSortKey; label: string; className?: string }[] = [
-  { key: "name", label: "Name" },
-  { key: "status", label: "Status" },
-  { key: "moisture", label: "Moisture" },
-  { key: "device", label: "Assigned Device", className: "col-hide-mobile" },
-];
-
 export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,6 +44,13 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
   const [plantToDelete, setPlantToDelete] = useState<EnrichedPlant | null>(null);
   const [deleteOpened, { open: openDelete, close: closeDelete }] = useDisclosure(false);
 
+  const SORTABLE_COLUMNS: { key: PlantsTabSortKey; label: string; className?: string }[] = [
+    { key: "name", label: t("plantsTab.columns.name") },
+    { key: "status", label: t("plantsTab.columns.status") },
+    { key: "moisture", label: t("plantsTab.columns.moisture") },
+    { key: "device", label: t("plantsTab.columns.assignedDevice"), className: "col-hide-mobile" },
+  ];
+
   const loadData = async () => {
     setLoading(true);
     try {
@@ -56,7 +58,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
       setPlants(data);
     } catch (err) {
       console.error(err);
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setLoading(false);
     }
@@ -120,7 +122,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
         <PlantFilterSearch value={search} onChange={setSearch} />
         <div className="center-tab-toolbar__actions" data-testid="center-tab-toolbar-actions">
           <Button leftSection={<IconPlus size={16} />} onClick={() => handleOpenEdit()}>
-            Add Plant
+            {t("plantsTab.addPlant")}
           </Button>
         </div>
       </div>
@@ -140,7 +142,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
                   className={col.className}
                 />
               ))}
-              <Table.Th w={100}>Actions</Table.Th>
+              <Table.Th w={100}>{t("plantsTab.columns.actions")}</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -152,9 +154,9 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
                   <Stack align="center" gap="xs" py="xl">
                     {plants.length === 0 ? (
                       <>
-                        <Text fw={500}>No plants yet</Text>
+                        <Text fw={500}>{t("plantsTab.emptyTitle")}</Text>
                         <Text size="sm" c="dimmed" ta="center" maw={320}>
-                          Add a plant to start tracking its humidity. Give it a name and optionally a photo.
+                          {t("plantsTab.emptyDescription")}
                         </Text>
                         <Button
                           size="sm"
@@ -162,11 +164,11 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
                           leftSection={<IconPlus size={14} />}
                           onClick={() => handleOpenEdit()}
                         >
-                          Add your first plant
+                          {t("plantsTab.addFirstPlant")}
                         </Button>
                       </>
                     ) : (
-                      <Text size="sm" c="dimmed">No plants match your search.</Text>
+                      <Text size="sm" c="dimmed">{t("plantsTab.noSearchMatch")}</Text>
                     )}
                   </Stack>
                 </Table.Td>

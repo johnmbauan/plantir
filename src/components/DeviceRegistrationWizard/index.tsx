@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Modal, Stepper, Button, Group } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 import { createPairingBundle, pollPairingToken } from "@/services/deviceService";
 import type { PairingBundle } from "@/types";
 import { getErrorMessage } from "@/utils/error";
@@ -30,6 +31,7 @@ export default function DeviceRegistrationWizard({
   plantOptions,
   onRegistered,
 }: Props) {
+  const { t } = useTranslation();
   const [active, setActive] = useState(0);
   const [plantId, setPlantId] = useState<string | null>(null);
   const [pairing, setPairing] = useState<PairingBundle | null>(null);
@@ -71,11 +73,11 @@ export default function DeviceRegistrationWizard({
       setWaitingError(null);
     } catch (err) {
       console.error(err);
-      notifications.show({ color: "red", title: "Error", message: getErrorMessage(err) });
+      notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
     } finally {
       setPairingLoading(false);
     }
-  }, [plantId]);
+  }, [plantId, t]);
 
   useEffect(() => {
     if (!opened) return;
@@ -108,13 +110,13 @@ export default function DeviceRegistrationWizard({
           setRegisteredDeviceId(result.deviceId ?? null);
           setActive(4);
           onRegistered();
-          void evaluateAndToastUnlocks();
+          void evaluateAndToastUnlocks(t);
         } else if (result.failed) {
           window.clearInterval(intervalId);
           setWaitingError(
             result.failureReason === "device_owned_by_another_user"
-              ? "This device is already registered to a different account. If you believe this is your device, contact support."
-              : "Registration failed. Please try again or contact support.",
+              ? t("registrationWizard.waiting.ownedByAnother")
+              : t("registrationWizard.waiting.registrationFailed"),
           );
         }
       } catch (err) {
@@ -127,7 +129,7 @@ export default function DeviceRegistrationWizard({
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [opened, active, pairing, onRegistered, pollGeneration]);
+  }, [opened, active, pairing, onRegistered, pollGeneration, t]);
 
   const nextStep = () => setActive((current) => Math.min(current + 1, 4));
   const prevStep = () => setActive((current) => Math.max(current - 1, 0));
@@ -137,24 +139,24 @@ export default function DeviceRegistrationWizard({
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Register new device"
+      title={t("registrationWizard.title")}
       size="lg"
       closeOnClickOutside={false}
     >
       <Stepper active={active} onStepClick={setActive} allowNextStepsSelect={false} size="sm" iconSize={22} styles={{ stepBody: { display: "none" } }}>
-        <Stepper.Step label="Prepare">
+        <Stepper.Step label={t("registrationWizard.steps.prepare")}>
           <PrepareStep plantOptions={plantOptions} plantId={plantId} onPlantChange={setPlantId} />
         </Stepper.Step>
 
-        <Stepper.Step label="Setup code">
+        <Stepper.Step label={t("registrationWizard.steps.setupCode")}>
           <SetupCodeStep pairing={pairing} loading={pairingLoading} onGenerate={() => void generateBundle()} />
         </Stepper.Step>
 
-        <Stepper.Step label="Connect">
+        <Stepper.Step label={t("registrationWizard.steps.connect")}>
           <ConnectStep />
         </Stepper.Step>
 
-        <Stepper.Step label="Waiting">
+        <Stepper.Step label={t("registrationWizard.steps.waiting")}>
           <WaitingStep
             timedOut={waitingTimedOut}
             error={waitingError}
@@ -172,19 +174,19 @@ export default function DeviceRegistrationWizard({
         {active < 4 ? (
           <>
             <Button variant="default" onClick={active === 0 ? handleClose : prevStep}>
-              {active === 0 ? "Cancel" : "Back"}
+              {active === 0 ? t("common.cancel") : t("common.back")}
             </Button>
             <Button
               onClick={nextStep}
               disabled={(active === 1 && (!pairing || pairingLoading)) || active === 3}
             >
-              {active === 2 ? "I've connected the device" : "Next"}
+              {active === 2 ? t("registrationWizard.connect.iveConnected") : t("common.next")}
             </Button>
           </>
         ) : (
           <Group justify="space-between" w="100%">
             <Button variant="default" onClick={handleClose}>
-              Skip for now
+              {t("registrationWizard.completed.skipForNow")}
             </Button>
             <Button
               onClick={() => {
@@ -199,7 +201,7 @@ export default function DeviceRegistrationWizard({
               }}
               disabled={!registeredDeviceId}
             >
-              Calibrate sensor
+              {t("registrationWizard.completed.calibrateSensor")}
             </Button>
           </Group>
         )}

@@ -1,4 +1,5 @@
 import { Button, Group } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 interface ProfileSaveFooterProps {
   loading: boolean;
@@ -6,10 +7,12 @@ interface ProfileSaveFooterProps {
 }
 
 export default function ProfileSaveFooter({ loading, saving }: ProfileSaveFooterProps) {
+  const { t } = useTranslation();
+
   return (
     <Group justify="flex-end" align="center" wrap="nowrap" gap="md">
       <Button type="submit" loading={saving} disabled={loading} style={{ flexShrink: 0 }}>
-        Save
+        {t("profile.save")}
       </Button>
     </Group>
   );
