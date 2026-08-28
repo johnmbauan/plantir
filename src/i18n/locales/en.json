@@ -170,6 +170,15 @@
     "snoozed": {
       "title": "Snoozed",
       "message": "Watering reminders for {{plantName}} silenced for {{hours}}h"
+    },
+    "alerts": {
+      "wateringTitle": "{{plantName}} needs water",
+      "wateringBody": "Humidity reading: {{humidity}}%",
+      "lastReading": "last reading {{time}}",
+      "neverSeen": "never seen",
+      "offlineTitleSingle": "{{plantName}} is offline",
+      "offlineTitleMulti": "{{count}} devices offline",
+      "offlineBodyIntro": "The following plants haven't sent data in too long:"
     }
   },
   "settings": {
@@ -597,6 +606,92 @@
       "singleSuffix": "Tap to open your garden.",
       "multiTitle": "Your garden grew",
       "multiMessage": "{{count}} new badges unlocked — tap to open your garden."
+    },
+    "achievements": {
+      "hello_my_name_is": {
+        "name": "Sprout Wars: A New Leaf",
+        "description": "Create your first plant."
+      },
+      "stalking_fern_legally": {
+        "name": "Sensor and Sensibility",
+        "description": "Register your first sensor."
+      },
+      "matchmaker_of_moisture": {
+        "name": "When Harry Met Ivy",
+        "description": "Link a sensor to a plant."
+      },
+      "dirt_whisperer_initiate": {
+        "name": "Lost in Calibration",
+        "description": "Finish calibrating a sensor."
+      },
+      "plant_texted_back": {
+        "name": "The Pothos Always Rings Twice",
+        "description": "Save notification settings or connect Telegram."
+      },
+      "fully_rooted_not_emotionally": {
+        "name": "Everything Everywhere Grow at Once",
+        "description": "Plant, linked sensor, and calibration — setup complete."
+      },
+      "hydration_hero": {
+        "name": "There Will Be Water",
+        "description": "Water a plant within 48 hours of a watering alert."
+      },
+      "back_from_the_mulch": {
+        "name": "Back to the Moisture",
+        "description": "Bring an offline plant back online."
+      },
+      "juice_box_refiller": {
+        "name": "Battery Returns",
+        "description": "Recharge a sensor after low battery."
+      },
+      "all_green_no_envy": {
+        "name": "LOTR: The Two Flowers",
+        "description": "At least two monitored plants, all healthy at once."
+      },
+      "accidental_collector": {
+        "name": "For a Few Dahlias More",
+        "description": "Own 4 plants."
+      },
+      "latin_name_dropper": {
+        "name": "The Bulb Identity",
+        "description": "Assign a species to a plant."
+      },
+      "influencer_garden": {
+        "name": "Picture of Dorstenia Gray",
+        "description": "Add photos to 3 plants."
+      },
+      "cloud_oracle": {
+        "name": "Rain (forecast) Man",
+        "description": "Set your weather city."
+      },
+      "face_of_the_garden": {
+        "name": "Being Jonquil Malkovich",
+        "description": "Set a nickname and profile photo."
+      },
+      "seven_days_without_drama": {
+        "name": "Seven Happy Days",
+        "description": "Keep all monitored plants healthy for 7 days in a row."
+      },
+      "photosynthesis_stan": {
+        "name": "30 Days of Light",
+        "description": "Keep all monitored plants healthy for 30 days in a row."
+      },
+      "the_comeback_kid": {
+        "name": "The Soil-shank Redemption",
+        "description": "Bring a plant back to healthy after 3+ dry days."
+      },
+      "inbox_compost": {
+        "name": "Inbox Clear",
+        "description": "Mark all notifications as read."
+      },
+      "time_traveler": {
+        "name": "Month History",
+        "description": "Open a plant's 30-day history chart."
+      },
+      "midnight_mulcher": {
+        "name": "Alert Hour Visit",
+        "description": "Open the dashboard near your daily alert hour."
+      }
     }
   },
   "sortable": {

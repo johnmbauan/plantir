@@ -1,4 +1,5 @@
 import type { WateringRow } from "./types.ts";
+import { alertText, resolveLocale } from "./i18n.ts";
 
 /** TEMP: remove before deploy — forces rain alerts for today and tomorrow. */
 const TEMP_FORCE_RAIN_FORECAST = false;
@@ -45,14 +46,15 @@ export async function fetchRainForecast(lat: number, lng: number): Promise<RainF
   };
 }
 
-export function rainNoteText(forecast: RainForecast): string {
+export function rainNoteText(forecast: RainForecast, localeValue?: string | null): string {
+  const locale = resolveLocale(localeValue);
   if (forecast.isRainForcastedForToday && forecast.isRainForcastedForTomorrow) {
-    return "Rain is expected today and tomorrow — watering may not be needed.";
+    return alertText(locale, "rainTodayTomorrow");
   }
   if (forecast.isRainForcastedForToday) {
-    return "Rain is expected today — watering may not be needed.";
+    return alertText(locale, "rainToday");
   }
-  return "Rain is expected tomorrow — watering may not be needed.";
+  return alertText(locale, "rainTomorrow");
 }
 
 /**

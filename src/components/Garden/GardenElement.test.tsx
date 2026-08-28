@@ -58,7 +58,10 @@ describe('GardenElement', () => {
     it('renders a button with an accessible label from the achievement', () => {
       renderElement();
       const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', expect.stringContaining('Sprout Wars'));
+      expect(button).toHaveAttribute(
+        'aria-label',
+        'Sprout Wars: A New Leaf: Create your first plant.',
+      );
     });
 
     it('renders the regular sprite for a visible badge', () => {
@@ -76,8 +79,11 @@ describe('GardenElement', () => {
     it('uses a non-revealing aria-label for hidden locked badges', () => {
       renderElement({ definition: hiddenDef, earned: false });
       const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', expect.stringContaining('Mystery badge'));
-      expect(button).not.toHaveAttribute('aria-label', expect.stringContaining('Seven Happy Days'));
+      expect(button).toHaveAttribute(
+        'aria-label',
+        'Mystery badge: Keep all monitored plants healthy for 7 days in a row.',
+      );
+      expect(button.getAttribute('aria-label')).not.toContain('Seven Happy Days');
     });
 
     it('still renders the regular sprite when a hidden badge is earned', () => {
@@ -128,7 +134,9 @@ describe('GardenElement', () => {
 
       await user.hover(screen.getByRole('button'));
 
-      expect(await screen.findByTestId('popover-content')).toBeInTheDocument();
+      expect(await screen.findByTestId('popover-content')).toHaveTextContent(
+        'Sprout Wars: A New Leaf',
+      );
     });
 
     it('passes locked=false to the popover for earned badges', async () => {

@@ -3,6 +3,7 @@ import { Popover } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { GARDEN_LAYOUT } from "@/constants/achievements";
 import type { AchievementDefinition } from "@/services/achievementService";
+import { achievementCopy } from "@/utils/achievementDisplay";
 import { GardenSprite, MysterySprite } from "./GardenSprites";
 import GardenInspectPopover from "./GardenInspectPopover";
 
@@ -14,6 +15,7 @@ interface Props {
 
 export default function GardenElement({ definition, earned, animateIn }: Props) {
   const { t } = useTranslation();
+  const copy = achievementCopy(definition.key, definition);
   const [hovered, setHovered] = useState(false);
   const layout = GARDEN_LAYOUT[definition.garden_element];
   const isHiddenLocked = !earned && definition.is_hidden;
@@ -27,8 +29,8 @@ export default function GardenElement({ definition, earned, animateIn }: Props) 
     .join(" ");
 
   const ariaLabel = isHiddenLocked
-    ? t("garden.mysteryBadgeAria", { description: definition.description })
-    : `${definition.name}: ${definition.description}`;
+    ? t("garden.mysteryBadgeAria", { description: copy.description })
+    : `${copy.name}: ${copy.description}`;
 
   return (
     <Popover
@@ -57,8 +59,8 @@ export default function GardenElement({ definition, earned, animateIn }: Props) 
       </Popover.Target>
       <Popover.Dropdown>
         <GardenInspectPopover
-          name={definition.name}
-          description={definition.description}
+          name={copy.name}
+          description={copy.description}
           locked={!earned}
           hidden={definition.is_hidden}
         />

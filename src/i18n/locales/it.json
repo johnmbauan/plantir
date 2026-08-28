@@ -170,6 +170,15 @@
     "snoozed": {
       "title": "Silenziato",
       "message": "Promemoria di annaffiatura per {{plantName}} silenziati per {{hours}}h"
+    },
+    "alerts": {
+      "wateringTitle": "{{plantName}} ha bisogno di acqua",
+      "wateringBody": "Umidità: {{humidity}}%",
+      "lastReading": "ultima lettura {{time}}",
+      "neverSeen": "mai rilevato",
+      "offlineTitleSingle": "{{plantName}} è offline",
+      "offlineTitleMulti": "{{count}} sensori offline",
+      "offlineBodyIntro": "Le seguenti piante non inviano dati da troppo tempo:"
     }
   },
   "settings": {
@@ -597,6 +606,92 @@
       "singleSuffix": "Tocca per aprire il tuo giardino.",
       "multiTitle": "Il tuo giardino è cresciuto",
       "multiMessage": "{{count}} nuovi badge sbloccati — tocca per aprire il tuo giardino."
+    },
+    "achievements": {
+      "hello_my_name_is": {
+        "name": "C'era una volta il vaso",
+        "description": "Crea la tua prima pianta."
+      },
+      "stalking_fern_legally": {
+        "name": "Il sesto sensore",
+        "description": "Registra il tuo primo sensore."
+      },
+      "matchmaker_of_moisture": {
+        "name": "Harry, ti presento l'edera",
+        "description": "Collega un sensore a una pianta."
+      },
+      "dirt_whisperer_initiate": {
+        "name": "Il silenzio dei vasi",
+        "description": "Completa la calibrazione di un sensore."
+      },
+      "plant_texted_back": {
+        "name": "C'è pothos per te",
+        "description": "Salva le impostazioni di notifica o collega Telegram."
+      },
+      "fully_rooted_not_emotionally": {
+        "name": "Tutti in vaso appassionatamente",
+        "description": "Pianta, sensore collegato e calibrazione — configurazione completa."
+      },
+      "hydration_hero": {
+        "name": "Salvate il soldato Ficus",
+        "description": "Annaffia una pianta entro 48 ore da un avviso di annaffiatura."
+      },
+      "back_from_the_mulch": {
+        "name": "La bella addormentata nel vaso",
+        "description": "Riporta online una pianta offline."
+      },
+      "juice_box_refiller": {
+        "name": "Batteria - Il ritorno",
+        "description": "Ricarica un sensore dopo la batteria scarica."
+      },
+      "all_green_no_envy": {
+        "name": "Il Signore dei vasi: Le due piante",
+        "description": "Almeno due piante monitorate, tutte in salute insieme."
+      },
+      "accidental_collector": {
+        "name": "Per qualche dalia in più",
+        "description": "Possiedi 4 piante."
+      },
+      "latin_name_dropper": {
+        "name": "Il nome della rosa",
+        "description": "Assegna una specie a una pianta."
+      },
+      "influencer_garden": {
+        "name": "Il ritratto di Dorstenia Gray",
+        "description": "Aggiungi foto a 3 piante."
+      },
+      "cloud_oracle": {
+        "name": "Cantando sotto la pioggia",
+        "description": "Imposta la città per il meteo."
+      },
+      "face_of_the_garden": {
+        "name": "Essere Narciso Malkovich",
+        "description": "Imposta un soprannome e una foto profilo."
+      },
+      "seven_days_without_drama": {
+        "name": "I magnifici sette",
+        "description": "Mantieni tutte le piante monitorate in salute per 7 giorni di fila."
+      },
+      "photosynthesis_stan": {
+        "name": "30 giorni di luce",
+        "description": "Mantieni tutte le piante monitorate in salute per 30 giorni di fila."
+      },
+      "the_comeback_kid": {
+        "name": "Sopravvissuto - The Martian",
+        "description": "Riporta una pianta in salute dopo 3 o più giorni di siccità."
+      },
+      "inbox_compost": {
+        "name": "Se mi lasci ti composto",
+        "description": "Segna tutte le notifiche come lette."
+      },
+      "time_traveler": {
+        "name": "Memento",
+        "description": "Apri il grafico storico a 30 giorni di una pianta."
+      },
+      "midnight_mulcher": {
+        "name": "Mezzogiorno di fuoco",
+        "description": "Apri la dashboard vicino all'ora degli avvisi giornalieri."
+      }
     }
   },
   "sortable": {

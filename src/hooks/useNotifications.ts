@@ -7,6 +7,7 @@ import {
   fetchUnreadNotifications,
   type AppNotification,
 } from "@/services/notificationService";
+import { formatNotificationCopy } from "@/utils/notificationDisplay";
 
 const POLL_INTERVAL_MS = 30 * 60 * 1000;
 
@@ -43,9 +44,10 @@ export function useNotifications() {
 
     // Achievement unlocks already toast from evaluate/client-event responses.
     if (document.hasFocus() && notification.type !== "achievement") {
+      const { title, body } = formatNotificationCopy(notification);
       notifications.show({
-        title: notification.title,
-        message: notification.body.split("\n")[0],
+        title,
+        message: body.split("\n")[0],
         color: notification.type === "watering" ? "yellow" : "red",
         autoClose: 8000,
       });

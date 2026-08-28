@@ -5,6 +5,14 @@ import { getEffectiveHumidity } from "./effectiveHumidity.ts";
 import { loadRainForecastsByCoords, rainNoteText } from "./weather.ts";
 import { sendTelegramMessage, sendTelegramPhoto } from "./telegram.ts";
 import { createInAppNotification } from "./notifications.ts";
+import {
+  offlineInAppCopy,
+  offlinePlantLine,
+  offlineTelegramText,
+  resolveLocale,
+  wateringInAppCopy,
+  wateringTelegramCaption,
+} from "./i18n.ts";
 
 async function loadSnoozedPlantIds(
   connection: PoolClient,
@@ -61,13 +69,12 @@ export async function sendWateringAlerts(
       const forecast = rainByCoords.get(`${Number(row.weatherLat)},${Number(row.weatherLng)}`);
       if (forecast && (forecast.isRainForcastedForToday || forecast.isRainForcastedForTomorrow)) {
         rainForecasted = true;
-        rainNote = rainNoteText(forecast);
+        rainNote = rainNoteText(forecast, row.locale);
       }
     }
 
-    const caption = rainForecasted
-      ? `⚠️ Warning! Plant ${row.plantName} needs water! Humidity reading: ${humidity}%\n\n🌧️ ${rainNote}`
-      : `⚠️ Warning! Plant ${row.plantName} needs water! Humidity reading: ${humidity}%`;
+    const locale = resolveLocale(row.locale);
+    const caption = wateringTelegramCaption(locale, row.plantName, humidity, rainNote);
 
     let telegram = false;
     let browser = false;
@@ -86,10 +93,7 @@ export async function sendWateringAlerts(
     }
 
     if (row.browserEnabled) {
-      const title = `${row.plantName} needs water`;
-      const body = rainForecasted
-        ? `Humidity reading: ${humidity}%\n${rainNote}`
-        : `Humidity reading: ${humidity}%`;
+      const { title, body } = wateringInAppCopy(locale, row.plantName, humidity, rainNote);
       const payload = {
         plantId: Number(row.plantId),
         plantName: row.plantName,
@@ -150,37 +154,27 @@ export async function sendOfflineAlerts(
   const notified: OfflineAlertResult[] = [];
 
   for (const [chatId, plants] of byTelegramChat) {
-    const lines = plants.map((r) => {
-      const lastSeen = r.lastSeenAt
-        ? `last reading ${new Date(r.lastSeenAt).toLocaleString("en-US", { timeZone: r.notificationTimezone })}`
-        : "never seen";
-      return `• ${r.plantName} (${lastSeen})`;
-    });
+    const locale = resolveLocale(plants[0].locale);
+    const lines = plants.map((r) =>
+      offlinePlantLine(locale, r.plantName, r.lastSeenAt, r.notificationTimezone)
+    );
 
-    const text =
-      `🔴 Warning! The devices for the following plants haven't sent data in too long (possible low battery or malfunction):\n\n` +
-      lines.join("\n");
-
-    await sendTelegramMessage(botToken, chatId, text);
+    await sendTelegramMessage(botToken, chatId, offlineTelegramText(locale, lines));
     for (const r of plants) {
       notified.push({ plant: r.plantName, telegram: true, browser: false });
     }
   }
 
   for (const [userId, plants] of byUserId) {
-    const lines = plants.map((r) => {
-      const lastSeen = r.lastSeenAt
-        ? `last reading ${new Date(r.lastSeenAt).toLocaleString("en-US", { timeZone: r.notificationTimezone })}`
-        : "never seen";
-      return `• ${r.plantName} (${lastSeen})`;
-    });
-
-    const title = plants.length === 1
-      ? `${plants[0].plantName} is offline`
-      : `${plants.length} devices offline`;
-    const body =
-      `The following plants haven't sent data in too long:\n\n` +
-      lines.join("\n");
+    const locale = resolveLocale(plants[0].locale);
+    const lines = plants.map((r) =>
+      offlinePlantLine(locale, r.plantName, r.lastSeenAt, r.notificationTimezone)
+    );
+    const { title, body } = offlineInAppCopy(
+      locale,
+      plants.map((r) => r.plantName),
+      lines,
+    );
 
     const payload = {
       plants: plants.map((r) => ({
@@ -188,6 +182,7 @@ export async function sendOfflineAlerts(
         plantName: r.plantName,
         lastSeenAt: r.lastSeenAt,
       })),
+      notificationTimezone: plants[0].notificationTimezone,
     };
 
     const id = await createInAppNotification(

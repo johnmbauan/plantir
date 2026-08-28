@@ -125,7 +125,7 @@ describe('achievementService', () => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: 'green',
-          title: 'Sprout Wars',
+          title: 'Sprout Wars: A New Leaf',
         }),
       );
     });
@@ -134,14 +134,14 @@ describe('achievementService', () => {
       showUnlockToasts([sproutDef]);
 
       const [call] = mockNotificationsShow.mock.calls;
-      expect(call[0].message).toContain('Create your first plant.');
+      expect(call[0].message).toBe('Create your first plant. Tap to open your garden.');
     });
 
     it('includes a garden call-to-action in the single-unlock toast message', () => {
       showUnlockToasts([sproutDef]);
 
       const [call] = mockNotificationsShow.mock.calls;
-      expect(call[0].message).toContain('Tap to open your garden');
+      expect(call[0].message).toBe('Create your first plant. Tap to open your garden.');
     });
 
     it('shows a batch toast mentioning badge count for multiple unlocks', () => {

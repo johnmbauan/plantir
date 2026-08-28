@@ -40,7 +40,7 @@ const footerStyle = {
 };
 
 export default function SettingsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { locale, setLocale } = useLanguage();
 
   const [inAppEnabled, setInAppEnabled] = useState(true);
@@ -88,8 +88,8 @@ export default function SettingsPage() {
       await setLocale(next as "it" | "en");
       notifications.show({
         color: "green",
-        title: t("settings.language.saved.title"),
-        message: t("settings.language.saved.message"),
+        title: i18n.t("settings.language.saved.title", { lng: next }),
+        message: i18n.t("settings.language.saved.message", { lng: next }),
       });
     } catch (err) {
       notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });
