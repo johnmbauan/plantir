@@ -391,7 +391,7 @@
     "unassigned": "Unassigned",
     "calibrationRecommended": "Calibration recommended",
     "calibrateSensor": "Calibrate sensor",
-    "calibrateSensorRequired": "Calibrate sensor (required)",
+    "calibrateSensorRequired": "Calibrate sensor",
     "editDevice": "Edit device",
     "deleteDevice": "Delete device"
   },
@@ -509,7 +509,7 @@
       "intro": "Calibration teaches the sensor what \"completely dry\" and \"completely wet\" feel like, so it can give you accurate soil moisture readings.",
       "youllNeed": "You'll need:",
       "needDevice": "Your Plantir device",
-      "needWater": "A small glass of water",
+      "needWater": "A full glass of water",
       "duration": "The process takes about 1 minute."
     },
     "wake": {

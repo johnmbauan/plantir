@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { Accordion, Badge, Button, Group, Image, Paper, SimpleGrid, Skeleton, Stack, Text } from "@mantine/core";
+import { Accordion, Button, Group, Image, Paper, SimpleGrid, Skeleton, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/context/LanguageContext";
+import FilterChip from "@/components/shared/FilterChip";
+import IconLeaf from "@/components/icons/IconLeaf";
 import { fetchSpeciesTranslation, type SpeciesCareTranslation } from "@/services/plantSpeciesService";
 
 export interface SpeciesCareFields {
@@ -73,7 +75,11 @@ export function SpeciesCareCard({ species, showImage = false, onClear }: Species
               <Text size="xs" c="dimmed">{t("species.scientificName", { name: scientificName })}</Text>
             )}
           </Stack>
-          <Badge variant="light" color="green">{t("species.careGuidanceBadge")}</Badge>
+          <FilterChip
+            variant="healthy"
+            icon={<IconLeaf size={13} />}
+            label={t("species.careGuidanceBadge")}
+          />
         </Group>
 
         {showImage && species.imageUrl && (
