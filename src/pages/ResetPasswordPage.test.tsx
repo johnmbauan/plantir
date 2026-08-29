@@ -34,7 +34,8 @@ describe('ResetPasswordPage', () => {
     renderWithProviders(<ResetPasswordPage />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Plantir' })).toBeInTheDocument();
+      expect(screen.getByTestId('brand-logo-mark')).toBeInTheDocument();
       expect(screen.getByLabelText(/^New password/)).toBeInTheDocument();
       expect(screen.getByLabelText(/^Confirm new password/)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Reset password' })).toBeInTheDocument();

@@ -32,7 +32,8 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Plantir' })).toBeInTheDocument();
+      expect(screen.getByTestId('brand-logo-mark')).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
       expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();

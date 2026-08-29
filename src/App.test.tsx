@@ -41,7 +41,8 @@ describe('App', () => {
     renderApp('/login');
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Plantir' })).toBeInTheDocument();
+      expect(screen.getByTestId('brand-logo-mark')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
     });
   });

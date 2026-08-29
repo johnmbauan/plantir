@@ -1,8 +1,9 @@
-import { AppShell, Burger, Group, Text, UnstyledButton } from "@mantine/core";
+import { AppShell, Burger, Group, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { Outlet, NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import BrandLogo from "@/components/BrandLogo";
 import NavDrawer from "@/components/NavDrawer";
 import NotificationBell from "@/components/NotificationBell";
 import UserMenu from "@/components/UserMenu";
@@ -58,9 +59,7 @@ export default function Layout() {
               aria-label={t("nav.homeAria")}
               style={{ textDecoration: "none", color: "inherit" }}
             >
-              <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-                {t("common.brandWithEmoji")}
-              </Text>
+              <BrandLogo />
             </UnstyledButton>
             <Group gap="md">
               <NotificationBell />

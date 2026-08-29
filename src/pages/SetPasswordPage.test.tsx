@@ -39,7 +39,8 @@ describe('SetPasswordPage', () => {
     renderWithProviders(<SetPasswordPage />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Plantir' })).toBeInTheDocument();
+      expect(screen.getByTestId('brand-logo-mark')).toBeInTheDocument();
       expect(screen.getByLabelText(/^Password/)).toBeInTheDocument();
       expect(screen.getByLabelText(/^Confirm password/)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Set password' })).toBeInTheDocument();
