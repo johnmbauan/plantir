@@ -1,6 +1,7 @@
-import { Drawer, Stack, Text, UnstyledButton } from "@mantine/core";
+import { Drawer, Stack, UnstyledButton } from "@mantine/core";
 import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import BrandLogo from "@/components/BrandLogo";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -33,9 +34,7 @@ export default function NavDrawer({ opened, onClose, isAdmin }: Props) {
           aria-label={t("nav.homeAria")}
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          <Text fw={700} size="lg" c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-            {t("common.brandWithEmoji")}
-          </Text>
+          <BrandLogo />
         </UnstyledButton>
       }
       styles={{ header: { background: "var(--terracotta-50)", borderBottom: "1px solid var(--terracotta-100)" } }}

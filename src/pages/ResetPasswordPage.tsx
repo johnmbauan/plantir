@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Paper, PasswordInput, Button, Title, Text, Stack, Center, Loader } from "@mantine/core";
+import { Paper, PasswordInput, Button, Text, Stack, Center, Loader } from "@mantine/core";
+import BrandLogo from "@/components/BrandLogo";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
@@ -91,9 +92,7 @@ export default function ResetPasswordPage() {
       >
         <Stack gap="md">
           <Stack gap={4}>
-            <Title order={2} c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-              {t("common.brandWithEmoji")}
-            </Title>
+            <BrandLogo variant="auth" />
             <Text size="sm" c="dimmed">
               {t("auth.resetPassword.subtitle")}
             </Text>

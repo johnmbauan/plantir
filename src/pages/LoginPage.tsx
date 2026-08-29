@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Paper, TextInput, PasswordInput, Button, Title, Text, Stack, Center, Anchor } from "@mantine/core";
+import { Paper, TextInput, PasswordInput, Button, Text, Stack, Center, Anchor } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import { useNativeValidation } from "@/hooks/useNativeValidation";
+import BrandLogo from "@/components/BrandLogo";
 import supabase from "@/supabase";
 import { needsPasswordSetup } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
@@ -64,9 +65,7 @@ export default function LoginPage() {
       >
         <Stack gap="md">
           <Stack gap={4}>
-            <Title order={2} c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-              {t("common.brandWithEmoji")}
-            </Title>
+            <BrandLogo variant="auth" />
             <Text size="sm" c="dimmed">
               {t("auth.login.subtitle")}
             </Text>

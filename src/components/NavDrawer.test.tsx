@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { renderWithProviders, screen } from '@/test/render';
+import { renderWithProviders, screen, within } from '@/test/render';
 import NavDrawer from '@/components/NavDrawer';
 
 describe('NavDrawer', () => {
@@ -8,6 +8,8 @@ describe('NavDrawer', () => {
       <NavDrawer opened onClose={vi.fn()} />,
     );
 
+    expect(screen.getByRole('link', { name: 'Plantir home' })).toBeInTheDocument();
+    expect(within(screen.getByRole('link', { name: 'Plantir home' })).getByTestId('brand-logo-mark')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Plants Center' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Settings' })).toBeInTheDocument();

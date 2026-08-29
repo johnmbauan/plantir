@@ -2,7 +2,7 @@ import '@/test/mocks/supabase';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router-dom';
-import { renderWithProviders, screen } from '@/test/render';
+import { renderWithProviders, screen, within } from '@/test/render';
 import { buildSession, buildUser } from '@/test/builders/session';
 import { mockSession, resetSupabaseMocks } from '@/test/mocks/supabase';
 import Layout from '@/components/Layout';
@@ -37,7 +37,9 @@ describe('Layout', () => {
   it('renders the app header and outlet content', async () => {
     renderLayout();
 
-    expect(await screen.findByText('🪴 Plantir')).toBeInTheDocument();
+    expect(await screen.findByText('Plantir')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Plantir home' })).toBeInTheDocument();
+    expect(within(screen.getByRole('link', { name: 'Plantir home' })).getByTestId('brand-logo-mark')).toBeInTheDocument();
     expect(screen.getByText('Dashboard page')).toBeInTheDocument();
     expect(screen.getByText('Notification bell')).toBeInTheDocument();
   });

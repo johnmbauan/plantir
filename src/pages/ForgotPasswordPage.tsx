@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Paper, TextInput, Button, Title, Text, Stack, Center, Anchor } from "@mantine/core";
+import { Paper, TextInput, Button, Text, Stack, Center, Anchor } from "@mantine/core";
+import BrandLogo from "@/components/BrandLogo";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
@@ -68,9 +69,7 @@ export default function ForgotPasswordPage() {
       >
         <Stack gap="md">
           <Stack gap={4}>
-            <Title order={2} c="var(--green-700)" style={{ letterSpacing: "-0.3px" }}>
-              {t("common.brandWithEmoji")}
-            </Title>
+            <BrandLogo variant="auth" />
             <Text size="sm" c="dimmed">
               {submitted
                 ? t("auth.forgotPassword.subtitleSubmitted")

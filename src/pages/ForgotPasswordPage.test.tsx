@@ -32,7 +32,8 @@ describe('ForgotPasswordPage', () => {
     renderWithProviders(<ForgotPasswordPage />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Plantir/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Plantir' })).toBeInTheDocument();
+      expect(screen.getByTestId('brand-logo-mark')).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Send reset link' })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'Back to sign in' })).toHaveAttribute('href', '/login');
