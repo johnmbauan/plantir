@@ -105,7 +105,6 @@ describe('OnboardingChecklist', () => {
   });
 
   it('hides checklist when all steps are complete', async () => {
-    localStorage.setItem('settings_visited', 'true');
     localStorage.setItem(WEATHER_CITY_STORAGE_KEY, JSON.stringify({ name: 'Rome', lat: 41.89, lng: 12.49 }));
     setupFromMocks({
       devices: { data: [{ id: 1 }], error: null },
@@ -191,6 +190,34 @@ describe('OnboardingChecklist', () => {
     });
 
     renderChecklist([buildPlant({ created_at: oldDate })]);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Get started with Plantir')).not.toBeInTheDocument();
+    });
+  });
+
+  it('marks location complete when the account has weather coordinates', async () => {
+    const recentDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    setupFromMocks({
+      devices: { data: [{ id: 1 }], error: null },
+      notification_settings: { data: { weather_lat: 41.89, weather_lng: 12.49 }, error: null },
+    });
+
+    renderChecklist([buildPlant({ created_at: recentDate })]);
+
+    expect(await screen.findByText(/3 of 4 steps complete/)).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Go' })).toHaveLength(1);
+  });
+
+  it('marks notifications complete when the settings badge is earned', async () => {
+    const recentDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    localStorage.setItem(WEATHER_CITY_STORAGE_KEY, JSON.stringify({ name: 'Rome', lat: 41.89, lng: 12.49 }));
+    setupFromMocks({
+      devices: { data: [{ id: 1 }], error: null },
+      user_achievements: { data: { achievement_key: 'plant_texted_back' }, error: null },
+    });
+
+    renderChecklist([buildPlant({ created_at: recentDate })]);
 
     await waitFor(() => {
       expect(screen.queryByText('Get started with Plantir')).not.toBeInTheDocument();

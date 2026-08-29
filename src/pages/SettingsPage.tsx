@@ -51,10 +51,6 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("settings_visited", "true");
-  }, []);
-
-  useEffect(() => {
     fetchSettings()
       .then((s) => {
         if (s) {

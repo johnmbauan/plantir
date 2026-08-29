@@ -47,6 +47,7 @@ describe('WeatherWidget', () => {
       forecast: null,
       loading: false,
       error: null,
+      ready: true,
       selectCity: mockSelectCity,
       ensureForecast: mockEnsureForecast,
     });
@@ -74,6 +75,7 @@ describe('WeatherWidget', () => {
       ],
       loading: false,
       error: null,
+      ready: true,
       selectCity: mockSelectCity,
       ensureForecast: vi.fn(),
     });
@@ -93,6 +95,7 @@ describe('WeatherWidget', () => {
       forecast: [{ date: '2026-07-06', maxTemp: 28, minTemp: 18, weatherCode: 0 }],
       loading: false,
       error: null,
+      ready: true,
       selectCity: mockSelectCity,
       ensureForecast: vi.fn(),
     });
@@ -114,6 +117,7 @@ describe('WeatherWidget', () => {
       forecast: null,
       loading: false,
       error: null,
+      ready: true,
       selectCity: mockSelectCity,
       ensureForecast: vi.fn(),
     });

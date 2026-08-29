@@ -1,8 +1,15 @@
+import '@/test/mocks/supabase';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw/server';
+import { AuthProvider } from '@/context/AuthContext';
+import {
+  mockSession,
+  resetSupabaseMocks,
+} from '@/test/mocks/supabase';
+import { buildSession } from '@/test/builders/session';
 import {
   useWeatherCity,
   WEATHER_CITY_STORAGE_KEY,
@@ -14,7 +21,10 @@ const mockUpdateWeatherLocation = vi.fn().mockResolvedValue(undefined);
 const mockRecordClientEvent = vi.fn().mockResolvedValue([]);
 const mockShowUnlockToasts = vi.fn();
 
+const mockFetchSettings = vi.fn().mockResolvedValue(null);
+
 vi.mock('@/services/notificationService', () => ({
+  fetchSettings: (...args: unknown[]) => mockFetchSettings(...args),
   updateWeatherLocation: (...args: unknown[]) => mockUpdateWeatherLocation(...args),
 }));
 
@@ -26,12 +36,20 @@ vi.mock('@/services/achievementService', () => ({
 const STORAGE_KEY = WEATHER_CITY_STORAGE_KEY;
 
 function wrapper({ children }: { children: ReactNode }) {
-  return <WeatherCityProvider>{children}</WeatherCityProvider>;
+  return (
+    <AuthProvider>
+      <WeatherCityProvider>{children}</WeatherCityProvider>
+    </AuthProvider>
+  );
 }
 
 describe('WeatherCityContext', () => {
   beforeEach(() => {
+    resetSupabaseMocks();
+    mockSession(null);
     localStorage.clear();
+    mockFetchSettings.mockReset();
+    mockFetchSettings.mockResolvedValue(null);
     mockUpdateWeatherLocation.mockClear();
     mockRecordClientEvent.mockClear();
     mockShowUnlockToasts.mockClear();
@@ -203,5 +221,87 @@ describe('WeatherCityContext', () => {
     expect(() => renderHook(() => useWeatherCity())).toThrow(
       'useWeatherCity must be used within WeatherCityProvider',
     );
+  });
+
+  it('hydrates city from account coordinates when signed in', async () => {
+    mockSession(buildSession());
+    mockFetchSettings.mockResolvedValue({ weather_lat: 41.89, weather_lng: 12.49 });
+
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+
+    await waitFor(() => expect(result.current.city).toEqual({
+      name: 'Rome',
+      lat: 41.89,
+      lng: 12.49,
+    }));
+    expect(result.current.locationSource).toBe('stored');
+    expect(result.current.ready).toBe(true);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!)).toEqual({
+      name: 'Rome',
+      lat: 41.89,
+      lng: 12.49,
+    });
+  });
+
+  it('reuses the cached city name when account coordinates match', async () => {
+    mockSession(buildSession());
+    const storedCity = { name: 'Rome, Lazio, Italy', lat: 41.89, lng: 12.49 };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(storedCity));
+    mockFetchSettings.mockResolvedValue({ weather_lat: 41.89, weather_lng: 12.49 });
+
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+
+    await waitFor(() => expect(result.current.ready).toBe(true));
+    expect(result.current.city).toEqual(storedCity);
+  });
+
+  it('uploads a locally cached city when the account has no coordinates', async () => {
+    mockSession(buildSession());
+    const storedCity = { name: 'Rome, Lazio, Italy', lat: 41.89, lng: 12.49 };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(storedCity));
+
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+
+    await waitFor(() => expect(mockUpdateWeatherLocation).toHaveBeenCalledWith(41.89, 12.49));
+  });
+
+  it('falls back to a generic name when reverse geocoding fails', async () => {
+    mockSession(buildSession());
+    mockFetchSettings.mockResolvedValue({ weather_lat: 48.8, weather_lng: 2.3 });
+    server.use(
+      http.get('https://nominatim.openstreetmap.org/reverse', () => HttpResponse.error()),
+    );
+
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+
+    await waitFor(() => expect(result.current.city).toEqual({
+      name: 'My Location',
+      lat: 48.8,
+      lng: 2.3,
+    }));
+  });
+
+  it('logs when loading account weather location fails', async () => {
+    mockSession(buildSession());
+    mockFetchSettings.mockRejectedValue(new Error('settings failed'));
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const { result } = renderHook(() => useWeatherCity(), { wrapper });
+
+    await waitFor(() => expect(result.current.ready).toBe(true));
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+
+  it('logs when uploading a cached city fails', async () => {
+    mockSession(buildSession());
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ name: 'Rome', lat: 41.89, lng: 12.49 }));
+    mockUpdateWeatherLocation.mockRejectedValueOnce(new Error('upload failed'));
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    renderHook(() => useWeatherCity(), { wrapper });
+
+    await waitFor(() => expect(consoleError).toHaveBeenCalled());
+    consoleError.mockRestore();
   });
 });
