@@ -49,17 +49,17 @@ describe('captureInviteCallbackFromUrl', () => {
   });
 
   it('stores pending password setup for invite callback URLs', () => {
-    expect(captureInviteCallbackFromUrl('https://plantir-smoky.vercel.app/#access_token=abc&type=invite')).toBe(true);
+    expect(captureInviteCallbackFromUrl('https://plantir.green/#access_token=abc&type=invite')).toBe(true);
     expect(needsPasswordSetup(buildUser())).toBe(true);
   });
 
   it('stores pending password setup for invite query parameters', () => {
-    expect(captureInviteCallbackFromUrl('https://plantir-smoky.vercel.app/?type=invite&code=abc')).toBe(true);
+    expect(captureInviteCallbackFromUrl('https://plantir.green/?type=invite&code=abc')).toBe(true);
     expect(needsPasswordSetup(buildUser())).toBe(true);
   });
 
   it('ignores non-invite URLs', () => {
-    expect(captureInviteCallbackFromUrl('https://plantir-smoky.vercel.app/')).toBe(false);
+    expect(captureInviteCallbackFromUrl('https://plantir.green/')).toBe(false);
     expect(needsPasswordSetup(buildUser())).toBe(false);
   });
 });

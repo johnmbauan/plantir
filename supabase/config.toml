@@ -150,9 +150,9 @@ enabled = true
 site_url = "http://localhost:5173"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = [
-  "https://plantir-smoky.vercel.app",
-  "https://plantir-smoky.vercel.app/",
-  "https://plantir-smoky.vercel.app/reset-password",
+  "https://plantir.green",
+  "https://plantir.green/",
+  "https://plantir.green/reset-password",
   "http://127.0.0.1:5173",
   "http://127.0.0.1:5173/reset-password",
   "http://localhost:5173",

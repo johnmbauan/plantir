@@ -17,7 +17,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useWeatherCity } from "@/context/WeatherCityContext";
 
 const DISMISSED_KEY = "onboarding_dismissed";
-const SETTINGS_VISITED_KEY = "settings_visited";
+const SETTINGS_BADGE_KEY = "plant_texted_back";
 const SETTINGS_IMPLICIT_DAYS = 3;
 
 interface Props {
@@ -42,6 +42,9 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
   const [hasDevices, setHasDevices] = useState(false);
   const [devicesLoaded, setDevicesLoaded] = useState(false);
+  const [hasAccountLocation, setHasAccountLocation] = useState(false);
+  const [hasSettingsBadge, setHasSettingsBadge] = useState(false);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   // Capture once at mount — Date.now() during render violates react-hooks/purity.
   const [nowMs] = useState(() => Date.now());
 
@@ -70,7 +73,43 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
     };
   }, [dismissed, user]);
 
-  const hasLocation = city !== null;
+  useEffect(() => {
+    if (dismissed || !user) return;
+
+    const userId = user.id;
+    let cancelled = false;
+
+    async function checkNotificationSettings() {
+      const [settingsResult, badgeResult] = await Promise.all([
+        supabase
+          .from("notification_settings")
+          .select("weather_lat, weather_lng")
+          .eq("user_id", userId)
+          .maybeSingle(),
+        supabase
+          .from("user_achievements")
+          .select("achievement_key")
+          .eq("user_id", userId)
+          .eq("achievement_key", SETTINGS_BADGE_KEY)
+          .maybeSingle(),
+      ]);
+
+      if (cancelled) return;
+
+      const lat = settingsResult.data?.weather_lat;
+      const lng = settingsResult.data?.weather_lng;
+      setHasAccountLocation(lat != null && lng != null);
+      setHasSettingsBadge(badgeResult.data != null);
+      setSettingsLoaded(true);
+    }
+
+    void checkNotificationSettings();
+    return () => {
+      cancelled = true;
+    };
+  }, [dismissed, user]);
+
+  const hasLocation = hasAccountLocation || city !== null;
   const hasPlants = plantsLoaded && plants.length > 0;
 
   const oldestPlantDate = plants.length > 0
@@ -78,7 +117,7 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
     : null;
   const plantIsOldEnough = oldestPlantDate !== null
     && nowMs - new Date(oldestPlantDate).getTime() >= SETTINGS_IMPLICIT_DAYS * 24 * 60 * 60 * 1000;
-  const hasNotifications = localStorage.getItem(SETTINGS_VISITED_KEY) === "true"
+  const hasNotifications = hasSettingsBadge
     || (hasPlants && hasDevices && plantIsOldEnough);
 
   const steps: ChecklistStep[] = [
@@ -118,7 +157,9 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
 
   const allDone = hasPlants && hasDevices && hasLocation && hasNotifications;
 
-  if (dismissed || !user || !plantsLoaded || !devicesLoaded || allDone) return null;
+  if (dismissed || !user || !plantsLoaded || !devicesLoaded || !settingsLoaded || allDone) {
+    return null;
+  }
 
   const completedCount = steps.filter((s) => s.done).length;
 

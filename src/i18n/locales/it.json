@@ -48,11 +48,11 @@
       "forgotPassword": "Password dimenticata?"
     },
     "forgotPassword": {
-      "subtitle": "Inserisci la tua email e ti invieremo un link di reimpostazione.",
+      "subtitle": "Inserisci la tua email e ti invieremo un link di reimpostazione della password.",
       "subtitleSubmitted": "Controlla la tua email per il link di reimpostazione della password.",
       "submittedHint": "Se esiste un account per quell'email, riceverai a breve un link. Il link scade tra 1 ora.",
       "email": "Email",
-      "sendResetLink": "Invia link di reimpostazione",
+      "sendResetLink": "Invia link di reimpostazione password",
       "backToSignIn": "Torna all'accesso"
     },
     "resetPassword": {
@@ -146,11 +146,11 @@
       },
       "devices": {
         "label": "Registra il tuo primo sensore",
-        "description": "Usa la procedura guidata per collegare un sensore Plantir al tuo account."
+        "description": "Usa la procedura guidata per collegare un sensore Plantir ad una pianta."
       },
       "location": {
         "label": "Imposta la tua posizione",
-        "description": "Scegli la città così le piante da esterno ricevono avvisi di annaffiatura basati sulla pioggia."
+        "description": "Scegli la tua città così le piante da esterno ricevono avvisi di annaffiatura basati sulla pioggia."
       },
       "notifications": {
         "label": "Controlla le impostazioni di notifica",
@@ -218,14 +218,14 @@
   "telegramSetup": {
     "accordionTitle": "Come configurare le notifiche Telegram",
     "step1Title": "Trova il tuo Chat ID",
-    "step1Body": "Apri Telegram e cerca <link>@userinfobot</link>. Tocca <bold>Start</bold> — risponderà subito con il tuo Chat ID numerico (es. 123456789).",
+    "step1Body": "Apri Telegram e cerca <link>@userinfobot</link>. Tocca <bold>Avvia Bot</bold> — risponderà subito con il tuo Chat ID numerico (es. 123456789).",
     "step1Start": "Start",
     "step2Title": "Avvia una conversazione con il bot Plantir",
-    "step2Body": "Cerca <link>@PlantirAlert_bot</link> su Telegram e tocca <bold>Start</bold>. Serve affinché Telegram permetta al bot di inviarti messaggi.",
-    "step3Title": "Inserisci il Chat ID qui sotto e salva",
-    "step3Body": "Incolla il numero del Passaggio 1 nel campo Chat ID Telegram, scegli l'orario di notifica preferito e premi Salva.",
+    "step2Body": "Cerca <link>@PlantirAlert_bot</link> su Telegram e tocca <bold>Avvia Bot</bold>. Serve affinché Telegram permetta al bot di inviarti messaggi.",
+    "step3Title": "Inserisci il Chat ID e salva",
+    "step3Body": "Incolla il numero del Passaggio 1 nel campo Chat ID Telegram sotto riportato, scegli l'orario di notifica preferito e premi Salva.",
     "groupTitle": "Vuoi ricevere gli avvisi su più persone? Usa un gruppo",
-    "groupBody": "Avvia una conversazione con <userinfobot>@userinfobot</userinfobot> e scegli uno dei tuoi gruppi quando richiesto — il bot risponderà con il Chat ID del gruppo (un numero negativo, es. -1001234567890). Poi aggiungi <link>@PlantirAlert_bot</link> al gruppo in modo che possa inviare messaggi lì. Incolla l'ID del gruppo nel campo qui sotto e tutti i membri del gruppo riceveranno gli avvisi."
+    "groupBody": "Avvia una conversazione con <userinfobot>@userinfobot</userinfobot> e scegli uno dei tuoi gruppi; il bot risponderà con il Chat ID del gruppo (un numero negativo, es. -1001234567890). Poi aggiungi <link>@PlantirAlert_bot</link> al gruppo in modo che possa inviare messaggi lì. Incolla l'ID del gruppo nel campo qui sotto e tutti i membri del gruppo riceveranno gli avvisi."
   },
   "profile": {
     "title": "Profilo",
@@ -293,7 +293,7 @@
     "speciesSectionTitle": "Specie (opzionale)",
     "speciesSectionDescription": "Aggiungere la specie aiuta a sbloccare indicazioni di cura più accurate.",
     "photoSectionTitle": "Foto",
-    "photoSectionDescription": "Scegli la foto della specie corrispondente oppure una tua immagine personalizzata.",
+    "photoSectionDescription": "Scegli la foto della pianta.",
     "nameRequired": "Il nome della pianta è obbligatorio",
     "addSubmit": "Aggiungi pianta",
     "saveSubmit": "Salva modifiche",
@@ -384,14 +384,14 @@
     },
     "addManually": "Aggiungi manualmente",
     "registerNewDevice": "Registra nuovo sensore",
-    "emptyTitle": "Nessun sensore ancora",
+    "emptyTitle": "Nessun sensore",
     "emptyDescription": "Registra un sensore Plantir con la procedura guidata, oppure aggiungi un sensore manualmente se hai già il numero di serie.",
     "registerFirstDevice": "Registra il tuo primo sensore",
     "noSearchMatch": "Nessun sensore corrisponde alla ricerca.",
     "unassigned": "Non assegnato",
     "calibrationRecommended": "Calibrazione consigliata",
     "calibrateSensor": "Calibra sensore",
-    "calibrateSensorRequired": "Calibra sensore (obbligatorio)",
+    "calibrateSensorRequired": "Calibra sensore",
     "editDevice": "Modifica sensore",
     "deleteDevice": "Elimina sensore"
   },
@@ -451,7 +451,7 @@
     "prepare": {
       "title": "Preparazione",
       "pcRecommendation": "Per la migliore esperienza, ti consigliamo di completare questa configurazione da un PC o laptop.",
-      "intro": "Questa procedura ti guida nella registrazione di un sensore di umidità Plantir e nel collegamento al tuo account.",
+      "intro": "Questa procedura ti guida nella registrazione di un sensore di umidità Plantir e nell'assegnazione ad una pianta.",
       "assignPlant": "Assegna a una pianta (opzionale)",
       "assignPlantPlaceholder": "Puoi assegnare una pianta ora o più tardi"
     },
@@ -500,8 +500,8 @@
     "steps": {
       "prepare": "Preparazione",
       "wakeDevice": "Riattiva sensore",
-      "dryReading": "Lettura a secco",
-      "wetReading": "Lettura bagnata"
+      "dryReading": "Lettura sensore secco",
+      "wetReading": "Lettura sensore bagnato"
     },
     "startCalibration": "Avvia calibrazione",
     "prepare": {
@@ -509,7 +509,7 @@
       "intro": "La calibrazione insegna al sensore cosa significa \"completamente secco\" e \"completamente bagnato\", così può darti letture accurate dell'umidità del suolo.",
       "youllNeed": "Ti serviranno:",
       "needDevice": "Il tuo sensore Plantir",
-      "needWater": "Un piccolo bicchiere d'acqua",
+      "needWater": "Un bicchiere pieno d'acqua",
       "duration": "Il processo dura circa 1 minuto."
     },
     "wake": {
@@ -520,15 +520,15 @@
       "waiting": "In attesa che il sensore si connetta…"
     },
     "dry": {
-      "title": "Lettura a secco",
-      "instructions": "Tieni la punta nera del sensore all'aria aperta, lontano da terra o acqua. Mantieni la posizione mentre acquisiamo una lettura stabile.",
+      "title": "Lettura sensore secco",
+      "instructions": "Tieni l'asta nera del sensore all'aria aperta, lontano da terra o acqua. Mantieni la posizione mentre acquisiamo una lettura stabile.",
       "timeout": "Nessuna lettura ricevuta. Assicurati di aver premuto il pulsante di riavvio e che il sensore si sia connesso al Wi-Fi.",
-      "rejected": "Assicurati che la punta nera del sensore sia all'aria aperta, lontano da terra o acqua, poi resta fermo.",
+      "rejected": "Assicurati che l'asta nera del sensore sia all'aria aperta, lontano da terra o acqua, poi resta fermo.",
       "waiting": "In attesa di una lettura…"
     },
     "wet": {
-      "title": "Lettura bagnata",
-      "instructions": "Abbassa delicatamente il sensore nel bicchiere d'acqua finché la linea orizzontale bianca sulla punta nera è appena immersa. Tieni il sensore fermo a questa profondità mentre acquisiamo una lettura stabile.",
+      "title": "Lettura sensore bagnato",
+      "instructions": "Abbassa delicatamente il sensore nel bicchiere d'acqua fino alla linea orizzontale bianca sull'asta. Tieni il sensore fermo a questa profondità mentre acquisiamo una lettura stabile.",
       "guideAlt": "Sensore immerso in acqua fino alla linea orizzontale bianca",
       "timeout": "Nessuna lettura ricevuta. Assicurati che il sensore sia immerso correttamente e che il sensore sia ancora connesso.",
       "restart": "Riavvia calibrazione",
@@ -552,7 +552,7 @@
     "changeCityAria": "Cambia città",
     "cancelCityChangeAria": "Annulla cambio città",
     "locationSetupHint": "Imposta la tua città così Plantir può includere le previsioni di pioggia negli avvisi di annaffiatura per le piante da esterno.",
-    "introHint": "Scegli una città per vedere le previsioni.",
+    "introHint": "Scegli la tua città per vedere le previsioni.",
     "searchPlaceholder": "Cerca una città per vedere le previsioni…",
     "searchAria": "Cerca città per le previsioni meteo",
     "noCitiesFound": "Nessuna città trovata. Prova un altro nome.",
@@ -620,7 +620,7 @@
         "description": "Collega un sensore a una pianta."
       },
       "dirt_whisperer_initiate": {
-        "name": "Il silenzio dei vasi",
+        "name": "Lost in Calibration - L’umidità tradotta",
         "description": "Completa la calibrazione di un sensore."
       },
       "plant_texted_back": {

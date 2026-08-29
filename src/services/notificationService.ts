@@ -12,6 +12,8 @@ export interface NotificationSettings {
   notification_timezone: string;
   browser_notifications_enabled: boolean;
   locale: string;
+  weather_lat?: number | null;
+  weather_lng?: number | null;
 }
 
 export type NotificationType = "watering" | "offline" | "achievement";
@@ -87,7 +89,9 @@ export async function fetchSettings(): Promise<NotificationSettings | null> {
 
   const { data, error } = await supabase
     .from("notification_settings")
-    .select("id, telegram_chat_id, notification_hour, notification_timezone, browser_notifications_enabled, locale")
+    .select(
+      "id, telegram_chat_id, notification_hour, notification_timezone, browser_notifications_enabled, locale, weather_lat, weather_lng",
+    )
     .eq("user_id", user.id)
     .maybeSingle();
 

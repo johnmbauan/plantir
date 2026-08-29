@@ -26,7 +26,7 @@ describe('achievementCopy', () => {
     expect(achievementCopy('back_from_the_mulch').name).toBe('La bella addormentata nel vaso');
     expect(achievementCopy('cloud_oracle').name).toBe('Cantando sotto la pioggia');
     expect(achievementCopy('the_comeback_kid').name).toBe('Sopravvissuto - The Martian');
-    expect(achievementCopy('dirt_whisperer_initiate').name).toBe('Il silenzio dei vasi');
+    expect(achievementCopy('dirt_whisperer_initiate').name).toBe('Lost in Calibration - L’umidità tradotta');
   });
 
   it('uses fallback copy when the achievement key has no translation', () => {
