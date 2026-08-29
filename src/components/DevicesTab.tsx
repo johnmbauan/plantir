@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Table,
   Button,
@@ -31,11 +31,13 @@ import { plantThumbnailUrl } from "@/utils/plantDisplay";
 import PlantFilterSearch from "@/components/PlantFilterSearch";
 import { SortableTh } from "@/components/shared/SortableTh";
 import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
+import { shouldReturnToDashboardAfterFirstCreate } from "@/constants/onboarding";
 
 const COLUMN_COUNT = 4;
 
 export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [devices, setDevices] = useState<Device[]>([]);
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
@@ -53,6 +55,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
 
   const [calibratingDevice, setCalibratingDevice] = useState<Device | null>(null);
   const [calibrationOpened, { open: openCalibration, close: closeCalibration }] = useDisclosure(false);
+  const returnAfterFirstDeviceRef = useRef(false);
 
   const SORTABLE_COLUMNS: { key: DevicesTabSortKey; label: string; className?: string }[] = [
     { key: "serial", label: t("devicesTab.columns.serialNumber") },
@@ -243,7 +246,15 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
         opened={wizardOpened}
         onClose={closeWizard}
         plantOptions={registrationPlantOptions}
-        onRegistered={onMutated}
+        onRegistered={() => {
+          returnAfterFirstDeviceRef.current = shouldReturnToDashboardAfterFirstCreate(devices.length);
+          onMutated();
+        }}
+        onFinished={() => {
+          if (!returnAfterFirstDeviceRef.current) return;
+          returnAfterFirstDeviceRef.current = false;
+          navigate("/");
+        }}
       />
 
       <DeviceFormModal

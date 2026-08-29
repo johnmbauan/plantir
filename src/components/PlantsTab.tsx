@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Table,
   Button,
@@ -26,11 +26,13 @@ import {
 import PlantFilterSearch from "@/components/PlantFilterSearch";
 import { SortableTh } from "@/components/shared/SortableTh";
 import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
+import { shouldReturnToDashboardAfterFirstCreate } from "@/constants/onboarding";
 
 const COLUMN_COUNT = 5;
 
 export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number; onMutated: () => void }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [plants, setPlants] = useState<EnrichedPlant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -193,7 +195,14 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
         opened={opened}
         onClose={close}
         editingPlant={editingPlant}
-        onSaved={onMutated}
+        onSaved={() => {
+          const isFirstPlantCreate =
+            editingPlant == null && shouldReturnToDashboardAfterFirstCreate(plants.length);
+          onMutated();
+          if (isFirstPlantCreate) {
+            navigate("/");
+          }
+        }}
       />
 
       <PlantDeleteModal

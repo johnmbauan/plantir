@@ -15,8 +15,7 @@ import type { EnrichedPlant } from "@/types";
 import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { useWeatherCity } from "@/context/WeatherCityContext";
-
-const DISMISSED_KEY = "onboarding_dismissed";
+import { ONBOARDING_DISMISSED_KEY } from "@/constants/onboarding";
 const SETTINGS_BADGE_KEY = "plant_texted_back";
 const SETTINGS_IMPLICIT_DAYS = 3;
 
@@ -39,7 +38,7 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { city } = useWeatherCity();
-  const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
+  const [dismissed, setDismissed] = useState(() => localStorage.getItem(ONBOARDING_DISMISSED_KEY) === "true");
   const [hasDevices, setHasDevices] = useState(false);
   const [devicesLoaded, setDevicesLoaded] = useState(false);
   const [hasAccountLocation, setHasAccountLocation] = useState(false);
@@ -179,7 +178,7 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
           color="gray"
           aria-label={t("onboarding.dismissAria")}
           onClick={() => {
-            localStorage.setItem(DISMISSED_KEY, "true");
+            localStorage.setItem(ONBOARDING_DISMISSED_KEY, "true");
             setDismissed(true);
           }}
         >

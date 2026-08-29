@@ -5,6 +5,14 @@ import { renderWithProviders, screen, waitFor } from '@/test/render';
 import { buildDevice, buildHumidityConfig } from '@/test/builders/device';
 import { buildPlant } from '@/test/builders/plant';
 import DevicesTab from '@/components/DevicesTab';
+import { ONBOARDING_DISMISSED_KEY } from '@/constants/onboarding';
+
+const mockNavigate = vi.fn();
+
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return { ...actual, useNavigate: () => mockNavigate };
+});
 
 vi.mock('@/services/deviceService', () => ({
   fetchDevices: vi.fn(),
@@ -42,9 +50,18 @@ vi.mock('@mantine/notifications', () => ({
 import { fetchDevices } from '@/services/deviceService';
 import { fetchPlants } from '@/services/plantService';
 
+function lastWizardCallbacks() {
+  return DeviceRegistrationWizardMock.mock.calls.at(-1)?.[0] as {
+    onRegistered: () => void;
+    onFinished: () => void;
+  };
+}
+
 describe('DevicesTab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockReset();
+    localStorage.clear();
     vi.mocked(fetchDevices).mockResolvedValue([buildDevice()]);
     vi.mocked(fetchPlants).mockResolvedValue([buildPlant()]);
   });
@@ -433,6 +450,44 @@ describe('DevicesTab', () => {
         ],
       }),
     );
+  });
+
+  it('returns to the dashboard after registering the first device during onboarding', async () => {
+    vi.mocked(fetchDevices).mockResolvedValue([]);
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('No devices yet');
+
+    const { onRegistered, onFinished } = lastWizardCallbacks();
+    onRegistered();
+    onFinished();
+
+    expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
+
+  it('stays on plants center after registering another device during onboarding', async () => {
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    const { onRegistered, onFinished } = lastWizardCallbacks();
+    onRegistered();
+    onFinished();
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('stays on plants center after registering the first device when onboarding is dismissed', async () => {
+    localStorage.setItem(ONBOARDING_DISMISSED_KEY, 'true');
+    vi.mocked(fetchDevices).mockResolvedValue([]);
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('No devices yet');
+
+    const { onRegistered, onFinished } = lastWizardCallbacks();
+    onRegistered();
+    onFinished();
+
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('opens registration wizard from register=1 URL param', async () => {

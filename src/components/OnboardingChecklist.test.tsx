@@ -11,6 +11,7 @@ import {
 import { buildSession } from '@/test/builders/session';
 import { buildPlant } from '@/test/builders/plant';
 import OnboardingChecklist from '@/components/OnboardingChecklist';
+import { ONBOARDING_DISMISSED_KEY } from '@/constants/onboarding';
 import { useWeatherCity, WEATHER_CITY_STORAGE_KEY } from '@/context/WeatherCityContext';
 import { mockGeocodingResults } from '@/test/msw/handlers';
 
@@ -71,7 +72,7 @@ describe('OnboardingChecklist', () => {
   });
 
   it('does not render when previously dismissed', () => {
-    localStorage.setItem('onboarding_dismissed', 'true');
+    localStorage.setItem(ONBOARDING_DISMISSED_KEY, 'true');
     renderChecklist();
 
     expect(screen.queryByText('Get started with Plantir')).not.toBeInTheDocument();

@@ -23,6 +23,7 @@ interface Props {
   onClose: () => void;
   plantOptions: PlantOption[];
   onRegistered: () => void;
+  onFinished?: () => void;
 }
 
 export default function DeviceRegistrationWizard({
@@ -30,6 +31,7 @@ export default function DeviceRegistrationWizard({
   onClose,
   plantOptions,
   onRegistered,
+  onFinished,
 }: Props) {
   const { t } = useTranslation();
   const [active, setActive] = useState(0);
@@ -45,6 +47,8 @@ export default function DeviceRegistrationWizard({
   const [waitingError, setWaitingError] = useState<string | null>(null);
   const [pollGeneration, setPollGeneration] = useState(0);
   const pollStartedAtRef = useRef<number | null>(null);
+  const didRegisterRef = useRef(false);
+  const finishAfterCalibrationRef = useRef(false);
 
   const resetState = useCallback(() => {
     setActive(0);
@@ -59,9 +63,18 @@ export default function DeviceRegistrationWizard({
     setPollGeneration(0);
   }, []);
 
+  const notifyFinishedIfRegistered = () => {
+    if (!didRegisterRef.current) return;
+    didRegisterRef.current = false;
+    onFinished?.();
+  };
+
   const handleClose = () => {
     resetState();
     onClose();
+    if (!finishAfterCalibrationRef.current) {
+      notifyFinishedIfRegistered();
+    }
   };
 
   const generateBundle = useCallback(async () => {
@@ -109,6 +122,7 @@ export default function DeviceRegistrationWizard({
           setRegisteredSerial(result.serialNumber ?? null);
           setRegisteredDeviceId(result.deviceId ?? null);
           setActive(4);
+          didRegisterRef.current = true;
           onRegistered();
           void evaluateAndToastUnlocks(t);
         } else if (result.failed) {
@@ -192,11 +206,14 @@ export default function DeviceRegistrationWizard({
               onClick={() => {
                 // Capture ID before resetState clears it, then open calibration wizard.
                 const id = registeredDeviceId;
+                finishAfterCalibrationRef.current = Boolean(id);
                 resetState();
                 onClose();
                 if (id) {
                   setCalibrationTargetDeviceId(id);
                   setCalibrationWizardOpen(true);
+                } else {
+                  notifyFinishedIfRegistered();
                 }
               }}
               disabled={!registeredDeviceId}
@@ -214,6 +231,10 @@ export default function DeviceRegistrationWizard({
       onClose={() => {
         setCalibrationWizardOpen(false);
         setCalibrationTargetDeviceId(null);
+        if (finishAfterCalibrationRef.current) {
+          finishAfterCalibrationRef.current = false;
+          notifyFinishedIfRegistered();
+        }
       }}
       deviceId={calibrationTargetDeviceId}
       onCalibrated={onRegistered}
