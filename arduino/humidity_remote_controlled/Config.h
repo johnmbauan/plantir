@@ -22,9 +22,10 @@
 #define WIFI_CONNECT_TIMEOUT_SEC 30  // STA join timeout during portal save / autoconnect
 #define PLANTIR_BUNDLE_MAX_LEN 1024
 #define BUNDLE_DELIMITER       "###"
-#define BOOT_LED_BLINK_COUNT   3
-#define BOOT_LED_ON_MS         150
-#define BOOT_LED_OFF_MS        150
+#define BOOT_LED_BLINK_COUNT           3
+#define FACTORY_RESET_LED_BLINK_COUNT  2
+#define BOOT_LED_ON_MS                 150
+#define BOOT_LED_OFF_MS                150
 
 //const int sensorPin = 36;  // GPIO36 (SVP) on ESP32 from DIYmore.
 const int sensorPin   = A1;  // Maps to GPIO2 on ESP32-C5; Arduino resolves the alias per board.
