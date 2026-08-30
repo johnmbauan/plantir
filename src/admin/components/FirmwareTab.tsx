@@ -22,7 +22,6 @@ import { RefreshButton } from "@/admin/components/RefreshButton";
 import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
 import { useTranslation } from "react-i18next";
 import { useFirmwareTab } from "@/admin/hooks/useFirmwareTab";
-import { relativeTime } from "@/utils/time";
 
 export function FirmwareTab() {
   const { t } = useTranslation();
@@ -163,7 +162,9 @@ export function FirmwareTab() {
                       </Table.Td>
                       <Table.Td>
                         <Text size="sm" c="dimmed">
-                          {relativeTime(release.createdAt, t) ?? t("common.emDash")}
+                          {release.createdAt
+                            ? new Date(release.createdAt).toLocaleDateString()
+                            : t("common.emDash")}
                         </Text>
                       </Table.Td>
                       <Table.Td>

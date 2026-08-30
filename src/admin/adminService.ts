@@ -167,8 +167,7 @@ export async function fetchFirmwareReleases(): Promise<FirmwareRelease[]> {
   const { data, error } = await supabase
     .from("firmware_releases")
     .select("*")
-    .order("board", { ascending: true })
-    .order("version", { ascending: false });
+    .order("createdAt", { ascending: false });
   if (error) throw error;
   return (data ?? []) as FirmwareRelease[];
 }
