@@ -94,16 +94,19 @@ describe('PlantsTab', () => {
     const healthy = screen.getByRole('button', { name: 'Healthy' });
     expect(healthy).toHaveClass('filter-chip--healthy');
     expect(healthy).not.toHaveClass('filter-chip--icon-only');
+    expect(healthy).toHaveClass('filter-chip--static');
 
     const edit = screen.getByRole('button', { name: 'Edit plant' });
     expect(edit).toHaveClass('filter-chip--edit');
     expect(edit).toHaveClass('filter-chip--icon-only');
     expect(edit).not.toHaveClass('filter-chip--expand-label');
+    expect(edit).not.toHaveClass('filter-chip--static');
 
     const remove = screen.getByRole('button', { name: 'Delete plant' });
     expect(remove).toHaveClass('filter-chip--danger');
     expect(remove).toHaveClass('filter-chip--icon-only');
     expect(remove).not.toHaveClass('filter-chip--expand-label');
+    expect(remove).not.toHaveClass('filter-chip--static');
   });
 
   it('shows outdoor indicator and species subtitle when present', async () => {

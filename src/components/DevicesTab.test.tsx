@@ -111,6 +111,7 @@ describe('DevicesTab', () => {
 
     const chip = screen.getByRole('button', { name: 'Calibration recommended' });
     expect(chip).toHaveClass('filter-chip--calibration');
+    expect(chip).toHaveClass('filter-chip--static');
     expect(chip).toHaveTextContent('Calibration recommended');
   });
 
@@ -141,16 +142,19 @@ describe('DevicesTab', () => {
     expect(calibrate).toHaveClass('filter-chip--healthy');
     expect(calibrate).toHaveClass('filter-chip--icon-only');
     expect(calibrate).not.toHaveClass('filter-chip--expand-label');
+    expect(calibrate).not.toHaveClass('filter-chip--static');
 
     const edit = screen.getByRole('button', { name: 'Edit device' });
     expect(edit).toHaveClass('filter-chip--edit');
     expect(edit).toHaveClass('filter-chip--icon-only');
     expect(edit).not.toHaveClass('filter-chip--expand-label');
+    expect(edit).not.toHaveClass('filter-chip--static');
 
     const remove = screen.getByRole('button', { name: 'Delete device' });
     expect(remove).toHaveClass('filter-chip--danger');
     expect(remove).toHaveClass('filter-chip--icon-only');
     expect(remove).not.toHaveClass('filter-chip--expand-label');
+    expect(remove).not.toHaveClass('filter-chip--static');
   });
 
   it('shows empty state when there are no devices', async () => {

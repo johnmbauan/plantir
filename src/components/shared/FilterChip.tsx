@@ -33,11 +33,12 @@ const FilterChip = forwardRef<HTMLButtonElement, FilterChipProps>(function Filte
       ref={ref}
       type="button"
       onClick={onClick}
+      tabIndex={onClick ? undefined : -1}
       aria-label={label}
       className={[
         "filter-chip",
         `filter-chip--${variant}`,
-        active ? "filter-chip--active" : "",
+        active && onClick ? "filter-chip--active" : "",
         !onClick ? "filter-chip--static" : "",
         iconOnly ? "filter-chip--icon-only" : "",
         iconOnly && expandLabel ? "filter-chip--expand-label" : "",
