@@ -477,9 +477,9 @@
       "pressRestart": "Premi il pulsante <bold>RESTART</bold> sul lato del sensore. Dopo averlo premuto, il chip all'interno del sensore Plantir accenderà un LED verde tre volte di fila. Il sensore aprirà poi un hotspot Wi-Fi chiamato <bold>Plantir-Device-Setup</bold>.",
       "connectHotspot": "Sul telefono o computer, connettiti all'hotspot <bold>Plantir-Device-Setup</bold>. Si aprirà automaticamente un portale — dovrebbe assomigliare a questo:",
       "portalHomeAlt": "Schermata home del portale Wi-Fi",
-      "configureWifi": "Tocca <bold>Configure WiFi</bold>, poi seleziona la tua rete domestica, inserisci la password, incolla il codice di setup nel campo <bold>Plantir Setup</bold> e tocca <bold>Save</bold>:",
+      "configureWifi": "Tocca <bold>Configure WiFi</bold>, poi seleziona la tua rete domestica, inserisci la password.",
       "portalConfigureAlt": "Schermata di configurazione del portale Wi-Fi",
-      "waitPortalClose": "Attendi che il portale <bold>Plantir-Device-Setup</bold> si chiuda automaticamente.",
+      "waitPortalClose": "Incolla il codice di setup nel campo <bold>Plantir Setup</bold> e tocca <bold>Save</bold>. Attendi che il portale <bold>Plantir-Device-Setup</bold> si chiuda automaticamente.",
       "iveConnected": "Ho connesso il sensore"
     },
     "waiting": {
