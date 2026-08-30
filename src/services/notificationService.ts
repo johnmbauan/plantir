@@ -98,6 +98,34 @@ function shouldResolveNotification(
   return false;
 }
 
+export interface TelegramChatInfo {
+  type: "private" | "group" | "supergroup" | "channel";
+  title?: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+}
+
+export type TelegramLookupErrorCode = "invalid_chat_id" | "chat_not_found" | "bot_not_in_chat" | "telegram_error" | "unknown";
+
+export async function lookupTelegramChat(chatId: string): Promise<TelegramChatInfo> {
+  const { data, error } = await supabase.functions.invoke("telegram-chat-lookup", {
+    body: { chatId },
+  });
+
+  if (error) {
+    const code = (data as { error?: string } | null)?.error as TelegramLookupErrorCode | undefined;
+    throw Object.assign(new Error(code ?? "unknown"), { code: code ?? "unknown" });
+  }
+
+  const payload = data as { error?: TelegramLookupErrorCode } & TelegramChatInfo;
+  if (payload.error) {
+    throw Object.assign(new Error(payload.error), { code: payload.error });
+  }
+
+  return payload as TelegramChatInfo;
+}
+
 export async function fetchSettings(): Promise<NotificationSettings | null> {
   const user = await requireUser();
 

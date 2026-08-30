@@ -28,7 +28,7 @@ describe('TelegramSetupAccordion', () => {
 
     expect(await screen.findByText('Find your Chat ID')).toBeInTheDocument();
     expect(screen.getByText('Start a conversation with the Plantir bot')).toBeInTheDocument();
-    expect(screen.getByText('Enter your Chat ID below and save')).toBeInTheDocument();
+    expect(screen.getByText('Enter your Chat ID below and verify')).toBeInTheDocument();
   });
 
   it('renders step 1 with a link to @userinfobot', async () => {
@@ -70,12 +70,22 @@ describe('TelegramSetupAccordion', () => {
     expect(linksByHref('https://t.me/userinfobot').length).toBeGreaterThanOrEqual(2);
   });
 
-  it('step 3 body instructs users to paste the Chat ID and save', async () => {
+  it('shows a tip to copy the Chat ID from Telegram Web', async () => {
     const user = userEvent.setup();
     renderWithProviders(<TelegramSetupAccordion />);
     await expand(user);
 
-    await screen.findByText('Enter your Chat ID below and save');
-    expect(screen.getByText(/Paste the number from Step 1/)).toBeInTheDocument();
+    expect(await screen.findByText('Tip')).toBeInTheDocument();
+    expect(screen.getByText(/Copying the Chat ID is easier in a browser/)).toBeInTheDocument();
+    expect(linksByHref('https://web.telegram.org/')).toHaveLength(1);
+  });
+
+  it('step 3 body instructs users to paste the Chat ID and confirm the name', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<TelegramSetupAccordion />);
+    await expand(user);
+
+    await screen.findByText('Enter your Chat ID below and verify');
+    expect(screen.getByText(/confirm it is the right person or group/)).toBeInTheDocument();
   });
 });

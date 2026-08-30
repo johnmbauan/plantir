@@ -21,6 +21,7 @@ import {
   mockAuthenticatedUser,
   mockUnauthenticated,
   setupFromMocks,
+  mockInvoke,
 } from '@/test/mocks/supabase';
 import {
   fetchSettings,
@@ -34,6 +35,7 @@ import {
   snoozeNotification,
   unsnoozeNotification,
   fetchActiveSnoozedPlants,
+  lookupTelegramChat,
   type AppNotification,
 } from './notificationService';
 
@@ -356,6 +358,61 @@ describe('notificationService', () => {
       mockAuthenticatedUser();
       setupFromMocks({ plant_notification_snooze: { data: null, error: new Error('DB error') } });
       await expect(fetchActiveSnoozedPlants()).rejects.toThrow('DB error');
+    });
+  });
+
+  describe('lookupTelegramChat', () => {
+    it('returns chat metadata from the edge function', async () => {
+      mockInvoke.mockResolvedValue({
+        data: { type: 'private', firstName: 'John', lastName: 'Doe', username: 'johndoe' },
+        error: null,
+      });
+
+      await expect(lookupTelegramChat('123456789')).resolves.toEqual({
+        type: 'private',
+        firstName: 'John',
+        lastName: 'Doe',
+        username: 'johndoe',
+      });
+      expect(mockInvoke).toHaveBeenCalledWith('telegram-chat-lookup', {
+        body: { chatId: '123456789' },
+      });
+    });
+
+    it('throws the payload error code when invoke fails with a body', async () => {
+      mockInvoke.mockResolvedValue({
+        data: { error: 'chat_not_found' },
+        error: new Error('Edge function error'),
+      });
+
+      await expect(lookupTelegramChat('999')).rejects.toMatchObject({
+        message: 'chat_not_found',
+        code: 'chat_not_found',
+      });
+    });
+
+    it('throws unknown when invoke fails without a payload error', async () => {
+      mockInvoke.mockResolvedValue({
+        data: null,
+        error: new Error('Network error'),
+      });
+
+      await expect(lookupTelegramChat('123')).rejects.toMatchObject({
+        message: 'unknown',
+        code: 'unknown',
+      });
+    });
+
+    it('throws when the payload contains an error without an invoke error', async () => {
+      mockInvoke.mockResolvedValue({
+        data: { error: 'bot_not_in_chat' },
+        error: null,
+      });
+
+      await expect(lookupTelegramChat('-1001')).rejects.toMatchObject({
+        message: 'bot_not_in_chat',
+        code: 'bot_not_in_chat',
+      });
     });
   });
 

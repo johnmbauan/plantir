@@ -20,6 +20,17 @@ vi.mock('@/components/TelegramSetupAccordion', () => ({
   default: () => <div>Telegram setup instructions</div>,
 }));
 
+vi.mock('@/components/TelegramChatIdField', () => ({
+  TelegramChatIdField: ({ value, onChange, disabled }: { value: string; onChange: (v: string) => void; disabled?: boolean }) => (
+    <input
+      aria-label="Telegram Chat ID"
+      value={value}
+      onChange={(e) => onChange(e.currentTarget.value)}
+      disabled={disabled}
+    />
+  ),
+}));
+
 vi.mock('@mantine/notifications', () => ({
   notifications: { show: vi.fn() },
 }));

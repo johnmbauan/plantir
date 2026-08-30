@@ -1,5 +1,5 @@
-import { Accordion, Anchor, Divider, List, Stack, Text, ThemeIcon } from "@mantine/core";
-import { IconBrandTelegram, IconDeviceFloppy, IconSend, IconUser, IconUsersGroup } from "@tabler/icons-react";
+import { Accordion, Alert, Anchor, Divider, List, Stack, Text, ThemeIcon } from "@mantine/core";
+import { IconBrandTelegram, IconBulb, IconDeviceFloppy, IconSend, IconUser, IconUsersGroup } from "@tabler/icons-react";
 import { Trans, useTranslation } from "react-i18next";
 
 export default function TelegramSetupAccordion() {
@@ -12,6 +12,31 @@ export default function TelegramSetupAccordion() {
           <Text size="sm" fw={500}>{t("telegramSetup.accordionTitle")}</Text>
         </Accordion.Control>
         <Accordion.Panel>
+          <Alert
+            mb="md"
+            variant="light"
+            color="blue"
+            icon={<IconBulb size={16} />}
+            title={t("telegramSetup.webTipTitle")}
+          >
+            <Text size="sm">
+              <Trans
+                i18nKey="telegramSetup.webTipBody"
+                components={{
+                  web: (
+                    <Anchor
+                      href="https://web.telegram.org/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      size="sm"
+                      underline="always"
+                    />
+                  ),
+                }}
+              />
+            </Text>
+          </Alert>
+
           <List spacing="md" size="sm" center>
             <List.Item
               icon={
