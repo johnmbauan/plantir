@@ -143,7 +143,7 @@
     "skip": "Salta per ora",
     "complete": {
       "title": "Congratulazioni",
-      "message": "Sei pronto per prenderti cura delle tue piante. Ricordati di assegnare il sensore alla pianta e di piantarlo nel terreno."
+      "message": "Sei pronto per prenderti cura delle tue piante. Ricordati di assegnare il sensore alla pianta (se non già fatto) e di piantarlo nel terreno."
     },
     "steps": {
       "plants": {
