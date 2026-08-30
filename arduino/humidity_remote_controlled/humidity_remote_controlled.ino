@@ -1,5 +1,6 @@
 #include "Config.h"
 #include "DeviceIdentity.h"
+#include "LedFeedback.h"
 #include "StorageManager.h"
 #include "WifiProvisioner.h"
 #include "ApiClient.h"
@@ -10,22 +11,6 @@
 #if defined(CONFIG_IDF_TARGET_ESP32C6)
 #include "driver/gpio.h"
 #endif
-
-// FireBeetle 2 ESP32-C5/C6: LED_BUILTIN is GPIO15 (active HIGH per DFRobot examples).
-static void blinkBootLed() {
-  pinMode(LED_BUILTIN, OUTPUT);
-  for (int blinkIndex = 0; blinkIndex < BOOT_LED_BLINK_COUNT; blinkIndex++) {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(BOOT_LED_ON_MS);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(BOOT_LED_OFF_MS);
-  }
-}
-
-static void bootLedOff() {
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
-}
 
 // Drive the sensor supply pin LOW. On the C6 the pad would otherwise float in
 // deep sleep; gpio_hold_en latches that LOW until the next wake.
@@ -58,7 +43,7 @@ static void cutSensorPower() {
 
 void setup() {
   Serial.begin(115200);
-  blinkBootLed();
+  blinkBuiltInLed(BOOT_LED_BLINK_COUNT);
 
   // Power on the sensor: C5 uses GPIO0 to gate 3V3_C; C6 uses A3 because the 3.3 V rail
   // stays on in deep sleep, so the sensor VCC is wired to A3 instead of 3V3.

@@ -37,6 +37,7 @@
     "accountMenuAria": "Account menu",
     "yourProfileAlt": "Your profile",
     "profile": "Profile",
+    "onboarding": "Get started",
     "signOut": "Sign out"
   },
   "auth": {
@@ -137,8 +138,13 @@
   },
   "onboarding": {
     "title": "Get started with Plantir",
-    "progress": "{{completed}} of {{total}} steps complete — finish setup to start monitoring your plants.",
+    "progress": "{{completed}} of {{total}} steps complete — follow the guide to start monitoring your plants.",
     "dismissAria": "Dismiss onboarding",
+    "skip": "Skip for now",
+    "complete": {
+      "title": "Congratulations",
+      "message": "You're ready to start taking care of your plants. Insert the sensor into the soil in the pot so it can start measuring moisture."
+    },
     "steps": {
       "plants": {
         "label": "Add your first plant",

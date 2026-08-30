@@ -257,7 +257,7 @@ export default function Dashboard() {
         locationSetupPrompt={locationSetupPrompt}
         onLocationSet={clearLocationSetupParam}
       />
-      <OnboardingChecklist plants={plants} plantsLoaded={!loading} />
+      <OnboardingChecklist />
       <PlantFilterBar
         counts={counts}
         activeFilter={activeFilter}

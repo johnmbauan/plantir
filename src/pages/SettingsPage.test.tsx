@@ -5,10 +5,15 @@ import SettingsPage from './SettingsPage';
 
 const fetchSettings = vi.fn();
 const upsertSettings = vi.fn();
+const markOnboardingStepComplete = vi.fn();
 
 vi.mock('@/services/notificationService', () => ({
   fetchSettings: (...args: unknown[]) => fetchSettings(...args),
   upsertSettings: (...args: unknown[]) => upsertSettings(...args),
+}));
+
+vi.mock('@/services/onboardingService', () => ({
+  markOnboardingStepComplete: (...args: unknown[]) => markOnboardingStepComplete(...args),
 }));
 
 vi.mock('@/components/TelegramSetupAccordion', () => ({
@@ -29,6 +34,7 @@ describe('SettingsPage', () => {
       notification_timezone: 'Europe/Rome',
     });
     upsertSettings.mockResolvedValue(undefined);
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: true, dismissed: false });
   });
 
   it('renders settings form after loading', async () => {
@@ -57,6 +63,7 @@ describe('SettingsPage', () => {
 
     await waitFor(() => {
       expect(upsertSettings).toHaveBeenCalledWith('99999', 9, 'Europe/Rome', true);
+      expect(markOnboardingStepComplete).toHaveBeenCalledWith('notifications');
     });
   });
 

@@ -6,6 +6,18 @@ import { buildDevice, buildHumidityConfig } from '@/test/builders/device';
 import { buildPlant } from '@/test/builders/plant';
 import DevicesTab from '@/components/DevicesTab';
 
+const mockNavigate = vi.fn();
+const markOnboardingStepComplete = vi.fn();
+
+vi.mock('@/services/onboardingService', () => ({
+  markOnboardingStepComplete: (...args: unknown[]) => markOnboardingStepComplete(...args),
+}));
+
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return { ...actual, useNavigate: () => mockNavigate };
+});
+
 vi.mock('@/services/deviceService', () => ({
   fetchDevices: vi.fn(),
 }));
@@ -42,9 +54,39 @@ vi.mock('@mantine/notifications', () => ({
 import { fetchDevices } from '@/services/deviceService';
 import { fetchPlants } from '@/services/plantService';
 
+function lastMockCall<T>(calls: unknown[][]): T {
+  return calls[calls.length - 1]?.[0] as T;
+}
+
+function lastWizardCallbacks() {
+  return lastMockCall<{
+    onRegistered: () => void;
+    onFinished: () => void;
+  }>(DeviceRegistrationWizardMock.mock.calls);
+}
+
+function lastFormCallbacks() {
+  return lastMockCall<{
+    onSaved: () => void;
+    onFinished: () => void;
+    onOpenCalibration: (device: unknown) => void;
+    onClose: () => void;
+  }>(DeviceFormModalMock.mock.calls);
+}
+
+function lastCalibrationCallbacks() {
+  return lastMockCall<{
+    onClose: () => void;
+  }>(DeviceCalibrationWizardMock.mock.calls);
+}
+
 describe('DevicesTab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockReset();
+    markOnboardingStepComplete.mockReset();
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: true, dismissed: false });
+    localStorage.clear();
     vi.mocked(fetchDevices).mockResolvedValue([buildDevice()]);
     vi.mocked(fetchPlants).mockResolvedValue([buildPlant()]);
   });
@@ -387,6 +429,108 @@ describe('DevicesTab', () => {
     );
   });
 
+  it('records the devices onboarding step when a device is added manually', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    await user.click(screen.getByRole('button', { name: 'Add manually' }));
+    lastFormCallbacks().onSaved();
+
+    expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
+  });
+
+  it('does not record the devices onboarding step when an existing device is saved', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    await user.click(screen.getByRole('button', { name: 'Edit device' }));
+    lastFormCallbacks().onSaved();
+
+    expect(markOnboardingStepComplete).not.toHaveBeenCalled();
+  });
+
+  it('returns to the dashboard after finishing manual device creation during onboarding', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    await user.click(screen.getByRole('button', { name: 'Add manually' }));
+    const { onSaved, onFinished } = lastFormCallbacks();
+    onSaved();
+    onFinished();
+
+    await waitFor(() => {
+      expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('stays on plants center after manual create when the devices step is already complete', async () => {
+    const user = userEvent.setup();
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: false, dismissed: false });
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    await user.click(screen.getByRole('button', { name: 'Add manually' }));
+    const { onSaved, onFinished } = lastFormCallbacks();
+    onSaved();
+    onFinished();
+
+    await waitFor(() => {
+      expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('returns to the dashboard after the first manual device even if onboarding was dismissed', async () => {
+    const user = userEvent.setup();
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: true, dismissed: true });
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    await user.click(screen.getByRole('button', { name: 'Add manually' }));
+    const { onSaved, onFinished } = lastFormCallbacks();
+    onSaved();
+    onFinished();
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('waits until calibration ends before returning after a first manual device', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    await user.click(screen.getByRole('button', { name: 'Add manually' }));
+    const { onSaved, onOpenCalibration } = lastFormCallbacks();
+    onSaved();
+    onOpenCalibration(buildDevice({ id: 99 }));
+
+    await waitFor(() => {
+      expect(DeviceCalibrationWizardMock).toHaveBeenCalledWith(
+        expect.objectContaining({ opened: true, deviceId: 99 }),
+      );
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
+
+    lastCalibrationCallbacks().onClose();
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
+
+
   it('opens registration wizard from header button', async () => {
     const user = userEvent.setup();
 
@@ -433,6 +577,51 @@ describe('DevicesTab', () => {
         ],
       }),
     );
+  });
+
+  it('returns to the dashboard after completing the devices onboarding step', async () => {
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    const { onRegistered, onFinished } = lastWizardCallbacks();
+    onRegistered();
+    onFinished();
+
+    await waitFor(() => {
+      expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('stays on plants center after registering a device when that step is already complete', async () => {
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: false, dismissed: false });
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    const { onRegistered, onFinished } = lastWizardCallbacks();
+    onRegistered();
+    onFinished();
+
+    await waitFor(() => {
+      expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('returns to the dashboard after the first device even if onboarding was dismissed', async () => {
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: true, dismissed: true });
+
+    renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
+    await screen.findByText('SN-001');
+
+    const { onRegistered, onFinished } = lastWizardCallbacks();
+    onRegistered();
+    onFinished();
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
   });
 
   it('opens registration wizard from register=1 URL param', async () => {

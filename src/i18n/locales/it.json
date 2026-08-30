@@ -37,6 +37,7 @@
     "accountMenuAria": "Menu account",
     "yourProfileAlt": "Il tuo profilo",
     "profile": "Profilo",
+    "onboarding": "Inizia",
     "signOut": "Esci"
   },
   "auth": {
@@ -137,8 +138,13 @@
   },
   "onboarding": {
     "title": "Inizia con Plantir",
-    "progress": "{{completed}} di {{total}} passaggi completati — termina la configurazione per monitorare le tue piante.",
+    "progress": "{{completed}} di {{total}} passaggi completati — segui la guida per monitorare le tue piante.",
     "dismissAria": "Chiudi onboarding",
+    "skip": "Salta per ora",
+    "complete": {
+      "title": "Congratulazioni",
+      "message": "Sei pronto per prenderti cura delle tue piante. Inserisci il sensore nel terriccio del vaso, così può iniziare a misurare l'umidità."
+    },
     "steps": {
       "plants": {
         "label": "Aggiungi la tua prima pianta",

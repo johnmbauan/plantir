@@ -8,6 +8,7 @@ const createPairingBundle = vi.fn();
 const pollPairingToken = vi.fn();
 const onClose = vi.fn();
 const onRegistered = vi.fn();
+const onFinished = vi.fn();
 
 vi.mock('@/services/deviceService', () => ({
   createPairingBundle: (...args: unknown[]) => createPairingBundle(...args),
@@ -84,12 +85,14 @@ describe('DeviceRegistrationWizard', () => {
         onClose={onClose}
         plantOptions={[]}
         onRegistered={onRegistered}
+        onFinished={onFinished}
       />,
     );
 
     await user.click(within(getDialog()).getByRole('button', { name: 'Cancel' }));
 
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onFinished).not.toHaveBeenCalled();
   });
 
   it('advances from prepare to setup code step', async () => {
@@ -324,6 +327,7 @@ describe('DeviceRegistrationWizard', () => {
         onClose={onClose}
         plantOptions={[]}
         onRegistered={onRegistered}
+        onFinished={onFinished}
       />,
     );
 
@@ -338,6 +342,7 @@ describe('DeviceRegistrationWizard', () => {
 
     expect(onClose).toHaveBeenCalled();
     expect(screen.getByRole('dialog', { name: 'Calibration wizard' })).toBeInTheDocument();
+    expect(onFinished).not.toHaveBeenCalled();
   });
 
   it('skips calibration and closes on completed step', async () => {
@@ -354,6 +359,7 @@ describe('DeviceRegistrationWizard', () => {
         onClose={onClose}
         plantOptions={[]}
         onRegistered={onRegistered}
+        onFinished={onFinished}
       />,
     );
 
@@ -367,6 +373,7 @@ describe('DeviceRegistrationWizard', () => {
     await user.click(within(getDialog()).getByRole('button', { name: 'Skip for now' }));
 
     expect(onClose).toHaveBeenCalled();
+    expect(onFinished).toHaveBeenCalledTimes(1);
   });
 
   it('passes selected plant id when generating bundle', async () => {
@@ -451,6 +458,7 @@ describe('DeviceRegistrationWizard', () => {
         onClose={onClose}
         plantOptions={[]}
         onRegistered={onRegistered}
+        onFinished={onFinished}
       />,
     );
 
@@ -465,9 +473,11 @@ describe('DeviceRegistrationWizard', () => {
 
     const calibrationDialog = screen.getByRole('dialog', { name: 'Calibration wizard' });
     expect(calibrationDialog).toBeInTheDocument();
+    expect(onFinished).not.toHaveBeenCalled();
 
     await user.click(within(calibrationDialog).getByRole('button', { name: 'Close calibration' }));
 
     expect(screen.queryByRole('dialog', { name: 'Calibration wizard' })).not.toBeInTheDocument();
+    expect(onFinished).toHaveBeenCalledTimes(1);
   });
 });

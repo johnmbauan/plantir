@@ -298,9 +298,55 @@ describe('useDeviceForm', () => {
       result.current.handleClose();
     });
 
-    expect(window.confirm).toHaveBeenCalled();
+    expect(window.confirm).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
     expect(result.current.createdDevice).toBeNull();
+  });
+
+  it('calls onFinished when closing after a successful create', async () => {
+    vi.mocked(createDevice).mockResolvedValue({ id: 99 });
+    const onClose = vi.fn();
+    const onFinished = vi.fn();
+
+    const { result } = renderHook(() => useDeviceForm({ ...baseOptions, onClose, onFinished }));
+
+    act(() => {
+      result.current.setForm((prev) => ({ ...prev, serialNumber: 'SN-NEW' }));
+    });
+
+    await act(async () => {
+      await result.current.handleSave();
+    });
+
+    act(() => {
+      result.current.handleClose();
+    });
+
+    expect(onFinished).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not call onFinished when calibrating after create', async () => {
+    vi.mocked(createDevice).mockResolvedValue({ id: 99 });
+    const onFinished = vi.fn();
+    const onOpenCalibration = vi.fn();
+
+    const { result } = renderHook(() =>
+      useDeviceForm({ ...baseOptions, onFinished, onOpenCalibration }),
+    );
+
+    act(() => {
+      result.current.setForm((prev) => ({ ...prev, serialNumber: 'SN-NEW' }));
+    });
+
+    await act(async () => {
+      await result.current.handleSave();
+    });
+
+    act(() => {
+      result.current.handleCalibrateNow();
+    });
+
+    expect(onFinished).not.toHaveBeenCalled();
   });
 
   it('does not close when discard is cancelled', () => {

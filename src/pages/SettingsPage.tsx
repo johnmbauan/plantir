@@ -18,6 +18,7 @@ import { notifications } from "@mantine/notifications";
 import { useTranslation } from "react-i18next";
 import TelegramSetupAccordion from "@/components/TelegramSetupAccordion";
 import { fetchSettings, upsertSettings } from "@/services/notificationService";
+import { markOnboardingStepComplete } from "@/services/onboardingService";
 import { useLanguage } from "@/context/LanguageContext";
 import { getErrorMessage } from "@/utils/error";
 
@@ -45,7 +46,7 @@ export default function SettingsPage() {
 
   const [inAppEnabled, setInAppEnabled] = useState(true);
   const [chatId, setChatId] = useState("");
-  const [notificationHour, setNotificationHour] = useState(8);
+  const [notificationHour, setNotificationHour] = useState(6);
   const [notificationTimezone, setNotificationTimezone] = useState(DEFAULT_TIMEZONE);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -71,6 +72,9 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       await upsertSettings(chatId.trim(), notificationHour, notificationTimezone, inAppEnabled);
+      void markOnboardingStepComplete("notifications").catch((err) => {
+        console.error("Failed to record onboarding notifications step:", err);
+      });
       notifications.show({ color: "green", title: t("settings.saved.title"), message: t("settings.saved.message") });
     } catch (err) {
       notifications.show({ color: "red", title: t("common.error"), message: getErrorMessage(err) });

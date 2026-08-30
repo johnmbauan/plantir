@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import {
   autoResolveNotifications,
   fetchUnreadNotifications,
+  NOTIFICATIONS_CHANGED_EVENT,
   type AppNotification,
 } from "@/services/notificationService";
 import { formatNotificationCopy } from "@/utils/notificationDisplay";
@@ -42,8 +43,8 @@ export function useNotifications() {
       return [notification, ...current];
     });
 
-    // Achievement unlocks already toast from evaluate/client-event responses.
-    if (document.hasFocus() && notification.type !== "achievement") {
+    // Achievement and onboarding already toast from the action that created them.
+    if (document.hasFocus() && notification.type !== "achievement" && notification.type !== "onboardingCompleted") {
       const { title, body } = formatNotificationCopy(notification);
       notifications.show({
         title,
@@ -84,6 +85,18 @@ export function useNotifications() {
       cancelled = true;
     };
   }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const onChanged = () => {
+      void refresh();
+    };
+    window.addEventListener(NOTIFICATIONS_CHANGED_EVENT, onChanged);
+    return () => {
+      window.removeEventListener(NOTIFICATIONS_CHANGED_EVENT, onChanged);
+    };
+  }, [userId, refresh]);
 
   useEffect(() => {
     if (!userId || !accessToken) return;

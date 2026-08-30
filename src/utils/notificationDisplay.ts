@@ -58,6 +58,13 @@ export function formatNotificationCopy(
     return { title: copy.name, body: copy.description };
   }
 
+  if (notification.type === "onboardingCompleted") {
+    return {
+      title: t("onboarding.complete.title"),
+      body: t("onboarding.complete.message"),
+    };
+  }
+
   return { title: notification.title, body: notification.body };
 }
 

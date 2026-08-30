@@ -1,6 +1,7 @@
 #include "WifiProvisioner.h"
 #include "Config.h"
 #include "DeviceIdentity.h"
+#include "LedFeedback.h"
 #include "StorageManager.h"
 #include <WiFiManager.h>
 
@@ -65,6 +66,7 @@ bool connectAndProvision(AppConfig& appConfig, String& pairingToken) {
   if (factoryResetRequested) {
     Serial.println("Factory reset: clearing WiFi and Supabase credentials");
     clearConfig();
+    blinkBuiltInLed(FACTORY_RESET_LED_BLINK_COUNT);
   }
 
   pairingToken = "";

@@ -11,114 +11,78 @@ import {
   IconX,
   IconChevronRight,
 } from "@tabler/icons-react";
-import type { EnrichedPlant } from "@/types";
-import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
-import { useWeatherCity } from "@/context/WeatherCityContext";
-
-const DISMISSED_KEY = "onboarding_dismissed";
-const SETTINGS_BADGE_KEY = "plant_texted_back";
-const SETTINGS_IMPLICIT_DAYS = 3;
-
-interface Props {
-  plants: EnrichedPlant[];
-  plantsLoaded: boolean;
-}
+import {
+  ONBOARDING_CHANGED_EVENT,
+  isSkippableOnboardingStep,
+  type OnboardingStep,
+  type SkippableOnboardingStep,
+} from "@/constants/onboarding";
+import {
+  dismissOnboarding,
+  fetchOnboarding,
+  isOnboardingStepComplete,
+  isOnboardingStepSkipped,
+  isOnboardingVisible,
+  skipOnboardingStep,
+  type OnboardingProgress,
+} from "@/services/onboardingService";
 
 interface ChecklistStep {
-  key: string;
+  key: OnboardingStep;
   icon: React.ReactNode;
   label: string;
   description: string;
   href: string;
-  done: boolean;
 }
 
-export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
+export default function OnboardingChecklist() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { city } = useWeatherCity();
-  const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === "true");
-  const [hasDevices, setHasDevices] = useState(false);
-  const [devicesLoaded, setDevicesLoaded] = useState(false);
-  const [hasAccountLocation, setHasAccountLocation] = useState(false);
-  const [hasSettingsBadge, setHasSettingsBadge] = useState(false);
-  const [settingsLoaded, setSettingsLoaded] = useState(false);
-  // Capture once at mount — Date.now() during render violates react-hooks/purity.
-  const [nowMs] = useState(() => Date.now());
+  const [progress, setProgress] = useState<OnboardingProgress | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (dismissed || !user) return;
-
-    const userId = user.id;
-    let cancelled = false;
-
-    async function checkDevices() {
-      // Devices may exist without a plant association, so query devices directly.
-      const { data } = await supabase
-        .from("devices")
-        .select("id")
-        .eq("user_id", userId)
-        .limit(1);
-
-      if (cancelled) return;
-      setHasDevices((data?.length ?? 0) > 0);
-      setDevicesLoaded(true);
+    if (!user) {
+      setProgress(null);
+      setLoaded(true);
+      return;
     }
 
-    void checkDevices();
-    return () => {
-      cancelled = true;
-    };
-  }, [dismissed, user]);
-
-  useEffect(() => {
-    if (dismissed || !user) return;
-
-    const userId = user.id;
     let cancelled = false;
 
-    async function checkNotificationSettings() {
-      const [settingsResult, badgeResult] = await Promise.all([
-        supabase
-          .from("notification_settings")
-          .select("weather_lat, weather_lng")
-          .eq("user_id", userId)
-          .maybeSingle(),
-        supabase
-          .from("user_achievements")
-          .select("achievement_key")
-          .eq("user_id", userId)
-          .eq("achievement_key", SETTINGS_BADGE_KEY)
-          .maybeSingle(),
-      ]);
-
-      if (cancelled) return;
-
-      const lat = settingsResult.data?.weather_lat;
-      const lng = settingsResult.data?.weather_lng;
-      setHasAccountLocation(lat != null && lng != null);
-      setHasSettingsBadge(badgeResult.data != null);
-      setSettingsLoaded(true);
+    async function load() {
+      try {
+        const next = await fetchOnboarding();
+        if (!cancelled) {
+          setProgress(next);
+        }
+      } catch (err) {
+        console.error(err);
+        if (!cancelled) setProgress(null);
+      } finally {
+        if (!cancelled) setLoaded(true);
+      }
     }
 
-    void checkNotificationSettings();
+    setLoaded(false);
+    void load();
+
+    const onChanged = () => {
+      void load();
+    };
+    window.addEventListener(ONBOARDING_CHANGED_EVENT, onChanged);
+
     return () => {
       cancelled = true;
+      window.removeEventListener(ONBOARDING_CHANGED_EVENT, onChanged);
     };
-  }, [dismissed, user]);
+  }, [user]);
 
-  const hasLocation = hasAccountLocation || city !== null;
-  const hasPlants = plantsLoaded && plants.length > 0;
-
-  const oldestPlantDate = plants.length > 0
-    ? plants.reduce((oldest, p) => (p.created_at < oldest ? p.created_at : oldest), plants[0].created_at)
-    : null;
-  const plantIsOldEnough = oldestPlantDate !== null
-    && nowMs - new Date(oldestPlantDate).getTime() >= SETTINGS_IMPLICIT_DAYS * 24 * 60 * 60 * 1000;
-  const hasNotifications = hasSettingsBadge
-    || (hasPlants && hasDevices && plantIsOldEnough);
+  if (!user || !loaded || !progress || !isOnboardingVisible(progress)) {
+    return null;
+  }
 
   const steps: ChecklistStep[] = [
     {
@@ -127,7 +91,6 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
       label: t("onboarding.steps.plants.label"),
       description: t("onboarding.steps.plants.description"),
       href: "/plants-center?tab=plants",
-      done: hasPlants,
     },
     {
       key: "devices",
@@ -135,7 +98,6 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
       label: t("onboarding.steps.devices.label"),
       description: t("onboarding.steps.devices.description"),
       href: "/plants-center?tab=devices&register=1",
-      done: hasDevices,
     },
     {
       key: "location",
@@ -143,7 +105,6 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
       label: t("onboarding.steps.location.label"),
       description: t("onboarding.steps.location.description"),
       href: "/?setLocation=1",
-      done: hasLocation,
     },
     {
       key: "notifications",
@@ -151,17 +112,27 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
       label: t("onboarding.steps.notifications.label"),
       description: t("onboarding.steps.notifications.description"),
       href: "/settings",
-      done: hasNotifications,
     },
   ];
 
-  const allDone = hasPlants && hasDevices && hasLocation && hasNotifications;
+  const visibleSteps = steps.filter(
+    (step) =>
+      isOnboardingStepComplete(progress, step.key) || !isOnboardingStepSkipped(progress, step.key),
+  );
+  const completedCount = steps.filter((step) => isOnboardingStepComplete(progress, step.key)).length;
 
-  if (dismissed || !user || !plantsLoaded || !devicesLoaded || !settingsLoaded || allDone) {
-    return null;
+  function handleSkip(step: SkippableOnboardingStep) {
+    const skippedAt = new Date().toISOString();
+    setProgress((prev) => {
+      if (!prev) return prev;
+      return step === "location"
+        ? { ...prev, skippedLocationAt: skippedAt }
+        : { ...prev, skippedNotificationsAt: skippedAt };
+    });
+    void skipOnboardingStep(step).catch((err) => {
+      console.error(err);
+    });
   }
-
-  const completedCount = steps.filter((s) => s.done).length;
 
   return (
     <Paper shadow="xs" radius="md" p="lg" style={{ border: "1px solid var(--terracotta-100)" }}>
@@ -179,8 +150,10 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
           color="gray"
           aria-label={t("onboarding.dismissAria")}
           onClick={() => {
-            localStorage.setItem(DISMISSED_KEY, "true");
-            setDismissed(true);
+            setProgress({ ...progress, dismissedAt: new Date().toISOString() });
+            void dismissOnboarding().catch((err) => {
+              console.error(err);
+            });
           }}
         >
           <IconX size={16} />
@@ -188,64 +161,79 @@ export default function OnboardingChecklist({ plants, plantsLoaded }: Props) {
       </Group>
 
       <Stack gap="xs">
-        {steps.map((step) => (
-          <Group
-            key={step.key}
-            gap="sm"
-            p="sm"
-            style={{
-              borderRadius: "var(--mantine-radius-sm)",
-              background: step.done
-                ? "var(--mantine-color-green-0)"
-                : "var(--mantine-color-gray-0)",
-              cursor: step.done ? "default" : "pointer",
-              opacity: step.done ? 0.65 : 1,
-              transition: "opacity 0.15s",
-            }}
-            onClick={() => {
-              if (!step.done) navigate(step.href);
-            }}
-          >
-            <ThemeIcon
-              radius="xl"
-              size="md"
-              color={step.done ? "green" : "var(--green-700)"}
-              variant={step.done ? "filled" : "light"}
+        {visibleSteps.map((step) => {
+          const done = isOnboardingStepComplete(progress, step.key);
+          const skippable = !done && isSkippableOnboardingStep(step.key);
+          return (
+            <Group
+              key={step.key}
+              gap="sm"
+              p="sm"
+              style={{
+                borderRadius: "var(--mantine-radius-sm)",
+                background: done
+                  ? "var(--mantine-color-green-0)"
+                  : "var(--mantine-color-gray-0)",
+                cursor: done ? "default" : "pointer",
+                opacity: done ? 0.65 : 1,
+                transition: "opacity 0.15s",
+              }}
+              onClick={() => {
+                if (!done) navigate(step.href);
+              }}
             >
-              {step.done ? <IconCheck size={13} /> : step.icon}
-            </ThemeIcon>
-
-            <Stack gap={0} style={{ flex: 1 }}>
-              <Text
-                size="sm"
-                fw={500}
-                td={step.done ? "line-through" : undefined}
-                c={step.done ? "dimmed" : undefined}
+              <ThemeIcon
+                radius="xl"
+                size="md"
+                color={done ? "green" : "var(--green-700)"}
+                variant={done ? "filled" : "light"}
               >
-                {step.label}
-              </Text>
-              {!step.done && (
-                <Text size="xs" c="dimmed">
-                  {step.description}
+                {done ? <IconCheck size={13} /> : step.icon}
+              </ThemeIcon>
+
+              <Stack gap={0} style={{ flex: 1 }}>
+                <Text
+                  size="sm"
+                  fw={500}
+                  td={done ? "line-through" : undefined}
+                  c={done ? "dimmed" : undefined}
+                >
+                  {step.label}
                 </Text>
-              )}
-            </Stack>
+                {!done && (
+                  <Text size="xs" c="dimmed">
+                    {step.description}
+                  </Text>
+                )}
+              </Stack>
 
-            {!step.done && (
-              <Button
-                variant="subtle"
-                size="compact-sm"
-                rightSection={<IconChevronRight size={14} />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(step.href);
-                }}
-              >
-                {t("common.go")}
-              </Button>
-            )}
-          </Group>
-        ))}
+              {!done && (
+                <Group gap={4} wrap="nowrap" onClick={(e) => e.stopPropagation()}>
+                  {skippable && (
+                    <Button
+                      variant="subtle"
+                      color="gray"
+                      size="compact-sm"
+                      onClick={() => {
+                        if (isSkippableOnboardingStep(step.key)) handleSkip(step.key);
+                      }}
+                    >
+                      {t("onboarding.skip")}
+                    </Button>
+                  )}
+                  <Button
+                    variant="subtle"
+                    size="compact-sm"
+                    rightSection={<IconChevronRight size={14} />}
+                    onClick={() => navigate(step.href)}
+                  >
+                    {t("common.go")}
+                  </Button>
+                </Group>
+              )}
+            </Group>
+          );
+        })}
       </Stack>
     </Paper>
   );

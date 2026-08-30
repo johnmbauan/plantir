@@ -22,6 +22,10 @@ const mockRecordClientEvent = vi.fn().mockResolvedValue([]);
 const mockShowUnlockToasts = vi.fn();
 
 const mockFetchSettings = vi.fn().mockResolvedValue(null);
+const mockMarkOnboardingStepComplete = vi.fn().mockResolvedValue({
+  newlyCompleted: true,
+  dismissed: false,
+});
 
 vi.mock('@/services/notificationService', () => ({
   fetchSettings: (...args: unknown[]) => mockFetchSettings(...args),
@@ -31,6 +35,10 @@ vi.mock('@/services/notificationService', () => ({
 vi.mock('@/services/achievementService', () => ({
   recordClientEvent: (...args: unknown[]) => mockRecordClientEvent(...args),
   showUnlockToasts: (...args: unknown[]) => mockShowUnlockToasts(...args),
+}));
+
+vi.mock('@/services/onboardingService', () => ({
+  markOnboardingStepComplete: (...args: unknown[]) => mockMarkOnboardingStepComplete(...args),
 }));
 
 const STORAGE_KEY = WEATHER_CITY_STORAGE_KEY;
@@ -54,6 +62,8 @@ describe('WeatherCityContext', () => {
     mockRecordClientEvent.mockClear();
     mockShowUnlockToasts.mockClear();
     mockRecordClientEvent.mockResolvedValue([]);
+    mockMarkOnboardingStepComplete.mockReset();
+    mockMarkOnboardingStepComplete.mockResolvedValue({ newlyCompleted: true, dismissed: false });
   });
 
   afterEach(() => {
@@ -108,6 +118,7 @@ describe('WeatherCityContext', () => {
     });
     expect(mockUpdateWeatherLocation).toHaveBeenCalledWith(41.89, 12.49);
     expect(mockRecordClientEvent).toHaveBeenCalledWith('weather_city_set');
+    expect(mockMarkOnboardingStepComplete).toHaveBeenCalledWith('location');
     expect(mockRecordClientEvent).not.toHaveBeenCalledWith('notification_settings_saved');
     expect(mockShowUnlockToasts).toHaveBeenCalled();
   });
@@ -289,7 +300,7 @@ describe('WeatherCityContext', () => {
     const { result } = renderHook(() => useWeatherCity(), { wrapper });
 
     await waitFor(() => expect(result.current.ready).toBe(true));
-    expect(consoleError).toHaveBeenCalled();
+    await waitFor(() => expect(consoleError).toHaveBeenCalled());
     consoleError.mockRestore();
   });
 
