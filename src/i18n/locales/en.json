@@ -228,10 +228,20 @@
     "step1Start": "Start",
     "step2Title": "Start a conversation with the Plantir bot",
     "step2Body": "Search for <link>@PlantirAlert_bot</link> in Telegram and tap <bold>Start</bold>. This is required so Telegram allows the bot to send you messages.",
-    "step3Title": "Enter your Chat ID below and save",
-    "step3Body": "Paste the number from Step 1 into the Telegram Chat ID field, pick your preferred notification time, and hit Save.",
+    "step3Title": "Enter your Chat ID below and verify",
+    "step3Body": "Paste the number from Step 1 into the Telegram Chat ID field. The name of your account should appear below the field — confirm it is the right person or group, then pick your preferred notification time and save.",
+    "webTipTitle": "Tip",
+    "webTipBody": "Copying the Chat ID is easier in a browser. Open <web>Telegram Web</web>, start @userinfobot there, then copy the number.",
     "groupTitle": "Want alerts for multiple people? Use a group",
-    "groupBody": "Start a conversation with <userinfobot>@userinfobot</userinfobot> and choose one of your groups when prompted — the bot will reply with that group's Chat ID (a negative number, e.g. -1001234567890). Then add <link>@PlantirAlert_bot</link> to the group so it can send messages there. Paste the group ID in the field below and everyone in the group will receive the alerts."
+    "groupBody": "Start a conversation with <userinfobot>@userinfobot</userinfobot> and choose one of your groups when prompted — the bot will reply with that group's Chat ID (a negative number, e.g. -1001234567890). Then add <link>@PlantirAlert_bot</link> to the group so it can send messages there. Paste the group ID in the field below — the group name will appear for you to confirm — and everyone in the group will receive the alerts."
+  },
+  "telegramChatId": {
+    "verifying": "Verifying…",
+    "typePersonal": "Personal account ·",
+    "typeGroup": "Group ·",
+    "errorNotFound": "Chat ID not found. Make sure you started the Plantir bot first.",
+    "errorBotNotInChat": "The Plantir bot is not in this group. Add @PlantirAlert_bot to the group first.",
+    "errorGeneric": "Could not verify the Chat ID. Check the number and try again."
   },
   "profile": {
     "title": "Profile",

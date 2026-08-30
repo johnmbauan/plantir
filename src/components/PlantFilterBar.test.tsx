@@ -106,5 +106,6 @@ describe('PlantFilterBar', () => {
 
     const activeBadge = screen.getByRole('button', { name: 'need watering' });
     expect(activeBadge).toHaveClass('filter-chip--active');
+    expect(activeBadge).not.toHaveClass('filter-chip--static');
   });
 });

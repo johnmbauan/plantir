@@ -18,6 +18,7 @@ describe('PlantStatusChips', () => {
     const healthy = screen.getByRole('button', { name: 'Healthy' });
     expect(healthy).toHaveClass('filter-chip--icon-only');
     expect(healthy).toHaveClass('filter-chip--expand-label');
+    expect(healthy).toHaveClass('filter-chip--static');
 
     rerender(<PlantStatusChips statuses={['HEALTHY']} expanded />);
 
@@ -43,7 +44,9 @@ describe('PlantStatusChips', () => {
     );
 
     expect(screen.getByRole('button', { name: 'Healthy' })).toHaveClass('filter-chip--healthy');
+    expect(screen.getByRole('button', { name: 'Healthy' })).toHaveClass('filter-chip--static');
     expect(screen.getByRole('button', { name: 'Needs water' })).toHaveClass('filter-chip--watering');
+    expect(screen.getByRole('button', { name: 'Needs water' })).toHaveClass('filter-chip--static');
     expect(screen.getByRole('button', { name: 'Offline' })).toHaveClass('filter-chip--offline');
     expect(screen.getByRole('button', { name: 'Needs recharge' })).toHaveClass('filter-chip--recharge');
   });

@@ -42,9 +42,10 @@ describe('FilterChip', () => {
     expect(screen.getByRole('button')).toHaveClass('filter-chip--snooze');
   });
 
-  it('adds the active modifier class when active=true', () => {
+  it('adds the active modifier class when active=true and the chip is clickable', () => {
     renderWithProviders(<FilterChip {...defaultProps} active />);
     expect(screen.getByRole('button')).toHaveClass('filter-chip--active');
+    expect(screen.getByRole('button')).not.toHaveClass('filter-chip--static');
   });
 
   it('does not add the active modifier class when active=false', () => {
@@ -52,11 +53,35 @@ describe('FilterChip', () => {
     expect(screen.getByRole('button')).not.toHaveClass('filter-chip--active');
   });
 
+  it('does not add the active modifier class when onClick is omitted', () => {
+    renderWithProviders(
+      <FilterChip icon={<span>🌿</span>} label="Healthy" variant="healthy" active />,
+    );
+    expect(screen.getByRole('button')).not.toHaveClass('filter-chip--active');
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--static');
+  });
+
   it('adds the static modifier class when onClick is omitted', () => {
     renderWithProviders(
       <FilterChip icon={<span>🌿</span>} label="Healthy" variant="healthy" />,
     );
     expect(screen.getByRole('button')).toHaveClass('filter-chip--static');
+    expect(screen.getByRole('button')).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('keeps clickable chips in the tab order', () => {
+    renderWithProviders(<FilterChip {...defaultProps} />);
+    expect(screen.getByRole('button')).not.toHaveAttribute('tabindex', '-1');
+    expect(screen.getByRole('button')).not.toHaveClass('filter-chip--static');
+  });
+
+  it('keeps expand-label on static icon-only chips', () => {
+    renderWithProviders(
+      <FilterChip icon={<span>🌿</span>} label="Healthy" variant="healthy" iconOnly />,
+    );
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--static');
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--icon-only');
+    expect(screen.getByRole('button')).toHaveClass('filter-chip--expand-label');
   });
 
   it('adds the icon-only modifier class when iconOnly=true', () => {

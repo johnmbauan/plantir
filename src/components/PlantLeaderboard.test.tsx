@@ -130,6 +130,7 @@ describe('PlantLeaderboard', () => {
 
     expect(screen.getByRole('button', { name: 'Healthy' })).toHaveClass('filter-chip--icon-only');
     expect(screen.getByRole('button', { name: 'Healthy' })).toHaveClass('filter-chip--expand-label');
+    expect(screen.getByRole('button', { name: 'Healthy' })).toHaveClass('filter-chip--static');
 
     rerender(
       <PlantLeaderboard
@@ -226,6 +227,7 @@ describe('PlantLeaderboard', () => {
       const snoozeChip = screen.getByRole('button', { name: 'Snoozed · 23h left' });
       expect(snoozeChip).toBeInTheDocument();
       expect(snoozeChip).not.toHaveClass('filter-chip--icon-only');
+      expect(snoozeChip).toHaveClass('filter-chip--static');
     } finally {
       vi.useRealTimers();
     }

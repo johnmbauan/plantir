@@ -11,12 +11,12 @@ import {
   Stack,
   Switch,
   Text,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useTranslation } from "react-i18next";
 import TelegramSetupAccordion from "@/components/TelegramSetupAccordion";
+import { TelegramChatIdField } from "@/components/TelegramChatIdField";
 import { fetchSettings, upsertSettings } from "@/services/notificationService";
 import { markOnboardingStepComplete } from "@/services/onboardingService";
 import { useLanguage } from "@/context/LanguageContext";
@@ -194,12 +194,9 @@ export default function SettingsPage() {
 
                 <TelegramSetupAccordion />
 
-                <TextInput
-                  label={t("settings.telegram.chatIdLabel")}
-                  placeholder={t("settings.telegram.chatIdPlaceholder")}
-                  description={t("settings.telegram.chatIdDescription")}
+                <TelegramChatIdField
                   value={chatId}
-                  onChange={(e) => setChatId(e.currentTarget.value)}
+                  onChange={setChatId}
                   disabled={loading}
                 />
               </Stack>
