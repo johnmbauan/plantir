@@ -1,40 +1,28 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
-  ONBOARDING_DISMISSED_KEY,
-  isOnboardingActive,
-  shouldReturnToDashboardAfterFirstCreate,
+  ONBOARDING_SKIP_COLUMNS,
+  ONBOARDING_STEP_COLUMNS,
+  ONBOARDING_STEPS,
+  SKIPPABLE_ONBOARDING_STEPS,
+  isSkippableOnboardingStep,
 } from './onboarding';
 
-describe('isOnboardingActive', () => {
-  beforeEach(() => {
-    localStorage.clear();
+describe('onboarding constants', () => {
+  it('maps every step to a completion column', () => {
+    expect(ONBOARDING_STEPS).toEqual(['plants', 'devices', 'location', 'notifications']);
+    expect(ONBOARDING_STEP_COLUMNS.plants).toBe('completed_plants_at');
+    expect(ONBOARDING_STEP_COLUMNS.devices).toBe('completed_devices_at');
+    expect(ONBOARDING_STEP_COLUMNS.location).toBe('completed_location_at');
+    expect(ONBOARDING_STEP_COLUMNS.notifications).toBe('completed_notifications_at');
   });
 
-  it('is true when onboarding has not been dismissed', () => {
-    expect(isOnboardingActive()).toBe(true);
-  });
-
-  it('is false when onboarding has been dismissed', () => {
-    localStorage.setItem(ONBOARDING_DISMISSED_KEY, 'true');
-    expect(isOnboardingActive()).toBe(false);
-  });
-});
-
-describe('shouldReturnToDashboardAfterFirstCreate', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  it('is true for the first item while onboarding is active', () => {
-    expect(shouldReturnToDashboardAfterFirstCreate(0)).toBe(true);
-  });
-
-  it('is false for a later item while onboarding is still active', () => {
-    expect(shouldReturnToDashboardAfterFirstCreate(1)).toBe(false);
-  });
-
-  it('is false for the first item after onboarding is dismissed', () => {
-    localStorage.setItem(ONBOARDING_DISMISSED_KEY, 'true');
-    expect(shouldReturnToDashboardAfterFirstCreate(0)).toBe(false);
+  it('allows skipping only location and notifications', () => {
+    expect(SKIPPABLE_ONBOARDING_STEPS).toEqual(['location', 'notifications']);
+    expect(ONBOARDING_SKIP_COLUMNS.location).toBe('skipped_location_at');
+    expect(ONBOARDING_SKIP_COLUMNS.notifications).toBe('skipped_notifications_at');
+    expect(isSkippableOnboardingStep('plants')).toBe(false);
+    expect(isSkippableOnboardingStep('devices')).toBe(false);
+    expect(isSkippableOnboardingStep('location')).toBe(true);
+    expect(isSkippableOnboardingStep('notifications')).toBe(true);
   });
 });

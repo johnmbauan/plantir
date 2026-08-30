@@ -4,6 +4,7 @@ import { getWeatherForecast, reverseGeocode } from "@/services/weatherService";
 import type { StoredCity, LocationSource } from "@/components/WeatherWidget/types";
 import { recordClientEvent, showUnlockToasts } from "@/services/achievementService";
 import { fetchSettings, updateWeatherLocation } from "@/services/notificationService";
+import { markOnboardingStepComplete } from "@/services/onboardingService";
 import { useAuth } from "@/context/AuthContext";
 
 export const WEATHER_CITY_STORAGE_KEY = "weather_city";
@@ -157,6 +158,9 @@ export function WeatherCityProvider({ children }: { children: React.ReactNode })
       void recordClientEvent("weather_city_set")
         .then((newly) => showUnlockToasts(newly))
         .catch((err) => console.error("Weather achievement event failed:", err));
+      void markOnboardingStepComplete("location").catch((err) =>
+        console.error("Failed to record onboarding location step:", err),
+      );
     },
     [loadForecast],
   );

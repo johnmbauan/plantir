@@ -26,7 +26,7 @@ import {
 import PlantFilterSearch from "@/components/PlantFilterSearch";
 import { SortableTh } from "@/components/shared/SortableTh";
 import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
-import { shouldReturnToDashboardAfterFirstCreate } from "@/constants/onboarding";
+import { markOnboardingStepComplete } from "@/services/onboardingService";
 
 const COLUMN_COUNT = 5;
 
@@ -196,12 +196,14 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
         onClose={close}
         editingPlant={editingPlant}
         onSaved={() => {
-          const isFirstPlantCreate =
-            editingPlant == null && shouldReturnToDashboardAfterFirstCreate(plants.length);
+          const wasCreate = editingPlant == null;
           onMutated();
-          if (isFirstPlantCreate) {
-            navigate("/");
-          }
+          if (!wasCreate) return;
+          void markOnboardingStepComplete("plants").then((result) => {
+            if (result.newlyCompleted) {
+              navigate("/");
+            }
+          });
         }}
       />
 

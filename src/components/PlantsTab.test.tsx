@@ -5,9 +5,13 @@ import { renderWithProviders, screen, waitFor, within } from '@/test/render';
 import { buildPlant } from '@/test/builders/plant';
 import type { PlantSpeciesSummary } from '@/types';
 import PlantsTab from '@/components/PlantsTab';
-import { ONBOARDING_DISMISSED_KEY } from '@/constants/onboarding';
 
 const mockNavigate = vi.fn();
+const markOnboardingStepComplete = vi.fn();
+
+vi.mock('@/services/onboardingService', () => ({
+  markOnboardingStepComplete: (...args: unknown[]) => markOnboardingStepComplete(...args),
+}));
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
@@ -57,7 +61,8 @@ function SearchParamsSpy() {
 }
 
 function lastPlantFormOnSaved() {
-  const props = PlantFormModalMock.mock.calls.at(-1)?.[0] as { onSaved: () => void };
+  const calls = PlantFormModalMock.mock.calls;
+  const props = calls[calls.length - 1]?.[0] as { onSaved: () => void };
   return props.onSaved;
 }
 
@@ -65,6 +70,8 @@ describe('PlantsTab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockReset();
+    markOnboardingStepComplete.mockReset();
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: true, dismissed: false });
     localStorage.clear();
     vi.mocked(fetchPlants).mockResolvedValue([buildPlant()]);
   });
@@ -284,23 +291,26 @@ describe('PlantsTab', () => {
     expect(screen.getByTestId('center-tab-toolbar-actions')).toContainElement(addPlant);
   });
 
-  it('returns to the dashboard after creating the first plant during onboarding', async () => {
+  it('returns to the dashboard after completing the plants onboarding step', async () => {
     const user = userEvent.setup();
     const onMutated = vi.fn();
-    vi.mocked(fetchPlants).mockResolvedValue([]);
 
     renderWithProviders(<PlantsTab reloadKey={0} onMutated={onMutated} />);
-    await screen.findByText('No plants yet');
+    await screen.findByText('Monstera');
 
-    await user.click(screen.getByRole('button', { name: 'Add your first plant' }));
+    await user.click(screen.getByRole('button', { name: 'Add Plant' }));
     lastPlantFormOnSaved()();
 
     expect(onMutated).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(markOnboardingStepComplete).toHaveBeenCalledWith('plants');
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
   });
 
-  it('stays on plants center after creating another plant during onboarding', async () => {
+  it('stays on plants center after creating a plant when that step is already complete', async () => {
     const user = userEvent.setup();
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: false, dismissed: false });
 
     renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
     await screen.findByText('Monstera');
@@ -308,21 +318,25 @@ describe('PlantsTab', () => {
     await user.click(screen.getByRole('button', { name: 'Add Plant' }));
     lastPlantFormOnSaved()();
 
+    await waitFor(() => {
+      expect(markOnboardingStepComplete).toHaveBeenCalledWith('plants');
+    });
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('stays on plants center after creating the first plant when onboarding is dismissed', async () => {
+  it('returns to the dashboard after the first plant even if onboarding was dismissed', async () => {
     const user = userEvent.setup();
-    localStorage.setItem(ONBOARDING_DISMISSED_KEY, 'true');
-    vi.mocked(fetchPlants).mockResolvedValue([]);
+    markOnboardingStepComplete.mockResolvedValue({ newlyCompleted: true, dismissed: true });
 
     renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
-    await screen.findByText('No plants yet');
+    await screen.findByText('Monstera');
 
-    await user.click(screen.getByRole('button', { name: 'Add your first plant' }));
+    await user.click(screen.getByRole('button', { name: 'Add Plant' }));
     lastPlantFormOnSaved()();
 
-    expect(mockNavigate).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
   });
 
   it('stays on plants center after editing a plant during onboarding', async () => {
@@ -334,6 +348,7 @@ describe('PlantsTab', () => {
     await user.click(screen.getByRole('button', { name: 'Edit plant' }));
     lastPlantFormOnSaved()();
 
+    expect(markOnboardingStepComplete).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 

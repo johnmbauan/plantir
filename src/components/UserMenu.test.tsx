@@ -7,20 +7,35 @@ import { buildSession } from '@/test/builders/session';
 import { mockSession, resetSupabaseMocks } from '@/test/mocks/supabase';
 import supabase from '@/supabase';
 import UserMenu from '@/components/UserMenu';
+import { EMPTY_ONBOARDING } from '@/services/onboardingService';
 
 const fetchProfile = vi.fn();
+const fetchOnboarding = vi.fn();
+const restoreOnboarding = vi.fn();
 
 vi.mock('@/services/profileService', () => ({
   fetchProfile: (...args: unknown[]) => fetchProfile(...args),
 }));
 
+vi.mock('@/services/onboardingService', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/services/onboardingService')>();
+  return {
+    ...actual,
+    fetchOnboarding: (...args: unknown[]) => fetchOnboarding(...args),
+    restoreOnboarding: (...args: unknown[]) => restoreOnboarding(...args),
+  };
+});
+
 function renderUserMenu(route = '/') {
   return renderWithProviders(
-    <Routes>
-      <Route path="/" element={<UserMenu />} />
-      <Route path="/profile" element={<div>Profile page</div>} />
-      <Route path="/login" element={<div>Login page</div>} />
-    </Routes>,
+    <>
+      <UserMenu />
+      <Routes>
+        <Route path="/" element={<div>Dashboard page</div>} />
+        <Route path="/profile" element={<div>Profile page</div>} />
+        <Route path="/login" element={<div>Login page</div>} />
+      </Routes>
+    </>,
     { route },
   );
 }
@@ -30,6 +45,8 @@ describe('UserMenu', () => {
     resetSupabaseMocks();
     mockSession(buildSession());
     fetchProfile.mockResolvedValue({ nickname: 'Plant Fan', avatar_url: null });
+    fetchOnboarding.mockResolvedValue({ ...EMPTY_ONBOARDING });
+    restoreOnboarding.mockResolvedValue(undefined);
     Object.assign(supabase.auth, {
       signOut: vi.fn().mockResolvedValue({ error: null }),
     });
@@ -41,6 +58,61 @@ describe('UserMenu', () => {
     expect(await screen.findByRole('button', { name: 'Account menu' })).toBeInTheDocument();
     expect(await screen.findByText('PF')).toBeInTheDocument();
     expect(fetchProfile).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not show Get started when setup is still open', async () => {
+    const user = userEvent.setup();
+    renderUserMenu();
+
+    await user.hover(await screen.findByRole('button', { name: 'Account menu' }));
+    expect(await screen.findByRole('menuitem', { name: 'Profile' })).toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: 'Get started' })).not.toBeInTheDocument();
+  });
+
+  it('shows Get started after dismiss when setup is incomplete', async () => {
+    fetchOnboarding.mockResolvedValue({
+      ...EMPTY_ONBOARDING,
+      dismissedAt: '2026-08-30T00:00:00Z',
+    });
+    const user = userEvent.setup();
+    renderUserMenu();
+
+    await user.hover(await screen.findByRole('button', { name: 'Account menu' }));
+    expect(await screen.findByRole('menuitem', { name: 'Get started' })).toBeInTheDocument();
+  });
+
+  it('does not show Get started when setup is complete even if dismissed', async () => {
+    fetchOnboarding.mockResolvedValue({
+      ...EMPTY_ONBOARDING,
+      completedPlantsAt: '2026-08-01T00:00:00Z',
+      completedDevicesAt: '2026-08-01T00:00:00Z',
+      completedLocationAt: '2026-08-01T00:00:00Z',
+      completedNotificationsAt: '2026-08-01T00:00:00Z',
+      dismissedAt: '2026-08-30T00:00:00Z',
+    });
+    const user = userEvent.setup();
+    renderUserMenu();
+
+    await user.hover(await screen.findByRole('button', { name: 'Account menu' }));
+    expect(await screen.findByRole('menuitem', { name: 'Profile' })).toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: 'Get started' })).not.toBeInTheDocument();
+  });
+
+  it('restores onboarding and goes to the dashboard', async () => {
+    fetchOnboarding.mockResolvedValue({
+      ...EMPTY_ONBOARDING,
+      dismissedAt: '2026-08-30T00:00:00Z',
+    });
+    const user = userEvent.setup();
+    renderUserMenu('/profile');
+
+    await user.hover(await screen.findByRole('button', { name: 'Account menu' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Get started' }));
+
+    await waitFor(() => {
+      expect(restoreOnboarding).toHaveBeenCalledTimes(1);
+    });
+    expect(await screen.findByText('Dashboard page')).toBeInTheDocument();
   });
 
   it('navigates to profile from the menu', async () => {

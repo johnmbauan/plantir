@@ -16,6 +16,7 @@ export default function DeviceFormModal({
   editingDevice,
   plantOptions,
   onSaved,
+  onFinished,
   onOpenCalibration,
 }: DeviceFormModalProps) {
   const { t } = useTranslation();
@@ -45,6 +46,7 @@ export default function DeviceFormModal({
     plantOptions,
     onClose,
     onSaved,
+    onFinished,
     onOpenCalibration,
   });
 

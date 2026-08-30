@@ -13,6 +13,7 @@ export interface DeviceFormModalProps {
   editingDevice: Device | null;
   plantOptions: PlantOption[];
   onSaved: () => void;
+  onFinished?: () => void;
   onOpenCalibration?: (device: Device) => void;
 }
 

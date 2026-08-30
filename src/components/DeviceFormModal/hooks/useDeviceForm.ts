@@ -14,6 +14,7 @@ interface UseDeviceFormOptions {
   plantOptions: PlantOption[];
   onClose: () => void;
   onSaved: () => void;
+  onFinished?: () => void;
   onOpenCalibration?: (device: Device) => void;
 }
 
@@ -27,6 +28,7 @@ export function useDeviceForm({
   plantOptions,
   onClose,
   onSaved,
+  onFinished,
   onOpenCalibration,
 }: UseDeviceFormOptions) {
   const { t } = useTranslation();
@@ -152,6 +154,7 @@ export function useDeviceForm({
       } else {
         const { id } = await createDevice(form);
         onSaved();
+        setInitialSnapshot(serializeFormState(form, intervalPreset));
         setCreatedDevice({
           id,
           serialNumber: form.serialNumber,
@@ -176,11 +179,13 @@ export function useDeviceForm({
   };
 
   const handleClose = () => {
-    if (isDirty && !window.confirm(t("common.discardUnsavedChanges"))) {
+    const alreadySaved = createdDevice != null;
+    if (!alreadySaved && isDirty && !window.confirm(t("common.discardUnsavedChanges"))) {
       return;
     }
     setCreatedDevice(null);
     onClose();
+    if (alreadySaved) onFinished?.();
   };
 
   return {
