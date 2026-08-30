@@ -173,7 +173,7 @@ describe('formatNotificationCopy', () => {
         }),
       ).toEqual({
         title: 'Congratulations',
-        body: "You're ready to start taking care of your plants. Insert the sensor into the soil in the pot so it can start measuring moisture.",
+        body: "You're ready to start taking care of your plants. Remember to assign the sensor to your plant and insert it into the soil.",
       });
     });
   });
