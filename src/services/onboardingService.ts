@@ -1,5 +1,8 @@
+import { notifications } from "@mantine/notifications";
 import supabase from "@/supabase";
+import i18n from "@/i18n";
 import { requireUser } from "@/utils/requireUser";
+import { NOTIFICATIONS_CHANGED_EVENT } from "@/services/notificationService";
 import {
   ONBOARDING_CHANGED_EVENT,
   ONBOARDING_SKIP_COLUMNS,
@@ -114,6 +117,69 @@ export function isOnboardingStepResolved(
   return isOnboardingStepComplete(progress, step) || isOnboardingStepSkipped(progress, step);
 }
 
+function progressWithCompletedStep(
+  progress: OnboardingProgress,
+  step: OnboardingStep,
+  at: string,
+): OnboardingProgress {
+  switch (step) {
+    case "plants":
+      return { ...progress, completedPlantsAt: at };
+    case "devices":
+      return { ...progress, completedDevicesAt: at };
+    case "location":
+      return { ...progress, completedLocationAt: at };
+    case "notifications":
+      return { ...progress, completedNotificationsAt: at };
+  }
+}
+
+function progressWithSkippedStep(
+  progress: OnboardingProgress,
+  step: SkippableOnboardingStep,
+  at: string,
+): OnboardingProgress {
+  switch (step) {
+    case "location":
+      return { ...progress, skippedLocationAt: at };
+    case "notifications":
+      return { ...progress, skippedNotificationsAt: at };
+  }
+}
+
+function celebrateIfOnboardingFinished(before: OnboardingProgress, after: OnboardingProgress) {
+  if (!isOnboardingIncomplete(before) || isOnboardingIncomplete(after)) return;
+
+  const title = i18n.t("onboarding.complete.title");
+  const message = i18n.t("onboarding.complete.message");
+
+  notifications.show({
+    color: "green",
+    title,
+    message,
+    autoClose: 10000,
+  });
+
+  void persistOnboardingCompleteNotification(title, message).catch((err) => {
+    console.error("Failed to persist onboarding complete notification:", err);
+  });
+}
+
+async function persistOnboardingCompleteNotification(title: string, body: string): Promise<void> {
+  const user = await requireUser();
+
+  const { error } = await supabase.from("notifications").insert({
+    user_id: user.id,
+    type: "onboardingCompleted",
+    title,
+    body,
+    payload: { kind: "complete" },
+  });
+
+  if (error && error.code !== "23505") throw error;
+  window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED_EVENT));
+}
+
 export async function fetchOnboarding(): Promise<OnboardingProgress> {
   const user = await requireUser();
 
@@ -155,6 +221,7 @@ export async function markOnboardingStepComplete(
 
   if (error) throw error;
   emitOnboardingChanged();
+  celebrateIfOnboardingFinished(progress, progressWithCompletedStep(progress, step, now));
   return { newlyCompleted: true, dismissed };
 }
 
@@ -174,6 +241,7 @@ export async function skipOnboardingStep(step: SkippableOnboardingStep): Promise
 
   if (error) throw error;
   emitOnboardingChanged();
+  celebrateIfOnboardingFinished(progress, progressWithSkippedStep(progress, step, now));
 }
 
 export async function dismissOnboarding(): Promise<void> {

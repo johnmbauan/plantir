@@ -141,6 +141,10 @@
     "progress": "{{completed}} of {{total}} steps complete — follow the guide to start monitoring your plants.",
     "dismissAria": "Dismiss onboarding",
     "skip": "Skip for now",
+    "complete": {
+      "title": "Congratulations",
+      "message": "You're ready to start taking care of your plants. Insert the sensor into the soil in the pot so it can start measuring moisture."
+    },
     "steps": {
       "plants": {
         "label": "Add your first plant",

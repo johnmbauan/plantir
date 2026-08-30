@@ -16,7 +16,9 @@ export interface NotificationSettings {
   weather_lng?: number | null;
 }
 
-export type NotificationType = "watering" | "offline" | "achievement";
+export type NotificationType = "watering" | "offline" | "achievement" | "onboardingCompleted";
+
+export const NOTIFICATIONS_CHANGED_EVENT = "plantir-notifications-changed";
 
 export interface WateringPayload {
   plantId: number;
@@ -42,7 +44,15 @@ export interface AchievementPayload {
   garden_element: string;
 }
 
-export type NotificationPayload = WateringPayload | OfflinePayload | AchievementPayload;
+export interface OnboardingPayload {
+  kind: "complete";
+}
+
+export type NotificationPayload =
+  | WateringPayload
+  | OfflinePayload
+  | AchievementPayload
+  | OnboardingPayload;
 
 export interface AppNotification {
   id: string;
@@ -63,6 +73,10 @@ export function isOfflinePayload(payload: NotificationPayload): payload is Offli
 
 export function isAchievementPayload(payload: NotificationPayload): payload is AchievementPayload {
   return "achievementKey" in payload;
+}
+
+export function isOnboardingPayload(payload: NotificationPayload): payload is OnboardingPayload {
+  return "kind" in payload && payload.kind === "complete";
 }
 
 function shouldResolveNotification(
@@ -300,6 +314,7 @@ export async function markAllNotificationsRead(): Promise<void> {
 
 export function getNotificationHref(notification: AppNotification): string {
   if (notification.type === "achievement") return GARDEN_PROFILE_PATH;
+  if (notification.type === "onboardingCompleted") return "/";
   if (notification.type === "offline") return "/plants-center?tab=devices";
   if (isWateringPayload(notification.payload)) {
     return `/?highlightPlant=${notification.payload.plantId}`;

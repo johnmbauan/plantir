@@ -234,6 +234,16 @@ describe('notificationService', () => {
       };
       expect(getNotificationHref(achievement)).toBe('/profile#garden');
     });
+
+    it('links onboarding congratulations to the dashboard', () => {
+      const onboarding: AppNotification = {
+        ...wateringNotification,
+        id: 'n-onboarding',
+        type: 'onboardingCompleted',
+        payload: { kind: 'complete' },
+      };
+      expect(getNotificationHref(onboarding)).toBe('/');
+    });
   });
 
   describe('updateWeatherLocation', () => {

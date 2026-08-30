@@ -1,5 +1,12 @@
 import '@/test/mocks/supabase';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { waitFor } from '@testing-library/react';
+
+const mockNotificationsShow = vi.fn();
+
+vi.mock('@mantine/notifications', () => ({
+  notifications: { show: (...args: unknown[]) => mockNotificationsShow(...args) },
+}));
 import {
   resetSupabaseMocks,
   mockAuthenticatedUser,
@@ -102,6 +109,7 @@ describe('onboardingService helpers', () => {
 describe('onboardingService', () => {
   beforeEach(() => {
     resetSupabaseMocks();
+    mockNotificationsShow.mockReset();
   });
 
   describe('fetchOnboarding', () => {
@@ -207,8 +215,38 @@ describe('onboardingService', () => {
         dismissed: false,
       });
       expect(listener).toHaveBeenCalledTimes(1);
+      expect(mockNotificationsShow).not.toHaveBeenCalled();
 
       window.removeEventListener(ONBOARDING_CHANGED_EVENT, listener);
+    });
+
+    it('congratulates when the last remaining step is completed', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({
+        user_onboarding: {
+          data: {
+            ...emptyRow,
+            completed_plants_at: '2026-08-01T00:00:00Z',
+            completed_devices_at: '2026-08-01T00:00:00Z',
+            completed_location_at: '2026-08-01T00:00:00Z',
+          },
+          error: null,
+        },
+      });
+
+      await markOnboardingStepComplete('notifications');
+
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: 'green',
+          title: 'Congratulations',
+          message:
+            "You're ready to start taking care of your plants. Insert the sensor into the soil in the pot so it can start measuring moisture.",
+        }),
+      );
+      await waitFor(() => {
+        expect(mockFrom).toHaveBeenCalledWith('notifications');
+      });
     });
 
     it('throws when update fails', async () => {
@@ -235,8 +273,36 @@ describe('onboardingService', () => {
 
       await expect(skipOnboardingStep('location')).resolves.toBeUndefined();
       expect(listener).toHaveBeenCalledTimes(1);
+      expect(mockNotificationsShow).not.toHaveBeenCalled();
 
       window.removeEventListener(ONBOARDING_CHANGED_EVENT, listener);
+    });
+
+    it('congratulates when skipping the last remaining optional step', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({
+        user_onboarding: {
+          data: {
+            ...emptyRow,
+            completed_plants_at: '2026-08-01T00:00:00Z',
+            completed_devices_at: '2026-08-01T00:00:00Z',
+            skipped_location_at: '2026-08-01T00:00:00Z',
+          },
+          error: null,
+        },
+      });
+
+      await skipOnboardingStep('notifications');
+
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: 'green',
+          title: 'Congratulations',
+        }),
+      );
+      await waitFor(() => {
+        expect(mockFrom).toHaveBeenCalledWith('notifications');
+      });
     });
 
     it('does not write when the step is already complete', async () => {

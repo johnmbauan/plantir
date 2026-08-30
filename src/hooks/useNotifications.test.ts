@@ -103,6 +103,18 @@ describe('useNotifications', () => {
     expect(mockFetchUnreadNotifications).toHaveBeenCalledTimes(1);
   });
 
+  it('reloads unread notifications when the inbox changes locally', async () => {
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([]);
+
+    renderHook(() => useNotifications());
+    await waitFor(() => expect(mockFetchUnreadNotifications).toHaveBeenCalledTimes(1));
+
+    window.dispatchEvent(new Event('plantir-notifications-changed'));
+
+    await waitFor(() => expect(mockFetchUnreadNotifications).toHaveBeenCalledTimes(2));
+  });
+
   it('does not re-fetch unread notifications when only the access token changes', async () => {
     const session = buildSession();
     mockUseAuth.mockReturnValue({ session, loading: false });

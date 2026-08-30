@@ -160,6 +160,24 @@ describe('formatNotificationCopy', () => {
     });
   });
 
+  describe('onboardingCompleted', () => {
+    it('uses translated congratulations copy', () => {
+      expect(
+        formatNotificationCopy({
+          id: 'n-onboard',
+          type: 'onboardingCompleted',
+          title: 'stored title',
+          body: 'stored body',
+          payload: { kind: 'complete' },
+          created_at: '2024-01-01T00:00:00Z',
+        }),
+      ).toEqual({
+        title: 'Congratulations',
+        body: "You're ready to start taking care of your plants. Insert the sensor into the soil in the pot so it can start measuring moisture.",
+      });
+    });
+  });
+
   it('returns the stored title and body when the payload does not match the type', () => {
     expect(
       formatNotificationCopy({

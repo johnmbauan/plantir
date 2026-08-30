@@ -33,6 +33,7 @@ import { formatNotificationCopy } from "@/utils/notificationDisplay";
 function notificationAvatar(notification: AppNotification): { color: string; label: string } {
   if (notification.type === "watering") return { color: "yellow", label: "💧" };
   if (notification.type === "offline") return { color: "red", label: "📡" };
+  if (notification.type === "onboardingCompleted") return { color: "green", label: "🎉" };
   return { color: "green", label: "🌿" };
 }
 
