@@ -143,7 +143,7 @@
     "skip": "Salta per ora",
     "complete": {
       "title": "Congratulazioni",
-      "message": "Sei pronto per prenderti cura delle tue piante. Inserisci il sensore nel terriccio del vaso, così può iniziare a misurare l'umidità."
+      "message": "Sei pronto per prenderti cura delle tue piante. Ricordati di assegnare il sensore alla pianta e di piantarlo nel terreno."
     },
     "steps": {
       "plants": {

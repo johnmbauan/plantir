@@ -241,7 +241,7 @@ describe('onboardingService', () => {
           color: 'green',
           title: 'Congratulations',
           message:
-            "You're ready to start taking care of your plants. Insert the sensor into the soil in the pot so it can start measuring moisture.",
+            "You're ready to start taking care of your plants. Remember to assign the sensor to your plant and insert it into the soil.",
         }),
       );
       await waitFor(() => {
