@@ -477,9 +477,9 @@
       "pressRestart": "Press the <bold>RESTART</bold> button on the side of the device. After you press it, the chip inside the Plantir device will light a green LED three times in a row. The device will then open a Wi-Fi hotspot named <bold>Plantir-Device-Setup</bold>.",
       "connectHotspot": "On your phone or computer, connect to <bold>Plantir-Device-Setup</bold> hotspot. A portal will open automatically — it should look like this:",
       "portalHomeAlt": "WiFi portal home screen",
-      "configureWifi": "Tap <bold>Configure WiFi</bold>, then select your home network, enter the password, paste the setup code into the <bold>Plantir Setup</bold> field, and tap <bold>Save</bold>:",
+      "configureWifi": "Tap <bold>Configure WiFi</bold>, then select your home network, enter the password.",
       "portalConfigureAlt": "WiFi portal configure screen",
-      "waitPortalClose": "Wait for the <bold>Plantir-Device-Setup</bold> portal to close automatically.",
+      "waitPortalClose": "Paste the setup code into the <bold>Plantir Setup</bold> field and tap <bold>Save</bold>. Wait for the <bold>Plantir-Device-Setup</bold> portal to close automatically.",
       "iveConnected": "I've connected the device"
     },
     "waiting": {

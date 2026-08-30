@@ -134,7 +134,7 @@ describe('adminService', () => {
   });
 
   describe('fetchFirmwareReleases', () => {
-    it('returns releases ordered by board then version', async () => {
+    it('returns releases ordered by creation date, newest first', async () => {
       const chain = createQueryChain({ data: [sampleRelease], error: null });
       mockFrom.mockImplementation((name: string) =>
         name === 'firmware_releases' ? chain : createQueryChain(),
@@ -142,8 +142,7 @@ describe('adminService', () => {
 
       await expect(fetchFirmwareReleases()).resolves.toEqual([sampleRelease]);
       expect(chain.select).toHaveBeenCalledWith('*');
-      expect(chain.order).toHaveBeenNthCalledWith(1, 'board', { ascending: true });
-      expect(chain.order).toHaveBeenNthCalledWith(2, 'version', { ascending: false });
+      expect(chain.order).toHaveBeenCalledWith('createdAt', { ascending: false });
     });
 
     it('throws when the query fails', async () => {

@@ -21,7 +21,7 @@ describe('ConnectStep', () => {
     expect(screen.getByAltText('WiFi portal configure screen')).toBeInTheDocument();
     expect(
       screen.getByText((_, element) => {
-        const expected = 'Wait for the Plantir-Device-Setup portal to close automatically.';
+        const expected = 'Paste the setup code into the Plantir Setup field and tap Save. Wait for the Plantir-Device-Setup portal to close automatically.';
         if (element?.textContent !== expected) return false;
         return !Array.from(element.children).some((child) => child.textContent === expected);
       }),
