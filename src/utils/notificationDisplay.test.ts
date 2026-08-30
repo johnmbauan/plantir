@@ -173,7 +173,7 @@ describe('formatNotificationCopy', () => {
         }),
       ).toEqual({
         title: 'Congratulations',
-        body: "You're ready to start taking care of your plants. Remember to assign the sensor to your plant and insert it into the soil.",
+        body: "You're ready to start taking care of your plants. Remember to assign the sensor to your plant (if not already done) and insert it into the soil.",
       });
     });
   });
