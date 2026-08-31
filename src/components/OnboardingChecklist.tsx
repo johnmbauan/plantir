@@ -11,6 +11,7 @@ import {
   IconX,
   IconChevronRight,
 } from "@tabler/icons-react";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import { useAuth } from "@/context/AuthContext";
 import {
   ONBOARDING_CHANGED_EVENT,
@@ -104,7 +105,7 @@ export default function OnboardingChecklist() {
       icon: <IconMapPin size={15} />,
       label: t("onboarding.steps.location.label"),
       description: t("onboarding.steps.location.description"),
-      href: "/?setLocation=1",
+      href: `${DASHBOARD_PATH}?setLocation=1`,
     },
     {
       key: "notifications",

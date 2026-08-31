@@ -24,7 +24,7 @@ const baseOptions: AdminFilterOptions = {
 describe('buildSerialOptions', () => {
   it('includes an all-devices option and serials from filter options', () => {
     expect(buildSerialOptions(baseOptions, t)).toEqual([
-      { value: '', label: 'All devices' },
+      { value: '', label: 'All sensors' },
       { value: 'SN-B', label: 'SN-B' },
       { value: 'SN-A', label: 'SN-A' },
     ]);

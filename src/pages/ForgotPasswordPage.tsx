@@ -5,6 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import { needsPasswordSetup } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
 import { useNativeValidation } from "@/hooks/useNativeValidation";
@@ -32,7 +33,7 @@ export default function ForgotPasswordPage() {
       return;
     }
 
-    navigate("/", { replace: true });
+    navigate(DASHBOARD_PATH, { replace: true });
   }, [loading, session, authUser, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {

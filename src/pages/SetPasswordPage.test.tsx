@@ -77,7 +77,7 @@ describe('SetPasswordPage', () => {
     renderWithProviders(<SetPasswordPage />);
 
     await waitFor(() => {
-      expect(navigate).toHaveBeenCalledWith('/', { replace: true });
+      expect(navigate).toHaveBeenCalledWith('/dashboard', { replace: true });
     });
   });
 
@@ -105,7 +105,7 @@ describe('SetPasswordPage', () => {
       password: 'Secret123',
       data: { needs_password_setup: false },
     });
-    expect(navigate).toHaveBeenCalledWith('/', { replace: true });
+    expect(navigate).toHaveBeenCalledWith('/dashboard', { replace: true });
   });
 
   it('shows error when passwords do not match', async () => {

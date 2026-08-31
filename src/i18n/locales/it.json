@@ -33,6 +33,38 @@
     "admin": "Admin",
     "toggleNavigation": "Apri o chiudi navigazione"
   },
+  "landing": {
+    "hero": {
+      "title": "Saprai quando hanno bisogno di te.",
+      "subtitle": "Umidità in tempo reale, avvisi che rispettano la pioggia, e un giardino che cresce quando ci sei."
+    },
+    "features": {
+      "moisture": {
+        "title": "Guarda come sta la terra",
+        "body": "Una dashboard in tempo reale dell'umidità, così annaffi quando serve — non a intuito."
+      },
+      "rain": {
+        "title": "Avvisi che aspettano la pioggia",
+        "body": "Le piante all'aperto fanno una pausa quando arriva la pioggia. Meno sprechi, meno sguardi preoccupati al cielo."
+      },
+      "garden": {
+        "title": "Un giardino che cresce con te"
+      }
+    },
+    "glimpse": {
+      "aria": "Anteprima delle piante sulla dashboard",
+      "plants": {
+        "ficus": "Ficus",
+        "basil": "Basilico"
+      }
+    },
+    "language": {
+      "label": "Lingua",
+      "it": "Italiano",
+      "en": "English"
+    },
+    "stepsAria": "Come Plantir si prende cura con te"
+  },
   "userMenu": {
     "accountMenuAria": "Menu account",
     "yourProfileAlt": "Il tuo profilo",

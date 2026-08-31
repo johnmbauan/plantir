@@ -96,7 +96,7 @@ describe('DevicesTab', () => {
 
     expect(await screen.findByText('SN-001')).toBeInTheDocument();
     expect(screen.getByText('Monstera')).toBeInTheDocument();
-    expect(screen.queryByText('Devices')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sensors')).not.toBeInTheDocument();
   });
 
   it('shows a calibration-recommended chip for uncalibrated devices', async () => {
@@ -144,13 +144,13 @@ describe('DevicesTab', () => {
     expect(calibrate).not.toHaveClass('filter-chip--expand-label');
     expect(calibrate).not.toHaveClass('filter-chip--static');
 
-    const edit = screen.getByRole('button', { name: 'Edit device' });
+    const edit = screen.getByRole('button', { name: 'Edit sensor' });
     expect(edit).toHaveClass('filter-chip--edit');
     expect(edit).toHaveClass('filter-chip--icon-only');
     expect(edit).not.toHaveClass('filter-chip--expand-label');
     expect(edit).not.toHaveClass('filter-chip--static');
 
-    const remove = screen.getByRole('button', { name: 'Delete device' });
+    const remove = screen.getByRole('button', { name: 'Delete sensor' });
     expect(remove).toHaveClass('filter-chip--danger');
     expect(remove).toHaveClass('filter-chip--icon-only');
     expect(remove).not.toHaveClass('filter-chip--expand-label');
@@ -161,8 +161,8 @@ describe('DevicesTab', () => {
     vi.mocked(fetchDevices).mockResolvedValue([]);
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
 
-    expect(await screen.findByText('No devices yet')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Register your first device' })).toBeInTheDocument();
+    expect(await screen.findByText('No sensors yet')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Register your first sensor' })).toBeInTheDocument();
   });
 
   it('filters devices by search query', async () => {
@@ -328,7 +328,7 @@ describe('DevicesTab', () => {
 
     await user.type(screen.getByPlaceholderText('Search by serial or plant…'), 'nomatch');
 
-    expect(screen.getByText('No devices match your search.')).toBeInTheDocument();
+    expect(screen.getByText('No sensors match your search.')).toBeInTheDocument();
   });
 
   it('shows error notification when loading fails', async () => {
@@ -351,7 +351,7 @@ describe('DevicesTab', () => {
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
     await screen.findByText('SN-001');
 
-    await user.click(screen.getByRole('button', { name: 'Edit device' }));
+    await user.click(screen.getByRole('button', { name: 'Edit sensor' }));
 
     expect(DeviceFormModalMock).toHaveBeenCalledWith(
       expect.objectContaining({ opened: true, editingDevice: device }),
@@ -365,7 +365,7 @@ describe('DevicesTab', () => {
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
     await screen.findByText('SN-001');
 
-    await user.click(screen.getByRole('button', { name: 'Delete device' }));
+    await user.click(screen.getByRole('button', { name: 'Delete sensor' }));
 
     expect(DeviceDeleteModalMock).toHaveBeenCalledWith(
       expect.objectContaining({ opened: true, device }),
@@ -406,10 +406,10 @@ describe('DevicesTab', () => {
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
     await screen.findByText('SN-001');
 
-    expect(screen.getByRole('button', { name: 'Search devices' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search sensors' })).toBeInTheDocument();
 
     const addManually = screen.getByRole('button', { name: 'Add manually' });
-    const register = screen.getByRole('button', { name: 'Register new device' });
+    const register = screen.getByRole('button', { name: 'Register new sensor' });
     expect(addManually).toBeInTheDocument();
     expect(register).toBeInTheDocument();
 
@@ -451,7 +451,7 @@ describe('DevicesTab', () => {
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
     await screen.findByText('SN-001');
 
-    await user.click(screen.getByRole('button', { name: 'Edit device' }));
+    await user.click(screen.getByRole('button', { name: 'Edit sensor' }));
     lastFormCallbacks().onSaved();
 
     expect(markOnboardingStepComplete).not.toHaveBeenCalled();
@@ -470,7 +470,7 @@ describe('DevicesTab', () => {
 
     await waitFor(() => {
       expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -505,7 +505,7 @@ describe('DevicesTab', () => {
     onFinished();
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -530,7 +530,7 @@ describe('DevicesTab', () => {
     lastCalibrationCallbacks().onClose();
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -541,7 +541,7 @@ describe('DevicesTab', () => {
     renderWithProviders(<DevicesTab reloadKey={0} onMutated={vi.fn()} />);
     await screen.findByText('SN-001');
 
-    await user.click(screen.getByRole('button', { name: 'Register new device' }));
+    await user.click(screen.getByRole('button', { name: 'Register new sensor' }));
 
     expect(DeviceRegistrationWizardMock).toHaveBeenCalledWith(
       expect.objectContaining({ opened: true }),
@@ -570,7 +570,7 @@ describe('DevicesTab', () => {
       }),
     );
 
-    await user.click(screen.getByRole('button', { name: 'Edit device' }));
+    await user.click(screen.getByRole('button', { name: 'Edit sensor' }));
 
     expect(DeviceFormModalMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -593,7 +593,7 @@ describe('DevicesTab', () => {
 
     await waitFor(() => {
       expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -624,7 +624,7 @@ describe('DevicesTab', () => {
     onFinished();
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 

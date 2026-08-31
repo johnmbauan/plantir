@@ -6,7 +6,7 @@ describe('AddManualIntro', () => {
   it('renders guidance about manual device add', () => {
     renderWithProviders(<AddManualIntro />);
 
-    expect(screen.getByText(/Register new device/i)).toBeInTheDocument();
+    expect(screen.getByText(/Register new sensor/i)).toBeInTheDocument();
     expect(screen.getByText(/Manual add is for advanced cases/i)).toBeInTheDocument();
   });
 });

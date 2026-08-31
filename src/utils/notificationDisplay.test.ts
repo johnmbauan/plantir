@@ -96,7 +96,7 @@ describe('formatNotificationCopy', () => {
           }),
         ),
       ).toEqual({
-        title: '2 devices offline',
+        title: '2 sensors offline',
         body:
           "The following plants haven't sent data in too long:\n\n"
           + `• Monstera (last reading ${time})\n`

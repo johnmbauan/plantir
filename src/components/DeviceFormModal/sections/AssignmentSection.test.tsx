@@ -80,7 +80,7 @@ describe('AssignmentSection', () => {
     );
 
     expect(
-      screen.getByText('Plants that already have a device assigned are disabled.'),
+      screen.getByText('Plants that already have a sensor assigned are disabled.'),
     ).toBeInTheDocument();
   });
 

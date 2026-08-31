@@ -4,7 +4,7 @@ import { renderWithProviders, screen } from '@/test/render';
 import { LogsTabHeader } from '@/admin/components/LogsTabHeader';
 
 const serialOptions = [
-  { value: '', label: 'All devices' },
+  { value: '', label: 'All sensors' },
   { value: 'SN-001', label: 'SN-001' },
 ];
 
@@ -40,8 +40,8 @@ describe('LogsTabHeader', () => {
       />,
     );
 
-    expect(screen.getByText('Device Logs')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('All devices')).toBeInTheDocument();
+    expect(screen.getByText('Sensor Logs')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('All sensors')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('All owners')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('All levels')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Refresh logs' })).toBeInTheDocument();

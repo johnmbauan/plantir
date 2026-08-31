@@ -47,7 +47,7 @@ describe('AdminPage', () => {
     expect(screen.getByText('Admin devices tab')).toBeInTheDocument();
     expect(screen.queryByText('Admin logs tab')).not.toBeInTheDocument();
     expect(screen.queryByText('Admin firmware tab')).not.toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Devices', selected: true })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Sensors', selected: true })).toBeInTheDocument();
   });
 
   it('switches to logs tab and updates the URL', async () => {
@@ -68,7 +68,7 @@ describe('AdminPage', () => {
     expect(screen.getByText('Admin logs tab')).toBeInTheDocument();
     expect(screen.queryByText('Admin devices tab')).not.toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Logs', selected: true })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Devices', selected: false })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Sensors', selected: false })).toBeInTheDocument();
   });
 
   it('switches to firmware tab and updates the URL', async () => {
@@ -89,6 +89,6 @@ describe('AdminPage', () => {
     expect(screen.getByText('Admin firmware tab')).toBeInTheDocument();
     expect(screen.queryByText('Admin devices tab')).not.toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Firmware', selected: true })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Devices', selected: false })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Sensors', selected: false })).toBeInTheDocument();
   });
 });

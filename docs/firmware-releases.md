@@ -67,14 +67,14 @@ Repeat for the other board if you support both C5 and C6 (each board needs its o
 
 1. On the staged release row, click **Assign** and select one or more devices for that board.
 2. Wait for those devices to wake (they may sleep for many hours).
-3. In **Admin → Devices**, confirm each pilot shows the new integer under **Firmware**.
+3. In **Admin → Sensors**, confirm each pilot shows the new integer under **Firmware**.
 4. Verify behavior on the pilots before continuing.
 
 ### 5. Publish to the fleet
 
 1. On the same release row, click **Publish**.
 2. That board’s fleet channel now points at this release.
-3. Click **Clear overrides** so pilot devices follow the fleet again (or clear overrides per device on the Devices tab).
+3. Click **Clear overrides** so pilot devices follow the fleet again (or clear overrides per device on the Sensors tab).
 
 All other devices of that board type will download the new firmware on their next successful wake, once registered.
 

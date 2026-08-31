@@ -87,7 +87,7 @@ describe('AssignFirmwareModal', () => {
     mockFetchAdminDevicesForBoard.mockResolvedValue([]);
     renderModal();
 
-    expect(await screen.findByText('No devices found for this board.')).toBeInTheDocument();
+    expect(await screen.findByText('No sensors found for this board.')).toBeInTheDocument();
   });
 
   it('notifies when device loading fails', async () => {
@@ -97,7 +97,7 @@ describe('AssignFirmwareModal', () => {
     await waitFor(() => {
       expect(mockNotificationsShow).toHaveBeenCalledWith({
         color: 'red',
-        title: 'Failed to load devices',
+        title: 'Failed to load sensors',
         message: 'timeout',
       });
     });
@@ -116,7 +116,7 @@ describe('AssignFirmwareModal', () => {
     await screen.findByText(/SN-001/);
 
     await user.click(screen.getByRole('checkbox', { name: /SN-001/ }));
-    await user.click(screen.getByRole('button', { name: 'Assign to 1 device' }));
+    await user.click(screen.getByRole('button', { name: 'Assign to 1 sensor' }));
 
     await waitFor(() => {
       expect(mockAssignFirmwareOverride).toHaveBeenCalledWith([1], 10);
@@ -124,7 +124,7 @@ describe('AssignFirmwareModal', () => {
     expect(mockNotificationsShow).toHaveBeenCalledWith({
       color: 'green',
       title: 'Override assigned',
-      message: 'Pinned OTA v2 (1.2.0) on 1 device(s).',
+      message: 'Pinned OTA v2 (1.2.0) on 1 sensor(s).',
     });
     expect(onAssigned).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -137,7 +137,7 @@ describe('AssignFirmwareModal', () => {
 
     const checkbox = screen.getByRole('checkbox', { name: /SN-001/ });
     await user.click(checkbox);
-    expect(screen.getByRole('button', { name: 'Assign to 1 device' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Assign to 1 sensor' })).toBeEnabled();
 
     await user.click(checkbox);
     expect(screen.getByRole('button', { name: /Assign to/ })).toBeDisabled();
@@ -153,7 +153,7 @@ describe('AssignFirmwareModal', () => {
 
     renderModal();
 
-    expect(screen.getByText('Loading devices…')).toBeInTheDocument();
+    expect(screen.getByText('Loading sensors…')).toBeInTheDocument();
     resolveDevices(devices);
     expect(await screen.findByText(/SN-001/)).toBeInTheDocument();
   });
@@ -166,7 +166,7 @@ describe('AssignFirmwareModal', () => {
     await screen.findByText(/SN-001/);
 
     await user.click(screen.getByRole('checkbox', { name: /SN-001/ }));
-    await user.click(screen.getByRole('button', { name: 'Assign to 1 device' }));
+    await user.click(screen.getByRole('button', { name: 'Assign to 1 sensor' }));
 
     await waitFor(() => {
       expect(mockNotificationsShow).toHaveBeenCalledWith({

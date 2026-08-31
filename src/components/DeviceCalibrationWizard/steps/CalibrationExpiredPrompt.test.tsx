@@ -12,7 +12,7 @@ describe('CalibrationExpiredPrompt', () => {
 
     expect(
       screen.getByText(
-        "The device's calibration window has ended after 2 minutes. Restart calibration to try again.",
+        "The sensor's calibration window has ended after 2 minutes. Restart calibration to try again.",
       ),
     ).toBeInTheDocument();
 

@@ -5,14 +5,14 @@ import { renderPlantAssignmentOption } from './renderPlantAssignmentOption';
 
 describe('renderPlantAssignmentOption', () => {
   it('returns plain label for available plants', () => {
-    expect(renderPlantAssignmentOption('Ficus', false)).toBe('Ficus');
+    expect(renderPlantAssignmentOption('Ficus', false, 'sensor assigned')).toBe('Ficus');
   });
 
-  it('renders a device assigned badge for assigned plants', () => {
-    renderWithProviders(<>{renderPlantAssignmentOption('Monstera', true)}</>);
+  it('renders a sensor assigned badge for assigned plants', () => {
+    renderWithProviders(<>{renderPlantAssignmentOption('Monstera', true, 'sensor assigned')}</>);
 
     expect(screen.getByText('Monstera')).toBeInTheDocument();
-    expect(screen.getByText('device assigned')).toBeInTheDocument();
+    expect(screen.getByText('sensor assigned')).toBeInTheDocument();
   });
 });
 
@@ -29,7 +29,7 @@ describe('PlantAssignmentSelect', () => {
     );
 
     expect(
-      screen.getByText('Plants that already have a device assigned are disabled.'),
+      screen.getByText('Plants that already have a sensor assigned are disabled.'),
     ).toBeInTheDocument();
   });
 });

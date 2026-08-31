@@ -9,13 +9,13 @@ describe('ConnectStep', () => {
   it('renders hotspot connection instructions', () => {
     renderWithProviders(<ConnectStep />);
 
-    expect(screen.getByText('Connect to device hotspot')).toBeInTheDocument();
+    expect(screen.getByText('Connect to sensor hotspot')).toBeInTheDocument();
     expect(screen.getByText(/Make sure the setup code from the previous step is copied/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Slightly twist the cap of the device counter-clockwise, then pull it up/i),
+      screen.getByText(/Slightly twist the cap of the sensor counter-clockwise, then pull it up/i),
     ).toBeInTheDocument();
     expect(screen.getByText('RESTART')).toBeInTheDocument();
-    expect(screen.getByText(/the chip inside the Plantir device will light a green LED three times in a row/i)).toBeInTheDocument();
+    expect(screen.getByText(/the chip inside the Plantir sensor will light a green LED three times in a row/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Plantir-Device-Setup/i).length).toBeGreaterThan(0);
     expect(screen.getByAltText('WiFi portal home screen')).toBeInTheDocument();
     expect(screen.getByAltText('WiFi portal configure screen')).toBeInTheDocument();

@@ -4,7 +4,7 @@ import { renderWithProviders, screen } from '@/test/render';
 import { DevicesTabHeader } from '@/admin/components/DevicesTabHeader';
 
 const serialOptions = [
-  { value: '', label: 'All devices' },
+  { value: '', label: 'All sensors' },
   { value: 'SN-001', label: 'SN-001' },
 ];
 
@@ -46,11 +46,11 @@ describe('DevicesTabHeader', () => {
       />,
     );
 
-    expect(screen.getByText('All Devices')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('All devices')).toBeInTheDocument();
+    expect(screen.getByText('All Sensors')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('All sensors')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('All owners')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('All plants')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Refresh devices' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh sensors' })).toBeInTheDocument();
   });
 
   it('calls filter change handlers', async () => {
@@ -102,7 +102,7 @@ describe('DevicesTabHeader', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Refresh devices' }));
+    await user.click(screen.getByRole('button', { name: 'Refresh sensors' }));
     expect(onRefresh).toHaveBeenCalledOnce();
   });
 });

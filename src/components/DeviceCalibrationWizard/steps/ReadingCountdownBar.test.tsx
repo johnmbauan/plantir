@@ -5,7 +5,7 @@ import ReadingCountdownBar from './ReadingCountdownBar';
 describe('ReadingCountdownBar', () => {
   it('renders countdown progress and helper text', () => {
     renderWithProviders(<ReadingCountdownBar />);
-    expect(screen.getByText('The device sends a reading every 10 seconds')).toBeInTheDocument();
+    expect(screen.getByText('The sensor sends a reading every 10 seconds')).toBeInTheDocument();
   });
 
   it('advances progress as timers elapse', async () => {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Progress, Text, Stack } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 const CYCLE_MS = 10000; // must match CALIBRATION_INTERVAL_MS in CalibrationRunner.cpp
 const TICK_MS = 50;
@@ -25,10 +26,12 @@ function CountdownProgress() {
 }
 
 export default function ReadingCountdownBar({ resetKey = 0 }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Stack gap={4} mt="xs">
       <CountdownProgress key={resetKey} />
-      <Text size="xs" c="dimmed">The device sends a reading every 10 seconds</Text>
+      <Text size="xs" c="dimmed">{t("calibrationWizard.countdownHint")}</Text>
     </Stack>
   );
 }

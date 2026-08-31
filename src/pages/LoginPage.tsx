@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useNativeValidation } from "@/hooks/useNativeValidation";
 import BrandLogo from "@/components/BrandLogo";
 import supabase from "@/supabase";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import { needsPasswordSetup } from "@/pages/password/password-helper";
 import { getErrorMessage } from "@/utils/error";
 
@@ -30,7 +31,7 @@ export default function LoginPage() {
       return;
     }
 
-    navigate("/", { replace: true });
+    navigate(DASHBOARD_PATH, { replace: true });
   }, [loading, session, authUser, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -40,7 +41,7 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      navigate("/", { replace: true });
+      navigate(DASHBOARD_PATH, { replace: true });
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
