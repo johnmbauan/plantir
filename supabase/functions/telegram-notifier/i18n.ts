@@ -16,12 +16,12 @@ const STRINGS = {
     rainToday: "Rain is expected today — watering may not be needed.",
     rainTomorrow: "Rain is expected tomorrow — watering may not be needed.",
     offlineTelegramIntro:
-      "🔴 Warning! The devices for the following plants haven't sent data in too long (possible low battery or malfunction):",
+      "🔴 Warning! The sensors for the following plants haven't sent data in too long (possible low battery or malfunction):",
     neverSeen: "never seen",
     lastReading: "last reading {{time}}",
     plantLine: "• {{plantName}} ({{lastSeen}})",
     offlineTitleSingle: "{{plantName}} is offline",
-    offlineTitleMulti: "{{count}} devices offline",
+    offlineTitleMulti: "{{count}} sensors offline",
     offlineBodyIntro: "The following plants haven't sent data in too long:",
   },
   it: {

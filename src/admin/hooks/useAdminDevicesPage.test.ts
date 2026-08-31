@@ -109,7 +109,7 @@ describe('useAdminDevicesPage', () => {
     expect(mockNotificationsShow).toHaveBeenCalledWith(
       expect.objectContaining({
         color: 'red',
-        title: 'Error loading devices',
+        title: 'Error loading sensors',
         message: 'forbidden',
       }),
     );

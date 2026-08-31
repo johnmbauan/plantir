@@ -35,7 +35,7 @@ describe('PlantDeleteModal', () => {
 
     const dialog = getDialog();
     expect(within(dialog).getByText('Fiddle Leaf')).toBeInTheDocument();
-    expect(within(dialog).getByText(/devices currently assigned/i)).toBeInTheDocument();
+    expect(within(dialog).getByText(/sensors currently assigned/i)).toBeInTheDocument();
   });
 
   it('calls onClose when cancel is clicked', async () => {

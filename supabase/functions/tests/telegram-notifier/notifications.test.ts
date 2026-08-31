@@ -95,7 +95,7 @@ describe("createInAppNotification (offline)", () => {
     using _fetch = stub(globalThis, "fetch", realtimeMock());
     const id = await createInAppNotification(
       client as any, SUPABASE_URL, SERVICE_KEY, USER_ID,
-      "offline", "2 devices offline", "Monstera and Rose haven't reported in", { plants: [] },
+      "offline", "2 sensors offline", "Monstera and Rose haven't reported in", { plants: [] },
     );
     assertEquals(id, "offline-notif");
   });

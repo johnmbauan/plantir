@@ -104,11 +104,11 @@ describe('PlantFilterSearch', () => {
         value=""
         onChange={vi.fn()}
         placeholder="Search by serial or plant…"
-        searchLabel="Search devices"
+        searchLabel="Search sensors"
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Search devices' }));
+    await user.click(screen.getByRole('button', { name: 'Search sensors' }));
     expect(screen.getByPlaceholderText('Search by serial or plant…')).toBeInTheDocument();
   });
 });

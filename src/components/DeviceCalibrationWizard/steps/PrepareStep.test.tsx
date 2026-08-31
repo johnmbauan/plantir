@@ -8,7 +8,7 @@ describe('PrepareStep', () => {
 
     expect(screen.getByText('Before you start')).toBeInTheDocument();
     expect(screen.getByText(/completely dry.*completely wet/i)).toBeInTheDocument();
-    expect(screen.getByText('Your Plantir device')).toBeInTheDocument();
+    expect(screen.getByText('Your Plantir sensor')).toBeInTheDocument();
     expect(screen.getByText('A full glass of water')).toBeInTheDocument();
   });
 });

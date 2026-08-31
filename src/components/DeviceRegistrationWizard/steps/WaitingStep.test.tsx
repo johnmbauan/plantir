@@ -15,7 +15,7 @@ describe('WaitingStep', () => {
     );
 
     expect(screen.getByText('Waiting for registration')).toBeInTheDocument();
-    expect(screen.getByText(/Waiting for the device to register/i)).toBeInTheDocument();
+    expect(screen.getByText(/Waiting for the sensor to register/i)).toBeInTheDocument();
   });
 
   it('shows timeout actions when timed out', async () => {

@@ -130,7 +130,7 @@
     "searchPlantsPlaceholder": "Search plants…",
     "searchPlantsAria": "Search plants",
     "searchDevicesPlaceholder": "Search by serial or plant…",
-    "searchDevicesAria": "Search devices",
+    "searchDevicesAria": "Search sensors",
     "clearSearchAria": "Clear search",
     "sortAria": "Sort plants",
     "sortHumidityLow": "Humidity (lowest first)",
@@ -183,7 +183,7 @@
         "description": "Give it a name and optionally a photo."
       },
       "devices": {
-        "label": "Register your first device",
+        "label": "Register your first sensor",
         "description": "Use the guided wizard to link a Plantir sensor to your account."
       },
       "location": {
@@ -214,7 +214,7 @@
       "lastReading": "last reading {{time}}",
       "neverSeen": "never seen",
       "offlineTitleSingle": "{{plantName}} is offline",
-      "offlineTitleMulti": "{{count}} devices offline",
+      "offlineTitleMulti": "{{count}} sensors offline",
       "offlineBodyIntro": "The following plants haven't sent data in too long:"
     }
   },
@@ -246,7 +246,7 @@
       "chatIdPlaceholder": "e.g. 123456789",
       "chatIdDescription": "Leave blank to receive alerts in the app only."
     },
-    "footerHint": "Changes apply to all your devices.",
+    "footerHint": "Changes apply to all your sensors.",
     "save": "Save",
     "saved": {
       "title": "Saved",
@@ -305,7 +305,7 @@
     "title": "Plants Center",
     "tabs": {
       "plants": "Plants",
-      "devices": "Devices"
+      "devices": "Sensors"
     }
   },
   "plantsTab": {
@@ -313,7 +313,7 @@
       "name": "Name",
       "status": "Status",
       "moisture": "Moisture",
-      "assignedDevice": "Assigned Device",
+      "assignedDevice": "Assigned Sensor",
       "actions": "Actions"
     },
     "addPlant": "Add Plant",
@@ -390,7 +390,7 @@
   "plantDelete": {
     "title": "Delete plant",
     "confirm": "Are you sure you want to delete <bold>{{name}}</bold>?",
-    "unassignWarning": "Any devices currently assigned to this plant will be unassigned.",
+    "unassignWarning": "Any sensors currently assigned to this plant will be unassigned.",
     "success": {
       "title": "Deleted",
       "message": "Plant deleted successfully"
@@ -398,7 +398,7 @@
   },
   "plantDetail": {
     "editPlant": "Edit plant",
-    "editDevice": "Edit device",
+    "editDevice": "Edit sensor",
     "viewFullSizeAria": "View full size photo of {{name}}",
     "fullSizeAria": "Full size photo of {{name}}",
     "closeFullSizeAria": "Close full size photo",
@@ -406,11 +406,11 @@
     "humidity": "Humidity",
     "noReading": "No reading",
     "lastWatered": "Last watered",
-    "noDevice": "No device",
+    "noDevice": "No sensor",
     "battery": "Battery",
     "reportingInterval": "Reporting interval",
-    "connectDeviceTitle": "Connect a device to track history",
-    "connectDeviceBody": "Assign a device to this plant to collect humidity, battery, and measurement history.",
+    "connectDeviceTitle": "Connect a sensor to track history",
+    "connectDeviceBody": "Assign a sensor to this plant to collect humidity, battery, and measurement history.",
     "measurementHistory": "Measurement history",
     "range7d": "7 days",
     "range14d": "14 days",
@@ -431,32 +431,32 @@
       "actions": "Actions"
     },
     "addManually": "Add manually",
-    "registerNewDevice": "Register new device",
-    "emptyTitle": "No devices yet",
-    "emptyDescription": "Register a Plantir sensor with the guided setup wizard, or add a device manually if you already have its serial number.",
-    "registerFirstDevice": "Register your first device",
-    "noSearchMatch": "No devices match your search.",
+    "registerNewDevice": "Register new sensor",
+    "emptyTitle": "No sensors yet",
+    "emptyDescription": "Register a Plantir sensor with the guided setup wizard, or add a sensor manually if you already have its serial number.",
+    "registerFirstDevice": "Register your first sensor",
+    "noSearchMatch": "No sensors match your search.",
     "unassigned": "Unassigned",
     "calibrationRecommended": "Calibration recommended",
     "calibrateSensor": "Calibrate sensor",
     "calibrateSensorRequired": "Calibrate sensor",
-    "editDevice": "Edit device",
-    "deleteDevice": "Delete device"
+    "editDevice": "Edit sensor",
+    "deleteDevice": "Delete sensor"
   },
   "deviceDelete": {
-    "title": "Delete device",
-    "confirm": "Are you sure you want to delete device <bold>{{serialNumber}}</bold>?",
+    "title": "Delete sensor",
+    "confirm": "Are you sure you want to delete sensor <bold>{{serialNumber}}</bold>?",
     "warning": "Its sensor configuration and all measurements will also be removed.",
     "success": {
       "title": "Deleted",
-      "message": "Device deleted successfully"
+      "message": "Sensor deleted successfully"
     }
   },
   "deviceForm": {
-    "createdTitle": "Device created",
-    "editTitle": "Edit device",
-    "addTitle": "Add device manually",
-    "manualIntro": "For most setups, use Register new device instead. Manual add is for advanced cases when you already have a serial number.",
+    "createdTitle": "Sensor created",
+    "editTitle": "Edit sensor",
+    "addTitle": "Add sensor manually",
+    "manualIntro": "For most setups, use Register new sensor instead. Manual add is for advanced cases when you already have a serial number.",
     "assignment": "Assignment",
     "serialNumber": "Serial number",
     "serialPlaceholder": "e.g. SN-001",
@@ -465,14 +465,14 @@
     "plant": "Plant",
     "plantPlaceholder": "Select a plant",
     "clearPlantAria": "Clear plant",
-    "plantsWithDeviceDisabled": "Plants that already have a device assigned are disabled.",
-    "deviceAssigned": "device assigned",
+    "plantsWithDeviceDisabled": "Plants that already have a sensor assigned are disabled.",
+    "deviceAssigned": "sensor assigned",
     "wateringAlerts": "Watering alerts",
     "alertWhenBelow": "Alert when humidity drops below this value",
     "suggestedFromSpecies": "Suggested from species: {{threshold}}%",
     "thresholdRangeError": "Threshold must be between 0 and 100",
     "reportingInterval": "Reporting interval",
-    "reportingIntervalDescription": "How often the device wakes up and sends data. Higher frequencies drain the battery faster.",
+    "reportingIntervalDescription": "How often the sensor wakes up and sends data. Higher frequencies drain the battery faster.",
     "recommended": "Recommended",
     "customInterval": "Custom interval (seconds)",
     "customIntervalDescription": "For testing you can set a short interval (e.g. 10–60 seconds). Lower values use more battery.",
@@ -482,14 +482,14 @@
     "airDry": "Air (dry):",
     "waterWet": "Water (wet):",
     "recalibrateSensor": "Recalibrate sensor",
-    "addSubmit": "Add device",
+    "addSubmit": "Add sensor",
     "saveSubmit": "Save changes",
-    "updatedMessage": "Device updated successfully",
+    "updatedMessage": "Sensor updated successfully",
     "calibratePrompt": "Calibrate the sensor for accurate readings.",
     "calibrateNow": "Calibrate now"
   },
   "registrationWizard": {
-    "title": "Register new device",
+    "title": "Register new sensor",
     "steps": {
       "prepare": "Prepare",
       "setupCode": "Setup code",
@@ -505,7 +505,7 @@
     },
     "setupCode": {
       "title": "Setup code",
-      "intro": "Copy this setup code. You will paste it into the device Wi-Fi portal in the next steps.",
+      "intro": "Copy this setup code. You will paste it into the sensor Wi-Fi portal in the next steps.",
       "generating": "Generating setup code…",
       "copy": "Copy setup code",
       "copied": "Copied",
@@ -513,31 +513,31 @@
       "generate": "Generate setup code"
     },
     "connect": {
-      "title": "Connect to device hotspot",
+      "title": "Connect to sensor hotspot",
       "copyCodeFirst": "Make sure the setup code from the previous step is copied.",
-      "openCap": "Slightly twist the cap of the device counter-clockwise, then pull it up.",
-      "pressRestart": "Press the <bold>RESTART</bold> button on the side of the device. After you press it, the chip inside the Plantir device will light a green LED three times in a row. The device will then open a Wi-Fi hotspot named <bold>Plantir-Device-Setup</bold>.",
+      "openCap": "Slightly twist the cap of the sensor counter-clockwise, then pull it up.",
+      "pressRestart": "Press the <bold>RESTART</bold> button on the side of the sensor. After you press it, the chip inside the Plantir sensor will light a green LED three times in a row. The sensor will then open a Wi-Fi hotspot named <bold>Plantir-Device-Setup</bold>.",
       "connectHotspot": "On your phone or computer, connect to <bold>Plantir-Device-Setup</bold> hotspot. A portal will open automatically — it should look like this:",
       "portalHomeAlt": "WiFi portal home screen",
       "configureWifi": "Tap <bold>Configure WiFi</bold>, then select your home network, enter the password.",
       "portalConfigureAlt": "WiFi portal configure screen",
       "waitPortalClose": "Paste the setup code into the <bold>Plantir Setup</bold> field and tap <bold>Save</bold>. Wait for the <bold>Plantir-Device-Setup</bold> portal to close automatically.",
-      "iveConnected": "I've connected the device"
+      "iveConnected": "I've connected the sensor"
     },
     "waiting": {
       "title": "Waiting for registration",
-      "body": "Waiting for the device to register… Keep the portal open until the device connects to your Wi-Fi.",
+      "body": "Waiting for the sensor to register… Keep the portal open until the sensor connects to your Wi-Fi.",
       "stillWaitingTitle": "Still waiting",
-      "stillWaitingBody": "We have not detected registration yet. Check that the setup code was pasted correctly and the device joined your Wi-Fi.",
+      "stillWaitingBody": "We have not detected registration yet. Check that the setup code was pasted correctly and the sensor joined your Wi-Fi.",
       "keepWaiting": "Keep waiting",
       "regenerateCode": "Generate a new setup code",
-      "ownedByAnother": "This device is already registered to a different account. If you believe this is your device, contact support.",
+      "ownedByAnother": "This sensor is already registered to a different account. If you believe this is your sensor, contact support.",
       "registrationFailed": "Registration failed. Please try again or contact support."
     },
     "completed": {
-      "title": "Device registered successfully",
+      "title": "Sensor registered successfully",
       "serialNumberLabel": "Serial number:",
-      "body": "Your device is registered and will start sending readings shortly.",
+      "body": "Your sensor is registered and will start sending readings shortly.",
       "skipForNow": "Skip for now",
       "calibrateSensor": "Calibrate sensor"
     }
@@ -547,7 +547,7 @@
     "closeAria": "Close calibration wizard",
     "steps": {
       "prepare": "Prepare",
-      "wakeDevice": "Wake device",
+      "wakeDevice": "Wake sensor",
       "dryReading": "Dry reading",
       "wetReading": "Wet reading"
     },
@@ -556,21 +556,21 @@
       "title": "Before you start",
       "intro": "Calibration teaches the sensor what \"completely dry\" and \"completely wet\" feel like, so it can give you accurate soil moisture readings.",
       "youllNeed": "You'll need:",
-      "needDevice": "Your Plantir device",
+      "needDevice": "Your Plantir sensor",
       "needWater": "A full glass of water",
       "duration": "The process takes about 1 minute."
     },
     "wake": {
-      "title": "Wake the device",
-      "instructions": "Slightly twist the cap counter-clockwise, then pull it up. Press the <bold>Restart</bold> button on your Plantir device to wake it up. After you press it, the chip inside the Plantir device will light a green LED three times in a row. Then put the cap back on.",
-      "timeout": "No reading received. Make sure you pressed the restart button and the device connected to Wi-Fi.",
+      "title": "Wake the sensor",
+      "instructions": "Slightly twist the cap counter-clockwise, then pull it up. Press the <bold>Restart</bold> button on your Plantir sensor to wake it up. After you press it, the chip inside the Plantir sensor will light a green LED three times in a row. Then put the cap back on.",
+      "timeout": "No reading received. Make sure you pressed the restart button and the sensor connected to Wi-Fi.",
       "tryAgain": "Try again",
-      "waiting": "Waiting for the device to connect…"
+      "waiting": "Waiting for the sensor to connect…"
     },
     "dry": {
       "title": "Dry reading",
       "instructions": "Hold the black sensor tip in open air, away from any soil or water. Hold position while we capture a stable reading.",
-      "timeout": "No reading received. Make sure you pressed the restart button and the device connected to Wi-Fi.",
+      "timeout": "No reading received. Make sure you pressed the restart button and the sensor connected to Wi-Fi.",
       "rejected": "Make sure the black sensor tip is in open air, away from any soil or water, then hold still.",
       "waiting": "Waiting for a reading…"
     },
@@ -578,20 +578,20 @@
       "title": "Wet reading",
       "instructions": "Gently lower the sensor into the glass of water until the white horizontal line on the black tip is just submerged. Hold the sensor steady at this depth while we capture a stable reading.",
       "guideAlt": "Sensor submerge in water up to the white horizontal line",
-      "timeout": "No reading received. Make sure the sensor is submerged correctly and the device is still connected.",
+      "timeout": "No reading received. Make sure the sensor is submerged correctly and the sensor is still connected.",
       "restart": "Restart calibration",
       "saving": "Saving calibration…",
-      "rejected": "Make sure the sensor tip is submerged in water down to the white horizontal line, without submerging the rest of the device.",
+      "rejected": "Make sure the sensor tip is submerged in water down to the white horizontal line, without submerging the rest of the sensor.",
       "waiting": "Waiting for a reading…"
     },
     "expired": {
-      "message": "The device's calibration window has ended after 2 minutes. Restart calibration to try again.",
+      "message": "The sensor's calibration window has ended after 2 minutes. Restart calibration to try again.",
       "restart": "Restart calibration"
     },
-    "countdownHint": "The device sends a reading every 10 seconds",
+    "countdownHint": "The sensor sends a reading every 10 seconds",
     "complete": {
       "title": "Sensor calibrated!",
-      "body": "Place the device back in the soil. It will take a reading in about 2 minutes."
+      "body": "Place the sensor back in the soil. It will take a reading in about 2 minutes."
     },
     "saveErrorTitle": "Error saving calibration"
   },
@@ -749,12 +749,12 @@
     "refresh": "Refresh",
     "filtersLoadError": "Error loading filters",
     "tabs": {
-      "devices": "Devices",
+      "devices": "Sensors",
       "logs": "Logs",
       "firmware": "Firmware"
     },
     "filters": {
-      "allDevices": "All devices",
+      "allDevices": "All sensors",
       "allOwners": "All owners",
       "allPlants": "All plants",
       "allLevels": "All levels"
@@ -764,11 +764,11 @@
       "showing": "Showing {{start}}–{{end}} of {{total}}"
     },
     "devices": {
-      "title": "All Devices",
-      "refreshLabel": "Refresh devices",
-      "noMatch": "No devices match your filters.",
-      "noneRegistered": "No devices registered.",
-      "loadError": "Error loading devices",
+      "title": "All Sensors",
+      "refreshLabel": "Refresh sensors",
+      "noMatch": "No sensors match your filters.",
+      "noneRegistered": "No sensors registered.",
+      "loadError": "Error loading sensors",
       "columns": {
         "serialNumber": "Serial Number",
         "owner": "Owner",
@@ -781,7 +781,7 @@
       }
     },
     "logs": {
-      "title": "Device Logs",
+      "title": "Sensor Logs",
       "refreshLabel": "Refresh logs",
       "noMatch": "No logs match your filters.",
       "noneFound": "No logs found.",
@@ -798,7 +798,7 @@
     },
     "firmware": {
       "title": "Firmware releases",
-      "description": "Upload stages a build. Assign to pilot devices, then publish to the fleet channel.",
+      "description": "Upload stages a build. Assign to pilot sensors, then publish to the fleet channel.",
       "refreshLabel": "Refresh firmware releases",
       "fleetChannels": "Fleet channels",
       "noPublishedRelease": "No published release",
@@ -835,7 +835,7 @@
         "currentVersion": "Current version for {{board}}: {{version}}",
         "noReleases": "No releases for {{board}} yet",
         "nextOta": "Next OTA version",
-        "semverTooltip": "Human-readable version label shown in Admin (e.g. 1.2.0). Devices use the OTA version, not this.",
+        "semverTooltip": "Human-readable version label shown in Admin (e.g. 1.2.0). Sensors use the OTA version, not this.",
         "semverAria": "What is SemVer?",
         "description": "Description (optional)",
         "binary": "Firmware binary",
@@ -846,17 +846,17 @@
       "assignModal": {
         "title": "Assign OTA v{{version}} · {{semver}} ({{board}})",
         "titleFallback": "Assign firmware",
-        "description": "Selected devices will OTA to this release on their next wake, even if the fleet channel points elsewhere.",
-        "loadFailed": "Failed to load devices",
+        "description": "Selected sensors will OTA to this release on their next wake, even if the fleet channel points elsewhere.",
+        "loadFailed": "Failed to load sensors",
         "assignedTitle": "Override assigned",
-        "assignedMessage": "Pinned OTA v{{version}} ({{semver}}) on {{count}} device(s).",
+        "assignedMessage": "Pinned OTA v{{version}} ({{semver}}) on {{count}} sensor(s).",
         "failedTitle": "Assign failed",
-        "loading": "Loading devices…",
-        "empty": "No devices found for this board.",
+        "loading": "Loading sensors…",
+        "empty": "No sensors found for this board.",
         "reported": " · reported v{{version}}",
         "hasOverride": " · has override",
-        "assignTo_one": "Assign to {{count}} device",
-        "assignTo_other": "Assign to {{count}} devices"
+        "assignTo_one": "Assign to {{count}} sensor",
+        "assignTo_other": "Assign to {{count}} sensors"
       }
     },
     "device": {

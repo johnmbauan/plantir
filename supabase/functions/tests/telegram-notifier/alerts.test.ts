@@ -363,7 +363,7 @@ describe("sendOfflineAlerts", () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               chat_id: "chat-1",
-              text: "🔴 Warning! The devices for the following plants haven't sent data in too long (possible low battery or malfunction):\n\n• Monstera (never seen)",
+              text: "🔴 Warning! The sensors for the following plants haven't sent data in too long (possible low battery or malfunction):\n\n• Monstera (never seen)",
             }),
           },
         ],

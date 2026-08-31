@@ -25,7 +25,7 @@ describe('PlantCenter', () => {
 
     renderWithProviders(<PlantCenter />, { route: '/plants-center?tab=plants' });
 
-    await user.click(screen.getByRole('tab', { name: 'Devices' }));
+    await user.click(screen.getByRole('tab', { name: 'Sensors' }));
 
     expect(screen.getByText('Devices tab content')).toBeInTheDocument();
   });
@@ -33,7 +33,7 @@ describe('PlantCenter', () => {
   it('opens devices tab from URL param', () => {
     renderWithProviders(<PlantCenter />, { route: '/plants-center?tab=devices' });
 
-    expect(screen.getByRole('tab', { name: 'Devices' })).toHaveAttribute('data-active', 'true');
+    expect(screen.getByRole('tab', { name: 'Sensors' })).toHaveAttribute('data-active', 'true');
     expect(screen.getByText('Devices tab content')).toBeInTheDocument();
   });
 });

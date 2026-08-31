@@ -32,6 +32,7 @@ export default function PlantAssignmentSelect({
         renderPlantAssignmentOption(
           option.label,
           assignedByValue.get(option.value)?.hasDevice ?? false,
+          t("deviceForm.deviceAssigned"),
         )
       }
     />

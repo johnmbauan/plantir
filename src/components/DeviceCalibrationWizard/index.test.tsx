@@ -9,7 +9,7 @@ const onClose = vi.fn();
 const onCalibrated = vi.fn();
 
 const WAKE_INSTRUCTION =
-  'Slightly twist the cap counter-clockwise, then pull it up. Press the Restart button on your Plantir device to wake it up. After you press it, the chip inside the Plantir device will light a green LED three times in a row. Then put the cap back on.';
+  'Slightly twist the cap counter-clockwise, then pull it up. Press the Restart button on your Plantir sensor to wake it up. After you press it, the chip inside the Plantir sensor will light a green LED three times in a row. Then put the cap back on.';
 
 vi.mock('@mantine/notifications', () => ({
   notifications: { show: vi.fn() },
@@ -55,7 +55,7 @@ function getDialog() {
 }
 
 function expectWakeInstructions(dialog: HTMLElement = getDialog()) {
-  expect(within(dialog).getByText('Wake the device')).toBeInTheDocument();
+  expect(within(dialog).getByText('Wake the sensor')).toBeInTheDocument();
   expect(within(dialog).getByText('Restart').parentElement?.textContent).toBe(WAKE_INSTRUCTION);
 }
 
@@ -64,7 +64,7 @@ async function startCalibration(user: ReturnType<typeof userEvent.setup>) {
   await waitFor(() => expect(deviceService.startCalibrationMode).toHaveBeenCalledWith(1));
   await waitFor(() => {
     expectWakeInstructions();
-    expect(within(getDialog()).getByText('Waiting for the device to connect…')).toBeInTheDocument();
+    expect(within(getDialog()).getByText('Waiting for the sensor to connect…')).toBeInTheDocument();
   });
 }
 
@@ -102,7 +102,7 @@ describe('DeviceCalibrationWizard', () => {
     const dialog = getDialog();
     expect(within(dialog).getByText('Before you start')).toBeInTheDocument();
     expect(within(dialog).getByRole('button', { name: 'Start calibration' })).toBeInTheDocument();
-    expect(within(dialog).queryByText('Wake the device')).not.toBeInTheDocument();
+    expect(within(dialog).queryByText('Wake the sensor')).not.toBeInTheDocument();
     expect(within(dialog).queryByText('Restart')).not.toBeInTheDocument();
   });
 
@@ -146,7 +146,7 @@ describe('DeviceCalibrationWizard', () => {
 
     expect(within(getDialog()).getByText('Before you start')).toBeInTheDocument();
     expect(within(getDialog()).getByRole('button', { name: 'Start calibration' })).toBeInTheDocument();
-    expect(within(getDialog()).queryByText('Wake the device')).not.toBeInTheDocument();
+    expect(within(getDialog()).queryByText('Wake the sensor')).not.toBeInTheDocument();
   });
 
   it('shows error notification when startCalibrationMode fails', async () => {
@@ -165,7 +165,7 @@ describe('DeviceCalibrationWizard', () => {
       );
     });
     expect(within(getDialog()).getByText('Before you start')).toBeInTheDocument();
-    expect(within(getDialog()).queryByText('Wake the device')).not.toBeInTheDocument();
+    expect(within(getDialog()).queryByText('Wake the sensor')).not.toBeInTheDocument();
   });
 
   it('does not start calibration when deviceId is null', async () => {
@@ -196,7 +196,7 @@ describe('DeviceCalibrationWizard', () => {
     await waitFor(() => {
       expect(
         within(getDialog()).getByText(
-          "The device's calibration window has ended after 2 minutes. Restart calibration to try again.",
+          "The sensor's calibration window has ended after 2 minutes. Restart calibration to try again.",
         ),
       ).toBeInTheDocument();
     });
@@ -223,7 +223,7 @@ describe('DeviceCalibrationWizard', () => {
 
     expect(within(getDialog()).getByText('Before you start')).toBeInTheDocument();
     expect(within(getDialog()).getByRole('button', { name: 'Start calibration' })).toBeEnabled();
-    expect(within(getDialog()).queryByText('Wake the device')).not.toBeInTheDocument();
+    expect(within(getDialog()).queryByText('Wake the sensor')).not.toBeInTheDocument();
   });
 
   it('auto-advances to dry reading when first reading arrives', async () => {

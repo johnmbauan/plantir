@@ -56,7 +56,7 @@ describe('PlantDetailModal', () => {
     expect(screen.getByText('55%')).toBeInTheDocument();
     expect(screen.getByText('80%')).toBeInTheDocument();
     expect(screen.getByText('Last watered')).toBeInTheDocument();
-    expect(screen.getByText('No device')).toBeInTheDocument();
+    expect(screen.getByText('No sensor')).toBeInTheDocument();
     expect(screen.queryByText('Measurement history')).not.toBeInTheDocument();
     expect(fetchLastWateredAt).not.toHaveBeenCalled();
   });

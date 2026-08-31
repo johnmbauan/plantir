@@ -104,7 +104,7 @@ describe('Admin DevicesTab', () => {
   it('renders device rows', () => {
     renderWithProviders(<DevicesTab />);
 
-    expect(screen.getByText('All Devices')).toBeInTheDocument();
+    expect(screen.getByText('All Sensors')).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'SN-001' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'alice@example.com' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'Monstera' })).toBeInTheDocument();
@@ -158,14 +158,14 @@ describe('Admin DevicesTab', () => {
 
     renderWithProviders(<DevicesTab />);
 
-    expect(screen.getByText('No devices registered.')).toBeInTheDocument();
+    expect(screen.getByText('No sensors registered.')).toBeInTheDocument();
   });
 
   it('calls refresh when refresh button is clicked', async () => {
     const user = userEvent.setup();
     renderWithProviders(<DevicesTab />);
 
-    await user.click(screen.getByRole('button', { name: 'Refresh devices' }));
+    await user.click(screen.getByRole('button', { name: 'Refresh sensors' }));
     expect(mockRefresh).toHaveBeenCalledOnce();
     expect(mockRefreshFilterOptions).toHaveBeenCalledOnce();
   });
@@ -200,7 +200,7 @@ describe('Admin DevicesTab', () => {
 
     await selectComboboxOption(user, 2, 'Fern');
 
-    expect(screen.getByText('No devices match your filters.')).toBeInTheDocument();
+    expect(screen.getByText('No sensors match your filters.')).toBeInTheDocument();
   });
 
   it('renders placeholders for missing owner and readings', () => {

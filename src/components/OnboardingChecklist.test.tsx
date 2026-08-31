@@ -57,7 +57,7 @@ describe('OnboardingChecklist', () => {
 
     expect(await screen.findByText('Get started with Plantir')).toBeInTheDocument();
     expect(screen.getByText('Add your first plant')).toBeInTheDocument();
-    expect(screen.getByText('Register your first device')).toBeInTheDocument();
+    expect(screen.getByText('Register your first sensor')).toBeInTheDocument();
     expect(screen.getByText('Set your location')).toBeInTheDocument();
     expect(screen.getByText('Review notification settings')).toBeInTheDocument();
     expect(
@@ -121,7 +121,7 @@ describe('OnboardingChecklist', () => {
     expect(
       await screen.findByText('1 of 4 steps complete — follow the guide to start monitoring your plants.'),
     ).toBeInTheDocument();
-    expect(screen.getByText('Register your first device')).toBeInTheDocument();
+    expect(screen.getByText('Register your first sensor')).toBeInTheDocument();
     expect(screen.getByText('Add your first plant')).toHaveStyle({ textDecoration: 'line-through' });
     expect(screen.getAllByRole('button', { name: 'Go' })).toHaveLength(3);
   });

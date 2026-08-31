@@ -7,6 +7,6 @@ describe('CalibrationCompleteStep', () => {
     renderWithProviders(<CalibrationCompleteStep />);
 
     expect(screen.getByText('Sensor calibrated!')).toBeInTheDocument();
-    expect(screen.getByText(/Place the device back in the soil/i)).toBeInTheDocument();
+    expect(screen.getByText(/Place the sensor back in the soil/i)).toBeInTheDocument();
   });
 });

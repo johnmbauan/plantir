@@ -79,7 +79,7 @@ describe('Admin LogsTab', () => {
   it('renders log entries', () => {
     renderWithProviders(<LogsTab />);
 
-    expect(screen.getByText('Device Logs')).toBeInTheDocument();
+    expect(screen.getByText('Sensor Logs')).toBeInTheDocument();
     expect(screen.getByText('Device connected')).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'SN-001' })).toBeInTheDocument();
   });

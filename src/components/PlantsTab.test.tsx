@@ -383,15 +383,15 @@ describe('PlantsTab', () => {
     });
   });
 
-  describe('Assigned Device column', () => {
-    it('renders a sortable Assigned Device column header', async () => {
+  describe('Assigned Sensor column', () => {
+    it('renders a sortable Assigned Sensor column header', async () => {
       renderWithProviders(<PlantsTab reloadKey={0} onMutated={vi.fn()} />);
       await screen.findByText('Monstera');
 
-      expect(screen.getByRole('button', { name: 'Sort by Assigned Device' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Sort by Assigned Sensor' })).toBeInTheDocument();
       expect(
-        within(screen.getByRole('columnheader', { name: /Assigned Device/ })).getByText(
-          'Assigned Device',
+        within(screen.getByRole('columnheader', { name: /Assigned Sensor/ })).getByText(
+          'Assigned Sensor',
         ),
       ).toBeInTheDocument();
     });

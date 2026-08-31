@@ -29,7 +29,7 @@ vi.mock('@mantine/notifications', () => ({
 }));
 
 function getDialog() {
-  return screen.getByRole('dialog', { name: 'Register new device' });
+  return screen.getByRole('dialog', { name: 'Register new sensor' });
 }
 
 async function advanceToSetupCode(user: ReturnType<typeof userEvent.setup>) {
@@ -42,7 +42,7 @@ async function advanceToWaiting(user: ReturnType<typeof userEvent.setup>) {
   await advanceToSetupCode(user);
   const dialog = getDialog();
   await user.click(within(dialog).getByRole('button', { name: 'Next' }));
-  await user.click(within(dialog).getByRole('button', { name: "I've connected the device" }));
+  await user.click(within(dialog).getByRole('button', { name: "I've connected the sensor" }));
 }
 
 describe('DeviceRegistrationWizard', () => {

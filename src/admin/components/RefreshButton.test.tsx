@@ -8,9 +8,9 @@ describe('RefreshButton', () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
 
-    renderWithProviders(<RefreshButton onClick={onClick} label="Refresh devices" />);
+    renderWithProviders(<RefreshButton onClick={onClick} label="Refresh sensors" />);
 
-    await user.click(screen.getByRole('button', { name: 'Refresh devices' }));
+    await user.click(screen.getByRole('button', { name: 'Refresh sensors' }));
     expect(onClick).toHaveBeenCalledOnce();
   });
 });
