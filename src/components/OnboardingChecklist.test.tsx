@@ -150,7 +150,7 @@ describe('OnboardingChecklist', () => {
     await screen.findByText('Get started with Plantir');
     await user.click(screen.getByText('Set your location'));
 
-    expect(mockNavigate).toHaveBeenCalledWith('/?setLocation=1');
+    expect(mockNavigate).toHaveBeenCalledWith('/dashboard?setLocation=1');
   });
 
   it('reloads progress when onboarding changes', async () => {

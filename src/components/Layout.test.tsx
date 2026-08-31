@@ -15,11 +15,11 @@ vi.mock('@/components/UserMenu', () => ({
   default: () => <button type="button">Account menu</button>,
 }));
 
-function renderLayout(route = '/') {
+function renderLayout(route = '/dashboard') {
   return renderWithProviders(
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<div>Dashboard page</div>} />
+        <Route path="/dashboard" element={<div>Dashboard page</div>} />
         <Route path="/profile" element={<div>Profile page</div>} />
         <Route path="/login" element={<div>Login page</div>} />
       </Route>

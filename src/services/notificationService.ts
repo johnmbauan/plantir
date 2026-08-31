@@ -1,5 +1,6 @@
 import supabase from "@/supabase";
 import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import { fetchPlantStatusesByIds } from "@/services/plantService";
 import type { PlantStatus } from "@/types";
 import { evaluateAndToastUnlocks, recordClientEvent, showUnlockToasts } from "@/services/achievementService";
@@ -342,10 +343,10 @@ export async function markAllNotificationsRead(): Promise<void> {
 
 export function getNotificationHref(notification: AppNotification): string {
   if (notification.type === "achievement") return GARDEN_PROFILE_PATH;
-  if (notification.type === "onboardingCompleted") return "/";
+  if (notification.type === "onboardingCompleted") return DASHBOARD_PATH;
   if (notification.type === "offline") return "/plants-center?tab=devices";
   if (isWateringPayload(notification.payload)) {
-    return `/?highlightPlant=${notification.payload.plantId}`;
+    return `${DASHBOARD_PATH}?highlightPlant=${notification.payload.plantId}`;
   }
-  return "/";
+  return DASHBOARD_PATH;
 }

@@ -57,7 +57,7 @@ describe('LoginPage', () => {
       email: 'test@example.com',
       password: 'secret',
     });
-    expect(navigate).toHaveBeenCalledWith('/', { replace: true });
+    expect(navigate).toHaveBeenCalledWith('/dashboard', { replace: true });
   });
 
   it('shows error message on failed sign-in', async () => {
@@ -85,7 +85,7 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />);
 
     await waitFor(() => {
-      expect(navigate).toHaveBeenCalledWith('/', { replace: true });
+      expect(navigate).toHaveBeenCalledWith('/dashboard', { replace: true });
     });
   });
 

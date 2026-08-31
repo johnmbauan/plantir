@@ -33,6 +33,38 @@
     "admin": "Admin",
     "toggleNavigation": "Toggle navigation"
   },
+  "landing": {
+    "hero": {
+      "title": "Know when they need you.",
+      "subtitle": "Live soil moisture, rain-aware alerts, and a garden that grows when you keep showing up."
+    },
+    "features": {
+      "moisture": {
+        "title": "See how the soil feels",
+        "body": "A live dashboard of humidity readings, so you water when it matters — not on a guess."
+      },
+      "rain": {
+        "title": "Alerts that wait for the rain",
+        "body": "Outdoor plants get a pause when rain is coming. Less waste, fewer worried glances at the sky."
+      },
+      "garden": {
+        "title": "A garden that grows with you"
+      }
+    },
+    "glimpse": {
+      "aria": "A preview of plants on the dashboard",
+      "plants": {
+        "ficus": "Ficus",
+        "basil": "Basil"
+      }
+    },
+    "language": {
+      "label": "Language",
+      "it": "Italiano",
+      "en": "English"
+    },
+    "stepsAria": "How Plantir cares with you"
+  },
   "userMenu": {
     "accountMenuAria": "Account menu",
     "yourProfileAlt": "Your profile",

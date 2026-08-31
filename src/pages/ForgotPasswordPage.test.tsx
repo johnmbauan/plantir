@@ -83,7 +83,7 @@ describe('ForgotPasswordPage', () => {
     renderWithProviders(<ForgotPasswordPage />);
 
     await waitFor(() => {
-      expect(navigate).toHaveBeenCalledWith('/', { replace: true });
+      expect(navigate).toHaveBeenCalledWith('/dashboard', { replace: true });
     });
   });
 

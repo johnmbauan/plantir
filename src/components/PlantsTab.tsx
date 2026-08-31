@@ -26,6 +26,7 @@ import {
 import PlantFilterSearch from "@/components/PlantFilterSearch";
 import { SortableTh } from "@/components/shared/SortableTh";
 import { TableLoadingRows } from "@/components/shared/TableLoadingRows";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import { markOnboardingStepComplete } from "@/services/onboardingService";
 
 const COLUMN_COUNT = 5;
@@ -201,7 +202,7 @@ export default function PlantsTab({ reloadKey, onMutated }: { reloadKey: number;
           if (!wasCreate) return;
           void markOnboardingStepComplete("plants").then((result) => {
             if (result.newlyCompleted) {
-              navigate("/");
+              navigate(DASHBOARD_PATH);
             }
           });
         }}

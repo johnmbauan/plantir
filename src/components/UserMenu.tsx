@@ -8,6 +8,7 @@ import supabase from "@/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/context/ProfileContext";
 import { ONBOARDING_CHANGED_EVENT } from "@/constants/onboarding";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import {
   fetchOnboarding,
   isOnboardingRestoreAvailable,
@@ -61,7 +62,7 @@ export default function UserMenu() {
     try {
       await restoreOnboarding();
       setShowOnboardingItem(false);
-      navigate("/");
+      navigate(DASHBOARD_PATH);
     } catch (err) {
       console.error(err);
     }

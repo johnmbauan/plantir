@@ -20,7 +20,7 @@ function renderGuard() {
       <Route element={<AdminGuard />}>
         <Route path="/admin" element={<div>Admin panel</div>} />
       </Route>
-      <Route path="/" element={<div>Home page</div>} />
+      <Route path="/dashboard" element={<div>Home page</div>} />
     </Routes>,
     { route: '/admin' },
   );

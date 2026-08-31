@@ -26,12 +26,12 @@ vi.mock('@/services/onboardingService', async (importOriginal) => {
   };
 });
 
-function renderUserMenu(route = '/') {
+function renderUserMenu(route = '/dashboard') {
   return renderWithProviders(
     <>
       <UserMenu />
       <Routes>
-        <Route path="/" element={<div>Dashboard page</div>} />
+        <Route path="/dashboard" element={<div>Dashboard page</div>} />
         <Route path="/profile" element={<div>Profile page</div>} />
         <Route path="/login" element={<div>Login page</div>} />
       </Routes>

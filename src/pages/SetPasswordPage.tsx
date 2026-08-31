@@ -5,6 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import supabase from "@/supabase";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import {
   clearPendingPasswordSetup,
   needsPasswordSetup,
@@ -36,7 +37,7 @@ export default function SetPasswordPage() {
     }
 
     if (!needsPasswordSetup(authUser)) {
-      navigate("/", { replace: true });
+      navigate(DASHBOARD_PATH, { replace: true });
     }
   }, [loading, session, authUser, navigate, t]);
 
@@ -63,7 +64,7 @@ export default function SetPasswordPage() {
       });
       if (updateError) throw updateError;
       clearPendingPasswordSetup();
-      navigate("/", { replace: true });
+      navigate(DASHBOARD_PATH, { replace: true });
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

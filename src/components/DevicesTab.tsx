@@ -12,6 +12,7 @@ import { fetchDevices } from "@/services/deviceService";
 import { notifications } from "@mantine/notifications";
 import { fetchPlants } from "@/services/plantService";
 import { useTranslation } from "react-i18next";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import type { Device, EnrichedPlant } from "@/types";
 import { buildPlantAssignmentOptions } from "@/components/DeviceFormModal/plantOptions";
 import { getErrorMessage } from "@/utils/error";
@@ -61,7 +62,7 @@ export default function DevicesTab({ reloadKey, onMutated }: { reloadKey: number
   function finishFirstDeviceOnboardingIfNeeded() {
     void Promise.resolve(returnAfterFirstDeviceRef.current).then((shouldReturn) => {
       returnAfterFirstDeviceRef.current = false;
-      if (shouldReturn) navigate("/");
+      if (shouldReturn) navigate(DASHBOARD_PATH);
     });
   }
 

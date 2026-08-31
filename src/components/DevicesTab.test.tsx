@@ -470,7 +470,7 @@ describe('DevicesTab', () => {
 
     await waitFor(() => {
       expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -505,7 +505,7 @@ describe('DevicesTab', () => {
     onFinished();
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -530,7 +530,7 @@ describe('DevicesTab', () => {
     lastCalibrationCallbacks().onClose();
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -593,7 +593,7 @@ describe('DevicesTab', () => {
 
     await waitFor(() => {
       expect(markOnboardingStepComplete).toHaveBeenCalledWith('devices');
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -624,7 +624,7 @@ describe('DevicesTab', () => {
     onFinished();
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 

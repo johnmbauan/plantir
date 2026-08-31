@@ -214,7 +214,7 @@ describe('notificationService', () => {
 
   describe('getNotificationHref', () => {
     it('links watering alerts to the highlighted plant', () => {
-      expect(getNotificationHref(wateringNotification)).toBe('/?highlightPlant=1');
+      expect(getNotificationHref(wateringNotification)).toBe('/dashboard?highlightPlant=1');
     });
 
     it('links offline alerts to the devices tab', () => {
@@ -244,7 +244,7 @@ describe('notificationService', () => {
         type: 'onboardingCompleted',
         payload: { kind: 'complete' },
       };
-      expect(getNotificationHref(onboarding)).toBe('/');
+      expect(getNotificationHref(onboarding)).toBe('/dashboard');
     });
   });
 

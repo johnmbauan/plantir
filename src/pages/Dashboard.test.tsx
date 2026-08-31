@@ -222,7 +222,7 @@ describe('Dashboard', () => {
       const scrollIntoView = vi.fn();
       Element.prototype.scrollIntoView = scrollIntoView;
 
-      renderWithProviders(<Dashboard />, { route: '/?setLocation=1' });
+      renderWithProviders(<Dashboard />, { route: '/dashboard?setLocation=1' });
 
       await waitFor(() => {
         expect(screen.getByText('Monstera')).toBeInTheDocument();
@@ -243,7 +243,7 @@ describe('Dashboard', () => {
   it('clears setLocation param after weather location is set', async () => {
     const user = userEvent.setup();
 
-    renderWithProviders(<Dashboard />, { route: '/?setLocation=1' });
+    renderWithProviders(<Dashboard />, { route: '/dashboard?setLocation=1' });
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Confirm location' })).toBeInTheDocument();
@@ -264,7 +264,7 @@ describe('Dashboard', () => {
       const scrollIntoView = vi.fn();
       Element.prototype.scrollIntoView = scrollIntoView;
 
-      renderWithProviders(<Dashboard />, { route: '/?highlightPlant=1' });
+      renderWithProviders(<Dashboard />, { route: '/dashboard?highlightPlant=1' });
 
       await waitFor(() => {
         expect(screen.getByText('Monstera')).toBeInTheDocument();

@@ -37,6 +37,19 @@ describe('App', () => {
     mockSession(null);
   });
 
+  it('renders landing page for unauthenticated visitors at the root', async () => {
+    renderApp('/');
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', {
+          name: 'Know when they need you.',
+        }),
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole('link', { name: 'Sign in' }).length).toBeGreaterThan(0);
+    });
+  });
+
   it('renders login page for unauthenticated users', async () => {
     renderApp('/login');
 
@@ -50,7 +63,7 @@ describe('App', () => {
   it('renders dashboard for authenticated users', async () => {
     mockSession(buildSession());
 
-    renderApp('/');
+    renderApp('/dashboard');
 
     await waitFor(() => {
       expect(screen.getByText('Dashboard page')).toBeInTheDocument();

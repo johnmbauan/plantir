@@ -1,0 +1,138 @@
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  padding-bottom: 56px;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.skySvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  max-width: 34rem;
+  padding: 28px clamp(20px, 4vw, 40px) 0;
+}
+
+.headline {
+  margin: 0 0 14px;
+  font-size: clamp(2.3rem, 5.4vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.08;
+  color: var(--green-700);
+}
+
+.subtitle {
+  margin: 0 auto 24px;
+  max-width: 36ch;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--green-900);
+  opacity: 0.78;
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  width: min(420px, calc(100% - 40px));
+  margin: 40px auto 0;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 48px clamp(20px, 4vw, 40px) 72px;
+}
+
+.step {
+  background: var(--surface);
+  border: 1px solid var(--terracotta-100);
+  border-radius: 18px;
+  padding: 20px 18px 22px;
+  text-align: left;
+  box-shadow: 0 10px 28px rgba(74, 43, 28, 0.05);
+}
+
+.stepIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 12px;
+  border-radius: 99px;
+  background: var(--green-50);
+  color: var(--green-700);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.stepTitle {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--green-700);
+}
+
+.stepBody {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--green-900);
+  opacity: 0.7;
+}
+
+.footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px clamp(20px, 4vw, 40px);
+  background: color-mix(in srgb, var(--green-50) 55%, var(--terracotta-50));
+  border-top: 1px solid var(--green-100);
+}
+
+@media (max-width: 800px) {
+  .steps {
+    grid-template-columns: 1fr;
+    padding-top: 36px;
+    padding-bottom: 56px;
+  }
+
+  .copy {
+    padding-top: 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

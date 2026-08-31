@@ -307,7 +307,7 @@ describe('PlantsTab', () => {
     expect(onMutated).toHaveBeenCalledTimes(1);
     expect(markOnboardingStepComplete).toHaveBeenCalledWith('plants');
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 
@@ -338,7 +338,7 @@ describe('PlantsTab', () => {
     lastPlantFormOnSaved()();
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 

@@ -7,6 +7,7 @@ import BrandLogo from "@/components/BrandLogo";
 import NavDrawer from "@/components/NavDrawer";
 import NotificationBell from "@/components/NotificationBell";
 import UserMenu from "@/components/UserMenu";
+import { DASHBOARD_PATH } from "@/constants/routes";
 import { useAuth } from "@/context/AuthContext";
 import { ProfileProvider } from "@/context/ProfileContext";
 import { WeatherCityProvider } from "@/context/WeatherCityContext";
@@ -55,7 +56,7 @@ export default function Layout() {
           <Group h="100%" px="lg" justify="space-between">
             <UnstyledButton
               component={Link}
-              to="/"
+              to={DASHBOARD_PATH}
               aria-label={t("nav.homeAria")}
               style={{ textDecoration: "none", color: "inherit" }}
             >
@@ -64,7 +65,7 @@ export default function Layout() {
             <Group gap="md">
               <NotificationBell />
               <Group gap="lg" visibleFrom="sm">
-                <NavLink to="/" end style={navLinkStyle}>
+                <NavLink to={DASHBOARD_PATH} end style={navLinkStyle}>
                   {t("nav.dashboard")}
                 </NavLink>
                 <NavLink to="/plants-center" style={navLinkStyle}>
