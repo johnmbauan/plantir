@@ -1,7 +1,7 @@
 import { describe, it } from "jsr:@std/testing/bdd";
 import { assertEquals } from "jsr:@std/assert";
 import { assertSpyCall, assertSpyCalls, stub } from "jsr:@std/testing/mock";
-import { createInAppNotification } from "../../telegram-notifier/notifications.ts";
+import { createInAppNotification } from "../../alert-notifier/notifications.ts";
 import { routedFetch } from "../utils/supabase_env.ts";
 
 const SUPABASE_URL = "https://test.supabase.co";

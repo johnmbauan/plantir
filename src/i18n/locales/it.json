@@ -192,7 +192,7 @@
       },
       "notifications": {
         "label": "Controlla le impostazioni di notifica",
-        "description": "Scegli quando ricevere avvisi di annaffiatura e offline nell'app."
+        "description": "Scegli quando ricevere avvisi di annaffiatura e offline nell'app o via email."
       }
     }
   },
@@ -231,8 +231,11 @@
     },
     "notifications": {
       "title": "Notifiche",
-      "description": "Ricevi promemoria di annaffiatura, avvisi offline e sblocchi del giardino nell'app.",
+      "description": "Ricevi promemoria di annaffiatura, avvisi offline e sblocchi del giardino nell'app, via email o su Telegram.",
       "inApp": "Notifiche in-app",
+      "email": "Notifiche email",
+      "emailDescription": "Un riepilogo giornaliero viene inviato a {{email}}.",
+      "emailDescriptionMissing": "Un riepilogo giornaliero viene inviato all'email del tuo account.",
       "scheduleTitle": "Programmazione",
       "scheduleDescription": "Gli avvisi giornalieri vengono inviati all'ora scelta nel tuo fuso orario.",
       "notificationTime": "Orario notifica",
@@ -244,7 +247,7 @@
       "optionalBadge": "Opzionale",
       "chatIdLabel": "Chat ID Telegram",
       "chatIdPlaceholder": "es. 123456789",
-      "chatIdDescription": "Lascia vuoto per ricevere gli avvisi solo nell'app."
+      "chatIdDescription": "Lascia vuoto se vuoi ricevere gli avvisi solo nell'app o via email."
     },
     "footerHint": "Le modifiche valgono per tutti i tuoi sensori.",
     "save": "Salva",

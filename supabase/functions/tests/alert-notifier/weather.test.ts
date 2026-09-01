@@ -1,8 +1,8 @@
 import { describe, it } from "jsr:@std/testing/bdd";
 import { assertEquals } from "jsr:@std/assert";
 import { assertSpyCalls, returnsNext, stub } from "jsr:@std/testing/mock";
-import { fetchRainForecast, loadRainForecastsByCoords, rainNoteText } from "../../telegram-notifier/weather.ts";
-import type { WateringRow } from "../../telegram-notifier/types.ts";
+import { fetchRainForecast, loadRainForecastsByCoords, rainNoteText } from "../../alert-notifier/weather.ts";
+import type { WateringRow } from "../../alert-notifier/types.ts";
 import { json, routedFetch } from "../utils/supabase_env.ts";
 
 // ---------------------------------------------------------------------------
@@ -18,6 +18,8 @@ function makeWateringRow(overrides: Partial<WateringRow> = {}): WateringRow {
     userId: "u1",
     chatId: "",
     browserEnabled: false,
+    emailEnabled: false,
+    email: null,
     plantId: 1,
     plantName: "Fern",
     imageUrl: null,
@@ -26,6 +28,9 @@ function makeWateringRow(overrides: Partial<WateringRow> = {}): WateringRow {
     weatherLat: 48.8,
     weatherLng: 2.3,
     locale: "en",
+    notificationTimezone: "UTC",
+    potDepthClass: null,
+    minHumidityThreshold: 30,
     ...overrides,
   };
 }

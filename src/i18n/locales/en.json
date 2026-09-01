@@ -192,7 +192,7 @@
       },
       "notifications": {
         "label": "Review notification settings",
-        "description": "Choose when to receive watering and offline alerts in the app."
+        "description": "Choose when to receive watering and offline alerts in the app or by email."
       }
     }
   },
@@ -231,8 +231,11 @@
     },
     "notifications": {
       "title": "Notifications",
-      "description": "Get watering reminders, offline alerts, and garden unlocks in the app.",
+      "description": "Get watering reminders, offline alerts, and garden unlocks in the app, by email, or on Telegram.",
       "inApp": "In-app notifications",
+      "email": "Email notifications",
+      "emailDescription": "A daily digest is sent to {{email}}.",
+      "emailDescriptionMissing": "A daily digest is sent to your account email.",
       "scheduleTitle": "Schedule",
       "scheduleDescription": "Daily alerts are sent at the chosen hour in your local timezone.",
       "notificationTime": "Notification time",
@@ -244,7 +247,7 @@
       "optionalBadge": "Optional",
       "chatIdLabel": "Telegram Chat ID",
       "chatIdPlaceholder": "e.g. 123456789",
-      "chatIdDescription": "Leave blank to receive alerts in the app only."
+      "chatIdDescription": "Leave blank if you only want alerts in the app or by email."
     },
     "footerHint": "Changes apply to all your sensors.",
     "save": "Save",

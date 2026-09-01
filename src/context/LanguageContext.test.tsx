@@ -23,6 +23,7 @@ function buildSettings(locale: string): NotificationSettings {
     notification_hour: 8,
     notification_timezone: 'UTC',
     browser_notifications_enabled: false,
+    email_notifications_enabled: false,
     locale,
   };
 }

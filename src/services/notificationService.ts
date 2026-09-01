@@ -12,6 +12,7 @@ export interface NotificationSettings {
   notification_hour: number;
   notification_timezone: string;
   browser_notifications_enabled: boolean;
+  email_notifications_enabled: boolean;
   locale: string;
   weather_lat?: number | null;
   weather_lng?: number | null;
@@ -133,7 +134,7 @@ export async function fetchSettings(): Promise<NotificationSettings | null> {
   const { data, error } = await supabase
     .from("notification_settings")
     .select(
-      "id, telegram_chat_id, notification_hour, notification_timezone, browser_notifications_enabled, locale, weather_lat, weather_lng",
+      "id, telegram_chat_id, notification_hour, notification_timezone, browser_notifications_enabled, email_notifications_enabled, locale, weather_lat, weather_lng",
     )
     .eq("user_id", user.id)
     .maybeSingle();
@@ -147,6 +148,7 @@ export async function upsertSettings(
   notification_hour: number,
   notification_timezone: string,
   browser_notifications_enabled: boolean,
+  email_notifications_enabled: boolean,
 ): Promise<void> {
   const user = await requireUser();
 
@@ -159,6 +161,7 @@ export async function upsertSettings(
         notification_hour,
         notification_timezone,
         browser_notifications_enabled,
+        email_notifications_enabled,
         updatedAt: new Date().toISOString(),
       },
       { onConflict: "user_id" },

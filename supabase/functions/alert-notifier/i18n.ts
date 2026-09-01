@@ -23,6 +23,14 @@ const STRINGS = {
     offlineTitleSingle: "{{plantName}} is offline",
     offlineTitleMulti: "{{count}} sensors offline",
     offlineBodyIntro: "The following plants haven't sent data in too long:",
+    wateringSubjectMulti: "{{count}} plants need water",
+    emailGreeting: "Hi,",
+    emailIntro: "Here's today's plant status:",
+    emailWateringHeading: "These plants need water",
+    emailOfflineHeading: "These sensors are offline",
+    emailOpenDashboard: "Open dashboard",
+    emailManagePrefs: "Manage email alerts in Settings",
+    emailTagline: "Plantir — home plant caring",
   },
   it: {
     wateringTelegram:
@@ -41,6 +49,14 @@ const STRINGS = {
     offlineTitleSingle: "{{plantName}} è offline",
     offlineTitleMulti: "{{count}} sensori offline",
     offlineBodyIntro: "Le seguenti piante non inviano dati da troppo tempo:",
+    wateringSubjectMulti: "{{count}} piante hanno bisogno di acqua",
+    emailGreeting: "Ciao,",
+    emailIntro: "Ecco lo stato delle tue piante oggi:",
+    emailWateringHeading: "Queste piante hanno bisogno di acqua",
+    emailOfflineHeading: "Questi sensori sono offline",
+    emailOpenDashboard: "Apri la dashboard",
+    emailManagePrefs: "Gestisci gli avvisi email nelle Impostazioni",
+    emailTagline: "Plantir — cura delle piante di casa",
   },
 } as const;
 
@@ -120,4 +136,23 @@ export function offlineInAppCopy(
     title,
     body: `${alertText(locale, "offlineBodyIntro")}\n\n${lines.join("\n")}`,
   };
+}
+
+export function emailSubject(
+  locale: Locale,
+  wateringNames: string[],
+  offlineNames: string[],
+): string {
+  const watering = wateringNames.length === 0
+    ? ""
+    : wateringNames.length === 1
+    ? alertText(locale, "wateringTitle", { plantName: wateringNames[0] })
+    : alertText(locale, "wateringSubjectMulti", { count: wateringNames.length });
+  const offline = offlineNames.length === 0
+    ? ""
+    : offlineNames.length === 1
+    ? alertText(locale, "offlineTitleSingle", { plantName: offlineNames[0] })
+    : alertText(locale, "offlineTitleMulti", { count: offlineNames.length });
+  if (watering && offline) return `${watering} · ${offline}`;
+  return watering || offline;
 }

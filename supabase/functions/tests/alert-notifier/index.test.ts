@@ -1,5 +1,5 @@
 /**
- * Integration tests for the telegram-notifier edge function.
+ * Integration tests for the alert-notifier edge function.
  *
  * Strategy: intercept Deno.serve, stub Deno.env.get, then mock
  * Pool.prototype.connect (to avoid a real TCP connection) and
@@ -59,7 +59,7 @@ let restoreEnv: () => void;
 beforeAll(async () => {
   restoreEnv = stubEnv(TELEGRAM_ENV);
   const intercept = interceptServe();
-  await import("../../telegram-notifier/index.ts");
+  await import("../../alert-notifier/index.ts");
   intercept.restore();
   handler = intercept.getHandler();
 });
@@ -75,7 +75,7 @@ describe("environment validation", () => {
     const restore = stubEnv({ ...TELEGRAM_ENV, TELEGRAM_BOT_TOKEN: undefined });
     try {
       const res = await handler(
-        new Request("https://edge.fn/telegram-notifier", {
+        new Request("https://edge.fn/alert-notifier", {
           headers: { apikey: TEST_SERVICE_ROLE_KEY },
         }),
       );
@@ -90,7 +90,7 @@ describe("environment validation", () => {
     const restore = stubEnv({ ...TELEGRAM_ENV, SUPABASE_DB_URL: undefined });
     try {
       const res = await handler(
-        new Request("https://edge.fn/telegram-notifier", {
+        new Request("https://edge.fn/alert-notifier", {
           headers: { apikey: TEST_SERVICE_ROLE_KEY },
         }),
       );
@@ -104,7 +104,7 @@ describe("environment validation", () => {
     const restore = stubEnv({ ...TELEGRAM_ENV, SUPABASE_SERVICE_ROLE_KEY: undefined });
     try {
       const res = await handler(
-        new Request("https://edge.fn/telegram-notifier", {
+        new Request("https://edge.fn/alert-notifier", {
           headers: { apikey: TEST_SERVICE_ROLE_KEY },
         }),
       );
@@ -121,14 +121,14 @@ describe("environment validation", () => {
 
 describe("authentication", () => {
   it("returns 401 when the apikey header is absent", async () => {
-    const res = await handler(new Request("https://edge.fn/telegram-notifier"));
+    const res = await handler(new Request("https://edge.fn/alert-notifier"));
     assertEquals(res.status, 401);
     assertEquals((await res.json()).error, "Unauthorized");
   });
 
   it("returns 401 when the apikey does not match either key", async () => {
     const res = await handler(
-      new Request("https://edge.fn/telegram-notifier", {
+      new Request("https://edge.fn/alert-notifier", {
         headers: { apikey: "wrong-key" },
       }),
     );
@@ -139,7 +139,7 @@ describe("authentication", () => {
     using _pool = emptyPoolMocks();
     using _fetch = stub(globalThis, "fetch", routedFetch({}));
     const res = await handler(
-      new Request("https://edge.fn/telegram-notifier", {
+      new Request("https://edge.fn/alert-notifier", {
         headers: { apikey: TEST_SERVICE_ROLE_KEY },
       }),
     );
@@ -150,7 +150,7 @@ describe("authentication", () => {
     using _pool = emptyPoolMocks();
     using _fetch = stub(globalThis, "fetch", routedFetch({}));
     const res = await handler(
-      new Request("https://edge.fn/telegram-notifier", {
+      new Request("https://edge.fn/alert-notifier", {
         headers: { apikey: TEST_CRON_API_KEY },
       }),
     );
@@ -167,7 +167,7 @@ describe("happy path", () => {
     using _pool = emptyPoolMocks();
     using _fetch = stub(globalThis, "fetch", routedFetch({}));
     const res = await handler(
-      new Request("https://edge.fn/telegram-notifier", {
+      new Request("https://edge.fn/alert-notifier", {
         headers: { apikey: TEST_SERVICE_ROLE_KEY },
       }),
     );
@@ -180,26 +180,29 @@ describe("happy path", () => {
     using _pool = emptyPoolMocks();
     using _fetch = stub(globalThis, "fetch", routedFetch({}));
     const res = await handler(
-      new Request("https://edge.fn/telegram-notifier", {
+      new Request("https://edge.fn/alert-notifier", {
         headers: { apikey: TEST_SERVICE_ROLE_KEY },
       }),
     );
     const body = await res.json();
     assertEquals(body.wateringAlertsSent, 0);
     assertEquals(body.offlineAlertsSent, 0);
+    assertEquals(body.emailDigestsSent, 0);
   });
 
   it("response includes details.watering and details.offline arrays", async () => {
     using _pool = emptyPoolMocks();
     using _fetch = stub(globalThis, "fetch", routedFetch({}));
     const res = await handler(
-      new Request("https://edge.fn/telegram-notifier", {
+      new Request("https://edge.fn/alert-notifier", {
         headers: { apikey: TEST_SERVICE_ROLE_KEY },
       }),
     );
     const body = await res.json();
     assertEquals(Array.isArray(body.details?.watering), true);
     assertEquals(Array.isArray(body.details?.offline), true);
+    assertEquals(body.details?.email?.sent, 0);
+    assertEquals(body.details?.email?.skipped, 0);
   });
 });
 
@@ -214,7 +217,7 @@ describe("error handling", () => {
     });
     using _end = stub(Pool.prototype, "end", async () => {});
     const res = await handler(
-      new Request("https://edge.fn/telegram-notifier", {
+      new Request("https://edge.fn/alert-notifier", {
         headers: { apikey: TEST_SERVICE_ROLE_KEY },
       }),
     );
