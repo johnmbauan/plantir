@@ -23,6 +23,17 @@
   gap: 12px;
 }
 
+.navLink {
+  color: var(--green-700);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navLink:hover {
+  text-decoration: underline;
+}
+
 .logoLink {
   text-decoration: none;
   color: inherit;
@@ -57,75 +68,13 @@
   transform: translateY(0);
 }
 
-.glimpse {
-  background: var(--surface);
-  border: 1px solid var(--terracotta-100);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 18px 44px rgba(74, 43, 28, 0.12);
-}
-
-.glimpseList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.glimpseRow {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  background: var(--surface);
-  border: 1px solid var(--green-100);
-  border-radius: 10px;
-  padding: 12px 14px;
-  transition:
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
-}
-
-.glimpseRow:hover {
-  box-shadow: 0 2px 12px rgba(26, 46, 34, 0.08);
-  transform: translateX(3px);
-}
-
-.glimpseAvatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--green-50);
-  border: 1px solid var(--green-100);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: var(--green-500);
-}
-
-.glimpseInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-  flex: 1;
-  padding-top: 2px;
-}
-
-.glimpseNameRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.glimpseName {
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--green-900);
-}
-
 @media (max-width: 520px) {
   .navActions {
     gap: 8px;
+  }
+
+  .cta {
+    padding: 9px 14px;
+    font-size: 0.88rem;
   }
 }

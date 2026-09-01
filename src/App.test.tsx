@@ -46,7 +46,11 @@ describe('App', () => {
           name: 'Know when they need you.',
         }),
       ).toBeInTheDocument();
-      expect(screen.getAllByRole('link', { name: 'Sign in' }).length).toBeGreaterThan(0);
+      expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/login');
+      expect(screen.getByRole('link', { name: 'Write to us' })).toHaveAttribute(
+        'href',
+        'mailto:ciao@plantir.green?subject=I\'d%20like%20a%20Plantir',
+      );
     });
   });
 
