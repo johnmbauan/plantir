@@ -1,8 +1,12 @@
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/BrandLogo";
-import LandingGlimpse from "./LandingGlimpse";
+import { CONTACT_EMAIL, contactMailto } from "@/constants/contact";
+import LandingContact from "./LandingContact";
+import LandingDevicePhoto from "./LandingDevicePhoto";
+import LandingHighlights from "./LandingHighlights";
+import LandingHousehold from "./LandingHousehold";
 import LandingNav from "./LandingNav";
+import LandingSetup from "./LandingSetup";
 import pageStyles from "./LandingPage.module.css";
 import styles from "./LandingGarden.module.css";
 
@@ -28,6 +32,7 @@ function GardenSky() {
 
 export default function LandingMain() {
   const { t } = useTranslation();
+  const href = contactMailto(t("landing.contact.subject"));
 
   return (
     <main className={styles.main}>
@@ -37,38 +42,27 @@ export default function LandingMain() {
         <div className={styles.copy}>
           <h1 className={styles.headline}>{t("landing.hero.title")}</h1>
           <p className={styles.subtitle}>{t("landing.hero.subtitle")}</p>
-          <Link to="/login" className={pageStyles.cta}>
-            {t("auth.login.signIn")}
-          </Link>
+          <div className={styles.heroActions}>
+            <a className={pageStyles.cta} href={href}>
+              {t("landing.contact.cta")}
+            </a>
+            <a className={styles.mailLink} href={href}>
+              {CONTACT_EMAIL}
+            </a>
+          </div>
         </div>
         <div className={styles.stage}>
-          <LandingGlimpse />
+          <LandingDevicePhoto />
         </div>
       </section>
 
-      <section className={styles.steps} aria-label={t("landing.stepsAria")}>
-        <article className={styles.step}>
-          <span className={styles.stepIndex}>1</span>
-          <h2 className={styles.stepTitle}>{t("landing.features.moisture.title")}</h2>
-          <p className={styles.stepBody}>{t("landing.features.moisture.body")}</p>
-        </article>
-        <article className={styles.step}>
-          <span className={styles.stepIndex}>2</span>
-          <h2 className={styles.stepTitle}>{t("landing.features.rain.title")}</h2>
-          <p className={styles.stepBody}>{t("landing.features.rain.body")}</p>
-        </article>
-        <article className={styles.step}>
-          <span className={styles.stepIndex}>3</span>
-          <h2 className={styles.stepTitle}>{t("landing.features.garden.title")}</h2>
-          <p className={styles.stepBody}>{t("garden.footer")}</p>
-        </article>
-      </section>
+      <LandingHighlights />
+      <LandingHousehold />
+      <LandingSetup />
+      <LandingContact />
 
       <footer className={styles.footer}>
         <BrandLogo />
-        <Link to="/login" className={pageStyles.cta}>
-          {t("auth.login.signIn")}
-        </Link>
       </footer>
     </main>
   );

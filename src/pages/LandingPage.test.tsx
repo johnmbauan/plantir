@@ -54,14 +54,41 @@ describe("LandingPage", () => {
         name: "Know when they need you.",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "See how the soil feels" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Alerts that wait for the rain" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "A garden that grows with you" })).toBeInTheDocument();
-    expect(screen.getByText("Keep caring for your plants to grow your garden.")).toBeInTheDocument();
-    expect(screen.getByRole("region", { name: "How Plantir cares with you" })).toBeInTheDocument();
-    expect(screen.getByText("Ficus")).toBeInTheDocument();
-    expect(screen.getByText("Basil")).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "Sign in" }).length).toBeGreaterThan(0);
+    expect(
+      screen.getByText(
+        "Stop guessing. A sensor in the soil reads moisture on its own Wi-Fi — no extra hub, no standing next to the plant. You get a nudge when it's time to water, even when you're away.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Three things that change how you care for them." })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Stop guessing when to water" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "No hub. Just your Wi-Fi." })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Indoors, balcony, or garden" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Someone at home can water for you." })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "In the pot, on the Wi-Fi, done." })).toBeInTheDocument();
+    expect(screen.getByText("Rechargeable. A few charges a year is enough.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "If you want a sensor, write to us." })).toBeInTheDocument();
+    const photo = screen.getByRole("img", {
+      name: "Example photo: a Plantir sensor in a houseplant pot",
+    });
+    expect(photo).toHaveAttribute("src", "/landing/sensor.jpg");
+    expect(screen.getByRole("region", { name: "Why Plantir" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Alerts for the household" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "How to get started" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Put it in the pot" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Connect it to Wi-Fi" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Get the nudge" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
+    expect(screen.getByRole("link", { name: "Write to us" })).toHaveAttribute(
+      "href",
+      "mailto:ciao@plantir.green?subject=I'd%20like%20a%20Plantir",
+    );
+    const writeLinks = screen.getAllByRole("link", { name: "Want one? Write to us" });
+    expect(writeLinks).toHaveLength(2);
+    expect(writeLinks[0]).toHaveAttribute(
+      "href",
+      "mailto:ciao@plantir.green?subject=I'd%20like%20a%20Plantir",
+    );
+    expect(screen.getAllByRole("link", { name: "ciao@plantir.green" })).toHaveLength(2);
   });
 
   it("redirects signed-in users to the dashboard", async () => {
@@ -101,6 +128,16 @@ describe("LandingPage", () => {
         name: "Saprai quando hanno bisogno di te.",
       }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Basta indovinare. Un sensore nella terra misura l'umidità sul tuo Wi-Fi — senza una centralina, senza stare accanto alla pianta. Ti avvisa quando è ora di annaffiare, anche se sei fuori casa.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Scrivici" })).toHaveAttribute(
+      "href",
+      "mailto:ciao@plantir.green?subject=Vorrei%20un%20Plantir",
+    );
+    expect(screen.getAllByRole("link", { name: "Ne vuoi uno? Scrivici" })).toHaveLength(2);
     expect(localStorage.getItem(GUEST_LOCALE_STORAGE_KEY)).toBe("it");
 
     await user.click(screen.getByRole("radio", { name: "English" }));

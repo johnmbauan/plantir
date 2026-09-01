@@ -36,34 +36,73 @@
   "landing": {
     "hero": {
       "title": "Know when they need you.",
-      "subtitle": "Live soil moisture, rain-aware alerts, and a garden that grows when you keep showing up."
+      "subtitle": "Stop guessing. A sensor in the soil reads moisture on its own Wi-Fi — no extra hub, no standing next to the plant. You get a nudge when it's time to water, even when you're away."
     },
-    "features": {
+    "contact": {
+      "cta": "Want one? Write to us",
+      "navCta": "Write to us",
+      "subject": "I'd like a Plantir",
+      "aria": "Email {{email}}",
+      "eyebrow": "Get in touch",
+      "title": "If you want a sensor, write to us.",
+      "lead": "No form — just an email. Tell us about your plants."
+    },
+    "photo": {
+      "alt": "Example photo: a Plantir sensor in a houseplant pot",
+      "notify": "Basil needs water"
+    },
+    "highlights": {
+      "aria": "Why Plantir",
+      "eyebrow": "Why it helps",
+      "title": "Three things that change how you care for them.",
+      "lead": "Less guessing, no extra box to set up, and a reminder that follows you.",
       "moisture": {
-        "title": "See how the soil feels",
-        "body": "A live dashboard of humidity readings, so you water when it matters — not on a guess."
+        "title": "Stop guessing when to water",
+        "body": "The probe reads the soil, so you water only when the plant actually needs it — not when the surface looks dry."
       },
-      "rain": {
-        "title": "Alerts that wait for the rain",
-        "body": "Outdoor plants get a pause when rain is coming. Less waste, fewer worried glances at the sky."
+      "wifi": {
+        "title": "No hub. Just your Wi-Fi.",
+        "body": "Each sensor connects on its own. One plant or a whole windowsill. It keeps working when you're not in the room — and when you're not at home."
       },
-      "garden": {
-        "title": "A garden that grows with you"
+      "weather": {
+        "title": "Indoors, balcony, or garden",
+        "body": "Use it in the house or outside. When rain is coming, outdoor plants can wait."
       }
     },
-    "glimpse": {
-      "aria": "A preview of plants on the dashboard",
-      "plants": {
-        "ficus": "Ficus",
-        "basil": "Basil"
-      }
+    "household": {
+      "aria": "Alerts for the household",
+      "eyebrow": "When you're away",
+      "title": "Someone at home can water for you.",
+      "body": "Alerts can land in a household Telegram group — the chat you already use. Basil is thirsty; whoever is home picks up the watering can.",
+      "messageFrom": "Plantir",
+      "messageText": "Basil needs water."
+    },
+    "setup": {
+      "aria": "How to get started",
+      "eyebrow": "From box to reminder",
+      "title": "In the pot, on the Wi-Fi, done.",
+      "lead": "Three steps. Then it watches the soil for you.",
+      "steps": {
+        "pot": {
+          "title": "Put it in the pot",
+          "body": "Slide the probe into the soil until the sensor sits in place."
+        },
+        "wifi": {
+          "title": "Connect it to Wi-Fi",
+          "body": "It joins your network on its own. No extra box to plug in."
+        },
+        "alert": {
+          "title": "Get the nudge",
+          "body": "When watering would help, you hear about it in the app, by email, or on Telegram."
+        }
+      },
+      "battery": "Rechargeable. A few charges a year is enough."
     },
     "language": {
       "label": "Language",
       "it": "Italiano",
       "en": "English"
-    },
-    "stepsAria": "How Plantir cares with you"
+    }
   },
   "userMenu": {
     "accountMenuAria": "Account menu",
