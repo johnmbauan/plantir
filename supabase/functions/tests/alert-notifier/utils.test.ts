@@ -1,6 +1,6 @@
 import { describe, it } from "jsr:@std/testing/bdd";
 import { assertEquals } from "jsr:@std/assert";
-import { jsonStringify } from "../../telegram-notifier/utils.ts";
+import { jsonStringify } from "../../alert-notifier/utils.ts";
 
 describe("jsonStringify", () => {
   describe("standard JSON behaviour", () => {

@@ -129,22 +129,24 @@ export $(grep -v '^#' .env | xargs) && curl "$VITE_SUPABASE_URL/rest/v1/plants" 
 
 ## Edge functions
 
-The project requires an Edge function named `telegram-notifier`. This function is in charge of sending periodically daily updates about all home plants health status, connecting to a specific Telegram bot.
+The project requires an Edge function named `alert-notifier`. This function sends daily watering and offline alerts over Telegram, in-app notifications, and (when the user has opted in) a single email digest via Resend.
 
-To test manually the `telegram-notifier` function, once it has been deployed on Supabase, send the following cURL:
+To test manually the `alert-notifier` function, once it has been deployed on Supabase, send the following cURL:
 
 ```sh
-curl -L -X POST 'https://zlsmzlingdehpgglxpmk.supabase.co/functions/v1/telegram-notifier' \
+curl -L -X POST 'https://zlsmzlingdehpgglxpmk.supabase.co/functions/v1/alert-notifier' \
   -H 'apikey: <SUPABASE_SERVICE_ROLE_KEY>' \
   -H 'Content-Type: application/json' -v
 ```
 
 Replace the **SUPABASE_SERVICE_ROLE_KEY** with the `default` key found at [this link](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/settings/api-keys) under the section **Secret keys**.
 
-The `telegram-notifier` code is versioned in the project, at the [supabase/functions/telegram-notifier](../supabase/functions/telegram-notifier) path. If you need to deploy a new version, type these commands using the [Supabase CLI](#install-the-cli):
+The `alert-notifier` code is versioned in the project, at the [supabase/functions/alert-notifier](../supabase/functions/alert-notifier) path. If you need to deploy a new version, type these commands using the [Supabase CLI](#install-the-cli):
 
 1. `supabase login`: login automatically with your Supabase account; follow the instructions in the terminal to authenticate yourself.
-2. `supabase functions deploy telegram-notifier`: deploy on supabase the updated function code.
+2. `supabase functions deploy alert-notifier`: deploy on supabase the updated function code.
+
+This function used to be named `telegram-notifier`. After deploying `alert-notifier` and applying the cron migration, delete the old remote function so only one scheduler target remains.
 
 ### Unit testing and integration testing Edge Functions
 
@@ -177,11 +179,19 @@ deno test --no-check supabase/functions/tests/_shared/normalize.test.ts
 
 ## Secrets
 
-In Supabase secrets are at the project level. In our case the `telegram-notifier` function requires some custom secrets to work (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` and `CRON_API_KEY`); you can use the Supabase CLI to fully manage them. In particular:
+In Supabase secrets are at the project level. The `alert-notifier` function uses these secrets (`TELEGRAM_BOT_TOKEN`, `CRON_API_KEY`, and optionally `RESEND_API_KEY`, `RESEND_FROM`, `APP_ORIGIN`); you can use the Supabase CLI to fully manage them. In particular:
 
 - `supabase secrets list`: List all the available secrets configured for your project on Supabase
 - `supabase secrets set SOME_SECRET="some-value"`: Configure a new secret or edit an existing one.
 - `supabase secrets unset SOME_SECRET`: Remove a previously created secret.
+
+Email digest alerts are opt-in (`notification_settings.email_notifications_enabled`) and send at most one Resend email per user per local day. They require:
+
+- `RESEND_API_KEY` — Resend API key
+- `RESEND_FROM` — verified sender, e.g. `Plantir <alerts@plantir.green>`
+- `APP_ORIGIN` — optional, defaults to `https://plantir.green` for dashboard and settings links
+
+If `RESEND_API_KEY` or `RESEND_FROM` is missing, Telegram and in-app alerts still run. Auth invite and password-reset emails stay on Supabase Auth’s mailer and are not sent by this function.
 
 ## Row Level Security
 
@@ -222,7 +232,7 @@ Admins (`app_metadata.role = 'admin'`) get additional SELECT policies plus `SECU
 
 `firmware` is a public bucket used for HTTPS OTA binaries (`{board}/{version}.bin`). Admins may upload/update/delete objects; devices download via the public URL returned from `device_wake_sync`.
 
-> **Note:** Edge functions such as `telegram-notifier` and `register-device` connect with the service role and bypass RLS, so scheduled alerts and device provisioning continue to work across all users.
+> **Note:** Edge functions such as `alert-notifier` and `register-device` connect with the service role and bypass RLS, so scheduled alerts and device provisioning continue to work across all users.
 
 ## Database Migrations
 
@@ -243,12 +253,11 @@ Once you finish to write your migrations, you can apply them on the remote datab
 
 ## Cron Job
 
-In the [SQL Editor](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/sql/ed98d043-877f-499e-9b9b-e5a956e91390) dashboard there are a bunch of SQL queries that manage two distinct Cron jobs, both in charge of scheduling the `telegram-notifier` function, but at different intervals:
+The production scheduler is `alert-notifier-hourly` (`0 * * * *`), which posts to `/functions/v1/alert-notifier`. The function itself filters users by their chosen `notification_hour` in `notification_timezone`.
 
-- _telegram-notifier-daily_: a cron job that schedules `telegram-notifier` once a day at 6:00 AM UTC.
-- _telegram-notifier-minutes_: a cron job that schedules `telegram-notifier` every minute; used for testing purposes.
+Older jobs named `telegram-notifier-hourly` (and any leftover `telegram-notifier-daily` / `telegram-notifier-minutes` test jobs) are unscheduled by the rename migration. Dashboard SQL Editor snippets that still call `/functions/v1/telegram-notifier` need to be pointed at `/functions/v1/alert-notifier`.
 
-By default the _telegram-notifier-daily_ job is activated, while the _telegram-notifier-minutes_ is not. You can activate/deactivate them using the shared queries available in the SQL Editor:
+There is also a minute-interval test job used only for debugging. By default the hourly job is active and the minute job is not. You can activate/deactivate them using the shared queries available in the SQL Editor:
 
 - [Activate Minute-based Telegram notifier scheduler](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/sql/785bb54f-964e-41d2-af70-967435d8ef27)
 - [Deactivate Minute-based telegram notifier scheduler](https://supabase.com/dashboard/project/zlsmzlingdehpgglxpmk/sql/e478bb04-aba7-4e59-a8f4-6ff5eddce822)

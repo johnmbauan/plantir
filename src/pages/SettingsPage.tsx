@@ -20,6 +20,7 @@ import { TelegramChatIdField } from "@/components/TelegramChatIdField";
 import { fetchSettings, upsertSettings } from "@/services/notificationService";
 import { markOnboardingStepComplete } from "@/services/onboardingService";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { getErrorMessage } from "@/utils/error";
 
 const TIMEZONE_OPTIONS = (Intl as unknown as { supportedValuesOf: (key: string) => string[] })
@@ -43,8 +44,11 @@ const footerStyle = {
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
   const { locale, setLocale } = useLanguage();
+  const { session } = useAuth();
+  const accountEmail = session?.user.email ?? "";
 
   const [inAppEnabled, setInAppEnabled] = useState(true);
+  const [emailEnabled, setEmailEnabled] = useState(false);
   const [chatId, setChatId] = useState("");
   const [notificationHour, setNotificationHour] = useState(6);
   const [notificationTimezone, setNotificationTimezone] = useState(DEFAULT_TIMEZONE);
@@ -56,6 +60,7 @@ export default function SettingsPage() {
       .then((s) => {
         if (s) {
           setInAppEnabled(s.browser_notifications_enabled);
+          setEmailEnabled(s.email_notifications_enabled);
           setChatId(s.telegram_chat_id);
           setNotificationHour(s.notification_hour);
           setNotificationTimezone(s.notification_timezone);
@@ -71,7 +76,13 @@ export default function SettingsPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await upsertSettings(chatId.trim(), notificationHour, notificationTimezone, inAppEnabled);
+      await upsertSettings(
+        chatId.trim(),
+        notificationHour,
+        notificationTimezone,
+        inAppEnabled,
+        emailEnabled,
+      );
       void markOnboardingStepComplete("notifications").catch((err) => {
         console.error("Failed to record onboarding notifications step:", err);
       });
@@ -137,6 +148,22 @@ export default function SettingsPage() {
                   label={t("settings.notifications.inApp")}
                   checked={inAppEnabled}
                   onChange={(e) => setInAppEnabled(e.currentTarget.checked)}
+                  disabled={loading}
+                  styles={{
+                    track: { cursor: loading ? undefined : "pointer" },
+                    label: { cursor: loading ? undefined : "pointer" },
+                  }}
+                />
+
+                <Switch
+                  label={t("settings.notifications.email")}
+                  description={
+                    accountEmail
+                      ? t("settings.notifications.emailDescription", { email: accountEmail })
+                      : t("settings.notifications.emailDescriptionMissing")
+                  }
+                  checked={emailEnabled}
+                  onChange={(e) => setEmailEnabled(e.currentTarget.checked)}
                   disabled={loading}
                   styles={{
                     track: { cursor: loading ? undefined : "pointer" },

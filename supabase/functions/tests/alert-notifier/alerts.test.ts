@@ -1,8 +1,8 @@
 import { describe, it } from "jsr:@std/testing/bdd";
 import { assertEquals } from "jsr:@std/assert";
 import { assertSpyCall, assertSpyCalls, stub } from "jsr:@std/testing/mock";
-import { sendOfflineAlerts, sendWateringAlerts } from "../../telegram-notifier/alerts.ts";
-import type { OfflineRow, WateringRow } from "../../telegram-notifier/types.ts";
+import { sendOfflineAlerts, sendWateringAlerts } from "../../alert-notifier/alerts.ts";
+import type { OfflineRow, WateringRow } from "../../alert-notifier/types.ts";
 import { json, routedFetch } from "../utils/supabase_env.ts";
 
 const BOT_TOKEN = "test-bot-token";
@@ -38,6 +38,8 @@ function makeWateringRow(overrides: Partial<WateringRow> = {}): WateringRow {
     userId: "user-1",
     chatId: "chat-1",
     browserEnabled: false,
+    emailEnabled: false,
+    email: null,
     plantId: 1,
     plantName: "Monstera",
     imageUrl: null,
@@ -48,6 +50,7 @@ function makeWateringRow(overrides: Partial<WateringRow> = {}): WateringRow {
     weatherLat: null,
     weatherLng: null,
     locale: "en",
+    notificationTimezone: "UTC",
     ...overrides,
   };
 }
@@ -57,6 +60,8 @@ function makeOfflineRow(overrides: Partial<OfflineRow> = {}): OfflineRow {
     userId: "user-1",
     chatId: "chat-1",
     browserEnabled: false,
+    emailEnabled: false,
+    email: null,
     plantId: 1,
     plantName: "Monstera",
     lastSeenAt: "2024-01-01T12:00:00Z",
@@ -75,7 +80,7 @@ describe("sendWateringAlerts", () => {
     it("returns an empty array when the query returns no rows", async () => {
       const client = makeClient([{ rows: [] }]);
       assertEquals(
-        await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY),
+        (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts,
         [],
       );
     });
@@ -95,7 +100,7 @@ describe("sendWateringAlerts", () => {
         { rows: [] },
       ]);
       using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result, []);
       assertSpyCalls(fetchStub, 0);
     });
@@ -108,7 +113,7 @@ describe("sendWateringAlerts", () => {
         { rows: [] },                  // nothing snoozed
       ]);
       using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertSpyCalls(fetchStub, 1);
       assertSpyCall(fetchStub, 0, {
         args: [
@@ -151,7 +156,7 @@ describe("sendWateringAlerts", () => {
         { rows: [] }, // nothing snoozed
       ]);
       using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertSpyCalls(fetchStub, 1);
       assertSpyCall(fetchStub, 0, {
         args: [
@@ -178,7 +183,7 @@ describe("sendWateringAlerts", () => {
       using _fetch = stub(globalThis, "fetch", async () => {
         throw new Error("Network failure");
       });
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result[0].telegram, false);
     });
 
@@ -188,7 +193,7 @@ describe("sendWateringAlerts", () => {
         { rows: [] }, // nothing snoozed
       ]);
       using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertSpyCalls(fetchStub, 0);
       assertEquals(result[0].telegram, false);
     });
@@ -205,7 +210,7 @@ describe("sendWateringAlerts", () => {
       using _fetch = stub(globalThis, "fetch", routedFetch({
         "realtime": () => new Response(null, { status: 200 }),
       }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result[0].browser, true);
     });
 
@@ -217,7 +222,7 @@ describe("sendWateringAlerts", () => {
       using _fetch = stub(globalThis, "fetch", routedFetch({
         "sendMessage": () => json({ ok: true }),
       }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result[0].browser, false);
     });
   });
@@ -228,7 +233,7 @@ describe("sendWateringAlerts", () => {
         { rows: [makeWateringRow()] },
         { rows: [{ userId: "user-1", plantId: 1 }] }, // plant 1 snoozed
       ]);
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result.length, 0);
     });
 
@@ -240,7 +245,7 @@ describe("sendWateringAlerts", () => {
       using _fetch = stub(globalThis, "fetch", routedFetch({
         "sendMessage": () => json({ ok: true }),
       }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result.length, 1);
     });
   });
@@ -255,7 +260,7 @@ describe("sendWateringAlerts", () => {
         "open-meteo.com": () => json({ daily: { weather_code: [51, 0] } }),
         "sendMessage": () => json({ ok: true }),
       }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result[0].rainNote, true);
     });
 
@@ -268,7 +273,7 @@ describe("sendWateringAlerts", () => {
         "open-meteo.com": () => json({ daily: { weather_code: [0, 1] } }),
         "sendMessage": () => json({ ok: true }),
       }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result[0].rainNote, false);
     });
 
@@ -280,7 +285,7 @@ describe("sendWateringAlerts", () => {
       using _fetch = stub(globalThis, "fetch", routedFetch({
         "sendMessage": () => json({ ok: true }),
       }));
-      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result[0].rainNote, false);
     });
   });
@@ -294,7 +299,7 @@ describe("sendWateringAlerts", () => {
       using _fetch = stub(globalThis, "fetch", routedFetch({
         "sendMessage": () => json({ ok: true }),
       }));
-      const [alert] = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const [alert] = (await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(alert.plant, "Rose");
       assertEquals(alert.humidity, 15);
     });
@@ -310,7 +315,7 @@ describe("sendOfflineAlerts", () => {
     it("returns an empty array when the query returns no rows", async () => {
       const client = makeClient([{ rows: [] }]);
       assertEquals(
-        await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY),
+        (await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts,
         [],
       );
     });
@@ -320,7 +325,7 @@ describe("sendOfflineAlerts", () => {
     it("sends one message for a single offline plant", async () => {
       const client = makeClient([{ rows: [makeOfflineRow()] }]);
       using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
-      const result = await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertSpyCalls(fetchStub, 1);
       assertEquals(result[0].telegram, true);
       assertEquals(result[0].browser, false);
@@ -334,7 +339,7 @@ describe("sendOfflineAlerts", () => {
         ],
       }]);
       using fetchStub = stub(globalThis, "fetch", async () => json({ ok: true }));
-      const result = await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertSpyCalls(fetchStub, 1);
       assertEquals(result.length, 2);
     });
@@ -400,7 +405,7 @@ describe("sendOfflineAlerts", () => {
       using _fetch = stub(globalThis, "fetch", routedFetch({
         "realtime": () => new Response(null, { status: 200 }),
       }));
-      const result = await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result[0].browser, true);
     });
 
@@ -418,7 +423,7 @@ describe("sendOfflineAlerts", () => {
       using _fetch = stub(globalThis, "fetch", routedFetch({
         "realtime": () => new Response(null, { status: 200 }),
       }));
-      const result = await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result.length, 2);
       assertEquals(result.every((r) => r.browser), true);
     });
@@ -435,9 +440,62 @@ describe("sendOfflineAlerts", () => {
         "sendMessage": () => json({ ok: true }),
         "realtime": () => new Response(null, { status: 200 }),
       }));
-      const result = await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      const result = (await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY)).alerts;
       assertEquals(result[0].telegram, true);
       assertEquals(result[0].browser, true);
+    });
+  });
+
+  describe("email digest items", () => {
+    it("collects a watering digest item when email is enabled", async () => {
+      const client = makeClient([
+        { rows: [makeWateringRow({ chatId: "", emailEnabled: true, email: "a@b.com" })] },
+        { rows: [] },
+      ]);
+      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      assertEquals(result.digestItems, [
+        {
+          userId: "user-1",
+          email: "a@b.com",
+          locale: "en",
+          notificationTimezone: "UTC",
+          plantName: "Monstera",
+          humidity: 20,
+          rainNote: "",
+        },
+      ]);
+    });
+
+    it("omits watering digest items when email is disabled", async () => {
+      const client = makeClient([
+        { rows: [makeWateringRow({ chatId: "" })] },
+        { rows: [] },
+      ]);
+      const result = await sendWateringAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      assertEquals(result.digestItems, []);
+    });
+
+    it("collects an offline digest item when email is enabled", async () => {
+      const client = makeClient([
+        { rows: [makeOfflineRow({ chatId: "", emailEnabled: true, email: "a@b.com" })] },
+      ]);
+      const result = await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      assertEquals(result.digestItems, [
+        {
+          userId: "user-1",
+          email: "a@b.com",
+          locale: "en",
+          notificationTimezone: "UTC",
+          plantName: "Monstera",
+          lastSeenAt: "2024-01-01T12:00:00Z",
+        },
+      ]);
+    });
+
+    it("omits offline digest items when email is disabled", async () => {
+      const client = makeClient([{ rows: [makeOfflineRow({ chatId: "" })] }]);
+      const result = await sendOfflineAlerts(client as any, BOT_TOKEN, SUPABASE_URL, SERVICE_KEY);
+      assertEquals(result.digestItems, []);
     });
   });
 });

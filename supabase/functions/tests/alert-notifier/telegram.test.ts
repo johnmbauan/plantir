@@ -1,6 +1,6 @@
 import { describe, it } from "jsr:@std/testing/bdd";
 import { assertSpyCall, assertSpyCalls, stub } from "jsr:@std/testing/mock";
-import { sendTelegramMessage, sendTelegramPhoto } from "../../telegram-notifier/telegram.ts";
+import { sendTelegramMessage, sendTelegramPhoto } from "../../alert-notifier/telegram.ts";
 import { json } from "../utils/supabase_env.ts";
 
 const BOT_TOKEN = "test-bot-token-123";

@@ -22,6 +22,7 @@ import {
   mockUnauthenticated,
   setupFromMocks,
   mockInvoke,
+  mockFrom,
 } from '@/test/mocks/supabase';
 import {
   fetchSettings,
@@ -73,6 +74,7 @@ describe('notificationService', () => {
         notification_hour: 9,
         notification_timezone: 'Europe/Rome',
         browser_notifications_enabled: true,
+        email_notifications_enabled: false,
       };
       setupFromMocks({ notification_settings: { data: settings, error: null } });
       await expect(fetchSettings()).resolves.toEqual(settings);
@@ -148,7 +150,7 @@ describe('notificationService', () => {
       mockAuthenticatedUser();
       setupFromMocks({ notification_settings: { data: null, error: null } });
       await expect(
-        upsertSettings('chat-1', 9, 'Europe/Rome', true),
+        upsertSettings('chat-1', 9, 'Europe/Rome', true, false),
       ).resolves.toBeUndefined();
     });
 
@@ -165,8 +167,19 @@ describe('notificationService', () => {
       }];
       mockRecordClientEvent.mockResolvedValue(unlocked);
 
-      await upsertSettings('chat-1', 9, 'Europe/Rome', true);
+      await upsertSettings('chat-1', 9, 'Europe/Rome', true, true);
 
+      const chain = mockFrom.mock.results[0]?.value as { upsert: ReturnType<typeof vi.fn> };
+      expect(chain.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          telegram_chat_id: 'chat-1',
+          notification_hour: 9,
+          notification_timezone: 'Europe/Rome',
+          browser_notifications_enabled: true,
+          email_notifications_enabled: true,
+        }),
+        { onConflict: 'user_id' },
+      );
       expect(mockRecordClientEvent).toHaveBeenCalledWith('notification_settings_saved');
       expect(mockShowUnlockToasts).toHaveBeenCalledWith(unlocked);
     });
@@ -176,7 +189,7 @@ describe('notificationService', () => {
       setupFromMocks({ notification_settings: { data: null, error: new Error('DB error') } });
 
       await expect(
-        upsertSettings('chat-1', 9, 'Europe/Rome', true),
+        upsertSettings('chat-1', 9, 'Europe/Rome', true, false),
       ).rejects.toThrow('DB error');
 
       expect(mockRecordClientEvent).not.toHaveBeenCalled();
@@ -190,7 +203,7 @@ describe('notificationService', () => {
       const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
-        upsertSettings('chat-1', 9, 'Europe/Rome', true),
+        upsertSettings('chat-1', 9, 'Europe/Rome', true, false),
       ).resolves.toBeUndefined();
 
       expect(mockRecordClientEvent).toHaveBeenCalledWith('notification_settings_saved');

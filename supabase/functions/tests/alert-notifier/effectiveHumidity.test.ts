@@ -1,6 +1,6 @@
 import { describe, it } from "jsr:@std/testing/bdd";
 import { assertEquals } from "jsr:@std/assert";
-import { getEffectiveHumidity } from "../../telegram-notifier/effectiveHumidity.ts";
+import { getEffectiveHumidity } from "../../alert-notifier/effectiveHumidity.ts";
 
 describe("getEffectiveHumidity", () => {
   it("returns identity for null or compact", () => {

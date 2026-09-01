@@ -1,5 +1,10 @@
 import type { PoolClient } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
-import type { OfflineRow, WateringRow } from "./types.ts";
+import type {
+  OfflineDigestItem,
+  OfflineRow,
+  WateringDigestItem,
+  WateringRow,
+} from "./types.ts";
 import { OFFLINE_QUERY, WATERING_QUERY } from "./queries.ts";
 import { getEffectiveHumidity } from "./effectiveHumidity.ts";
 import { loadRainForecastsByCoords, rainNoteText } from "./weather.ts";
@@ -31,6 +36,35 @@ async function loadSnoozedPlantIds(
   return new Set(rows.map((r) => `${r.userId}:${Number(r.plantId)}`));
 }
 
+function digestFromWatering(
+  row: WateringRow,
+  humidity: number,
+  rainNote: string,
+): WateringDigestItem | null {
+  if (!row.emailEnabled || !row.email) return null;
+  return {
+    userId: row.userId,
+    email: row.email,
+    locale: row.locale,
+    notificationTimezone: row.notificationTimezone,
+    plantName: row.plantName,
+    humidity,
+    rainNote,
+  };
+}
+
+function digestFromOffline(row: OfflineRow): OfflineDigestItem | null {
+  if (!row.emailEnabled || !row.email) return null;
+  return {
+    userId: row.userId,
+    email: row.email,
+    locale: row.locale,
+    notificationTimezone: row.notificationTimezone,
+    plantName: row.plantName,
+    lastSeenAt: row.lastSeenAt,
+  };
+}
+
 export interface WateringAlertResult {
   plant: string;
   humidity: number;
@@ -39,14 +73,19 @@ export interface WateringAlertResult {
   rainNote: boolean;
 }
 
+export interface WateringSendResult {
+  alerts: WateringAlertResult[];
+  digestItems: WateringDigestItem[];
+}
+
 export async function sendWateringAlerts(
   connection: PoolClient,
   botToken: string,
   supabaseUrl: string,
   serviceRoleKey: string,
-): Promise<WateringAlertResult[]> {
+): Promise<WateringSendResult> {
   const { rows } = await connection.queryObject<WateringRow>(WATERING_QUERY);
-  if (rows.length === 0) return [];
+  if (rows.length === 0) return { alerts: [], digestItems: [] };
 
   const userIds = [...new Set(rows.map((r) => r.userId))];
   const [snoozedKeys, rainByCoords] = await Promise.all([
@@ -55,6 +94,7 @@ export async function sendWateringAlerts(
   ]);
 
   const alerts: WateringAlertResult[] = [];
+  const digestItems: WateringDigestItem[] = [];
 
   for (const row of rows) {
     const plantKey = `${row.userId}:${Number(row.plantId)}`;
@@ -114,10 +154,13 @@ export async function sendWateringAlerts(
       browser = id !== null;
     }
 
+    const digest = digestFromWatering(row, humidity, rainNote);
+    if (digest) digestItems.push(digest);
+
     alerts.push({ plant: row.plantName, humidity, telegram, browser, rainNote: rainForecasted });
   }
 
-  return alerts;
+  return { alerts, digestItems };
 }
 
 export interface OfflineAlertResult {
@@ -126,17 +169,23 @@ export interface OfflineAlertResult {
   browser: boolean;
 }
 
+export interface OfflineSendResult {
+  alerts: OfflineAlertResult[];
+  digestItems: OfflineDigestItem[];
+}
+
 export async function sendOfflineAlerts(
   connection: PoolClient,
   botToken: string,
   supabaseUrl: string,
   serviceRoleKey: string,
-): Promise<OfflineAlertResult[]> {
+): Promise<OfflineSendResult> {
   const { rows } = await connection.queryObject<OfflineRow>(OFFLINE_QUERY);
-  if (rows.length === 0) return [];
+  if (rows.length === 0) return { alerts: [], digestItems: [] };
 
   const byTelegramChat = new Map<string, OfflineRow[]>();
   const byUserId = new Map<string, OfflineRow[]>();
+  const digestItems: OfflineDigestItem[] = [];
 
   for (const row of rows) {
     if (row.chatId) {
@@ -149,6 +198,8 @@ export async function sendOfflineAlerts(
       list.push(row);
       byUserId.set(row.userId, list);
     }
+    const digest = digestFromOffline(row);
+    if (digest) digestItems.push(digest);
   }
 
   const notified: OfflineAlertResult[] = [];
@@ -206,5 +257,5 @@ export async function sendOfflineAlerts(
     }
   }
 
-  return notified;
+  return { alerts: notified, digestItems };
 }
