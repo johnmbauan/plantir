@@ -12,6 +12,6 @@ describe("LandingDevicePhoto", () => {
     expect(photo).toHaveAttribute("src", "/landing/sensor.jpg");
     expect(photo).toHaveAttribute("width", "1200");
     expect(photo).toHaveAttribute("height", "800");
-    expect(screen.getByText("Basil needs water")).toBeInTheDocument();
+    expect(screen.getByText("Pothos needs water")).toBeInTheDocument();
   });
 });

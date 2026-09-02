@@ -35,12 +35,11 @@
   },
   "landing": {
     "hero": {
-      "title": "Know when they need you.",
+      "title": "Care for them, without guessing.",
       "subtitle": "Stop guessing. A sensor in the soil reads moisture on its own Wi-Fi — no extra hub, no standing next to the plant. You get a nudge when it's time to water, even when you're away."
     },
     "contact": {
       "cta": "Want one? Write to us",
-      "navCta": "Write to us",
       "subject": "I'd like a Plantir",
       "aria": "Email {{email}}",
       "eyebrow": "Get in touch",
@@ -49,13 +48,12 @@
     },
     "photo": {
       "alt": "Example photo: a Plantir sensor in a houseplant pot",
-      "notify": "Basil needs water"
+      "notify": "Pothos needs water"
     },
     "highlights": {
       "aria": "Why Plantir",
       "eyebrow": "Why it helps",
       "title": "Three things that change how you care for them.",
-      "lead": "Less guessing, no extra box to set up, and a reminder that follows you.",
       "moisture": {
         "title": "Stop guessing when to water",
         "body": "The probe reads the soil, so you water only when the plant actually needs it — not when the surface looks dry."
@@ -73,23 +71,23 @@
       "aria": "Alerts for the household",
       "eyebrow": "When you're away",
       "title": "Someone at home can water for you.",
-      "body": "Alerts can land in a household Telegram group — the chat you already use. Basil is thirsty; whoever is home picks up the watering can.",
+      "body": "Alerts can land in a household Telegram group — the chat you already use. Pothos is thirsty; whoever is home picks up the watering can.",
       "messageFrom": "Plantir",
-      "messageText": "Basil needs water."
+      "messageText": "Pothos needs water."
     },
     "setup": {
       "aria": "How to get started",
       "eyebrow": "From box to reminder",
-      "title": "In the pot, on the Wi-Fi, done.",
+      "title": "Register, in the pot, done.",
       "lead": "Three steps. Then it watches the soil for you.",
       "steps": {
+        "register": {
+          "title": "Register the sensor in the Plantir web app",
+          "body": "Open Plantir and add the new sensor. It takes about three minutes."
+        },
         "pot": {
           "title": "Put it in the pot",
-          "body": "Slide the probe into the soil until the sensor sits in place."
-        },
-        "wifi": {
-          "title": "Connect it to Wi-Fi",
-          "body": "It joins your network on its own. No extra box to plug in."
+          "body": "Slide the probe in next to the plant, all the way into the soil."
         },
         "alert": {
           "title": "Get the nudge",
@@ -214,7 +212,7 @@
     "skip": "Skip for now",
     "complete": {
       "title": "Congratulations",
-      "message": "You're ready to start taking care of your plants. Remember to assign the sensor to your plant (if not already done) and insert it into the soil."
+      "message": "You're ready to start taking care of your plants. Remember to assign the sensor to your plant (if not already done) and insert it next to the plant, all the way into the soil."
     },
     "steps": {
       "plants": {
@@ -633,7 +631,8 @@
     "countdownHint": "The sensor sends a reading every 10 seconds",
     "complete": {
       "title": "Sensor calibrated!",
-      "body": "Place the sensor back in the soil. It will take a reading in about 2 minutes."
+      "body": "Place the sensor back in the soil. It will take a reading in about 2 minutes.",
+      "placement": "Slide the probe in next to the plant, all the way into the soil."
     },
     "saveErrorTitle": "Error saving calibration"
   },
@@ -664,6 +663,7 @@
   },
   "garden": {
     "title": "Your Garden",
+    "tierCaption": "{{name}} — {{tagline}}",
     "footer": "Keep caring for your plants to grow your garden.",
     "sceneAria": "Your growing garden",
     "notYetUnlocked": "Not yet unlocked",

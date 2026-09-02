@@ -8,19 +8,21 @@ describe("LandingSetup", () => {
 
     expect(screen.getByRole("region", { name: "How to get started" })).toBeInTheDocument();
     expect(screen.getByText("From box to reminder")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "In the pot, on the Wi-Fi, done." })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Register, in the pot, done." })).toBeInTheDocument();
     expect(screen.getByText("Three steps. Then it watches the soil for you.")).toBeInTheDocument();
 
     expect(screen.getByText("01")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Put it in the pot" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Register the sensor in the Plantir web app" })).toBeInTheDocument();
     expect(
-      screen.getByText("Slide the probe into the soil until the sensor sits in place."),
+      screen.getByText("Open Plantir and add the new sensor. It takes about three minutes."),
     ).toBeInTheDocument();
 
     expect(screen.getByText("02")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Connect it to Wi-Fi" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Put it in the pot" })).toBeInTheDocument();
     expect(
-      screen.getByText("It joins your network on its own. No extra box to plug in."),
+      screen.getByText(
+        "Slide the probe in next to the plant, all the way into the soil.",
+      ),
     ).toBeInTheDocument();
 
     expect(screen.getByText("03")).toBeInTheDocument();

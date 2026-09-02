@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styles from "./LandingGarden.module.css";
 
-const STEPS = ["pot", "wifi", "alert"] as const;
+const STEPS = ["register", "pot", "alert"] as const;
 
 export default function LandingSetup() {
   const { t } = useTranslation();

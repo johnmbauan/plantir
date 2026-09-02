@@ -43,14 +43,10 @@ describe('App', () => {
     await waitFor(() => {
       expect(
         screen.getByRole('heading', {
-          name: 'Know when they need you.',
+          name: 'Care for them, without guessing.',
         }),
       ).toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/login');
-      expect(screen.getByRole('link', { name: 'Write to us' })).toHaveAttribute(
-        'href',
-        'mailto:ciao@plantir.green?subject=I\'d%20like%20a%20Plantir',
-      );
     });
   });
 

@@ -35,12 +35,11 @@
   },
   "landing": {
     "hero": {
-      "title": "Saprai quando hanno bisogno di te.",
-      "subtitle": "Basta indovinare. Un sensore nella terra misura l'umidità sul tuo Wi-Fi — senza una centralina, senza stare accanto alla pianta. Ti avvisa quando è ora di annaffiare, anche se sei fuori casa."
+      "title": "Te ne prendi cura, senza indovinare come e quando.",
+      "subtitle": "Un sensore nella terra misura l'umidità, senza una centralina, senza stare accanto alla pianta; serve solo il Wi-Fi. Ti avvisa quando è ora di annaffiare, anche se sei fuori casa."
     },
     "contact": {
       "cta": "Ne vuoi uno? Scrivici",
-      "navCta": "Scrivici",
       "subject": "Vorrei un Plantir",
       "aria": "Scrivi a {{email}}",
       "eyebrow": "Parliamone",
@@ -49,20 +48,19 @@
     },
     "photo": {
       "alt": "Foto di esempio: un sensore Plantir in un vaso",
-      "notify": "Il basilico ha bisogno di acqua"
+      "notify": "Il pothos ha bisogno di acqua"
     },
     "highlights": {
       "aria": "Perché Plantir",
       "eyebrow": "Perché aiuta",
       "title": "Tre cose che cambiano come te ne prendi cura.",
-      "lead": "Senza indovinare, nessuna centralina, e un avviso che ti segue.",
       "moisture": {
         "title": "Basta indovinare quando annaffiare",
         "body": "La sonda legge il terreno: annaffi solo quando la pianta ne ha davvero bisogno, non quando la superficie sembra asciutta."
       },
       "wifi": {
         "title": "Niente centralina. Basta il Wi-Fi.",
-        "body": "Ogni sensore si collega da solo. Una pianta o tutto il davanzale. Continua a funzionare quando non sei nella stanza — e quando non sei a casa."
+        "body": "Ogni sensore si collega da solo. Una pianta o tutto il davanzale. Continua a funzionare quando non sei nella stanza e quando non sei a casa."
       },
       "weather": {
         "title": "In casa, in terrazzo o in giardino",
@@ -73,23 +71,23 @@
       "aria": "Avvisi per la famiglia",
       "eyebrow": "Quando sei via",
       "title": "Chi è a casa può annaffiare per te.",
-      "body": "Gli avvisi possono arrivare in un gruppo Telegram di famiglia — la chat che usate già. Il basilico ha sete; chi è in casa prende l'annaffiatoio.",
+      "body": "Gli avvisi possono arrivare in un gruppo Telegram di famiglia: la chat che usate già. Il pothos ha sete; chi è in casa prende l'annaffiatoio.",
       "messageFrom": "Plantir",
-      "messageText": "Il basilico ha bisogno di acqua."
+      "messageText": "Il pothos ha bisogno di acqua."
     },
     "setup": {
       "aria": "Come si inizia",
       "eyebrow": "Dalla scatola all'avviso",
-      "title": "Nel vaso, sul Wi-Fi, fatto.",
+      "title": "Registra, nel vaso, fatto.",
       "lead": "Tre passi. Poi guarda il terreno al posto tuo.",
       "steps": {
+        "register": {
+          "title": "Registra il sensore nella web app Plantir",
+          "body": "Apri Plantir e aggiungi il nuovo sensore. Ci vogliono circa tre minuti."
+        },
         "pot": {
           "title": "Mettilo nel vaso",
-          "body": "Infila la sonda nella terra finché il sensore sta a posto."
-        },
-        "wifi": {
-          "title": "Collegalo al Wi-Fi",
-          "body": "Entra nella tua rete da solo. Niente scatola in più da attaccare."
+          "body": "Infila la sonda vicino alla base della pianta, tutta nella terra"
         },
         "alert": {
           "title": "Ricevi l'avviso",
@@ -209,12 +207,12 @@
   },
   "onboarding": {
     "title": "Inizia con Plantir",
-    "progress": "{{completed}} di {{total}} passaggi completati — segui la guida per monitorare le tue piante.",
+    "progress": "{{completed}} di {{total}} passaggi completati. Segui la guida per monitorare le tue piante.",
     "dismissAria": "Chiudi onboarding",
     "skip": "Salta per ora",
     "complete": {
       "title": "Congratulazioni",
-      "message": "Sei pronto per prenderti cura delle tue piante. Ricordati di assegnare il sensore alla pianta (se non già fatto) e di piantarlo nel terreno."
+      "message": "Sei pronto per prenderti cura delle tue piante. Ricordati di assegnare il sensore alla pianta (se non già fatto) e di infilarlo vicino alla base della pianta, tutta nella terra"
     },
     "steps": {
       "plants": {
@@ -240,7 +238,7 @@
     "title": "Notifiche",
     "markAllAsRead": "Segna tutte come lette",
     "empty": "Nessuna nuova notifica",
-    "rainExpected": "Pioggia prevista — l'annaffiatura potrebbe non essere necessaria.",
+    "rainExpected": "Pioggia prevista: l'annaffiatura potrebbe non essere necessaria.",
     "snooze24h": "Silenzia 24h",
     "snooze48h": "Silenzia 48h",
     "snoozed": {
@@ -298,16 +296,16 @@
   "telegramSetup": {
     "accordionTitle": "Come configurare le notifiche Telegram",
     "step1Title": "Trova il tuo Chat ID",
-    "step1Body": "Apri Telegram e cerca <link>@userinfobot</link>. Tocca <bold>Avvia Bot</bold> — risponderà subito con il tuo Chat ID numerico (es. 123456789).",
+    "step1Body": "Apri Telegram e cerca <link>@userinfobot</link>. Tocca <bold>Avvia Bot</bold>: risponderà subito con il tuo Chat ID numerico (es. 123456789).",
     "step1Start": "Start",
     "step2Title": "Avvia una conversazione con il bot Plantir",
     "step2Body": "Cerca <link>@PlantirAlert_bot</link> su Telegram e tocca <bold>Avvia Bot</bold>. Serve affinché Telegram permetta al bot di inviarti messaggi.",
     "step3Title": "Inserisci il Chat ID e verifica",
-    "step3Body": "Incolla il numero del Passaggio 1 nel campo Chat ID Telegram. Il nome del tuo account apparirà sotto il campo — assicurati che sia la persona o il gruppo corretto, poi scegli l'orario preferito e salva.",
+    "step3Body": "Incolla il numero del Passaggio 1 nel campo Chat ID Telegram. Il nome del tuo account apparirà sotto il campo: assicurati che sia la persona o il gruppo corretto, poi scegli l'orario preferito e salva.",
     "webTipTitle": "Suggerimento",
     "webTipBody": "Copiare il Chat ID è più facile da un browser. Apri <web>Telegram Web</web>, avvia @userinfobot da lì e copia il numero.",
     "groupTitle": "Vuoi ricevere gli avvisi su più persone? Usa un gruppo",
-    "groupBody": "Avvia una conversazione con <userinfobot>@userinfobot</userinfobot> e scegli uno dei tuoi gruppi; il bot risponderà con il Chat ID del gruppo (un numero negativo, es. -1001234567890). Poi aggiungi <link>@PlantirAlert_bot</link> al gruppo in modo che possa inviare messaggi lì. Incolla l'ID del gruppo nel campo qui sotto — il nome del gruppo apparirà per conferma — e tutti i membri del gruppo riceveranno gli avvisi."
+    "groupBody": "Avvia una conversazione con <userinfobot>@userinfobot</userinfobot> e scegli uno dei tuoi gruppi; il bot risponderà con il Chat ID del gruppo (un numero negativo, es. -1001234567890). Poi aggiungi <link>@PlantirAlert_bot</link> al gruppo in modo che possa inviare messaggi lì. Incolla l'ID del gruppo nel campo qui sotto (il nome del gruppo apparirà per conferma) e tutti i membri del gruppo riceveranno gli avvisi."
   },
   "telegramChatId": {
     "verifying": "Verifica in corso…",
@@ -379,7 +377,7 @@
     "potHeight": "Altezza vaso",
     "potHeightAria": "Altezza vaso",
     "potHeightWhyAria": "Perché l'altezza del vaso conta per le letture di umidità",
-    "potHeightDescription": "Opzionale — migliora come l'umidità viene interpretata nei vasi più alti.",
+    "potHeightDescription": "Opzionale: migliora come l'umidità viene interpretata nei vasi più alti.",
     "speciesSectionTitle": "Specie (opzionale)",
     "speciesSectionDescription": "Aggiungere la specie aiuta a sbloccare indicazioni di cura più accurate.",
     "photoSectionTitle": "Foto",
@@ -559,7 +557,7 @@
       "copyCodeFirst": "Assicurati di aver copiato il codice di setup del passaggio precedente.",
       "openCap": "Ruota leggermente il coperchio del sensore in senso antiorario, poi tiralo verso l'alto.",
       "pressRestart": "Premi il pulsante <bold>RESTART</bold> sul lato del sensore. Dopo averlo premuto, il chip all'interno del sensore Plantir accenderà un LED verde tre volte di fila. Il sensore aprirà poi un hotspot Wi-Fi chiamato <bold>Plantir-Device-Setup</bold>.",
-      "connectHotspot": "Sul telefono o computer, connettiti all'hotspot <bold>Plantir-Device-Setup</bold>. Si aprirà automaticamente un portale — dovrebbe assomigliare a questo:",
+      "connectHotspot": "Sul telefono o computer, connettiti all'hotspot <bold>Plantir-Device-Setup</bold>. Si aprirà automaticamente un portale: dovrebbe assomigliare a questo:",
       "portalHomeAlt": "Schermata home del portale Wi-Fi",
       "configureWifi": "Tocca <bold>Configure WiFi</bold>, poi seleziona la tua rete domestica, inserisci la password.",
       "portalConfigureAlt": "Schermata di configurazione del portale Wi-Fi",
@@ -633,7 +631,8 @@
     "countdownHint": "Il sensore invia una lettura ogni 10 secondi",
     "complete": {
       "title": "Sensore calibrato!",
-      "body": "Rimetti il sensore nel terreno. Farà una lettura tra circa 2 minuti."
+      "body": "Rimetti il sensore nel vaso. Farà una lettura tra circa 2 minuti.",
+      "placement": "Infila la sonda vicino alla base della pianta, tutta nella terra"
     },
     "saveErrorTitle": "Errore nel salvataggio della calibrazione"
   },
@@ -664,6 +663,7 @@
   },
   "garden": {
     "title": "Il tuo giardino",
+    "tierCaption": "{{name}}: {{tagline}}",
     "footer": "Continua a prenderti cura delle piante per far crescere il giardino.",
     "sceneAria": "Il tuo giardino in crescita",
     "notYetUnlocked": "Non ancora sbloccato",
@@ -694,7 +694,7 @@
     "unlockToast": {
       "singleSuffix": "Tocca per aprire il tuo giardino.",
       "multiTitle": "Il tuo giardino è cresciuto",
-      "multiMessage": "{{count}} nuovi badge sbloccati — tocca per aprire il tuo giardino."
+      "multiMessage": "{{count}} nuovi badge sbloccati: tocca per aprire il tuo giardino."
     },
     "achievements": {
       "hello_my_name_is": {
@@ -719,7 +719,7 @@
       },
       "fully_rooted_not_emotionally": {
         "name": "Tutti in vaso appassionatamente",
-        "description": "Pianta, sensore collegato e calibrazione — configurazione completa."
+        "description": "Pianta, sensore collegato e calibrazione: configurazione completa."
       },
       "hydration_hero": {
         "name": "Salvate il soldato Ficus",

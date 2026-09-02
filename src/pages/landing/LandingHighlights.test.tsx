@@ -11,9 +11,6 @@ describe("LandingHighlights", () => {
     expect(
       screen.getByRole("heading", { name: "Three things that change how you care for them." }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText("Less guessing, no extra box to set up, and a reminder that follows you."),
-    ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Stop guessing when to water" })).toBeInTheDocument();
     expect(
       screen.getByText(

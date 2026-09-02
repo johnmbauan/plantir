@@ -27,7 +27,7 @@ export default function GardenSection() {
             <Skeleton height={16} width="60%" />
           ) : (
             <Text size="sm" c="dimmed">
-              {t(tier.nameKey)} — {t(tier.taglineKey)}
+              {t("garden.tierCaption", { name: t(tier.nameKey), tagline: t(tier.taglineKey) })}
             </Text>
           )}
         </Stack>

@@ -9,7 +9,7 @@ describe("LandingMain", () => {
   it("renders the hero, marketing sections, and footer", () => {
     renderWithProviders(<LandingMain />);
 
-    expect(screen.getByRole("heading", { name: "Know when they need you." })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Care for them, without guessing." })).toBeInTheDocument();
     expect(
       screen.getByText(
         "Stop guessing. A sensor in the soil reads moisture on its own Wi-Fi — no extra hub, no standing next to the plant. You get a nudge when it's time to water, even when you're away.",
