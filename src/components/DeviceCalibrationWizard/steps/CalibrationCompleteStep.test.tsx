@@ -7,6 +7,13 @@ describe('CalibrationCompleteStep', () => {
     renderWithProviders(<CalibrationCompleteStep />);
 
     expect(screen.getByText('Sensor calibrated!')).toBeInTheDocument();
-    expect(screen.getByText(/Place the sensor back in the soil/i)).toBeInTheDocument();
+    expect(
+      screen.getByText('Place the sensor back in the soil. It will take a reading in about 2 minutes.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Slide the probe in next to the plant, all the way into the soil.',
+      ),
+    ).toBeInTheDocument();
   });
 });

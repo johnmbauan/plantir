@@ -32,9 +32,14 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
+function itemSep(locale: Locale): string {
+  return locale === "it" ? ": " : " — ";
+}
+
 function wateringLine(locale: Locale, plant: EmailWateringPlant): string {
   const humidity = alertText(locale, "wateringBody", { humidity: plant.humidity });
-  return plant.rainNote ? `${humidity} — ${plant.rainNote}` : humidity;
+  if (!plant.rainNote) return humidity;
+  return locale === "it" ? `${humidity}. ${plant.rainNote}` : `${humidity} — ${plant.rainNote}`;
 }
 
 export function buildDigestEmail(input: DigestEmailInput): { subject: string; html: string; text: string } {
@@ -52,7 +57,7 @@ export function buildDigestEmail(input: DigestEmailInput): { subject: string; ht
     ? ""
     : [
       alertText(locale, "emailWateringHeading"),
-      ...watering.map((p) => `• ${p.plantName} — ${wateringLine(locale, p)}`),
+      ...watering.map((p) => `• ${p.plantName}${itemSep(locale)}${wateringLine(locale, p)}`),
     ].join("\n");
 
   const offlineText = offline.length === 0
@@ -89,7 +94,7 @@ export function buildDigestEmail(input: DigestEmailInput): { subject: string; ht
                 ${watering.map((p) => `
                 <li style="margin: 0 0 6px 0;">
                   <strong style="color: #2d5241;">${escapeHtml(p.plantName)}</strong>
-                  — ${escapeHtml(wateringLine(locale, p))}
+                  ${locale === "it" ? ":" : "—"} ${escapeHtml(wateringLine(locale, p))}
                 </li>`).join("")}
               </ul>
             </td>

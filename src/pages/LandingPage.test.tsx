@@ -39,7 +39,7 @@ describe("LandingPage", () => {
     await waitFor(() => {
       expect(
         screen.queryByRole("heading", {
-          name: "Know when they need you.",
+          name: "Care for them, without guessing.",
         }),
       ).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard page")).not.toBeInTheDocument();
@@ -51,7 +51,7 @@ describe("LandingPage", () => {
 
     expect(
       await screen.findByRole("heading", {
-        name: "Know when they need you.",
+        name: "Care for them, without guessing.",
       }),
     ).toBeInTheDocument();
     expect(
@@ -64,7 +64,7 @@ describe("LandingPage", () => {
     expect(screen.getByRole("heading", { name: "No hub. Just your Wi-Fi." })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Indoors, balcony, or garden" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Someone at home can water for you." })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "In the pot, on the Wi-Fi, done." })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Register, in the pot, done." })).toBeInTheDocument();
     expect(screen.getByText("Rechargeable. A few charges a year is enough.")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "If you want a sensor, write to us." })).toBeInTheDocument();
     const photo = screen.getByRole("img", {
@@ -74,14 +74,11 @@ describe("LandingPage", () => {
     expect(screen.getByRole("region", { name: "Why Plantir" })).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Alerts for the household" })).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "How to get started" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Register the sensor in the Plantir web app" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Put it in the pot" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Connect it to Wi-Fi" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Get the nudge" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
-    expect(screen.getByRole("link", { name: "Write to us" })).toHaveAttribute(
-      "href",
-      "mailto:ciao@plantir.green?subject=I'd%20like%20a%20Plantir",
-    );
+    expect(screen.queryByRole("link", { name: "Write to us" })).not.toBeInTheDocument();
     const writeLinks = screen.getAllByRole("link", { name: "Want one? Write to us" });
     expect(writeLinks).toHaveLength(2);
     expect(writeLinks[0]).toHaveAttribute(
@@ -118,25 +115,21 @@ describe("LandingPage", () => {
     renderLanding();
 
     await screen.findByRole("heading", {
-      name: "Know when they need you.",
+      name: "Care for them, without guessing.",
     });
 
     await user.click(screen.getByRole("radio", { name: "Italiano" }));
 
     expect(
       await screen.findByRole("heading", {
-        name: "Saprai quando hanno bisogno di te.",
+        name: "Te ne prendi cura, senza indovinare come e quando.",
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Basta indovinare. Un sensore nella terra misura l'umidità sul tuo Wi-Fi — senza una centralina, senza stare accanto alla pianta. Ti avvisa quando è ora di annaffiare, anche se sei fuori casa.",
+        "Un sensore nella terra misura l'umidità, senza una centralina, senza stare accanto alla pianta; serve solo il Wi-Fi. Ti avvisa quando è ora di annaffiare, anche se sei fuori casa.",
       ),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Scrivici" })).toHaveAttribute(
-      "href",
-      "mailto:ciao@plantir.green?subject=Vorrei%20un%20Plantir",
-    );
     expect(screen.getAllByRole("link", { name: "Ne vuoi uno? Scrivici" })).toHaveLength(2);
     expect(localStorage.getItem(GUEST_LOCALE_STORAGE_KEY)).toBe("it");
 
@@ -144,7 +137,7 @@ describe("LandingPage", () => {
 
     expect(
       await screen.findByRole("heading", {
-        name: "Know when they need you.",
+        name: "Care for them, without guessing.",
       }),
     ).toBeInTheDocument();
     expect(localStorage.getItem(GUEST_LOCALE_STORAGE_KEY)).toBe("en");

@@ -13,6 +13,9 @@ export default function CalibrationCompleteStep() {
       <Text size="sm" c="dimmed" ta="center">
         {t("calibrationWizard.complete.body")}
       </Text>
+      <Text size="sm" c="dimmed" ta="center">
+        {t("calibrationWizard.complete.placement")}
+      </Text>
     </Stack>
   );
 }

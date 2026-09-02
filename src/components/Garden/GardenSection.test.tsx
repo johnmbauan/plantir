@@ -103,7 +103,7 @@ describe('GardenSection', () => {
 
   it('renders the tier name and tagline', () => {
     renderSection();
-    // The tier name and tagline are rendered together separated by " — "
+    // The tier name and tagline are rendered together in garden.tierCaption
     expect(screen.getByText(/Seed Packet/)).toBeInTheDocument();
     expect(screen.getByText(/Empty soil/)).toBeInTheDocument();
   });

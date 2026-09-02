@@ -16,7 +16,6 @@ export default function LandingHighlights() {
       <div className={styles.sectionInner}>
         <p className={styles.eyebrow}>{t("landing.highlights.eyebrow")}</p>
         <h2 className={styles.sectionTitle}>{t("landing.highlights.title")}</h2>
-        <p className={styles.sectionLead}>{t("landing.highlights.lead")}</p>
 
         <div className={styles.featGrid}>
           {ITEMS.map(({ key, icon: Icon }) => (

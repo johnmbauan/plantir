@@ -38,9 +38,9 @@ const STRINGS = {
     wateringTitle: "{{plantName}} ha bisogno di acqua",
     wateringBody: "Umidità: {{humidity}}%",
     rainTodayTomorrow:
-      "È prevista pioggia oggi e domani — l'annaffiatura potrebbe non essere necessaria.",
-    rainToday: "È prevista pioggia oggi — l'annaffiatura potrebbe non essere necessaria.",
-    rainTomorrow: "È prevista pioggia domani — l'annaffiatura potrebbe non essere necessaria.",
+      "È prevista pioggia oggi e domani: l'annaffiatura potrebbe non essere necessaria.",
+    rainToday: "È prevista pioggia oggi: l'annaffiatura potrebbe non essere necessaria.",
+    rainTomorrow: "È prevista pioggia domani: l'annaffiatura potrebbe non essere necessaria.",
     offlineTelegramIntro:
       "🔴 Attenzione! I sensori delle seguenti piante non inviano dati da troppo tempo (possibile batteria scarica o malfunzionamento):",
     neverSeen: "mai rilevato",
@@ -56,7 +56,7 @@ const STRINGS = {
     emailOfflineHeading: "Questi sensori sono offline",
     emailOpenDashboard: "Apri la dashboard",
     emailManagePrefs: "Gestisci gli avvisi email nelle Impostazioni",
-    emailTagline: "Plantir — cura delle piante di casa",
+    emailTagline: "Plantir: cura delle piante di casa",
   },
 } as const;
 
