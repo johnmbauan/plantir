@@ -1,7 +1,7 @@
 #pragma once
 
 // Increment this version when you make changes that require a new firmware update. See docs/firmware-releases.md
-#define FIRMWARE_VERSION       5
+#define FIRMWARE_VERSION       6
 
 #define DEFAULT_SLEEP_DURATION 21600  // 6 hours in seconds
 #define uS_TO_S_FACTOR         1000000ULL
@@ -43,4 +43,4 @@ const int sensorPin   = A1;  // Maps to GPIO2 on ESP32-C5; Arduino resolves the 
   const int powerPin = A3;
 #endif
 
-const int readsPerRun = 5;   // Number of reads per run; the final result is their average.
+const int readsPerRun = 6;   // Samples per run; obvious outliers are dropped, then the rest are averaged.
