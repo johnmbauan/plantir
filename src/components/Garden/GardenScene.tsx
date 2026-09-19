@@ -10,9 +10,10 @@ interface Props {
   allDefinitions: AchievementDefinition[];
   earned: EarnedAchievement[];
   newlyUnlockedKeys: string[];
+  timeOfDay?: TimeOfDay;
 }
 
-type TimeOfDay = "dawn" | "day" | "dusk" | "night";
+export type TimeOfDay = "dawn" | "day" | "dusk" | "night";
 
 function getTimeOfDay(date = new Date()): TimeOfDay {
   const hour = date.getHours();
@@ -397,9 +398,16 @@ function GardenBackdrop({ visualStage, timeOfDay }: { visualStage: GardenVisualS
   );
 }
 
-export default function GardenScene({ visualStage, allDefinitions, earned, newlyUnlockedKeys }: Props) {
+export default function GardenScene({
+  visualStage,
+  allDefinitions,
+  earned,
+  newlyUnlockedKeys,
+  timeOfDay: timeOfDayOverride,
+}: Props) {
   const { t } = useTranslation();
-  const timeOfDay = useTimeOfDay();
+  const detectedTimeOfDay = useTimeOfDay();
+  const timeOfDay = timeOfDayOverride ?? detectedTimeOfDay;
   const earnedKeys = new Set(earned.map((e) => e.key));
 
   // Stable paint order: back-to-front by layout y so overlaps feel grounded
