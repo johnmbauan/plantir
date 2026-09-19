@@ -1,12 +1,51 @@
 .garden-scene {
   position: relative;
+  isolation: isolate;
   width: 100%;
   height: 380px;
   border-radius: var(--mantine-radius-md);
   overflow: hidden;
-  border: 1px solid var(--terracotta-100);
-  background: #a0c8a8;
-  box-shadow: inset 0 -20px 40px -10px rgba(26, 46, 34, 0.12);
+  border: 1px solid rgba(70, 101, 82, 0.38);
+  background: #6f9b78;
+  box-shadow:
+    inset 0 -24px 48px -12px rgba(18, 48, 37, 0.22),
+    inset 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.garden-scene--soil {
+  border-color: rgba(103, 119, 91, 0.4);
+}
+
+.garden-scene--garden {
+  border-color: rgba(58, 112, 78, 0.46);
+}
+
+.garden-scene--forest {
+  border-color: rgba(53, 101, 75, 0.58);
+  box-shadow:
+    inset 0 -26px 50px -14px rgba(16, 58, 41, 0.28),
+    inset 0 1px rgba(231, 255, 234, 0.3),
+    0 8px 24px -18px rgba(19, 56, 44, 0.45);
+}
+
+.garden-scene--dawn {
+  border-color: rgba(102, 122, 105, 0.48);
+}
+
+.garden-scene--dusk {
+  border-color: rgba(118, 91, 91, 0.5);
+  box-shadow:
+    inset 0 -26px 50px -14px rgba(43, 48, 37, 0.28),
+    inset 0 1px rgba(255, 226, 200, 0.24);
+}
+
+.garden-scene--night {
+  border-color: rgba(45, 76, 76, 0.78);
+  background: #29483f;
+  box-shadow:
+    inset 0 -32px 58px -12px rgba(5, 24, 27, 0.48),
+    inset 0 1px rgba(206, 237, 218, 0.14),
+    0 8px 24px -18px rgba(12, 40, 40, 0.6);
 }
 
 .garden-backdrop {
@@ -20,6 +59,174 @@
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.garden-sprite__idle,
+.garden-sprite__motion,
+.garden-sprite__shadow,
+.garden-sprite__glow,
+.scout-creature__lens,
+.solar-creature__light,
+.seer-creature__time-eye,
+.sprout-creature__leaf,
+.sprout-creature__eye {
+  transform-box: fill-box;
+}
+
+.garden-sprite__motion {
+  transform-origin: center bottom;
+}
+
+.garden-sprite--animated .garden-sprite__glow {
+  transform-origin: center;
+  animation: creature-glow 2.2s ease-in-out infinite alternate;
+}
+
+.garden-sprite--animated .scout-creature__lens {
+  transform-origin: center;
+  animation: creature-lens-focus 3.8s ease-in-out infinite;
+}
+
+.garden-sprite--animated .solar-creature__light {
+  transform-origin: center;
+  animation: creature-twinkle 1.8s ease-in-out infinite alternate;
+}
+
+.garden-sprite--animated .solar-creature__light:nth-of-type(3n) {
+  animation-delay: -0.6s;
+}
+
+.garden-sprite--animated .solar-creature__light:nth-of-type(3n + 1) {
+  animation-delay: -1.2s;
+}
+
+.garden-sprite--animated .gobbler-creature__message {
+  animation: creature-message-fade 3.6s ease-in-out infinite;
+}
+
+.garden-sprite--animated .seer-creature__time-eye {
+  transform-origin: center;
+  animation: creature-time-eye 5s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--sensor {
+  animation: creature-listen 3.4s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--vine {
+  animation: creature-slither 4.2s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--scout {
+  animation: creature-scan 3.8s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--messenger {
+  animation: creature-hop 3.1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--guardian {
+  animation: creature-heavy-breathe 4.6s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--dew {
+  animation: creature-dew-bob 3.7s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--wisp {
+  transform-origin: center center;
+  animation: creature-wisp-float 4.4s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--beetle {
+  animation: creature-scuttle 3.2s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--twins {
+  animation: creature-twin-rock 4s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--collector {
+  animation: creature-crawl 5.2s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--scribe {
+  animation: creature-nod 4.3s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--memory {
+  animation: creature-focus 3.9s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--weather {
+  transform-origin: center center;
+  animation: creature-glide 5.4s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--identity {
+  animation: creature-reflect 4.8s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--streak {
+  animation: creature-inch 4.1s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--solar {
+  transform-origin: center center;
+  animation: creature-solar-hover 3.2s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--recovery {
+  animation: creature-recover 4.5s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--gobbler {
+  animation: creature-chew 3.6s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--seer {
+  animation: creature-see-time 5s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__motion--prowler {
+  animation: creature-prowl 4.7s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__idle--sprout {
+  transform-origin: center bottom;
+  animation: sprout-creature-breathe 3.8s ease-in-out infinite;
+}
+
+.garden-sprite--animated .garden-sprite__shadow {
+  transform-origin: center;
+  animation: sprout-creature-shadow 3.8s ease-in-out infinite;
+}
+
+.garden-sprite--animated .sprout-creature__leaf--left {
+  transform-origin: right bottom;
+  animation: sprout-creature-leaf-left 2.8s ease-in-out infinite alternate;
+}
+
+.garden-sprite--animated .sprout-creature__leaf--right {
+  transform-origin: left bottom;
+  animation: sprout-creature-leaf-right 3.1s ease-in-out -0.7s infinite alternate;
+}
+
+.garden-sprite--animated .sprout-creature__eye {
+  transform-origin: center;
+  animation: sprout-creature-blink 5.2s ease-in-out infinite;
+}
+
+.garden-element:is(:hover, :focus-visible) .garden-sprite--animated .garden-sprite__idle--sprout {
+  animation-duration: 1.5s;
+}
+
+.garden-element:is(:hover, :focus-visible) .garden-sprite--animated .sprout-creature__leaf {
+  animation-duration: 0.7s;
+}
+
+.garden-element:is(:hover, :focus-visible) .garden-sprite--animated .garden-sprite__motion {
+  animation-duration: 1.1s;
 }
 
 .garden-element {
@@ -61,6 +268,347 @@
   animation: garden-grow-in 0.75s cubic-bezier(0.34, 1.45, 0.64, 1) both;
 }
 
+@keyframes sprout-creature-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-0.7px) scale(1.018, 0.985);
+  }
+}
+
+@keyframes sprout-creature-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scaleX(0.88);
+    opacity: 0.15;
+  }
+}
+
+@keyframes sprout-creature-leaf-left {
+  from {
+    transform: rotate(-1deg);
+  }
+  to {
+    transform: rotate(-6deg);
+  }
+}
+
+@keyframes sprout-creature-leaf-right {
+  from {
+    transform: rotate(1deg);
+  }
+  to {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes sprout-creature-blink {
+  0%,
+  45%,
+  49%,
+  100% {
+    transform: scaleY(1);
+  }
+  47% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes creature-glow {
+  from {
+    transform: scale(0.96);
+    filter: brightness(0.94);
+  }
+  to {
+    transform: scale(1.06);
+    filter: brightness(1.15);
+  }
+}
+
+@keyframes creature-lens-focus {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.13);
+  }
+}
+
+@keyframes creature-twinkle {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes creature-message-fade {
+  0%,
+  62%,
+  100% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes creature-time-eye {
+  0%,
+  42%,
+  54%,
+  100% {
+    transform: scaleY(1);
+    filter: brightness(1);
+  }
+  48% {
+    transform: scaleY(0.08);
+    filter: brightness(1.18);
+  }
+}
+
+@keyframes creature-listen {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  35% {
+    transform: translateY(-0.7px) rotate(-1.5deg);
+  }
+  65% {
+    transform: translateY(-0.7px) rotate(1.5deg);
+  }
+}
+
+@keyframes creature-slither {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0);
+  }
+  35% {
+    transform: translateX(-0.8px) rotate(-2deg);
+  }
+  70% {
+    transform: translateX(0.8px) rotate(2deg);
+  }
+}
+
+@keyframes creature-scan {
+  0%,
+  100% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-0.5px) rotate(3deg);
+  }
+}
+
+@keyframes creature-hop {
+  0%,
+  72%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  80% {
+    transform: translateY(1px) scaleY(0.96);
+  }
+  88% {
+    transform: translateY(-2px) scaleY(1.02);
+  }
+}
+
+@keyframes creature-heavy-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: translateY(-0.35px) scale(1.015, 0.99);
+  }
+}
+
+@keyframes creature-dew-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-1px) rotate(-1deg);
+  }
+}
+
+@keyframes creature-wisp-float {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-1deg);
+  }
+  50% {
+    transform: translate(0.8px, -1.8px) rotate(1.5deg);
+  }
+}
+
+@keyframes creature-scuttle {
+  0%,
+  65%,
+  100% {
+    transform: translateX(0) rotate(0);
+  }
+  72% {
+    transform: translateX(-1px) rotate(-1deg);
+  }
+  82% {
+    transform: translateX(1px) rotate(1deg);
+  }
+  91% {
+    transform: translateX(-0.5px);
+  }
+}
+
+@keyframes creature-twin-rock {
+  0%,
+  100% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-0.6px) rotate(1deg);
+  }
+}
+
+@keyframes creature-crawl {
+  0%,
+  100% {
+    transform: translateX(-0.5px);
+  }
+  50% {
+    transform: translateX(0.7px) translateY(-0.25px);
+  }
+}
+
+@keyframes creature-nod {
+  0%,
+  68%,
+  100% {
+    transform: rotate(0);
+  }
+  76% {
+    transform: rotate(2.5deg) translateY(0.5px);
+  }
+  84% {
+    transform: rotate(-1.5deg);
+  }
+}
+
+@keyframes creature-focus {
+  0%,
+  100% {
+    transform: rotate(-1.2deg);
+  }
+  50% {
+    transform: translateY(-0.5px) rotate(1.2deg);
+  }
+}
+
+@keyframes creature-glide {
+  0%,
+  100% {
+    transform: translate(-0.7px, 0.4px) rotate(-0.8deg);
+  }
+  50% {
+    transform: translate(0.8px, -1.2px) rotate(0.8deg);
+  }
+}
+
+@keyframes creature-reflect {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
+  50% {
+    transform: translateY(-0.6px) scaleX(1.018);
+  }
+}
+
+@keyframes creature-inch {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  45% {
+    transform: translate(0.7px, -0.5px) rotate(1deg) scaleY(0.985);
+  }
+  60% {
+    transform: translate(1px, 0) rotate(1.5deg) scaleY(1);
+  }
+}
+
+@keyframes creature-solar-hover {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
+  50% {
+    transform: translateY(-1.3px) scaleX(0.965);
+  }
+}
+
+@keyframes creature-recover {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    transform: translateY(-0.8px) scale(1.015);
+  }
+  55% {
+    transform: translateY(-1.2px) scale(1.025);
+  }
+}
+
+@keyframes creature-chew {
+  0%,
+  68%,
+  100% {
+    transform: scaleY(1);
+  }
+  75% {
+    transform: translateY(0.5px) scaleY(0.96);
+  }
+  82% {
+    transform: scaleY(1.015);
+  }
+  89% {
+    transform: scaleY(0.98);
+  }
+}
+
+@keyframes creature-see-time {
+  0%,
+  100% {
+    transform: rotate(-0.8deg);
+  }
+  50% {
+    transform: translateY(-0.5px) rotate(0.8deg);
+  }
+}
+
+@keyframes creature-prowl {
+  0%,
+  100% {
+    transform: translateX(-0.6px) translateY(0);
+  }
+  50% {
+    transform: translateX(0.8px) translateY(-0.5px);
+  }
+}
+
 @keyframes garden-grow-in {
   from {
     opacity: 0;
@@ -72,5 +620,12 @@
     transform: translate(-50%, -50%) scale(1);
     filter: drop-shadow(0 2px 3px rgba(26, 46, 34, 0.18))
       drop-shadow(0 4px 8px rgba(26, 46, 34, 0.12));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-sprite--animated *,
+  .garden-element--grow {
+    animation: none !important;
   }
 }
