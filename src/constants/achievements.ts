@@ -117,42 +117,42 @@ export interface GardenLayoutSlot {
 }
 
 /**
- * Positions are % of the scene container. Clusters match the SVG backdrop:
- * - Sky (top): weather / time badges floating above the garden
- * - Left bed: tools & recovery on the left raised bed
- * - Center bed: first-growth story on the main raised bed
- * - Right bed: display collection on the right raised bed
- * - Path (foreground): accents scattered along the gravel path
+ * Positions are % of the scene container. Clusters match the creature sanctuary:
+ * - Sky (top): creatures that can genuinely fly or hover
+ * - Left habitat: care and recovery creatures
+ * - Center habitat: starter and connection creatures
+ * - Right habitat: collection creatures resting on the platform
+ * - Clearings and stream (foreground): walkers, prowlers, and grounded creatures
  */
 export const GARDEN_LAYOUT: Record<GardenElementId, GardenLayoutSlot> = {
-  // Sky — spread across the top, clear of beds
-  rain_cloud:      { x: 14, y: 10, size: 44 },
-  week_wreath:     { x: 36, y:  7, size: 40 },
-  month_sun:       { x: 66, y:  6, size: 46 },
-  moon_mushroom:   { x: 88, y: 10, size: 42 },
+  // Sky — only true flying and hovering creatures
+  rain_cloud:      { x: 14, y: 14, size: 44 },
+  month_sun:       { x: 66, y: 13, size: 46 },
+  ghost_orchid:    { x: 82, y: 35, size: 48 },
 
-  // Left bed — tools & recovery, 2×2 grid on the raised bed
+  // Left habitat — care and recovery
   phoenix_fern:    { x: 14, y: 46, size: 44 },
   watering_can:    { x: 24, y: 46, size: 50 },
   battery_bush:    { x: 14, y: 53, size: 46 },
   compost_bin:     { x: 24, y: 53, size: 44 },
 
-  // Center bed — starter growth, arranged on the large center bed
+  // Center habitat — starter growth and connections
   clover_cluster:  { x: 39, y: 44, size: 44 },
   label_stake:     { x: 46, y: 43, size: 46 },
   sprout:          { x: 50, y: 50, size: 54 },
   vine_link:       { x: 55, y: 43, size: 44 },
   sensor_mushroom: { x: 58, y: 51, size: 50 },
 
-  // Right bed — display garden, near the trellis
-  bell_flower:     { x: 76, y: 45, size: 46 },
-  camera_sunflower:{ x: 88, y: 45, size: 52 },
-  ghost_orchid:    { x: 82, y: 52, size: 48 },
-  fern_pot:        { x: 76, y: 53, size: 52 },
+  // Right habitat — creatures resting on the platform
+  bell_flower:     { x: 75, y: 47, size: 46 },
+  camera_sunflower:{ x: 88, y: 47, size: 52 },
+  fern_pot:        { x: 81, y: 54, size: 52 },
 
-  // Path / foreground — scattered along the winding gravel path
-  magnifier:       { x: 34, y: 64, size: 42 },
+  // Clearings and stream — grounded creatures aligned with shadows and stones
+  magnifier:       { x: 34, y: 65, size: 42 },
   garden_gnome:    { x: 50, y: 70, size: 52 },
-  hourglass_leaf:  { x: 42, y: 76, size: 40 },
-  mirror_pond:     { x: 56, y: 79, size: 50 },
+  week_wreath:     { x: 14, y: 72, size: 40 },
+  hourglass_leaf:  { x: 40, y: 79, size: 40 },
+  mirror_pond:     { x: 58, y: 80, size: 50 },
+  moon_mushroom:   { x: 88, y: 80, size: 42 },
 };

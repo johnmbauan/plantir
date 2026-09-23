@@ -54,7 +54,7 @@ export default function GardenElement({ definition, earned, animateIn }: Props) 
         >
           {isHiddenLocked
             ? <MysterySprite size={layout.size} />
-            : <GardenSprite element={definition.garden_element} size={layout.size} />}
+            : <GardenSprite element={definition.garden_element} size={layout.size} animated={earned} />}
         </button>
       </Popover.Target>
       <Popover.Dropdown>

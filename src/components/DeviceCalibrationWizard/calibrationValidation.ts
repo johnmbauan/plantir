@@ -1,5 +1,5 @@
 export const CALIBRATION_IDEAL = { dry: 2650, wet: 950 } as const;
-export const CALIBRATION_TOLERANCE = 230;
+export const CALIBRATION_TOLERANCE = 350;
 
 function isWithinTolerance(value: number, ideal: number): boolean {
   return Math.abs(value - ideal) <= CALIBRATION_TOLERANCE;
