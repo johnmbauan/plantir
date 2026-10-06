@@ -125,7 +125,7 @@ describe('achievementService', () => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: 'green',
-          title: 'Sprout Wars: A New Leaf',
+          title: 'First Plant',
         }),
       );
     });
@@ -170,22 +170,21 @@ describe('achievementService', () => {
       expect(typeof call[0].onClick).toBe('function');
     });
 
-    it('onClick scrolls into view when already on the profile page', () => {
+    it('onClick stays put when already on the garden page', () => {
+      const assign = vi.fn();
       Object.defineProperty(window, 'location', {
-        value: { ...window.location, pathname: '/profile', assign: vi.fn() },
+        value: { pathname: '/garden', assign },
         configurable: true,
       });
-      const scrollIntoView = vi.fn();
-      document.getElementById = vi.fn(() => ({ scrollIntoView }) as unknown as HTMLElement);
 
       showUnlockToasts([sproutDef]);
       const [call] = mockNotificationsShow.mock.calls;
       call[0].onClick();
 
-      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+      expect(assign).not.toHaveBeenCalled();
     });
 
-    it('onClick navigates to the garden profile path on other pages', () => {
+    it('onClick navigates to the garden page from other pages', () => {
       const assign = vi.fn();
       Object.defineProperty(window, 'location', {
         value: { pathname: '/dashboard', assign },
@@ -196,7 +195,7 @@ describe('achievementService', () => {
       const [call] = mockNotificationsShow.mock.calls;
       call[0].onClick();
 
-      expect(assign).toHaveBeenCalledWith('/profile#garden');
+      expect(assign).toHaveBeenCalledWith('/garden');
     });
   });
 });

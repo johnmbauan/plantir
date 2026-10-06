@@ -448,6 +448,12 @@ verify_jwt = false
 import_map = "./functions/garden-achievements/deno.json"
 entrypoint = "./functions/garden-achievements/index.ts"
 
+[functions.garden-expeditions]
+enabled = true
+verify_jwt = false
+import_map = "./functions/garden-expeditions/deno.json"
+entrypoint = "./functions/garden-expeditions/index.ts"
+
 [functions.translate-species-care]
 enabled = true
 verify_jwt = true

@@ -24,6 +24,7 @@ function buildSettings(locale: string): NotificationSettings {
     notification_timezone: 'UTC',
     browser_notifications_enabled: false,
     email_notifications_enabled: false,
+    expedition_notifications_enabled: false,
     locale,
   };
 }

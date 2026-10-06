@@ -136,7 +136,7 @@ describe('formatNotificationCopy', () => {
           created_at: '2024-01-01T00:00:00Z',
         }),
       ).toEqual({
-        title: 'Sprout Wars: A New Leaf',
+        title: 'First Plant',
         body: 'Create your first plant.',
       });
     });
@@ -154,7 +154,7 @@ describe('formatNotificationCopy', () => {
           created_at: '2024-01-01T00:00:00Z',
         }),
       ).toEqual({
-        title: "C'era una volta il vaso",
+        title: 'Prima pianta',
         body: 'Crea la tua prima pianta.',
       });
     });
@@ -174,6 +174,79 @@ describe('formatNotificationCopy', () => {
       ).toEqual({
         title: 'Congratulations',
         body: "You're ready to start taking care of your plants. Remember to assign the sensor to your plant (if not already done) and insert it next to the plant, all the way into the soil.",
+      });
+    });
+  });
+
+  describe('garden expedition notices', () => {
+    it('formats an expedition return', () => {
+      expect(
+        formatNotificationCopy({
+          id: 'n-ret',
+          type: 'expedition_returned',
+          title: 'stored',
+          body: 'stored',
+          payload: { expeditionId: 'e1', destinationId: 'moss_lane' },
+          created_at: '2024-01-01T00:00:00Z',
+        }),
+      ).toEqual({
+        title: 'Explorers returned',
+        body: 'Your explorers returned with something unusual.',
+      });
+    });
+
+    it('formats a bond level increase', () => {
+      expect(
+        formatNotificationCopy({
+          id: 'n-bond',
+          type: 'bond_level',
+          title: 'stored',
+          body: 'stored',
+          payload: { achievementKey: 'hello_my_name_is', bondLevel: 2 },
+          created_at: '2024-01-01T00:00:00Z',
+        }),
+      ).toEqual({
+        title: 'Brin reached Familiar',
+        body: 'A new memory is waiting in their profile.',
+      });
+    });
+
+    it('formats garden notices without payload details', () => {
+      expect(
+        formatNotificationCopy({
+          id: 'n-bond-empty',
+          type: 'bond_level',
+          title: 'stored',
+          body: 'stored',
+          payload: { kind: 'complete' },
+          created_at: '2024-01-01T00:00:00Z',
+        }).title,
+      ).toBe(' reached ');
+      expect(
+        formatNotificationCopy({
+          id: 'n-pers-empty',
+          type: 'personal_expedition',
+          title: 'stored',
+          body: 'stored',
+          payload: { kind: 'complete' },
+          created_at: '2024-01-01T00:00:00Z',
+        }).body,
+      ).toBe(' is ready to lead a story of their own.');
+    });
+
+    it('formats a personal expedition notice', () => {
+      expect(
+        formatNotificationCopy({
+          id: 'n-pers',
+          type: 'personal_expedition',
+          title: 'stored',
+          body: 'stored',
+          payload: { achievementKey: 'hello_my_name_is' },
+          created_at: '2024-01-01T00:00:00Z',
+        }),
+      ).toEqual({
+        title: 'A personal expedition is open',
+        body: 'Brin is ready to lead a story of their own.',
       });
     });
   });

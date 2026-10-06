@@ -12,7 +12,8 @@ describe('NavDrawer', () => {
     expect(within(screen.getByRole('link', { name: 'Plantir home' })).getByTestId('brand-logo-mark')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Plants Center' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Settings' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Garden' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Profile' })).not.toBeInTheDocument();
   });
 

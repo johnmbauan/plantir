@@ -11,6 +11,7 @@
     "delete": "Elimina",
     "deleted": "Eliminato",
     "done": "Fatto",
+    "close": "Chiudi",
     "next": "Avanti",
     "back": "Indietro",
     "go": "Vai",
@@ -29,6 +30,7 @@
     "homeAria": "Home di Plantir",
     "dashboard": "Dashboard",
     "plantsCenter": "Centro piante",
+    "garden": "Giardino",
     "settings": "Impostazioni",
     "admin": "Admin",
     "toggleNavigation": "Apri o chiudi navigazione"
@@ -106,6 +108,7 @@
     "accountMenuAria": "Menu account",
     "yourProfileAlt": "Il tuo profilo",
     "profile": "Profilo",
+    "settings": "Impostazioni",
     "onboarding": "Inizia",
     "signOut": "Esci"
   },
@@ -269,6 +272,8 @@
     "notifications": {
       "title": "Notifiche",
       "description": "Ricevi promemoria di annaffiatura, avvisi offline e sblocchi del giardino nell'app, via email o su Telegram.",
+      "expeditions": "Avvisi via email o Telegram quando tornano dalla missione",
+      "expeditionsDescription": "Gli avvisi nell'app restano attivi. Qui si aggiunge solo un messaggio via email o Telegram quando la squadra torna.",
       "inApp": "Notifiche in-app",
       "email": "Notifiche email",
       "emailDescription": "Un riepilogo giornaliero viene inviato a {{email}}.",
@@ -688,7 +693,7 @@
       },
       "littleForest": {
         "name": "Piccola foresta",
-        "tagline": "La chioma è entrata in scena."
+        "tagline": "Le foglie si sono prese il cielo."
       }
     },
     "unlockToast": {
@@ -698,88 +703,512 @@
     },
     "achievements": {
       "hello_my_name_is": {
-        "name": "C'era una volta il vaso",
+        "name": "Prima pianta",
         "description": "Crea la tua prima pianta."
       },
       "stalking_fern_legally": {
-        "name": "Il sesto sensore",
+        "name": "Primo sensore",
         "description": "Registra il tuo primo sensore."
       },
       "matchmaker_of_moisture": {
-        "name": "Harry, ti presento l'edera",
+        "name": "Sensore collegato",
         "description": "Collega un sensore a una pianta."
       },
       "dirt_whisperer_initiate": {
-        "name": "Lost in Calibration - L’umidità tradotta",
+        "name": "Sensore calibrato",
         "description": "Completa la calibrazione di un sensore."
       },
       "plant_texted_back": {
-        "name": "C'è pothos per te",
+        "name": "Notifiche pronte",
         "description": "Salva le impostazioni di notifica o collega Telegram."
       },
       "fully_rooted_not_emotionally": {
-        "name": "Tutti in vaso appassionatamente",
+        "name": "Configurazione completa",
         "description": "Pianta, sensore collegato e calibrazione: configurazione completa."
       },
       "hydration_hero": {
-        "name": "Salvate il soldato Ficus",
+        "name": "Annaffiata in tempo",
         "description": "Annaffia una pianta entro 48 ore da un avviso di annaffiatura."
       },
       "back_from_the_mulch": {
-        "name": "La bella addormentata nel vaso",
+        "name": "Sensore di nuovo online",
         "description": "Riporta online una pianta offline."
       },
       "juice_box_refiller": {
-        "name": "Batteria - Il ritorno",
+        "name": "Batteria ricaricata",
         "description": "Ricarica un sensore dopo la batteria scarica."
       },
       "all_green_no_envy": {
-        "name": "Il Signore dei vasi: Le due piante",
+        "name": "Due piante in salute",
         "description": "Almeno due piante monitorate, tutte in salute insieme."
       },
       "accidental_collector": {
-        "name": "Per qualche dalia in più",
+        "name": "Quattro piante",
         "description": "Possiedi 4 piante."
       },
       "latin_name_dropper": {
-        "name": "Il nome della rosa",
+        "name": "Specie assegnata",
         "description": "Assegna una specie a una pianta."
       },
       "influencer_garden": {
-        "name": "Il ritratto di Dorstenia Gray",
+        "name": "Tre foto di piante",
         "description": "Aggiungi foto a 3 piante."
       },
       "cloud_oracle": {
-        "name": "Cantando sotto la pioggia",
+        "name": "Città del meteo impostata",
         "description": "Imposta la città per il meteo."
       },
       "face_of_the_garden": {
-        "name": "Essere Narciso Malkovich",
+        "name": "Profilo completo",
         "description": "Imposta un soprannome e una foto profilo."
       },
       "seven_days_without_drama": {
-        "name": "I magnifici sette",
+        "name": "Sette giorni in salute",
         "description": "Mantieni tutte le piante monitorate in salute per 7 giorni di fila."
       },
       "photosynthesis_stan": {
-        "name": "30 giorni di luce",
+        "name": "Trenta giorni in salute",
         "description": "Mantieni tutte le piante monitorate in salute per 30 giorni di fila."
       },
       "the_comeback_kid": {
-        "name": "Sopravvissuto - The Martian",
+        "name": "Recuperata dopo la siccità",
         "description": "Riporta una pianta in salute dopo 3 o più giorni di siccità."
       },
       "inbox_compost": {
-        "name": "Se mi lasci ti composto",
+        "name": "Posta svuotata",
         "description": "Segna tutte le notifiche come lette."
       },
       "time_traveler": {
-        "name": "Memento",
+        "name": "Storico mensile aperto",
         "description": "Apri il grafico storico a 30 giorni di una pianta."
       },
       "midnight_mulcher": {
-        "name": "Mezzogiorno di fuoco",
+        "name": "Visita all'ora degli avvisi",
         "description": "Apri la dashboard vicino all'ora degli avvisi giornalieri."
+      }
+    },
+    "travelMarkerAria": "{{name}} è in viaggio. Apri lo stato della missione.",
+    "travelingName": "{{name}} sta esplorando",
+    "travelingDescription": "Questo angolo è vuoto finché non tornano.",
+    "openJournal": "Diario",
+    "openMap": "Manda in missione",
+    "openHelp": "Come funzionano le missioni",
+    "expeditionStatus": "Missione in corso",
+    "expeditionReady": "Sono tornati e hanno portato qualcosa di curioso.",
+    "cancelExpedition": "Richiama la squadra",
+    "cancelConfirm": "Tornano sani e salvi. Non ci saranno scoperte e il legame non cresce.",
+    "confirmCancel": "Richiama la squadra",
+    "keepGoing": "Lasciali continuare",
+    "welcomeReturn": "Accoglili a casa",
+    "skipReturn": "Salta",
+    "returnsAt": "Tornano il {{time}}",
+    "returnsToday": "Tornano oggi alle {{time}}",
+    "returnsTomorrow": "Tornano domani alle {{time}}",
+    "missionTeam": "Squadra in missione",
+    "noFailureNote": "Ogni missione va a buon fine. I talenti cambiano il racconto, non l'esito.",
+    "mapBusy": "C'è già una squadra in missione.",
+    "mapBusyHint": "Tornano prima di poterne mandare un'altra.",
+    "selectTeam": "Scegli da uno a tre compagni",
+    "recommendedTalents": "Utili qui",
+    "durationLabel": "Quando tornano?",
+    "depart": "Falli partire",
+    "mapLocked": "Sblocca altre creature per aprire sentieri più lunghi.",
+    "stepTrail": "Scegli un sentiero",
+    "teamPicked": "{{count}} su 3",
+    "searchCreatures": "Cerca per nome o talento",
+    "searchCreaturesAria": "Cerca un compagno",
+    "filterAll": "Tutte",
+    "filterHelpful": "Utili qui",
+    "filterNew": "Nuove qui",
+    "newToTrail": "Prima volta",
+    "helpfulMark": "Utile",
+    "noCreatureMatch": "Nessuna creatura corrisponde alla ricerca.",
+    "pickCompanion": "Scegli almeno un compagno.",
+    "teamFull": "La squadra è piena.",
+    "bondLevels": {
+      "1": "Nuovo arrivo",
+      "2": "Di casa",
+      "3": "Di fiducia",
+      "4": "Compagno",
+      "5": "Amico del giardino"
+    },
+    "talents": {
+      "navigation": "Orientamento",
+      "weatherSense": "Senso del meteo",
+      "plantKnowledge": "Conoscenza delle piante",
+      "nightSight": "Vista notturna",
+      "recovery": "Ripresa",
+      "observation": "Osservazione",
+      "photography": "Fotografia",
+      "communication": "Comunicazione",
+      "curiosity": "Curiosità",
+      "resourcefulness": "Intraprendenza"
+    },
+    "profile": {
+      "origin": "Origine",
+      "unlockedOn": "Qui dal {{date}}",
+      "bond": "Legame",
+      "nextUnlock": "Poi: {{label}}",
+      "maxBond": "Il legame è al massimo. Parte lo stesso, come sempre.",
+      "memories": "Ricordi",
+      "keepsakes": "Tesori",
+      "personalExpedition": "Missione personale",
+      "personalLocked": "Si apre quando diventate compagni.",
+      "history": "Uscite insieme",
+      "noHistory": "Ancora nessun viaggio.",
+      "recentProgress": "Come è cresciuto il legame"
+    },
+    "intro": {
+      "stepCount": "{{current}} di {{total}}",
+      "startOuting": "Manda la prima missione",
+      "skip": "Ora no",
+      "continue": "Continua",
+      "done": "Ho capito",
+      "steps": {
+        "send": {
+          "title": "Manda una squadra",
+          "body": "Tocca {{send}} in alto. Scegli un sentiero, quando devono tornare e da una a tre creature. Tornano sempre: le missioni non falliscono. Portano una storia e, a volte, un tesoro."
+        },
+        "timing": {
+          "title": "Una missione alla volta",
+          "body": "Puoi avere una sola squadra fuori. Mentre sono via, la fascia in cima a questa pagina indica dove sono andati e quando rientrano. {{cancel}} li fa tornare subito, ma a mani vuote."
+        },
+        "bond": {
+          "title": "Il legame",
+          "body": "Ogni creatura ha un legame con te: un'amicizia a cinque livelli. Lo vedi toccando la creatura nel giardino: si apre la sua scheda, con il legame in alto sotto il nome. Cresce quando tornano da una missione, e un po' anche quando curi le piante. Non scende se resti lontano."
+        },
+        "journal": {
+          "title": "Il diario",
+          "body": "Storie e tesori finiscono in {{journal}}, il bottone in alto in questa pagina. Aprilo per rileggere quello che hanno trovato."
+        }
+      }
+    },
+    "journal": {
+      "title": "Diario delle missioni",
+      "lead": "Qui restano le tracce delle uscite: le storie che hanno riportato, i tesori trovati e i sentieri che avete iniziato a conoscere.",
+      "empty": "Qui si raccolgono i viaggi e le scoperte.",
+      "emptyHint": "Manda una squadra. Al primo ritorno si apre la prima pagina.",
+      "destinations": "Sentieri",
+      "stories": "Storie",
+      "keepsakes": "Tesori",
+      "memories": "Ricordi",
+      "complete": "Hai trovato le scoperte principali",
+      "hint": "Su questo sentiero c'è ancora qualcosa.",
+      "unvisited": "Ancora da esplorare",
+      "foundOf": "{{found}} su {{total}}",
+      "withTeam": "Con {{names}}",
+      "latestStory": "Ultimo ritorno"
+    },
+    "durations": {
+      "instant": "Subito",
+      "laterToday": "Entro oggi",
+      "tomorrow": "Domani",
+      "fewDays": "Tra qualche giorno"
+    },
+    "families": {
+      "nearby": "Sentieri qui intorno",
+      "plantLife": "Tra le piante",
+      "weather": "Sotto il cielo",
+      "recovery": "Percorsi di ripresa",
+      "nocturnal": "Percorsi notturni",
+      "archive": "Tra i ricordi"
+    },
+    "destinations": {
+      "first_outing": {
+        "name": "Sentiero di casa",
+        "premise": "La prima passeggiata sul bordo del giardino, appena abbastanza lontana da vedere qualcosa di nuovo."
+      },
+      "moss_lane": {
+        "name": "Vicolo del muschio",
+        "premise": "Un sentiero tranquillo di pietre umide e luce verde bassa, giusto per imparare a muoversi insieme."
+      },
+      "seed_hollow": {
+        "name": "Conca dei semi",
+        "premise": "Una nicchia al riparo, dove i semi strani si raccolgono quando il vento ha finito di spingerli."
+      }
+    },
+    "stories": {
+      "first_outing": "Sono restati vicini a casa e hanno portato un sasso liscio, ancora tiepido.",
+      "moss_lane": "Hanno seguito la riga verde del muschio, finché si è aperta su una radura senza nome.",
+      "moss_lane_observation": "Qualcuno ha visto un secondo sentiero sotto il primo, disegnato dalla rugiada.",
+      "seed_hollow": "In una cavità della sponda c'erano semi che non appartenevano a nessuna pianta del giardino.",
+      "seed_hollow_plant": "Li hanno ordinati secondo come volevano crescere, non secondo l'aspetto."
+    },
+    "discoveries": {
+      "first_outing_journal": "Prima pagina del diario",
+      "first_outing_pebble": "Sasso tiepido",
+      "moss_lane_map": "Schizzo macchiato di muschio",
+      "moss_lane_dew": "Appunto sul sentiero di rugiada",
+      "moss_lane_keepsake": "Nastro verde, morbido",
+      "seed_hollow_seed": "Seme sconosciuto",
+      "seed_hollow_root": "Traccia di radice",
+      "seed_hollow_keepsake": "Ciondolo di legno cavo"
+    },
+    "bondReasons": {
+      "expedition": "Tornati da {{destination}}",
+      "care_plant": "Una pianta nuova è arrivata in casa",
+      "care_device": "È arrivato un sensore",
+      "care_link": "Una pianta e un sensore si sono incontrati",
+      "care_calibration": "Un sensore ha imparato a leggere",
+      "care_watering": "Un avviso di annaffiatura è stato ascoltato in tempo",
+      "care_offline": "Un sensore è tornato a farsi sentire",
+      "care_battery": "Una batteria scarica è stata ricaricata",
+      "care_healthy": "Le piante monitorate sono restate in salute",
+      "care_species": "Una pianta ha ricevuto il suo nome",
+      "care_photo": "È stata aggiunta la foto di una pianta",
+      "care_weather": "È stata scelta la città per il meteo",
+      "care_notifications": "Le impostazioni di notifica sono state salvate",
+      "care_inbox": "La posta è stata messa in ordine",
+      "care_history": "È stato aperto lo storico di una pianta",
+      "care_profile": "Il profilo del giardino è completo",
+      "care_comeback": "Una pianta si è ripresa dopo una lunga siccità",
+      "milestone": "Il giardino è cresciuto"
+    },
+    "notifications": {
+      "returnedTitle": "Tornati dalla missione",
+      "returnedBody": "Sono tornati e hanno portato qualcosa di curioso.",
+      "bondTitle": "{{name}} ha raggiunto {{level}}",
+      "bondBody": "C'è un nuovo ricordo nel suo profilo.",
+      "personalTitle": "Si è aperta una missione personale",
+      "personalBody": "{{name}} può partire per una storia tutta sua."
+    },
+    "creatures": {
+      "hello_my_name_is": {
+        "name": "Brin",
+        "intro": "Un piccolo germoglio che nota ogni foglia nuova.",
+        "personality": "Entusiasta, gentile e sempre il primo a sbirciare dietro l'angolo.",
+        "depart": "Brin corre al cancello con entrambe le foglie alzate.",
+        "return": "Brin torna un po' più alto di come lo ricordi.",
+        "memories": {
+          "1": "Brin si è seduto nel primo vaso e ha deciso che quella era casa.",
+          "2": "Ha imparato i giorni dell'annaffiatura dal suono dell'annaffiatoio.",
+          "3": "Ha iniziato a lasciare sentierini di sassi, così nessuno si perde.",
+          "4": "Ora saluta le piante nuove prima che gli altri se ne accorgano."
+        }
+      },
+      "stalking_fern_legally": {
+        "name": "Morel",
+        "intro": "Un fungo esploratore che ascolta attraverso la terra.",
+        "personality": "Silenzioso, preciso e felice di restare fermo a lungo.",
+        "depart": "Morel inclina il cappello una volta e entra nell'ombra.",
+        "return": "Morel torna con la terra ancora umida sui piedi.",
+        "memories": {
+          "1": "Morel ha trovato il primo sensore e l'ha trattato come un vicino nuovo.",
+          "2": "Ha imparato a distinguere una lettura vera da una nervosa.",
+          "3": "Ha iniziato a mappare i sentieri più silenziosi tra i vasi.",
+          "4": "Ora aspetta al bordo di casa, finché la squadra non è pronta."
+        }
+      },
+      "matchmaker_of_moisture": {
+        "name": "Liana",
+        "intro": "Un rampicante che ama la compagnia e le presentazioni fatte bene.",
+        "personality": "Calda, chiacchierona e brava a unire i capi sciolti.",
+        "depart": "Liana lascia un saluto avvolto intorno al palo del cancello.",
+        "return": "Liana torna e ha già iniziato a raccontare.",
+        "memories": {
+          "1": "Liana ha imparato che due cose possono stare insieme senza essere uguali.",
+          "2": "Controlla ancora che ogni sentiero abbia qualcuno che lo percorra."
+        }
+      },
+      "dirt_whisperer_initiate": {
+        "name": "Peek",
+        "intro": "Un esploratore curioso, con una lente per guardare più da vicino.",
+        "personality": "Attento, felice dei dettagli, mai di fretta.",
+        "depart": "Peek pulisce la lente e annuisce.",
+        "return": "Peek torna strizzando gli occhi su qualcosa nel palmo.",
+        "memories": {
+          "1": "Peek ha passato un pomeriggio a guardare l'acqua diventare un numero.",
+          "2": "Tiene una lista di cose che si vedono solo se aspetti."
+        }
+      },
+      "plant_texted_back": {
+        "name": "Chime",
+        "intro": "Un fiore a campanella che preferisce toccarti la spalla piuttosto che alzare la voce.",
+        "personality": "Premuroso, musicale e un po' formale.",
+        "depart": "Chime suona una volta, piano, e se ne va.",
+        "return": "Chime torna con una nota nuova, più bassa.",
+        "memories": {
+          "1": "Chime ha imparato la differenza tra un messaggio utile e uno rumoroso.",
+          "2": "Preferisce ancora un suono chiaro a un pugno di allarmi."
+        }
+      },
+      "fully_rooted_not_emotionally": {
+        "name": "Knoll",
+        "intro": "Un guardiano saldo, a cui piace quando le cose sono finite per bene.",
+        "personality": "Stabile, pratico e orgoglioso quando basta una volta sola.",
+        "depart": "Knoll controlla il cancello due volte, poi parte.",
+        "return": "Knoll torna e si siede come se il posto fosse rimasto caldo.",
+        "memories": {
+          "1": "Knoll ha segnato il giorno in cui il giardino è sembrato completo.",
+          "2": "Cammina ancora il perimetro quando cambia la luce."
+        }
+      },
+      "hydration_hero": {
+        "name": "Rill",
+        "intro": "Un compagno d'acqua che arriva proprio quando serve.",
+        "personality": "Gentile, senza fronzoli e poco amico del dramma.",
+        "depart": "Rill versa un po' d'acqua sul sentiero e la segue.",
+        "return": "Rill torna con l'odore della pioggia sulla terra asciutta.",
+        "memories": {
+          "1": "Rill ha imparato che la bevuta migliore è quella che arriva in tempo.",
+          "2": "Ha iniziato a portare una goccia di riserva per chi sembra assetato.",
+          "3": "Per lui una settimana tranquilla vale più di qualsiasi salvataggio.",
+          "4": "Ora insegna alle nuove creature quando è abbastanza."
+        }
+      },
+      "back_from_the_mulch": {
+        "name": "Wisp",
+        "intro": "Un'orchidea chiara che trova ciò che è diventato silenzioso.",
+        "personality": "Parla piano, non molla e si spaventa di rado.",
+        "depart": "Wisp si assottiglia nell'aria e sparisce.",
+        "return": "Wisp si raccoglie di nuovo al bordo di casa.",
+        "memories": {
+          "1": "Wisp è rimasta con un sensore muto, finché non ha parlato di nuovo.",
+          "2": "Preferisce ancora i sentieri notturni, anche a mezzogiorno."
+        }
+      },
+      "juice_box_refiller": {
+        "name": "Volt",
+        "intro": "Un coleottero luminoso che nota quando qualcosa sta per finire.",
+        "personality": "Svelto, utile e affezionato a una buona scintilla.",
+        "depart": "Volt fa clic e sfreccia sul sentiero.",
+        "return": "Volt torna un po' più luminoso di prima.",
+        "memories": {
+          "1": "Volt ha imparato la differenza tra stanco e vuoto.",
+          "2": "Vigila su chi ha bisogno di riposo, non di una spinta."
+        }
+      },
+      "all_green_no_envy": {
+        "name": "Twinleaf",
+        "intro": "Due trifogli che rifiutano di essere contati come uno solo.",
+        "personality": "Giocose, abbinate e inaspettatamente sagge.",
+        "depart": "Partono al passo, poi lo rompono apposta.",
+        "return": "Tornano discutendo su chi ha visto per primo la cosa interessante.",
+        "memories": {
+          "1": "Twinleaf ha deciso che due piante in salute erano già un giardino.",
+          "2": "Controllano ancora che nessuno prosperi da solo."
+        }
+      },
+      "accidental_collector": {
+        "name": "Pottle",
+        "intro": "Una felce in vaso che trova sempre posto per un altro.",
+        "personality": "Allegra, un po' disordinata e generosa di spazio.",
+        "depart": "Pottle mette in borsa tre cose e non ne usa nessuna.",
+        "return": "Pottle torna con una quarta cosa che non voleva portare.",
+        "memories": {
+          "1": "Pottle ha smesso di contare dopo la quarta pianta e ha iniziato a sistemare.",
+          "2": "Fa ancora spazio prima che qualcuno lo chieda."
+        }
+      },
+      "latin_name_dropper": {
+        "name": "Quill",
+        "intro": "Uno scriba dei cartellini, a cui piace un nome vero.",
+        "personality": "Studioso, gentile e un po' pignolo.",
+        "depart": "Quill si mette un'etichetta di riserva dietro l'orecchio.",
+        "return": "Quill torna con l'inchiostro umido e un sorriso attento.",
+        "memories": {
+          "1": "Quill ha scritto il primo nome di specie come se fosse un benvenuto.",
+          "2": "Rifiuta ancora di indovinare, se si può andare a cercare."
+        }
+      },
+      "influencer_garden": {
+        "name": "Lumen",
+        "intro": "Un girasole con un occhio paziente per la luce.",
+        "personality": "Caldo, visivo e poco interessato alle pose.",
+        "depart": "Lumen si gira verso il sentiero come se fosse il sole.",
+        "return": "Lumen torna con un'immagine che nessuno ha chiesto e che tutti vogliono.",
+        "memories": {
+          "1": "Lumen ha imparato che una pianta sembra più se stessa dopo la terza foto.",
+          "2": "Aspetta ancora la luce vera, non la più forte."
+        }
+      },
+      "cloud_oracle": {
+        "name": "Nimbus",
+        "intro": "Una nuvoletta del meteo che preferisce le previsioni alle sorprese.",
+        "personality": "Pensierosa, portata a vagare e di rado in errore sulla pioggia.",
+        "depart": "Nimbus si abbassa all'altezza delle siepi e scivola via.",
+        "return": "Nimbus torna un tono più scura o più chiara, a seconda.",
+        "memories": {
+          "1": "Nimbus ha imparato prima il nome della città, poi il suo tempo.",
+          "2": "Rifiuta ancora di dare fretta a una nuvola."
+        }
+      },
+      "face_of_the_garden": {
+        "name": "Still",
+        "intro": "Una creatura dello stagno: i riflessi li vuole scelti, non a caso.",
+        "personality": "Calma, precisa e discretamente affezionata ai volti.",
+        "depart": "Still lascia un anello sull'acqua e lo segue fuori.",
+        "return": "Still torna e la superficie si ferma come se non fosse mai partita.",
+        "memories": {
+          "1": "Still ha tenuto il primo ritratto finché non è sembrato quello giusto.",
+          "2": "Preferisce ancora un soprannome detto ad alta voce a uno scritto."
+        }
+      },
+      "seven_days_without_drama": {
+        "name": "Halo",
+        "intro": "Una ghirlanda che misura il tempo in settimane tranquille.",
+        "personality": "Paziente, cerimoniale e poco impressionata dall'urgenza.",
+        "depart": "Halo rotola una volta e segue il sentiero come un cerchio.",
+        "return": "Halo torna un po' più verde di quando è partita.",
+        "memories": {
+          "1": "Halo ha contato sette giorni calmi e ha deciso che quella era già una magia.",
+          "2": "Preferisce ancora una settimana senza incidenti a qualsiasi salvataggio."
+        }
+      },
+      "photosynthesis_stan": {
+        "name": "Solara",
+        "intro": "Una creatura del sole a cui piace una luce lunga e uniforme.",
+        "personality": "Generosa, lenta e fedele ai giorni ordinari.",
+        "depart": "Solara si alza un poco e tira dietro una macchia calda sul sentiero.",
+        "return": "Solara torna come se fosse stata sopra di voi per tutto il tempo.",
+        "memories": {
+          "1": "Solara è restata trenta giorni e non ha mai chiesto un grazie.",
+          "2": "Tratta ancora un mese in salute come la storia migliore."
+        }
+      },
+      "the_comeback_kid": {
+        "name": "Cinder",
+        "intro": "Una felce che ricorda la siccità senza farne uno spettacolo.",
+        "personality": "Tenace, di umorismo secco e cauta con la speranza.",
+        "depart": "Cinder scuote la polvere vecchia dalle fronde e parte.",
+        "return": "Cinder torna più verde in punta.",
+        "memories": {
+          "1": "Cinder ha aspettato tre giorni asciutti e poi ha bevuto senza lamentele.",
+          "2": "Non accetta che qualcuno chiami la ripresa una vittoria sulla cura."
+        }
+      },
+      "inbox_compost": {
+        "name": "Muck",
+        "intro": "Un goloso del compost, che trasforma gli avanzi in qualcosa di utile.",
+        "personality": "Diretto, spiritoso e sorprendentemente ordinato.",
+        "depart": "Muck fa un rutto educato di saluto.",
+        "return": "Muck torna più leggero e orgoglioso.",
+        "memories": {
+          "1": "Muck ha svuotato un'intera posta e l'ha chiamata pranzo.",
+          "2": "Preferisce ancora un mucchio onesto a dieci note dimenticate."
+        }
+      },
+      "time_traveler": {
+        "name": "Drift",
+        "intro": "Una foglia clessidra a cui piace guardare indietro senza restare bloccata.",
+        "personality": "Riflessiva, precisa e un po' nostalgica.",
+        "depart": "Drift si capovolge e inizia a camminare.",
+        "return": "Drift torna con la sabbia sistemata in un disegno nuovo.",
+        "memories": {
+          "1": "Drift ha aperto trenta giorni di storia e non ha distolto lo sguardo.",
+          "2": "Tratta ancora un grafico lungo come una specie di mappa."
+        }
+      },
+      "midnight_mulcher": {
+        "name": "Umbra",
+        "intro": "Un fungo della luna che fa la veglia tarda.",
+        "personality": "Notturno, leale e indifferente agli orari strani.",
+        "depart": "Umbra aspetta la luce più fioca, poi scivola via.",
+        "return": "Umbra torna con l'odore dell'aria notturna.",
+        "memories": {
+          "1": "Umbra ha imparato l'ora degli avvisi e l'ha trattata come un invito fisso.",
+          "2": "Preferisce ancora arrivare quando il giardino è in silenzio."
+        }
       }
     }
   },

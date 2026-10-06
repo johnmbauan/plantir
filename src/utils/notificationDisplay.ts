@@ -65,6 +65,36 @@ export function formatNotificationCopy(
     };
   }
 
+  if (notification.type === "expedition_returned") {
+    return {
+      title: t("garden.notifications.returnedTitle"),
+      body: t("garden.notifications.returnedBody"),
+    };
+  }
+
+  if (notification.type === "bond_level") {
+    const payload = notification.payload as { achievementKey?: string; bondLevel?: number };
+    const name = payload.achievementKey
+      ? t(`garden.creatures.${payload.achievementKey}.name`, { defaultValue: payload.achievementKey })
+      : "";
+    const level = payload.bondLevel ? t(`garden.bondLevels.${payload.bondLevel}`) : "";
+    return {
+      title: t("garden.notifications.bondTitle", { name, level }),
+      body: t("garden.notifications.bondBody"),
+    };
+  }
+
+  if (notification.type === "personal_expedition") {
+    const payload = notification.payload as { achievementKey?: string };
+    const name = payload.achievementKey
+      ? t(`garden.creatures.${payload.achievementKey}.name`, { defaultValue: payload.achievementKey })
+      : "";
+    return {
+      title: t("garden.notifications.personalTitle"),
+      body: t("garden.notifications.personalBody", { name }),
+    };
+  }
+
   return { title: notification.title, body: notification.body };
 }
 

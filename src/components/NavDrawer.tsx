@@ -2,7 +2,7 @@ import { Drawer, Stack, UnstyledButton } from "@mantine/core";
 import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/BrandLogo";
-import { DASHBOARD_PATH } from "@/constants/routes";
+import { DASHBOARD_PATH, GARDEN_PATH } from "@/constants/routes";
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   textDecoration: "none",
@@ -47,8 +47,8 @@ export default function NavDrawer({ opened, onClose, isAdmin }: Props) {
         <NavLink to="/plants-center" style={navLinkStyle} onClick={onClose}>
           {t("nav.plantsCenter")}
         </NavLink>
-        <NavLink to="/settings" style={navLinkStyle} onClick={onClose}>
-          {t("nav.settings")}
+        <NavLink to={GARDEN_PATH} style={navLinkStyle} onClick={onClose}>
+          {t("nav.garden")}
         </NavLink>
         {isAdmin && (
           <NavLink to="/admin" style={navLinkStyle} onClick={onClose}>

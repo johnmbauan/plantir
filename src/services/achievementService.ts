@@ -2,9 +2,10 @@ import { notifications } from "@mantine/notifications";
 import supabase from "@/supabase";
 import i18n from "@/i18n";
 import type { AchievementKey, GardenElementId } from "@/constants/achievements";
-import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
+import { GARDEN_PATH } from "@/constants/routes";
 import { requireUser } from "@/utils/requireUser";
 import { achievementCopy } from "@/utils/achievementDisplay";
+import { grantCareBonds } from "@/services/expeditionService";
 
 export interface AchievementDefinition {
   key: AchievementKey;
@@ -99,11 +100,15 @@ export async function evaluateAchievements(): Promise<AchievementDefinition[]> {
 }
 
 export async function recordClientEvent(eventKey: string): Promise<AchievementDefinition[]> {
-  return invokeGarden("record_client_event", { eventKey });
+  const newly = await invokeGarden("record_client_event", { eventKey });
+  void grantCareBonds();
+  return newly;
 }
 
 export async function recordDashboardVisit(): Promise<AchievementDefinition[]> {
-  return invokeGarden("dashboard_visit");
+  const newly = await invokeGarden("dashboard_visit");
+  void grantCareBonds();
+  return newly;
 }
 
 /** Fire-and-forget evaluate that surfaces unlock toasts. Never throws to callers. */
@@ -111,6 +116,7 @@ export async function evaluateAndToastUnlocks(t: TFunc = i18n.t.bind(i18n)): Pro
   try {
     const newly = await evaluateAchievements();
     showUnlockToasts(newly, t);
+    void grantCareBonds();
     return newly;
   } catch (err) {
     console.error("Achievement evaluate failed:", err);
@@ -119,11 +125,8 @@ export async function evaluateAndToastUnlocks(t: TFunc = i18n.t.bind(i18n)): Pro
 }
 
 function openGarden(): void {
-  if (window.location.pathname === "/profile") {
-    document.getElementById("garden")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  } else {
-    window.location.assign(GARDEN_PROFILE_PATH);
-  }
+  if (window.location.pathname === GARDEN_PATH) return;
+  window.location.assign(GARDEN_PATH);
 }
 
 export function showUnlockToasts(newAchievements: AchievementDefinition[], t: TFunc = i18n.t.bind(i18n)): void {

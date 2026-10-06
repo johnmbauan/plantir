@@ -7,6 +7,7 @@ import Dashboard from "@/pages/Dashboard";
 import PlantCenter from "@/pages/PlantCenter";
 import SettingsPage from "@/pages/SettingsPage";
 import ProfilePage from "@/pages/ProfilePage";
+import GardenPage from "@/pages/GardenPage";
 import LoginPage from "@/pages/LoginPage";
 import SetPasswordPage from "@/pages/SetPasswordPage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
@@ -28,6 +29,7 @@ function App() {
             <Route element={<Layout />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="plants-center" element={<PlantCenter />} />
+              <Route path="garden" element={<GardenPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route element={<AdminGuard />}>

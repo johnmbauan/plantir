@@ -49,6 +49,7 @@ export default function SettingsPage() {
 
   const [inAppEnabled, setInAppEnabled] = useState(true);
   const [emailEnabled, setEmailEnabled] = useState(false);
+  const [expeditionEnabled, setExpeditionEnabled] = useState(false);
   const [chatId, setChatId] = useState("");
   const [notificationHour, setNotificationHour] = useState(6);
   const [notificationTimezone, setNotificationTimezone] = useState(DEFAULT_TIMEZONE);
@@ -61,6 +62,7 @@ export default function SettingsPage() {
         if (s) {
           setInAppEnabled(s.browser_notifications_enabled);
           setEmailEnabled(s.email_notifications_enabled);
+          setExpeditionEnabled(Boolean(s.expedition_notifications_enabled));
           setChatId(s.telegram_chat_id);
           setNotificationHour(s.notification_hour);
           setNotificationTimezone(s.notification_timezone);
@@ -82,6 +84,7 @@ export default function SettingsPage() {
         notificationTimezone,
         inAppEnabled,
         emailEnabled,
+        expeditionEnabled,
       );
       void markOnboardingStepComplete("notifications").catch((err) => {
         console.error("Failed to record onboarding notifications step:", err);
@@ -148,6 +151,18 @@ export default function SettingsPage() {
                   label={t("settings.notifications.inApp")}
                   checked={inAppEnabled}
                   onChange={(e) => setInAppEnabled(e.currentTarget.checked)}
+                  disabled={loading}
+                  styles={{
+                    track: { cursor: loading ? undefined : "pointer" },
+                    label: { cursor: loading ? undefined : "pointer" },
+                  }}
+                />
+
+                <Switch
+                  label={t("settings.notifications.expeditions")}
+                  description={t("settings.notifications.expeditionsDescription")}
+                  checked={expeditionEnabled}
+                  onChange={(e) => setExpeditionEnabled(e.currentTarget.checked)}
                   disabled={loading}
                   styles={{
                     track: { cursor: loading ? undefined : "pointer" },

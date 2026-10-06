@@ -37,13 +37,21 @@ const hiddenDef: AchievementDefinition = {
   is_hidden: true,
 };
 
-function renderElement(props: { definition?: AchievementDefinition; earned?: boolean; animateIn?: boolean } = {}) {
+function renderElement(props: {
+  definition?: AchievementDefinition;
+  earned?: boolean;
+  animateIn?: boolean;
+  traveling?: boolean;
+  onSelect?: (key: string) => void;
+} = {}) {
   return render(
     <MantineProvider>
       <GardenElement
         definition={props.definition ?? sproutDef}
         earned={props.earned ?? true}
         animateIn={props.animateIn}
+        traveling={props.traveling}
+        onSelect={props.onSelect}
       />
     </MantineProvider>,
   );
@@ -60,7 +68,7 @@ describe('GardenElement', () => {
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute(
         'aria-label',
-        'Sprout Wars: A New Leaf: Create your first plant.',
+        'Brin: Create your first plant.',
       );
     });
 
@@ -83,7 +91,7 @@ describe('GardenElement', () => {
         'aria-label',
         'Mystery badge: Keep all monitored plants healthy for 7 days in a row.',
       );
-      expect(button.getAttribute('aria-label')).not.toContain('Seven Happy Days');
+      expect(button.getAttribute('aria-label')).not.toContain('Seven Healthy Days');
     });
 
     it('still renders the regular sprite when a hidden badge is earned', () => {
@@ -135,7 +143,7 @@ describe('GardenElement', () => {
       await user.hover(screen.getByRole('button'));
 
       expect(await screen.findByTestId('popover-content')).toHaveTextContent(
-        'Sprout Wars: A New Leaf',
+        'Brin',
       );
     });
 
@@ -172,6 +180,37 @@ describe('GardenElement', () => {
       await waitFor(() => {
         expect(screen.queryByTestId('popover-content')).not.toBeInTheDocument();
       });
+    });
+
+    it('opens expedition status from a travel marker', async () => {
+      const onSelect = vi.fn();
+      const user = userEvent.setup();
+      renderElement({ traveling: true, onSelect });
+      expect(screen.getByRole('button')).toHaveClass('garden-element--traveling');
+      expect(screen.getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Brin is travelling. Open expedition status.',
+      );
+      await user.hover(screen.getByRole('button'));
+      expect(await screen.findByTestId('popover-content')).toHaveTextContent('Brin is exploring');
+      await user.click(screen.getByRole('button'));
+      expect(onSelect).toHaveBeenCalledWith('hello_my_name_is');
+    });
+
+    it('does not open a locked creature profile', async () => {
+      const onSelect = vi.fn();
+      const user = userEvent.setup();
+      renderElement({ earned: false, onSelect });
+      await user.click(screen.getByRole('button'));
+      expect(onSelect).not.toHaveBeenCalled();
+    });
+
+    it('opens the creature profile when an unlocked creature is selected', async () => {
+      const onSelect = vi.fn();
+      const user = userEvent.setup();
+      renderElement({ onSelect });
+      await user.click(screen.getByRole('button'));
+      expect(onSelect).toHaveBeenCalledWith('hello_my_name_is');
     });
 
     it('shows the popover on focus and hides it on blur', async () => {

@@ -2,21 +2,25 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MantineProvider } from '@mantine/core';
 import type { AchievementDefinition, EarnedAchievement } from '@/services/achievementService';
+import type { AchievementKey } from '@/constants/achievements';
 
 vi.mock('./GardenElement', () => ({
   default: ({
     definition,
     earned,
     animateIn,
+    traveling,
   }: {
     definition: AchievementDefinition;
     earned: boolean;
     animateIn: boolean;
+    traveling?: boolean;
   }) => (
     <div
       data-testid={`garden-element-${definition.key}`}
       data-earned={String(earned)}
       data-animate-in={String(animateIn)}
+      data-traveling={String(Boolean(traveling))}
     />
   ),
 }));
@@ -51,6 +55,7 @@ function renderScene(
     allDefinitions: AchievementDefinition[];
     earned: EarnedAchievement[];
     newlyUnlockedKeys: string[];
+    travelingKeys: AchievementKey[];
   }> = {},
 ) {
   return render(
@@ -60,6 +65,7 @@ function renderScene(
         allDefinitions={props.allDefinitions ?? [sproutDef, sensorDef]}
         earned={props.earned ?? [earnedSprout]}
         newlyUnlockedKeys={props.newlyUnlockedKeys ?? []}
+        travelingKeys={props.travelingKeys}
       />
     </MantineProvider>,
   );
@@ -130,5 +136,11 @@ describe('GardenScene', () => {
 
       expect(screen.getByRole('img', { name: 'Your growing garden' })).toHaveClass('garden-scene--forest');
     });
+  });
+
+  it('marks travelling creatures', () => {
+    renderScene({ travelingKeys: ['hello_my_name_is'] });
+    expect(screen.getByTestId('garden-element-hello_my_name_is')).toHaveAttribute('data-traveling', 'true');
+    expect(screen.getByTestId('garden-element-stalking_fern_legally')).toHaveAttribute('data-traveling', 'false');
   });
 });

@@ -11,6 +11,7 @@
     "delete": "Delete",
     "deleted": "Deleted",
     "done": "Done",
+    "close": "Close",
     "next": "Next",
     "back": "Back",
     "go": "Go",
@@ -29,6 +30,7 @@
     "homeAria": "Plantir home",
     "dashboard": "Dashboard",
     "plantsCenter": "Plants Center",
+    "garden": "Garden",
     "settings": "Settings",
     "admin": "Admin",
     "toggleNavigation": "Toggle navigation"
@@ -106,6 +108,7 @@
     "accountMenuAria": "Account menu",
     "yourProfileAlt": "Your profile",
     "profile": "Profile",
+    "settings": "Settings",
     "onboarding": "Get started",
     "signOut": "Sign out"
   },
@@ -269,6 +272,8 @@
     "notifications": {
       "title": "Notifications",
       "description": "Get watering reminders, offline alerts, and garden unlocks in the app, by email, or on Telegram.",
+      "expeditions": "Expedition returns by email or Telegram",
+      "expeditionsDescription": "In-app return notices stay on. This only adds an email or Telegram message when a team comes back.",
       "inApp": "In-app notifications",
       "email": "Email notifications",
       "emailDescription": "A daily digest is sent to {{email}}.",
@@ -698,88 +703,512 @@
     },
     "achievements": {
       "hello_my_name_is": {
-        "name": "Sprout Wars: A New Leaf",
+        "name": "First Plant",
         "description": "Create your first plant."
       },
       "stalking_fern_legally": {
-        "name": "Sensor and Sensibility",
+        "name": "First Sensor",
         "description": "Register your first sensor."
       },
       "matchmaker_of_moisture": {
-        "name": "When Harry Met Ivy",
+        "name": "Sensor Linked",
         "description": "Link a sensor to a plant."
       },
       "dirt_whisperer_initiate": {
-        "name": "Lost in Calibration",
+        "name": "Sensor Calibrated",
         "description": "Finish calibrating a sensor."
       },
       "plant_texted_back": {
-        "name": "The Pothos Always Rings Twice",
+        "name": "Notifications Ready",
         "description": "Save notification settings or connect Telegram."
       },
       "fully_rooted_not_emotionally": {
-        "name": "Everything Everywhere Grow at Once",
+        "name": "Setup Complete",
         "description": "Plant, linked sensor, and calibration — setup complete."
       },
       "hydration_hero": {
-        "name": "There Will Be Water",
+        "name": "Watered in Time",
         "description": "Water a plant within 48 hours of a watering alert."
       },
       "back_from_the_mulch": {
-        "name": "Back to the Moisture",
+        "name": "Sensor Back Online",
         "description": "Bring an offline plant back online."
       },
       "juice_box_refiller": {
-        "name": "Battery Returns",
+        "name": "Battery Recharged",
         "description": "Recharge a sensor after low battery."
       },
       "all_green_no_envy": {
-        "name": "LOTR: The Two Flowers",
+        "name": "Two Healthy Plants",
         "description": "At least two monitored plants, all healthy at once."
       },
       "accidental_collector": {
-        "name": "For a Few Dahlias More",
+        "name": "Four Plants",
         "description": "Own 4 plants."
       },
       "latin_name_dropper": {
-        "name": "The Bulb Identity",
+        "name": "Species Assigned",
         "description": "Assign a species to a plant."
       },
       "influencer_garden": {
-        "name": "Picture of Dorstenia Gray",
+        "name": "Three Plant Photos",
         "description": "Add photos to 3 plants."
       },
       "cloud_oracle": {
-        "name": "Rain (forecast) Man",
+        "name": "Weather City Set",
         "description": "Set your weather city."
       },
       "face_of_the_garden": {
-        "name": "Being Jonquil Malkovich",
+        "name": "Profile Complete",
         "description": "Set a nickname and profile photo."
       },
       "seven_days_without_drama": {
-        "name": "Seven Happy Days",
+        "name": "Seven Healthy Days",
         "description": "Keep all monitored plants healthy for 7 days in a row."
       },
       "photosynthesis_stan": {
-        "name": "30 Days of Light",
+        "name": "Thirty Healthy Days",
         "description": "Keep all monitored plants healthy for 30 days in a row."
       },
       "the_comeback_kid": {
-        "name": "The Soil-shank Redemption",
+        "name": "Recovered After Drought",
         "description": "Bring a plant back to healthy after 3+ dry days."
       },
       "inbox_compost": {
-        "name": "Inbox Clear",
+        "name": "Inbox Cleared",
         "description": "Mark all notifications as read."
       },
       "time_traveler": {
-        "name": "Month History",
+        "name": "Month History Viewed",
         "description": "Open a plant's 30-day history chart."
       },
       "midnight_mulcher": {
         "name": "Alert Hour Visit",
         "description": "Open the dashboard near your daily alert hour."
+      }
+    },
+    "travelMarkerAria": "{{name}} is travelling. Open expedition status.",
+    "travelingName": "{{name}} is exploring",
+    "travelingDescription": "This habitat is empty until the team returns.",
+    "openJournal": "Journal",
+    "openMap": "Send an expedition",
+    "openHelp": "How expeditions work",
+    "expeditionStatus": "Expedition in progress",
+    "expeditionReady": "Your explorers returned with something unusual.",
+    "cancelExpedition": "Call them back",
+    "cancelConfirm": "They will return safely. There will be no discovery or bond progress.",
+    "confirmCancel": "Call them back",
+    "keepGoing": "Let them continue",
+    "welcomeReturn": "Welcome them home",
+    "skipReturn": "Skip",
+    "returnsAt": "Back by {{time}}",
+    "returnsToday": "Back today at {{time}}",
+    "returnsTomorrow": "Back tomorrow at {{time}}",
+    "missionTeam": "Team on this expedition",
+    "noFailureNote": "Every expedition succeeds. Team talents change the story, not the outcome.",
+    "selectTeam": "Choose one to three companions",
+    "recommendedTalents": "Helpful here",
+    "durationLabel": "When should they return?",
+    "depart": "Send them out",
+    "mapLocked": "Unlock more creatures to open longer trails.",
+    "mapBusy": "A team is already out.",
+    "mapBusyHint": "They come back before you can send another.",
+    "stepTrail": "Choose a trail",
+    "teamPicked": "{{count}} of 3",
+    "searchCreatures": "Search by name or talent",
+    "searchCreaturesAria": "Search companions",
+    "filterAll": "All",
+    "filterHelpful": "Helpful here",
+    "filterNew": "New here",
+    "newToTrail": "First visit",
+    "helpfulMark": "Helpful",
+    "noCreatureMatch": "No companions match that search.",
+    "pickCompanion": "Pick at least one companion.",
+    "teamFull": "The team is full.",
+    "bondLevels": {
+      "1": "New Arrival",
+      "2": "Familiar",
+      "3": "Trusted",
+      "4": "Companion",
+      "5": "Sanctuary Friend"
+    },
+    "talents": {
+      "navigation": "Navigation",
+      "weatherSense": "Weather sense",
+      "plantKnowledge": "Plant knowledge",
+      "nightSight": "Night sight",
+      "recovery": "Recovery",
+      "observation": "Observation",
+      "photography": "Photography",
+      "communication": "Communication",
+      "curiosity": "Curiosity",
+      "resourcefulness": "Resourcefulness"
+    },
+    "profile": {
+      "origin": "Origin",
+      "unlockedOn": "Joined {{date}}",
+      "bond": "Bond",
+      "nextUnlock": "Next: {{label}}",
+      "maxBond": "Bond complete. They still join expeditions.",
+      "memories": "Memories",
+      "keepsakes": "Keepsakes",
+      "personalExpedition": "Personal expedition",
+      "personalLocked": "Unlocks at Companion.",
+      "history": "Expeditions together",
+      "noHistory": "No journeys yet.",
+      "recentProgress": "Recent bond progress"
+    },
+    "intro": {
+      "stepCount": "{{current}} of {{total}}",
+      "startOuting": "Send the first expedition",
+      "skip": "Not now",
+      "continue": "Continue",
+      "done": "Got it",
+      "steps": {
+        "send": {
+          "title": "Send a team",
+          "body": "Tap {{send}} at the top. Choose a trail, when they should return, and one to three companions. They always come back: expeditions do not fail. They bring a story, and sometimes a treasure."
+        },
+        "timing": {
+          "title": "One expedition at a time",
+          "body": "Only one team can be out. While they are away, a banner at the top of this page shows where they went and when they return. {{cancel}} brings them home at once, but they come back empty-handed."
+        },
+        "bond": {
+          "title": "The bond",
+          "body": "Each creature has a bond with you: a friendship with five levels. Tap the creature in the garden to open its card. The bond is at the top, under the name. It grows when they return from an expedition, and a little when you look after your plants. It does not drop if you stay away."
+        },
+        "journal": {
+          "title": "The journal",
+          "body": "Stories and treasures land in {{journal}}, the button at the top of this page. Open it to reread what they found."
+        }
+      }
+    },
+    "journal": {
+      "title": "Expedition journal",
+      "lead": "Outings leave a trace here: the stories they brought back, the keepsakes they found, and the trails you have started to know.",
+      "empty": "Journeys and discoveries will collect here.",
+      "emptyHint": "Send a team out. The first return opens the first page.",
+      "destinations": "Trails",
+      "stories": "Stories",
+      "keepsakes": "Keepsakes",
+      "memories": "Memories",
+      "complete": "Main discoveries found",
+      "hint": "There is still something waiting on this trail.",
+      "unvisited": "Not visited yet",
+      "foundOf": "{{found}} of {{total}}",
+      "withTeam": "With {{names}}",
+      "latestStory": "Latest return"
+    },
+    "durations": {
+      "instant": "Right now",
+      "laterToday": "Later today",
+      "tomorrow": "Tomorrow",
+      "fewDays": "In a few days"
+    },
+    "families": {
+      "nearby": "Nearby trails",
+      "plantLife": "Plant-life routes",
+      "weather": "Weather routes",
+      "recovery": "Recovery routes",
+      "nocturnal": "Nocturnal routes",
+      "archive": "Archive routes"
+    },
+    "destinations": {
+      "first_outing": {
+        "name": "Sanctuary path",
+        "premise": "A first walk along the edge of the sanctuary, just far enough to notice something new."
+      },
+      "moss_lane": {
+        "name": "Moss Lane",
+        "premise": "A quiet trail of damp stones and low green light, good for learning how a team moves together."
+      },
+      "seed_hollow": {
+        "name": "Seed Hollow",
+        "premise": "A sheltered dip where unusual seeds collect after the wind has finished with them."
+      }
+    },
+    "stories": {
+      "first_outing": "The team stayed close to home and brought back a small, smooth stone that still felt warm.",
+      "moss_lane": "They followed the green line of moss until it opened onto a clearing no one had marked.",
+      "moss_lane_observation": "Someone noticed a second path under the first, written in dew.",
+      "seed_hollow": "A hollow in the bank held seeds that did not match any plant in the sanctuary.",
+      "seed_hollow_plant": "They sorted the seeds by the way they wanted to grow, not by how they looked."
+    },
+    "discoveries": {
+      "first_outing_journal": "First journal page",
+      "first_outing_pebble": "Warm pebble",
+      "moss_lane_map": "Moss-stained sketch",
+      "moss_lane_dew": "Dew path note",
+      "moss_lane_keepsake": "Soft green ribbon",
+      "seed_hollow_seed": "Unknown seed",
+      "seed_hollow_root": "Root tracing",
+      "seed_hollow_keepsake": "Hollow-wood charm"
+    },
+    "bondReasons": {
+      "expedition": "Returned from {{destination}}",
+      "care_plant": "A new plant joined the collection",
+      "care_device": "A sensor was registered",
+      "care_link": "A plant and sensor were linked",
+      "care_calibration": "A sensor was calibrated",
+      "care_watering": "A watering alert was answered in time",
+      "care_offline": "A sensor came back online",
+      "care_battery": "A low battery was recharged",
+      "care_healthy": "Monitored plants stayed healthy",
+      "care_species": "A plant received its species",
+      "care_photo": "A plant photo was added",
+      "care_weather": "Weather city was set",
+      "care_notifications": "Notification settings were saved",
+      "care_inbox": "The inbox was cleared",
+      "care_history": "Long-term plant history was opened",
+      "care_profile": "The sanctuary profile was completed",
+      "care_comeback": "A plant recovered after a long dry spell",
+      "milestone": "The sanctuary grew"
+    },
+    "notifications": {
+      "returnedTitle": "Explorers returned",
+      "returnedBody": "Your explorers returned with something unusual.",
+      "bondTitle": "{{name}} reached {{level}}",
+      "bondBody": "A new memory is waiting in their profile.",
+      "personalTitle": "A personal expedition is open",
+      "personalBody": "{{name}} is ready to lead a story of their own."
+    },
+    "creatures": {
+      "hello_my_name_is": {
+        "name": "Brin",
+        "intro": "A small sprout-creature that notices every new leaf.",
+        "personality": "Eager, gentle, and always first to look around a corner.",
+        "depart": "Brin trots to the gate with both leaves up.",
+        "return": "Brin comes back a little taller than you remember.",
+        "memories": {
+          "1": "Brin sat in the first pot and decided this was home.",
+          "2": "It learned the names of the watering days by the sound of the can.",
+          "3": "It started leaving tiny pebble trails so no one would get lost in the sanctuary.",
+          "4": "It now greets new plants before anyone else has noticed them."
+        }
+      },
+      "stalking_fern_legally": {
+        "name": "Morel",
+        "intro": "A mushroom scout that listens through the soil.",
+        "personality": "Quiet, precise, and fond of standing very still.",
+        "depart": "Morel tilts its cap once and steps into the shade.",
+        "return": "Morel returns with damp soil still on its feet.",
+        "memories": {
+          "1": "Morel found the first sensor and treated it like a new neighbour.",
+          "2": "It learned to tell a true reading from a nervous one.",
+          "3": "It started mapping the quietest paths between pots.",
+          "4": "It now waits at the edge of the habitat until the team is ready."
+        }
+      },
+      "matchmaker_of_moisture": {
+        "name": "Liana",
+        "intro": "A vine that prefers company and good introductions.",
+        "personality": "Warm, talkative, and excellent at tying loose ends.",
+        "depart": "Liana loops a goodbye around the gate post.",
+        "return": "Liana comes back already telling the story.",
+        "memories": {
+          "1": "Liana learned that two things can belong together without being the same.",
+          "2": "It still checks that every path has someone to walk it."
+        }
+      },
+      "dirt_whisperer_initiate": {
+        "name": "Peek",
+        "intro": "A curious scout with a glass for looking closer.",
+        "personality": "Careful, delighted by details, never in a hurry.",
+        "depart": "Peek polishes the lens and nods.",
+        "return": "Peek returns squinting at something in its palm.",
+        "memories": {
+          "1": "Peek spent a whole afternoon watching water become a number.",
+          "2": "It keeps a list of things that only appear when you wait."
+        }
+      },
+      "plant_texted_back": {
+        "name": "Chime",
+        "intro": "A bell-flower that would rather tap you on the shoulder than shout.",
+        "personality": "Considerate, musical, and slightly formal.",
+        "depart": "Chime rings once, softly, and goes.",
+        "return": "Chime returns with a new, quieter note.",
+        "memories": {
+          "1": "Chime learned the difference between a useful message and a noisy one.",
+          "2": "It still prefers one clear sound to a handful of alarms."
+        }
+      },
+      "fully_rooted_not_emotionally": {
+        "name": "Knoll",
+        "intro": "A sturdy guardian who likes when things are finished properly.",
+        "personality": "Steady, practical, and proud of a job done once.",
+        "depart": "Knoll checks the gate twice, then leaves.",
+        "return": "Knoll comes back and sits as if the seat was kept warm.",
+        "memories": {
+          "1": "Knoll marked the day the sanctuary first felt complete.",
+          "2": "It still walks the perimeter when the light changes."
+        }
+      },
+      "hydration_hero": {
+        "name": "Rill",
+        "intro": "A watering companion who arrives exactly when needed.",
+        "personality": "Kind, unfussy, and allergic to drama.",
+        "depart": "Rill tips a little water into the path and follows it.",
+        "return": "Rill returns smelling like rain on dry soil.",
+        "memories": {
+          "1": "Rill learned that the best drink is the one that arrives in time.",
+          "2": "It started carrying a spare drop for anyone who looks thirsty.",
+          "3": "It refuses to celebrate a rescue more than a quiet healthy week.",
+          "4": "It now teaches new creatures the sound of enough."
+        }
+      },
+      "back_from_the_mulch": {
+        "name": "Wisp",
+        "intro": "A pale orchid-creature that finds things that went quiet.",
+        "personality": "Soft-spoken, persistent, and hard to startle.",
+        "depart": "Wisp thins into the air and is gone.",
+        "return": "Wisp gathers itself again at the habitat edge.",
+        "memories": {
+          "1": "Wisp sat with a silent sensor until it spoke again.",
+          "2": "It still prefers night paths, even at noon."
+        }
+      },
+      "juice_box_refiller": {
+        "name": "Volt",
+        "intro": "A bright beetle that notices when something is running low.",
+        "personality": "Brisk, helpful, and fond of a good spark.",
+        "depart": "Volt clicks once and zips along the path.",
+        "return": "Volt returns glowing a little more than before.",
+        "memories": {
+          "1": "Volt learned the difference between tired and empty.",
+          "2": "It keeps a lookout for anything that needs a rest, not a push."
+        }
+      },
+      "all_green_no_envy": {
+        "name": "Twinleaf",
+        "intro": "Two clover-creatures who refuse to be counted as one.",
+        "personality": "Playful, matched, and unexpectedly wise.",
+        "depart": "They leave in step, then immediately break it on purpose.",
+        "return": "They return arguing about who saw the interesting thing first.",
+        "memories": {
+          "1": "Twinleaf decided two healthy plants were already a garden.",
+          "2": "They still check that no one is thriving alone."
+        }
+      },
+      "accidental_collector": {
+        "name": "Pottle",
+        "intro": "A fern in a pot that keeps finding room for one more.",
+        "personality": "Cheerful, a little messy, and generous with space.",
+        "depart": "Pottle packs three things and uses none of them.",
+        "return": "Pottle returns with a fourth thing it did not mean to bring.",
+        "memories": {
+          "1": "Pottle stopped counting after the fourth plant and started arranging.",
+          "2": "It still makes room before anyone asks."
+        }
+      },
+      "latin_name_dropper": {
+        "name": "Quill",
+        "intro": "A label-stake scribe who likes a true name.",
+        "personality": "Scholarly, kind, and slightly pedantic.",
+        "depart": "Quill tucks a spare tag behind one ear.",
+        "return": "Quill returns with wet ink and a careful grin.",
+        "memories": {
+          "1": "Quill wrote the first species name as if it were a welcome.",
+          "2": "It still refuses to guess when looking it up would do."
+        }
+      },
+      "influencer_garden": {
+        "name": "Lumen",
+        "intro": "A sunflower with a patient eye for light.",
+        "personality": "Warm, visual, and uninterested in posing.",
+        "depart": "Lumen turns toward the trail as if it were the sun.",
+        "return": "Lumen returns with a picture no one asked for and everyone wants.",
+        "memories": {
+          "1": "Lumen learned that a plant looks more itself after the third photograph.",
+          "2": "It still waits for the honest light, not the brightest."
+        }
+      },
+      "cloud_oracle": {
+        "name": "Nimbus",
+        "intro": "A small weather-cloud that prefers forecasts to surprises.",
+        "personality": "Thoughtful, drift-prone, and rarely wrong about rain.",
+        "depart": "Nimbus lowers itself to hedge height and slides away.",
+        "return": "Nimbus returns a shade darker or a shade brighter, depending.",
+        "memories": {
+          "1": "Nimbus first learned the city's name and then its weather.",
+          "2": "It still refuses to hurry a cloud."
+        }
+      },
+      "face_of_the_garden": {
+        "name": "Still",
+        "intro": "A pond-creature that likes reflections to be chosen, not accidental.",
+        "personality": "Calm, exacting, and quietly fond of faces.",
+        "depart": "Still leaves a ring on the water and follows it out.",
+        "return": "Still returns and the surface settles as if it never left.",
+        "memories": {
+          "1": "Still kept the first portrait until it felt like the right one.",
+          "2": "It still prefers a nickname said aloud to one written down."
+        }
+      },
+      "seven_days_without_drama": {
+        "name": "Halo",
+        "intro": "A wreath-creature that measures time in quiet weeks.",
+        "personality": "Patient, ceremonial, and unimpressed by urgency.",
+        "depart": "Halo rolls once and follows the path like a hoop.",
+        "return": "Halo returns a little greener than it left.",
+        "memories": {
+          "1": "Halo counted seven calm days and decided that was a kind of magic.",
+          "2": "It still prefers a week without incident to any rescue."
+        }
+      },
+      "photosynthesis_stan": {
+        "name": "Solara",
+        "intro": "A sun-creature that likes long, even light.",
+        "personality": "Generous, slow, and loyal to ordinary days.",
+        "depart": "Solara lifts a little and tows a warm patch down the trail.",
+        "return": "Solara returns as if it had been overhead the whole time.",
+        "memories": {
+          "1": "Solara stayed for thirty days and never once asked to be thanked.",
+          "2": "It still treats a healthy month as the best story."
+        }
+      },
+      "the_comeback_kid": {
+        "name": "Cinder",
+        "intro": "A fern that remembers dryness without making a performance of it.",
+        "personality": "Resilient, dry-humoured, and careful with hope.",
+        "depart": "Cinder shakes old dust from its fronds and goes.",
+        "return": "Cinder returns greener at the tips.",
+        "memories": {
+          "1": "Cinder waited three dry days and then drank without complaint.",
+          "2": "It still will not let anyone call recovery a victory over care."
+        }
+      },
+      "inbox_compost": {
+        "name": "Muck",
+        "intro": "A compost gobbler that turns leftovers into something useful.",
+        "personality": "Blunt, funny, and surprisingly tidy.",
+        "depart": "Muck burps a polite goodbye.",
+        "return": "Muck returns lighter and proud of it.",
+        "memories": {
+          "1": "Muck cleared a whole inbox and called it lunch.",
+          "2": "It still prefers one honest pile to ten forgotten notes."
+        }
+      },
+      "time_traveler": {
+        "name": "Drift",
+        "intro": "An hourglass-leaf that likes looking backward without getting stuck.",
+        "personality": "Reflective, precise, and a little wistful.",
+        "depart": "Drift turns itself over and starts walking.",
+        "return": "Drift returns with the sand settled in a new pattern.",
+        "memories": {
+          "1": "Drift opened thirty days of history and did not look away.",
+          "2": "It still treats a long chart as a kind of map."
+        }
+      },
+      "midnight_mulcher": {
+        "name": "Umbra",
+        "intro": "A moon-mushroom that keeps the late watch.",
+        "personality": "Nocturnal, loyal, and unbothered by odd hours.",
+        "depart": "Umbra waits for the dimmer light, then slips out.",
+        "return": "Umbra returns smelling like cool night air.",
+        "memories": {
+          "1": "Umbra learned the alert hour and treated it like a standing invitation.",
+          "2": "It still prefers to arrive when the garden is quiet."
+        }
       }
     }
   },

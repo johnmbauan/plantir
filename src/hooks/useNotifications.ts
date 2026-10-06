@@ -43,13 +43,25 @@ export function useNotifications() {
       return [notification, ...current];
     });
 
+    if (
+      notification.type === "expedition_returned" ||
+      notification.type === "bond_level" ||
+      notification.type === "personal_expedition"
+    ) {
+      window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED_EVENT));
+    }
+
     // Achievement and onboarding already toast from the action that created them.
     if (document.hasFocus() && notification.type !== "achievement" && notification.type !== "onboardingCompleted") {
       const { title, body } = formatNotificationCopy(notification);
+      const gardenType =
+        notification.type === "expedition_returned" ||
+        notification.type === "bond_level" ||
+        notification.type === "personal_expedition";
       notifications.show({
         title,
         message: body.split("\n")[0],
-        color: notification.type === "watering" ? "yellow" : "red",
+        color: notification.type === "watering" ? "yellow" : gardenType ? "green" : "red",
         autoClose: 8000,
       });
     }

@@ -55,10 +55,12 @@
   z-index: 0;
 }
 
-.garden-backdrop-svg {
+.garden-backdrop-image {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .garden-sprite__idle,
@@ -266,6 +268,22 @@
 
 .garden-element--grow {
   animation: garden-grow-in 0.75s cubic-bezier(0.34, 1.45, 0.64, 1) both;
+}
+
+.garden-element--traveling {
+  filter: none;
+  cursor: pointer;
+}
+
+.garden-travel-marker {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 8px auto 0;
+  border-radius: 50%;
+  border: 3px solid #d7e7b4;
+  box-shadow: 0 0 0 3px rgba(70, 101, 82, 0.35);
+  background: radial-gradient(circle at 40% 35%, #f4f7e4, #8aa86a 70%);
 }
 
 @keyframes sprout-creature-breathe {

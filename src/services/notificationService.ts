@@ -1,6 +1,5 @@
 import supabase from "@/supabase";
-import { GARDEN_PROFILE_PATH } from "@/constants/achievements";
-import { DASHBOARD_PATH } from "@/constants/routes";
+import { DASHBOARD_PATH, GARDEN_PATH } from "@/constants/routes";
 import { fetchPlantStatusesByIds } from "@/services/plantService";
 import type { PlantStatus } from "@/types";
 import { evaluateAndToastUnlocks, recordClientEvent, showUnlockToasts } from "@/services/achievementService";
@@ -13,12 +12,20 @@ export interface NotificationSettings {
   notification_timezone: string;
   browser_notifications_enabled: boolean;
   email_notifications_enabled: boolean;
+  expedition_notifications_enabled: boolean;
   locale: string;
   weather_lat?: number | null;
   weather_lng?: number | null;
 }
 
-export type NotificationType = "watering" | "offline" | "achievement" | "onboardingCompleted";
+export type NotificationType =
+  | "watering"
+  | "offline"
+  | "achievement"
+  | "onboardingCompleted"
+  | "expedition_returned"
+  | "bond_level"
+  | "personal_expedition";
 
 export const NOTIFICATIONS_CHANGED_EVENT = "plantir-notifications-changed";
 
@@ -50,11 +57,28 @@ export interface OnboardingPayload {
   kind: "complete";
 }
 
+export interface ExpeditionReturnedPayload {
+  expeditionId: string;
+  destinationId: string;
+}
+
+export interface BondLevelPayload {
+  achievementKey: string;
+  bondLevel: number;
+}
+
+export interface PersonalExpeditionPayload {
+  achievementKey: string;
+}
+
 export type NotificationPayload =
   | WateringPayload
   | OfflinePayload
   | AchievementPayload
-  | OnboardingPayload;
+  | OnboardingPayload
+  | ExpeditionReturnedPayload
+  | BondLevelPayload
+  | PersonalExpeditionPayload;
 
 export interface AppNotification {
   id: string;
@@ -74,7 +98,7 @@ export function isOfflinePayload(payload: NotificationPayload): payload is Offli
 }
 
 export function isAchievementPayload(payload: NotificationPayload): payload is AchievementPayload {
-  return "achievementKey" in payload;
+  return "achievementKey" in payload && "garden_element" in payload;
 }
 
 export function isOnboardingPayload(payload: NotificationPayload): payload is OnboardingPayload {
@@ -134,7 +158,7 @@ export async function fetchSettings(): Promise<NotificationSettings | null> {
   const { data, error } = await supabase
     .from("notification_settings")
     .select(
-      "id, telegram_chat_id, notification_hour, notification_timezone, browser_notifications_enabled, email_notifications_enabled, locale, weather_lat, weather_lng",
+      "id, telegram_chat_id, notification_hour, notification_timezone, browser_notifications_enabled, email_notifications_enabled, expedition_notifications_enabled, locale, weather_lat, weather_lng",
     )
     .eq("user_id", user.id)
     .maybeSingle();
@@ -149,6 +173,7 @@ export async function upsertSettings(
   notification_timezone: string,
   browser_notifications_enabled: boolean,
   email_notifications_enabled: boolean,
+  expedition_notifications_enabled = false,
 ): Promise<void> {
   const user = await requireUser();
 
@@ -162,6 +187,7 @@ export async function upsertSettings(
         notification_timezone,
         browser_notifications_enabled,
         email_notifications_enabled,
+        expedition_notifications_enabled,
         updatedAt: new Date().toISOString(),
       },
       { onConflict: "user_id" },
@@ -345,7 +371,13 @@ export async function markAllNotificationsRead(): Promise<void> {
 }
 
 export function getNotificationHref(notification: AppNotification): string {
-  if (notification.type === "achievement") return GARDEN_PROFILE_PATH;
+  if (
+    notification.type === "achievement" ||
+    notification.type === "expedition_returned" ||
+    notification.type === "bond_level" ||
+    notification.type === "personal_expedition"
+  )
+    return GARDEN_PATH;
   if (notification.type === "onboardingCompleted") return DASHBOARD_PATH;
   if (notification.type === "offline") return "/plants-center?tab=devices";
   if (isWateringPayload(notification.payload)) {

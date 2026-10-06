@@ -1,0 +1,109 @@
+.garden-page__chrome {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.garden-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+}
+
+.garden-page__tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.garden-mission {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0.95rem 1.1rem;
+  border-radius: var(--mantine-radius-md);
+  border: 1.5px solid var(--green-100);
+  background: var(--green-50);
+}
+
+.garden-mission__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.9rem 1.25rem;
+}
+
+.garden-mission__copy {
+  display: grid;
+  gap: 0.25rem;
+  min-width: min(100%, 16rem);
+  flex: 1 1 16rem;
+}
+
+.garden-mission__kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--green-500);
+}
+
+.garden-mission__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--green-700);
+}
+
+.garden-mission__when {
+  color: var(--stone-700);
+}
+
+.garden-mission__premise {
+  color: var(--stone-700);
+  max-width: 36rem;
+}
+
+.garden-mission__party {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.garden-mission__member {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.65rem 0.2rem 0.25rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--green-100);
+  background: var(--warm-white);
+  color: var(--green-700);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.garden-mission__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.garden-mission__confirm {
+  flex-basis: 100%;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.garden-page__send {
+  --button-bg: var(--green-700);
+  --button-hover: var(--green-900);
+  --button-color: var(--warm-white);
+  --button-bd: 1.5px solid var(--green-700);
+}

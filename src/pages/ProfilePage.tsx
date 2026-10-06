@@ -6,7 +6,6 @@ import ProfilePhotoModal from "@/components/ProfilePhotoModal";
 import ProfileAvatarSection from "@/pages/profile/components/ProfileAvatarSection";
 import ProfileIdentityFields from "@/pages/profile/components/ProfileIdentityFields";
 import ProfileSaveFooter from "@/pages/profile/components/ProfileSaveFooter";
-import GardenSection from "@/components/Garden/GardenSection";
 import { cardStyle, NICKNAME_MAX_LENGTH } from "@/pages/profile/constants";
 import { useProfileAvatarPreview } from "@/pages/profile/hooks/useProfileAvatarPreview";
 import { useAuth } from "@/context/AuthContext";
@@ -152,10 +151,6 @@ export default function ProfilePage() {
           </Stack>
         </Paper>
       </form>
-
-      <Box mt="md">
-        <GardenSection />
-      </Box>
 
       <ProfilePhotoModal
         opened={avatarExpanded}

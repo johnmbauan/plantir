@@ -106,8 +106,7 @@ export function getGardenTier(earnedCount: number): GardenTier {
   return GARDEN_TIERS[0];
 }
 
-export const GARDEN_PROFILE_HASH = "#garden";
-export const GARDEN_PROFILE_PATH = `/profile${GARDEN_PROFILE_HASH}`;
+export { GARDEN_PATH as GARDEN_PROFILE_PATH } from "@/constants/routes";
 
 /** Designed scene layout — sole source of truth for badge positions/sizes. */
 export interface GardenLayoutSlot {

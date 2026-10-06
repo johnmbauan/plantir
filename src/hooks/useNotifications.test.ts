@@ -280,6 +280,38 @@ describe('useNotifications', () => {
     vi.mocked(document.hasFocus).mockRestore();
   });
 
+  it('shows a green toast and refreshes the garden for a returned expedition', async () => {
+    mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
+    mockFetchUnreadNotifications.mockResolvedValue([]);
+    vi.spyOn(document, 'hasFocus').mockReturnValue(true);
+    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+
+    const { result } = renderHook(() => useNotifications());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    const returned: AppNotification = {
+      id: 'n-returned',
+      type: 'expedition_returned',
+      title: 'stored',
+      body: 'stored',
+      payload: { expeditionId: 'e1', destinationId: 'moss_lane' },
+      created_at: '2026-07-06T08:00:00Z',
+    };
+
+    act(() => {
+      broadcastHandler?.({ payload: returned });
+    });
+
+    expect(result.current.items).toContainEqual(returned);
+    expect(mockNotificationsShow).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Explorers returned', color: 'green' }),
+    );
+    expect(dispatchSpy).toHaveBeenCalled();
+
+    vi.mocked(document.hasFocus).mockRestore();
+    dispatchSpy.mockRestore();
+  });
+
   it('does not show a toast for incoming achievement notifications even when document has focus', async () => {
     mockUseAuth.mockReturnValue({ session: buildSession(), loading: false });
     mockFetchUnreadNotifications.mockResolvedValue([]);
