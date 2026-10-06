@@ -8,7 +8,7 @@ import vitest from 'eslint-plugin-vitest';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-  globalIgnores(['dist', 'arduino', 'coverage']),
+  globalIgnores(['dist', 'arduino', 'coverage', 'storybook-static']),
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     extends: [

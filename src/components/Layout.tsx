@@ -7,7 +7,7 @@ import BrandLogo from "@/components/BrandLogo";
 import NavDrawer from "@/components/NavDrawer";
 import NotificationBell from "@/components/NotificationBell";
 import UserMenu from "@/components/UserMenu";
-import { DASHBOARD_PATH } from "@/constants/routes";
+import { DASHBOARD_PATH, GARDEN_PATH } from "@/constants/routes";
 import { useAuth } from "@/context/AuthContext";
 import { ProfileProvider } from "@/context/ProfileContext";
 import { WeatherCityProvider } from "@/context/WeatherCityContext";
@@ -71,8 +71,8 @@ export default function Layout() {
                 <NavLink to="/plants-center" style={navLinkStyle}>
                   {t("nav.plantsCenter")}
                 </NavLink>
-                <NavLink to="/settings" style={navLinkStyle}>
-                  {t("nav.settings")}
+                <NavLink to={GARDEN_PATH} style={navLinkStyle}>
+                  {t("nav.garden")}
                 </NavLink>
                 {isAdmin && (
                   <NavLink to="/admin" style={navLinkStyle}>

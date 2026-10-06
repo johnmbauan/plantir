@@ -1,35 +1,33 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import type { ComponentProps } from 'react';
 import { render, screen } from '@testing-library/react';
 import { MantineProvider } from '@mantine/core';
 import { MemoryRouter } from 'react-router-dom';
 import type { AchievementDefinition, EarnedAchievement } from '@/services/achievementService';
-import type { UseGardenStateResult } from './useGardenState';
 import { GARDEN_TIERS } from '@/constants/achievements';
-
-vi.mock('./useGardenState', () => ({
-  useGardenState: vi.fn(),
-}));
 
 vi.mock('./GardenScene', () => ({
   default: ({
     allDefinitions,
     earned,
+    travelingKeys,
   }: {
     allDefinitions: AchievementDefinition[];
     earned: EarnedAchievement[];
     newlyUnlockedKeys: string[];
     visualStage: string;
+    travelingKeys?: string[];
   }) => (
     <div
       data-testid="garden-scene"
       data-definitions={allDefinitions.length}
       data-earned={earned.length}
+      data-traveling={(travelingKeys ?? []).join(',')}
     />
   ),
 }));
 
 import GardenSection from './GardenSection';
-import { useGardenState } from './useGardenState';
 
 const soilTier = GARDEN_TIERS[0];
 
@@ -47,38 +45,25 @@ const earnedSprout: EarnedAchievement = {
   unlocked_at: '2026-01-01T00:00:00Z',
 };
 
-function baseState(overrides: Partial<UseGardenStateResult> = {}): UseGardenStateResult {
-  return {
-    loading: false,
-    allDefinitions: [sproutDef],
-    earned: [],
-    earnedCount: 0,
-    tier: soilTier,
-    newlyUnlockedKeys: [],
-    refresh: vi.fn(),
-    ...overrides,
-  };
-}
-
-function renderSection() {
+function renderSection(overrides: Partial<ComponentProps<typeof GardenSection>> = {}) {
   return render(
     <MantineProvider>
       <MemoryRouter>
-        <GardenSection />
+        <GardenSection
+          loading={false}
+          allDefinitions={[sproutDef]}
+          earned={[]}
+          tier={soilTier}
+          {...overrides}
+        />
       </MemoryRouter>
     </MantineProvider>,
   );
 }
 
 describe('GardenSection', () => {
-  beforeEach(() => {
-    vi.mocked(useGardenState).mockReset();
-    vi.mocked(useGardenState).mockReturnValue(baseState());
-  });
-
   it('shows a skeleton while loading', () => {
-    vi.mocked(useGardenState).mockReturnValue(baseState({ loading: true }));
-    renderSection();
+    renderSection({ loading: true });
     expect(screen.getByTestId('garden-loading-skeleton')).toBeInTheDocument();
   });
 
@@ -88,52 +73,28 @@ describe('GardenSection', () => {
   });
 
   it('passes allDefinitions to GardenScene', () => {
-    vi.mocked(useGardenState).mockReturnValue(baseState({ allDefinitions: [sproutDef] }));
-    renderSection();
+    renderSection({ allDefinitions: [sproutDef] });
     expect(screen.getByTestId('garden-scene')).toHaveAttribute('data-definitions', '1');
   });
 
   it('passes earned to GardenScene', () => {
-    vi.mocked(useGardenState).mockReturnValue(
-      baseState({ allDefinitions: [sproutDef], earned: [earnedSprout], earnedCount: 1 }),
-    );
-    renderSection();
+    renderSection({ allDefinitions: [sproutDef], earned: [earnedSprout] });
     expect(screen.getByTestId('garden-scene')).toHaveAttribute('data-earned', '1');
   });
 
   it('renders the tier name and tagline', () => {
     renderSection();
-    // The tier name and tagline are rendered together in garden.tierCaption
     expect(screen.getByText(/Seed Packet/)).toBeInTheDocument();
     expect(screen.getByText(/Empty soil/)).toBeInTheDocument();
   });
 
-  it('renders the garden section heading', () => {
+  it('renders the garden footer', () => {
     renderSection();
-    expect(screen.getByText('Your Garden')).toBeInTheDocument();
+    expect(screen.getByText('Keep caring for your plants to grow your garden.')).toBeInTheDocument();
   });
 
-  it('scrolls to the garden element when the hash is #garden on load', () => {
-    const scrollIntoView = vi.fn();
-    const originalGetElementById = document.getElementById.bind(document);
-    vi.spyOn(document, 'getElementById').mockImplementation((id: string) => {
-      if (id === 'garden') return { scrollIntoView } as unknown as HTMLElement;
-      return originalGetElementById(id);
-    });
-
-    Object.defineProperty(window, 'location', {
-      value: { ...window.location, hash: '#garden' },
-      configurable: true,
-    });
-
-    renderSection();
-
-    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
-
-    Object.defineProperty(window, 'location', {
-      value: { ...window.location, hash: '' },
-      configurable: true,
-    });
-    vi.restoreAllMocks();
+  it('passes travelling creatures to the scene', () => {
+    renderSection({ travelingKeys: ['hello_my_name_is'] });
+    expect(screen.getByTestId('garden-scene')).toHaveAttribute('data-traveling', 'hello_my_name_is');
   });
 });

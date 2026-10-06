@@ -78,12 +78,12 @@ export default function UserMenu() {
 
   return (
     <Menu
-      trigger="hover"
+      trigger="click-hover"
       openDelay={100}
       closeDelay={150}
       position="bottom-end"
       shadow="md"
-      width={160}
+      width={200}
     >
       <Menu.Target>
         <UnstyledButton
@@ -102,6 +102,7 @@ export default function UserMenu() {
 
       <Menu.Dropdown>
         <Menu.Item onClick={() => navigate("/profile")}>{t("userMenu.profile")}</Menu.Item>
+        <Menu.Item onClick={() => navigate("/settings")}>{t("userMenu.settings")}</Menu.Item>
         {showOnboardingItem && (
           <Menu.Item onClick={() => void handleRestoreOnboarding()}>
             {t("userMenu.onboarding")}

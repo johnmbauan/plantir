@@ -11,7 +11,7 @@ afterEach(async () => {
 describe('achievementCopy', () => {
   it('returns English catalog copy for a known achievement', () => {
     expect(achievementCopy('hello_my_name_is')).toEqual({
-      name: 'Sprout Wars: A New Leaf',
+      name: 'First Plant',
       description: 'Create your first plant.',
     });
   });
@@ -20,13 +20,13 @@ describe('achievementCopy', () => {
     await i18n.changeLanguage('it');
 
     expect(achievementCopy('hello_my_name_is')).toEqual({
-      name: "C'era una volta il vaso",
+      name: 'Prima pianta',
       description: 'Crea la tua prima pianta.',
     });
-    expect(achievementCopy('back_from_the_mulch').name).toBe('La bella addormentata nel vaso');
-    expect(achievementCopy('cloud_oracle').name).toBe('Cantando sotto la pioggia');
-    expect(achievementCopy('the_comeback_kid').name).toBe('Sopravvissuto - The Martian');
-    expect(achievementCopy('dirt_whisperer_initiate').name).toBe('Lost in Calibration - L’umidità tradotta');
+    expect(achievementCopy('back_from_the_mulch').name).toBe('Sensore di nuovo online');
+    expect(achievementCopy('cloud_oracle').name).toBe('Città del meteo impostata');
+    expect(achievementCopy('the_comeback_kid').name).toBe('Recuperata dopo la siccità');
+    expect(achievementCopy('dirt_whisperer_initiate').name).toBe('Sensore calibrato');
   });
 
   it('uses fallback copy when the achievement key has no translation', () => {

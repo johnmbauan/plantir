@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Popover } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { GARDEN_LAYOUT } from "@/constants/achievements";
+import { GARDEN_LAYOUT, type AchievementKey } from "@/constants/achievements";
 import type { AchievementDefinition } from "@/services/achievementService";
 import { achievementCopy } from "@/utils/achievementDisplay";
 import { GardenSprite, MysterySprite } from "./GardenSprites";
@@ -11,9 +11,11 @@ interface Props {
   definition: AchievementDefinition;
   earned: boolean;
   animateIn?: boolean;
+  traveling?: boolean;
+  onSelect?: (key: AchievementKey) => void;
 }
 
-export default function GardenElement({ definition, earned, animateIn }: Props) {
+export default function GardenElement({ definition, earned, animateIn, traveling, onSelect }: Props) {
   const { t } = useTranslation();
   const copy = achievementCopy(definition.key, definition);
   const [hovered, setHovered] = useState(false);
@@ -24,13 +26,25 @@ export default function GardenElement({ definition, earned, animateIn }: Props) 
     "garden-element",
     !earned && "garden-element--locked",
     animateIn && "garden-element--grow",
+    traveling && "garden-element--traveling",
   ]
     .filter(Boolean)
     .join(" ");
 
-  const ariaLabel = isHiddenLocked
-    ? t("garden.mysteryBadgeAria", { description: copy.description })
-    : `${copy.name}: ${copy.description}`;
+  const creatureName = t(`garden.creatures.${definition.key}.name`, { defaultValue: copy.name });
+  const ariaLabel = traveling
+    ? t("garden.travelMarkerAria", { name: creatureName })
+    : isHiddenLocked
+      ? t("garden.mysteryBadgeAria", { description: copy.description })
+      : `${creatureName}: ${copy.description}`;
+
+  function handleClick() {
+    if (traveling) {
+      onSelect?.(definition.key);
+      return;
+    }
+    if (earned) onSelect?.(definition.key);
+  }
 
   return (
     <Popover
@@ -47,20 +61,23 @@ export default function GardenElement({ definition, earned, animateIn }: Props) 
           className={classNames}
           style={{ left: `${layout.x}%`, top: `${layout.y}%` }}
           aria-label={ariaLabel}
+          onClick={handleClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onFocus={() => setHovered(true)}
           onBlur={() => setHovered(false)}
         >
-          {isHiddenLocked
-            ? <MysterySprite size={layout.size} />
-            : <GardenSprite element={definition.garden_element} size={layout.size} animated={earned} />}
+          {traveling
+            ? <span className="garden-travel-marker" aria-hidden />
+            : isHiddenLocked
+              ? <MysterySprite size={layout.size} />
+              : <GardenSprite element={definition.garden_element} size={layout.size} animated={earned} />}
         </button>
       </Popover.Target>
       <Popover.Dropdown>
         <GardenInspectPopover
-          name={copy.name}
-          description={copy.description}
+          name={traveling ? t("garden.travelingName", { name: creatureName }) : earned ? creatureName : copy.name}
+          description={traveling ? t("garden.travelingDescription") : copy.description}
           locked={!earned}
           hidden={definition.is_hidden}
         />

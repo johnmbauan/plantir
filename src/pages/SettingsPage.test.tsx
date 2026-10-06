@@ -118,7 +118,7 @@ describe('SettingsPage', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
-      expect(upsertSettings).toHaveBeenCalledWith('99999', 9, 'Europe/Rome', true, false);
+      expect(upsertSettings).toHaveBeenCalledWith('99999', 9, 'Europe/Rome', true, false, false);
       expect(markOnboardingStepComplete).toHaveBeenCalledWith('notifications');
     });
   });
@@ -133,7 +133,7 @@ describe('SettingsPage', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
-      expect(upsertSettings).toHaveBeenCalledWith('12345', 9, 'Europe/Rome', true, true);
+      expect(upsertSettings).toHaveBeenCalledWith('12345', 9, 'Europe/Rome', true, true, false);
     });
   });
 
@@ -192,6 +192,21 @@ describe('SettingsPage', () => {
     });
 
     errorSpy.mockRestore();
+  });
+
+  it('saves expedition return messages when the switch is turned on', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(<SettingsPage />);
+
+    const expeditionToggle = await screen.findByRole('switch', { name: /Expedition returns by email or Telegram/i });
+    expect(expeditionToggle).not.toBeChecked();
+    await user.click(expeditionToggle);
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => {
+      expect(upsertSettings).toHaveBeenCalledWith('12345', 9, 'Europe/Rome', true, false, true);
+    });
   });
 
   it('toggles in-app notifications switch', async () => {
@@ -267,7 +282,7 @@ describe('SettingsPage', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
-      expect(upsertSettings).toHaveBeenCalledWith('12345', 10, 'Europe/London', true, false);
+      expect(upsertSettings).toHaveBeenCalledWith('12345', 10, 'Europe/London', true, false, false);
     });
   });
 });

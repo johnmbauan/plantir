@@ -33,6 +33,7 @@ function renderUserMenu(route = '/dashboard') {
       <Routes>
         <Route path="/dashboard" element={<div>Dashboard page</div>} />
         <Route path="/profile" element={<div>Profile page</div>} />
+        <Route path="/settings" element={<div>Settings page</div>} />
         <Route path="/login" element={<div>Login page</div>} />
       </Routes>
     </>,
@@ -123,6 +124,16 @@ describe('UserMenu', () => {
     await user.click(await screen.findByRole('menuitem', { name: 'Profile' }));
 
     expect(await screen.findByText('Profile page')).toBeInTheDocument();
+  });
+
+  it('navigates to settings from the menu', async () => {
+    const user = userEvent.setup();
+    renderUserMenu();
+
+    await user.hover(await screen.findByRole('button', { name: 'Account menu' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Settings' }));
+
+    expect(await screen.findByText('Settings page')).toBeInTheDocument();
   });
 
   it('signs out from the menu', async () => {

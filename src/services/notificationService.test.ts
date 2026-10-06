@@ -177,11 +177,25 @@ describe('notificationService', () => {
           notification_timezone: 'Europe/Rome',
           browser_notifications_enabled: true,
           email_notifications_enabled: true,
+          expedition_notifications_enabled: false,
         }),
         { onConflict: 'user_id' },
       );
       expect(mockRecordClientEvent).toHaveBeenCalledWith('notification_settings_saved');
       expect(mockShowUnlockToasts).toHaveBeenCalledWith(unlocked);
+    });
+
+    it('stores the expedition return preference', async () => {
+      mockAuthenticatedUser();
+      setupFromMocks({ notification_settings: { data: null, error: null } });
+
+      await upsertSettings('chat-1', 9, 'Europe/Rome', true, false, true);
+
+      const chain = mockFrom.mock.results[0]?.value as { upsert: ReturnType<typeof vi.fn> };
+      expect(chain.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({ expedition_notifications_enabled: true }),
+        { onConflict: 'user_id' },
+      );
     });
 
     it('does not record an achievement event when the database upsert fails', async () => {
@@ -240,14 +254,38 @@ describe('notificationService', () => {
       expect(getNotificationHref(offline)).toBe('/plants-center?tab=devices');
     });
 
-    it('links achievement notifications to the garden section of the profile page', () => {
+    it('links garden notices to the garden page', () => {
+      const returned: AppNotification = {
+        ...wateringNotification,
+        id: 'n-returned',
+        type: 'expedition_returned',
+        payload: { expeditionId: 'e1', destinationId: 'moss_lane' } as AppNotification['payload'],
+      };
+      const bond: AppNotification = {
+        ...wateringNotification,
+        id: 'n-bond',
+        type: 'bond_level',
+        payload: { achievementKey: 'hello_my_name_is', bondLevel: 2 } as AppNotification['payload'],
+      };
+      const personal: AppNotification = {
+        ...wateringNotification,
+        id: 'n-personal',
+        type: 'personal_expedition',
+        payload: { achievementKey: 'hello_my_name_is' } as AppNotification['payload'],
+      };
+      expect(getNotificationHref(returned)).toBe('/garden');
+      expect(getNotificationHref(bond)).toBe('/garden');
+      expect(getNotificationHref(personal)).toBe('/garden');
+    });
+
+    it('links achievement notifications to the garden page', () => {
       const achievement: AppNotification = {
         ...wateringNotification,
         id: 'n-achievement',
         type: 'achievement',
         payload: { achievementKey: 'hello_my_name_is', garden_element: 'sprout' },
       };
-      expect(getNotificationHref(achievement)).toBe('/profile#garden');
+      expect(getNotificationHref(achievement)).toBe('/garden');
     });
 
     it('links onboarding congratulations to the dashboard', () => {

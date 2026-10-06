@@ -1,0 +1,122 @@
+.expedition-journal {
+  border: 1px solid var(--terracotta-100);
+  background:
+    linear-gradient(180deg, rgba(250, 242, 238, 0.55) 0%, rgba(255, 255, 255, 0.92) 140px),
+    var(--surface);
+}
+
+.expedition-journal__lead {
+  max-width: 38rem;
+  color: var(--stone-700);
+}
+
+.expedition-journal__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.expedition-journal__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--terracotta-100);
+  background: var(--terracotta-50);
+}
+
+.expedition-journal__stat-value {
+  font-size: 1.45rem;
+  line-height: 1.1;
+  font-weight: 650;
+  color: var(--green-700);
+}
+
+.expedition-journal__stat-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--stone-500);
+}
+
+.expedition-journal__section-title {
+  margin: 0;
+}
+
+.expedition-journal__stories,
+.expedition-journal__keepsakes,
+.expedition-journal__trails {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.expedition-journal__keepsakes,
+.expedition-journal__trails {
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+}
+
+.expedition-journal__story {
+  padding: 1rem 1.05rem 1.05rem;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--green-100);
+  background: var(--green-50);
+}
+
+.expedition-journal__story--latest {
+  border-color: color-mix(in srgb, var(--green-500) 35%, var(--green-100));
+  box-shadow: inset 3px 0 0 var(--green-500);
+}
+
+.expedition-journal__story-kicker {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--green-500);
+}
+
+.expedition-journal__keepsake,
+.expedition-journal__trail {
+  min-height: 6.5rem;
+  padding: 0.9rem;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--stone-100);
+  background: var(--stone-50);
+}
+
+.expedition-journal__keepsake {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  min-height: 5.5rem;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(214, 122, 91, 0.16), transparent 42%),
+    var(--terracotta-50);
+  border-color: var(--terracotta-100);
+}
+
+.expedition-journal__trail--started {
+  border-color: color-mix(in srgb, var(--terracotta-500) 28%, var(--stone-100));
+  background: var(--terracotta-50);
+}
+
+.expedition-journal__trail--complete {
+  border-color: var(--green-100);
+  background: var(--green-50);
+}
+
+.expedition-journal__trail--unvisited {
+  opacity: 0.78;
+}
+
+@media (max-width: 36rem) {
+  .expedition-journal__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .expedition-journal__keepsakes,
+  .expedition-journal__trails {
+    grid-template-columns: 1fr;
+  }
+}

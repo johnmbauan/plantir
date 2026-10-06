@@ -1,0 +1,326 @@
+.expedition-map {
+  border: 1px solid var(--terracotta-100);
+  background:
+    linear-gradient(180deg, rgba(250, 242, 238, 0.4) 0%, rgba(255, 255, 255, 0.96) 120px),
+    var(--surface);
+}
+
+.expedition-map__close {
+  --button-color: var(--green-700);
+  --button-hover: var(--green-50);
+}
+
+.expedition-map__lead {
+  max-width: 38rem;
+}
+
+.expedition-map__steps {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.expedition-map__step {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.expedition-map__step-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.expedition-map__step-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  color: var(--green-700);
+  font-weight: 650;
+}
+
+.expedition-map__step-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 99px;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.expedition-map__trails {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.expedition-map__trail {
+  display: grid;
+  gap: 0.3rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: var(--mantine-radius-md);
+  border: 1.5px solid var(--stone-100);
+  background: var(--stone-50);
+  color: var(--green-900);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.expedition-map__trail:hover {
+  border-color: var(--green-100);
+  background: var(--green-50);
+}
+
+.expedition-map__trail--selected {
+  border-color: var(--green-500);
+  background: var(--green-50);
+  box-shadow: inset 3px 0 0 var(--green-700);
+}
+
+.expedition-map__trail-name {
+  font-weight: 650;
+  color: var(--green-700);
+}
+
+.expedition-map__trail-family {
+  font-size: 0.75rem;
+  color: var(--stone-500);
+}
+
+.expedition-map__trail-premise {
+  font-size: 0.88rem;
+  color: var(--stone-700);
+}
+
+.expedition-map__durations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.expedition-map__duration {
+  padding: 0.45rem 0.85rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--green-100);
+  background: #fff;
+  color: var(--green-700);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.expedition-map__duration:hover {
+  background: var(--green-50);
+}
+
+.expedition-map__duration--selected {
+  background: var(--green-700);
+  border-color: var(--green-700);
+  color: var(--warm-white);
+}
+
+.expedition-map__picker {
+  display: grid;
+  gap: 1rem;
+}
+
+.expedition-map__toolbar {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.expedition-map__search {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 40px;
+  padding: 0 0.9rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--green-100);
+  background: #fff;
+  color: var(--green-500);
+}
+
+.expedition-map__search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.92rem;
+  color: var(--green-900);
+}
+
+.expedition-map__search input::placeholder {
+  color: var(--stone-500);
+}
+
+.expedition-map__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.expedition-map__filter {
+  padding: 0.35rem 0.75rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--stone-100);
+  background: var(--stone-50);
+  color: var(--stone-700);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.expedition-map__filter--active {
+  background: var(--green-100);
+  border-color: var(--green-400);
+  color: var(--green-700);
+}
+
+.expedition-map__creatures {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(138px, 1fr));
+  gap: 0.7rem;
+}
+
+.expedition-map__creature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.28rem;
+  min-height: 10.5rem;
+  padding: 0.85rem 0.6rem 0.7rem;
+  border-radius: var(--mantine-radius-md);
+  border: 1.5px solid var(--stone-100);
+  background: var(--warm-white);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.expedition-map__creature:hover {
+  border-color: var(--green-100);
+}
+
+.expedition-map__creature--selected {
+  border-color: var(--green-500);
+  background: var(--green-50);
+  box-shadow: inset 0 0 0 1px var(--green-100);
+}
+
+.expedition-map__creature--fresh {
+  border-color: var(--terracotta-100);
+  background: var(--terracotta-50);
+}
+
+.expedition-map__creature--blocked {
+  opacity: 0.48;
+  cursor: default;
+}
+
+.expedition-map__creature-name {
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--green-700);
+  text-align: center;
+}
+
+.expedition-map__creature-talent {
+  font-size: 0.72rem;
+  color: var(--stone-500);
+  text-align: center;
+}
+
+.expedition-map__creature-marks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 0.15rem;
+}
+
+.expedition-map__mark {
+  padding: 0.1rem 0.4rem;
+  border-radius: 99px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.expedition-map__mark--helpful {
+  background: var(--green-100);
+  color: var(--green-700);
+}
+
+.expedition-map__mark--fresh {
+  background: var(--terracotta-100);
+  color: var(--terracotta-900);
+}
+
+.expedition-map__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--terracotta-100);
+}
+
+.expedition-map__party {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.expedition-map__party-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 99px;
+  border: 1.5px dashed var(--green-100);
+  background: var(--green-50);
+}
+
+.expedition-map__party-slot--filled {
+  border-style: solid;
+  border-color: var(--green-100);
+}
+
+.expedition-map__submit {
+  --button-bg: var(--green-700);
+  --button-hover: var(--green-900);
+  --button-color: var(--warm-white);
+  --button-bd: 1.5px solid var(--green-700);
+}
+
+.expedition-map__submit:disabled {
+  --button-bg: var(--green-100);
+  --button-hover: var(--green-100);
+  --button-color: var(--green-400);
+  --button-bd: 1.5px solid var(--green-100);
+}
+
+@media (min-width: 40rem) {
+  .expedition-map__trails {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .expedition-map__toolbar {
+    grid-template-columns: minmax(12rem, 1fr) auto;
+    align-items: center;
+  }
+}
