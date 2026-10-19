@@ -27,7 +27,8 @@ describe("expeditions catalog", () => {
   });
 
   it("filters destinations by unlocked creature count", () => {
-    expect(availableDestinations(1).map((item) => item.id)).toEqual([FIRST_OUTING_ID]);
+    expect(availableDestinations(2)).toEqual([]);
+    expect(availableDestinations(3).map((item) => item.id)).toContain(FIRST_OUTING_ID);
     expect(availableDestinations(3).length).toBe(3);
   });
 

@@ -806,11 +806,11 @@
     "returnsTomorrow": "Back tomorrow at {{time}}",
     "missionTeam": "Team on this expedition",
     "noFailureNote": "Every expedition succeeds. Team talents change the story, not the outcome.",
-    "selectTeam": "Choose one to three companions",
+    "selectTeam": "Choose three companions",
     "recommendedTalents": "Helpful here",
     "durationLabel": "When should they return?",
     "depart": "Send them out",
-    "mapLocked": "Unlock more creatures to open longer trails.",
+    "mapLocked": "Expeditions open once three creatures live in the garden.",
     "mapBusy": "A team is already out.",
     "mapBusyHint": "They come back before you can send another.",
     "stepTrail": "Choose a trail",
@@ -823,8 +823,8 @@
     "newToTrail": "First visit",
     "helpfulMark": "Helpful",
     "noCreatureMatch": "No companions match that search.",
-    "pickCompanion": "Pick at least one companion.",
-    "teamFull": "The team is full.",
+    "teamIncomplete_one": "One more companion to go.",
+    "teamIncomplete_other": "{{count}} more companions to go.",
     "bondLevels": {
       "1": "New Arrival",
       "2": "Familiar",
@@ -867,7 +867,7 @@
       "steps": {
         "send": {
           "title": "Send a team",
-          "body": "Tap {{send}} at the top. Choose a trail, when they should return, and one to three companions. They always come back: expeditions do not fail. They bring a story, and sometimes a treasure."
+          "body": "Tap {{send}} at the top. Choose a trail, when they should return, and the three companions who go. They always come back: expeditions do not fail. They bring a story, and sometimes a treasure."
         },
         "timing": {
           "title": "One expedition at a time",
@@ -893,7 +893,7 @@
       "keepsakes": "Keepsakes",
       "memories": "Memories",
       "complete": "Main discoveries found",
-      "hint": "There is still something waiting on this trail.",
+      "openThreads": "Still out there",
       "unvisited": "Not visited yet",
       "foundOf": "{{found}} of {{total}}",
       "withTeam": "With {{names}}",
@@ -928,11 +928,29 @@
       }
     },
     "stories": {
-      "first_outing": "The team stayed close to home and brought back a small, smooth stone that still felt warm.",
-      "moss_lane": "They followed the green line of moss until it opened onto a clearing no one had marked.",
-      "moss_lane_observation": "Someone noticed a second path under the first, written in dew.",
-      "seed_hollow": "A hollow in the bank held seeds that did not match any plant in the sanctuary.",
-      "seed_hollow_plant": "They sorted the seeds by the way they wanted to grow, not by how they looked."
+      "first_outing_ch1": "The garden gate stood open, and the pots were only a few steps behind. {{lead}} had not finished the sentence about going only as far as the first corner, and {{scout}} was already on the other side, one foot on the path. {{anchor}} kept turning around. Not toward the path: toward the pots, as if they might decide to leave on their own.\n\nThey stopped where the path stops being home. The grass ahead was a little taller, and there was nothing else to see. {{lead}} opened the journal to a blank page and wrote down exactly that: the gate, the pots, the taller grass, the place where the garden ends. The page was not blank anymore. It is the first page of the journal.",
+      "first_outing_hook1": "On the right-hand post of the gate, about as high as their hands, a small grey pebble is still warm. Nobody has picked it up.",
+      "first_outing_ch2": "On the right-hand post of the gate, about as high as their hands, sat a small grey pebble. It was not wedged in. It lay flat, and it was warm, as if whoever had put it there had only just taken their fingers away.\n\n{{anchor}} said the pebble already had a place, and that the place was the post. {{scout}} held it anyway, in both hands, careful not to drop it in the grass. {{lead}} looked at the post, empty now, and let {{scout}} carry it home. They came back in among the pots closer together than they had gone out.",
+      "first_outing_hook2": "Past the gate the moss does not grow in patches. It sets off in a single line, too straight to have come up on its own.",
+      "first_outing_repeat1": "They went out through the garden gate again and walked the same edge as the first time, with the pots still in sight. Before coming back in, {{lead}} asked to see the pebble. {{scout}} opened both hands. It was still warm.",
+      "moss_lane_ch1": "Moss Lane begins a few steps past the garden gate. The stones of the path are green, and the green is not in patches. It is one line, running from stone to stone as if someone had drawn it with a finger.\n\n{{scout}} saw the line before the others had said yes, and started along it. When {{lead}} looked up, {{scout}} was already well ahead, toward a clearing where the lane opens out. {{anchor}} would not take another step until {{scout}}'s voice came back down the path. {{lead}} called. {{scout}} answered, and something in the clearing that had been listening went still, all at once. They walked home side by side. The moss line came with them, copied onto a wet leaf and pressed flat, so the drawing would survive the trip.",
+      "moss_lane_hook1": "The moss line does not end in the clearing. It keeps on between the stones, too straight to have grown there by itself.",
+      "moss_lane_ch2": "They went back to the lane in daylight, when the sun comes in sideways between the stones. They wanted to know whether a moss line that straight can happen by accident.\n\nFor a few minutes, under the moss, the dew draws a second path. It does not lead back to the garden. It runs the other way. {{scout}} wanted to follow it at once, while it could still be seen. {{lead}} said to copy it onto the page first. That was only half right. The dew dried while the sketch was still unfinished. {{anchor}} has not said whether copying was the right choice, but stayed beside {{lead}} the whole way home.",
+      "moss_lane_hook2": "The dew path does not lead home. It runs on, into a part of the valley that does not have a name yet.",
+      "moss_lane_ch3": "They followed the dew to the end of the lane. It stops at a flat stone. A green ribbon was knotted around the stone, pulled tight, the same colour as the moss.\n\n{{anchor}} said quietly that the ribbon belonged to someone, and that it ought to stay on the stone. {{scout}} had already untied it, and was holding it the way you hold a thing you decided to keep in the space of a second. {{lead}} let {{scout}} bring it, and left a pressed leaf where the ribbon had been. You only make that kind of trade once. They did not talk much on the way back to the garden.",
+      "moss_lane_hook3": "When they turned around, the knot on the stone had been tied again. Farther along the lane, another green ribbon was waiting on the stones.",
+      "moss_lane_ch4": "This time they followed the moss line to the last stone of the lane. The moss is cut short, stone by stone, and someone has kept it that way since before the garden existed.\n\nAll the way home, {{lead}} tried to settle it: the path they had been so proud of finding had not been theirs to find. Someone looks after it. At the last stone, {{anchor}} left the folded sketch in plain sight, the way you leave a note for a person you have never met.",
+      "moss_lane_hook4": "Nobody came out to meet them. The moss goes on past the last of the light, and whoever cuts it works at night.",
+      "moss_lane_repeat1": "The green ribbon on the stone at the end of Moss Lane had been tied again, not long before, perhaps while they were standing there looking. Nobody asked who had done it. {{scout}} counted the knots. There are eleven now, and {{scout}} knows every one of them.",
+      "moss_lane_repeat2": "Nothing new on the lane, except the branch that had tripped {{anchor}} last time. Someone had moved it aside and leaned it carefully against a stone. {{lead}} said thank you out loud, to the trees, and meant it.",
+      "seed_hollow_ch1": "A little way outside the garden there is a dip in the ground, sheltered from the wind. They call it the hollow. Seeds roll into it when the wind is finished with them, and stop against the earthen bank.\n\n{{scout}} went down first, and came back up with both hands full of small dark seeds that matched nothing growing in the pots. {{lead}} had them set the pile on a flat stone, so each seed could be looked at in turn. {{anchor}} counted them aloud, and counted again before they left, so the number would be the same when they got home.",
+      "seed_hollow_hook1": "Under the bank of the hollow, a root runs deeper than the hollow is wide. It does not belong to the plants growing above it.",
+      "seed_hollow_ch2": "Under the bank of the hollow the soil is loose, and roots come out of it. They are thicker than the roots of the plants above, and they run deeper than the hollow is wide.\n\n{{lead}} copied their path onto the page, bend by bend. {{scout}} wanted to break a piece off and take it home for a closer look. {{anchor}} held the page steady and said no, quietly. The root stayed where it was.",
+      "seed_hollow_hook2": "Where the bank of the hollow turns, there is a piece of wood worn smooth, as if someone had sat there and waited.",
+      "seed_hollow_ch3": "Where the bank of the hollow turns, wedged between two roots, was a piece of wood worn smooth. Someone had hollowed it into a charm, with a hole for a thread. The hand that did it was not from the garden.\n\n{{anchor}} said to leave it there, between the roots. {{scout}} had already hung it on a twig, to see how it sat. It sat well. {{lead}} let {{scout}} bring it home, and left one of the hollow's seeds in the place where the wood had been.",
+      "seed_hollow_hook3": "Whoever used the hollow is not finished with it. The seeds keep arriving, even on days when the wind is still.",
+      "seed_hollow_repeat1": "More seeds had gathered in the hollow since last time. {{scout}} lined them up by the way they seemed to want to grow. {{anchor}} kept aside the ones that did not belong with the others, to look at properly at home.",
+      "seed_hollow_repeat2": "At home, the wooden charm {{scout}} had brought back from the hollow was turned the other way. Nobody admits to touching it."
     },
     "discoveries": {
       "first_outing_journal": "First journal page",
@@ -943,6 +961,16 @@
       "seed_hollow_seed": "Unknown seed",
       "seed_hollow_root": "Root tracing",
       "seed_hollow_keepsake": "Hollow-wood charm"
+    },
+    "threads": {
+      "first_outing_journal": "The first page of the journal is still blank.",
+      "first_outing_pebble": "A small grey pebble on the right-hand gatepost stays warm, and nobody has picked it up.",
+      "moss_lane_map": "On Moss Lane the green runs in a line, and nobody has drawn it yet.",
+      "moss_lane_dew": "Under the moss, for a few minutes a day, the dew draws a second path. Nobody has been there at the right hour.",
+      "moss_lane_keepsake": "At the end of the lane a flat stone has a green ribbon knotted around it, and someone tied it.",
+      "seed_hollow_seed": "Seeds keep collecting in the hollow just outside the garden, and none of them match a plant in the pots.",
+      "seed_hollow_root": "Under the bank of the hollow, a root runs deeper than the hollow is wide.",
+      "seed_hollow_keepsake": "Where the bank of the hollow turns, a piece of wood has been worn smooth by hands that are not from the garden."
     },
     "bondReasons": {
       "expedition": "Returned from {{destination}}",

@@ -8,13 +8,19 @@ const expedition: UserExpedition = {
   id: "e1",
   destination_id: "first_outing",
   duration_key: "instant",
-  team: ["hello_my_name_is"],
+  team: ["hello_my_name_is", "stalking_fern_legally", "matchmaker_of_moisture"],
   started_at: "2026-09-24T00:00:00Z",
   returns_at: "2026-09-24T00:00:00Z",
   status: "ready",
   outcome: {
-    storyKey: "first_outing",
-    extraStoryKey: null,
+    chapterKey: "first_outing_ch1",
+    extraChapterKey: null,
+    hookKey: "first_outing_hook1",
+    cast: {
+      lead: "hello_my_name_is",
+      scout: "stalking_fern_legally",
+      anchor: "matchmaker_of_moisture",
+    },
     discoveryIds: ["first_outing_pebble"],
     talentMatches: ["curiosity"],
     observations: [{ achievementKey: "hello_my_name_is", firstVisit: true }],
@@ -39,15 +45,20 @@ describe("ReturnSequence", () => {
           ...expedition,
           outcome: {
             ...expedition.outcome!,
-            extraStoryKey: "moss_lane_observation",
-            discoveryIds: ["first_outing_pebble", "moss_lane_dew"],
+            extraChapterKey: "first_outing_ch2",
+            discoveryIds: ["first_outing_pebble", "first_outing_journal"],
           },
         }}
         onWelcome={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    expect(screen.getByText("Someone noticed a second path under the first, written in dew.")).toBeInTheDocument();
-    expect(screen.getByText("Dew path note")).toBeInTheDocument();
+    expect(
+      screen.getByText("The garden gate stood open, and the pots were only a few steps behind. Brin had not finished the sentence about going only as far as the first corner, and Morel was already on the other side, one foot on the path. Liana kept turning around. Not toward the path: toward the pots, as if they might decide to leave on their own."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("On the right-hand post of the gate, about as high as their hands, sat a small grey pebble. It was not wedged in. It lay flat, and it was warm, as if whoever had put it there had only just taken their fingers away."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("First journal page")).toBeInTheDocument();
   });
 
   it("skips without losing the welcome", async () => {

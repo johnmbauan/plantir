@@ -173,7 +173,7 @@ describe("user actions", () => {
       team: [],
     }));
     assertEquals(res.status, 500);
-    assertEquals((await res.json()).error, "Team must have one to three creatures");
+    assertEquals((await res.json()).error, "Team must have exactly three creatures");
   });
 
   it("returns 400 when cancel is missing expeditionId", async () => {

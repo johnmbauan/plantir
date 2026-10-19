@@ -75,7 +75,7 @@ export default function MissionHelpModal({ opened, mode, onClose, onStartFirst }
           )}
           {!last ? (
             <Button onClick={() => setStep((current) => current + 1)}>{t("garden.intro.continue")}</Button>
-          ) : mode === "intro" ? (
+          ) : mode === "intro" && onStartFirst ? (
             <Button onClick={() => void startFirst()} loading={busy}>
               {t("garden.intro.startOuting")}
             </Button>

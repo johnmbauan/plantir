@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Box, Button, Title } from "@mantine/core";
+import { Box, Button, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useTranslation } from "react-i18next";
 import CreatureProfile from "@/components/Garden/CreatureProfile";
@@ -13,7 +13,7 @@ import "@/components/Garden/GardenMissionBar.css";
 import { expeditionsForCreature, useSanctuaryState } from "@/components/Garden/useSanctuaryState";
 import { useGardenState } from "@/components/Garden/useGardenState";
 import type { AchievementKey } from "@/constants/achievements";
-import { FIRST_OUTING_ID, type DurationKey } from "@/constants/expeditions";
+import { EXPEDITION_TEAM_SIZE, FIRST_OUTING_ID, type DurationKey } from "@/constants/expeditions";
 import {
   cancelExpedition,
   departExpedition,
@@ -32,10 +32,9 @@ export default function GardenPage() {
   const [busy, setBusy] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
-  const firstCreature = garden.earned[0]?.key ?? null;
+  const canSendTeam = garden.earned.length >= EXPEDITION_TEAM_SIZE;
   const showIntro = Boolean(
-    firstCreature &&
-      garden.earned.length > 0 &&
+    garden.earned.length > 0 &&
       sanctuary.state?.sanctuary &&
       !sanctuary.state.sanctuary.intro_completed,
   );
@@ -93,10 +92,11 @@ export default function GardenPage() {
   }
 
   async function handleIntro(startOuting: boolean) {
-    if (!firstCreature) return;
+    if (garden.earned.length === 0) return;
     await markIntroCompleted();
-    if (startOuting) {
-      await departExpedition(FIRST_OUTING_ID, "instant", [firstCreature]);
+    if (startOuting && canSendTeam) {
+      const firstTeam = garden.earned.slice(0, EXPEDITION_TEAM_SIZE).map((item) => item.key);
+      await departExpedition(FIRST_OUTING_ID, "instant", firstTeam);
     }
     await sanctuary.refresh();
   }
@@ -125,14 +125,21 @@ export default function GardenPage() {
               {t("garden.openJournal")}
             </Button>
             {!activeExpedition && !readyExpedition && (
-              <Button
-                className="garden-page__send"
-                variant="filled"
-                onClick={() => setPanel((current) => (current === "map" ? "none" : "map"))}
-                disabled={garden.earned.length === 0}
-              >
-                {t("garden.openMap")}
-              </Button>
+              <>
+                {!canSendTeam && (
+                  <Text size="xs" c="dimmed" maw={220}>
+                    {t("garden.mapLocked")}
+                  </Text>
+                )}
+                <Button
+                  className="garden-page__send"
+                  variant="filled"
+                  onClick={() => setPanel((current) => (current === "map" ? "none" : "map"))}
+                  disabled={!canSendTeam}
+                >
+                  {t("garden.openMap")}
+                </Button>
+              </>
             )}
           </div>
         </div>
@@ -158,7 +165,7 @@ export default function GardenPage() {
           if (showIntro) void handleIntro(false);
           else setHelpOpen(false);
         }}
-        onStartFirst={showIntro ? () => handleIntro(true) : undefined}
+        onStartFirst={showIntro && canSendTeam ? () => handleIntro(true) : undefined}
       />
 
       {readyExpedition && (

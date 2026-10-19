@@ -10,7 +10,7 @@ import {
 } from "../../garden-expeditions/sanctuary.ts";
 import { createClient, USER_ID } from "./mock_client.ts";
 
-const firstTeam = ["hello_my_name_is"];
+const firstTeam = ["hello_my_name_is", "dirt_whisperer_initiate", "plant_texted_back"];
 const mossTeam = ["hello_my_name_is", "stalking_fern_legally", "matchmaker_of_moisture"];
 
 function unlockRows(keys: string[]) {
@@ -57,9 +57,9 @@ describe("bootstrapSanctuary", () => {
 describe("depart", () => {
   it("rejects invalid teams and destinations", async () => {
     const admin = createClient({});
-    await assertRejects(() => depart(admin as never, USER_ID, "first_outing", "instant", []), Error, "Team must have one to three creatures");
+    await assertRejects(() => depart(admin as never, USER_ID, "first_outing", "instant", []), Error, "Team must have exactly three creatures");
     await assertRejects(
-      () => depart(admin as never, USER_ID, "first_outing", "instant", ["a", "a"]),
+      () => depart(admin as never, USER_ID, "first_outing", "instant", ["a", "a", "b"]),
       Error,
       "Team members must be unique",
     );
@@ -241,8 +241,10 @@ describe("cancelExpedition", () => {
 
 describe("welcomeExpedition", () => {
   const readyOutcome = {
-    storyKey: "moss_lane",
-    extraStoryKey: null,
+    chapterKey: "moss_lane_ch1",
+    extraChapterKey: null,
+    hookKey: "moss_lane_hook1",
+    cast: { lead: "hello_my_name_is", scout: null, anchor: null },
     discoveryIds: ["moss_lane_map"],
     talentMatches: [],
     observations: [],

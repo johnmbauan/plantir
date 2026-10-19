@@ -75,6 +75,23 @@
   color: var(--green-500);
 }
 
+.expedition-journal__story-hook {
+  font-style: italic;
+  color: var(--stone-500);
+}
+
+.expedition-journal__threads {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.expedition-journal__threads li {
+  font-size: 0.78rem;
+  color: var(--stone-700);
+}
+
 .expedition-journal__keepsake,
 .expedition-journal__trail {
   min-height: 6.5rem;

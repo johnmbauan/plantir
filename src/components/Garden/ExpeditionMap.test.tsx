@@ -27,12 +27,33 @@ describe("ExpeditionMap", () => {
     const onDepart = vi.fn().mockResolvedValue(undefined);
     const user = userEvent.setup();
     renderWithProviders(
-      <ExpeditionMap earned={[first]} expeditions={[]} onDepart={onDepart} onClose={vi.fn()} />,
+      <ExpeditionMap
+        earned={[first, morel, liana]}
+        expeditions={[]}
+        onDepart={onDepart}
+        onClose={vi.fn()}
+      />,
     );
-    expect(screen.getByText("Unlock more creatures to open longer trails.")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /Brin/ }));
+    expect(screen.getByText("2 more companions to go.")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Morel/ }));
+    await user.click(screen.getByRole("button", { name: /Liana/ }));
     await user.click(screen.getByRole("button", { name: "Send them out" }));
-    expect(onDepart).toHaveBeenCalledWith("first_outing", "instant", ["hello_my_name_is"]);
+    expect(onDepart).toHaveBeenCalledWith("first_outing", "instant", [
+      "hello_my_name_is",
+      "stalking_fern_legally",
+      "matchmaker_of_moisture",
+    ]);
+  });
+
+  it("locks the map until three creatures live in the garden", () => {
+    renderWithProviders(
+      <ExpeditionMap earned={[first, morel]} expeditions={[]} onDepart={vi.fn()} onClose={vi.fn()} />,
+    );
+    expect(
+      screen.getByText("Expeditions open once three creatures live in the garden."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send them out" })).toBeDisabled();
   });
 
   it("selects a shared destination, duration, and a team of three", async () => {

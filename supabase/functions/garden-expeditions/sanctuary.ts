@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   DESTINATIONS,
   EXPEDITION_DURATIONS,
+  EXPEDITION_TEAM_SIZE,
   FIRST_OUTING_ID,
   destinationById,
   roundReturnsAt,
@@ -46,7 +47,7 @@ export async function depart(
   durationKey: DurationKey,
   team: string[],
 ): Promise<{ expeditionId: string; status: string; instant: boolean }> {
-  if (team.length < 1 || team.length > 3) throw new Error("Team must have one to three creatures");
+  if (team.length !== EXPEDITION_TEAM_SIZE) throw new Error("Team must have exactly three creatures");
   const unique = new Set(team);
   if (unique.size !== team.length) throw new Error("Team members must be unique");
 
@@ -114,17 +115,30 @@ async function freezeOutcome(
 
   const { data: history } = await admin
     .from("user_expeditions")
-    .select("destination_id, team, status")
+    .select("destination_id, team, status, outcome")
     .eq("user_id", userId)
     .in("status", ["ready", "welcomed"]);
-  const visited = new Set<string>();
+
+  const visitedKeys = new Set<string>();
+  const usedChapterKeys = new Set<string>();
+  let visitIndex = 0;
   for (const row of history ?? []) {
     for (const member of row.team ?? []) {
-      visited.add(`${row.destination_id}:${member}`);
+      visitedKeys.add(`${row.destination_id}:${member}`);
     }
+    if (row.destination_id !== dest.id) continue;
+    visitIndex += 1;
+    const past = row.outcome as FrozenOutcome | null;
+    if (past?.chapterKey) usedChapterKeys.add(past.chapterKey);
+    if (past?.extraChapterKey) usedChapterKeys.add(past.extraChapterKey);
   }
 
-  return computeOutcome(dest, durationKey, team, alreadyFound, visited);
+  return computeOutcome(dest, durationKey, team, {
+    alreadyFound,
+    visitedKeys,
+    visitIndex,
+    usedChapterKeys,
+  });
 }
 
 export async function completeDue(admin: SupabaseClient): Promise<{ completed: number }> {

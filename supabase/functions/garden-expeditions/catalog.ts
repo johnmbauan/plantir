@@ -20,6 +20,8 @@ export const EXPEDITION_DURATIONS: Record<DurationKey, { hours: number; bondPoin
 };
 
 export const BOND_LEVEL_THRESHOLDS = [0, 20, 80, 200, 400] as const;
+/** Every expedition leaves with exactly this many creatures. */
+export const EXPEDITION_TEAM_SIZE = 3;
 export const CARE_BOND_POINTS = 8;
 export const MILESTONE_BOND_POINTS = 6;
 export const FIRST_OUTING_ID = "first_outing";
@@ -56,6 +58,13 @@ export const CREATURE_TALENTS: Record<string, CreatureTalent[]> = {
   midnight_mulcher: ["nightSight", "navigation"],
 };
 
+export interface StoryChapter {
+  /** Key under `garden.stories` in the locale files. */
+  key: string;
+  /** The thread this chapter leaves open, shown under the story. */
+  hookKey?: string;
+}
+
 export interface DestinationCatalog {
   id: string;
   recommendedTalents: CreatureTalent[];
@@ -63,7 +72,8 @@ export interface DestinationCatalog {
   minCreatures: number;
   discoveryIds: string[];
   instant?: boolean;
-  extraStoryKey?: string;
+  chapters: StoryChapter[];
+  repeatChapters: StoryChapter[];
 }
 
 export const DESTINATIONS: DestinationCatalog[] = [
@@ -71,25 +81,49 @@ export const DESTINATIONS: DestinationCatalog[] = [
     id: FIRST_OUTING_ID,
     recommendedTalents: ["curiosity"],
     durations: ["instant"],
-    minCreatures: 1,
+    minCreatures: EXPEDITION_TEAM_SIZE,
     discoveryIds: ["first_outing_journal", "first_outing_pebble"],
     instant: true,
+    chapters: [
+      { key: "first_outing_ch1", hookKey: "first_outing_hook1" },
+      { key: "first_outing_ch2", hookKey: "first_outing_hook2" },
+    ],
+    repeatChapters: [
+      { key: "first_outing_repeat1", hookKey: "first_outing_hook2" },
+    ],
   },
   {
     id: "moss_lane",
     recommendedTalents: ["observation", "navigation"],
     durations: ["laterToday", "tomorrow", "fewDays"],
-    minCreatures: 3,
+    minCreatures: EXPEDITION_TEAM_SIZE,
     discoveryIds: ["moss_lane_map", "moss_lane_dew", "moss_lane_keepsake"],
-    extraStoryKey: "moss_lane_observation",
+    chapters: [
+      { key: "moss_lane_ch1", hookKey: "moss_lane_hook1" },
+      { key: "moss_lane_ch2", hookKey: "moss_lane_hook2" },
+      { key: "moss_lane_ch3", hookKey: "moss_lane_hook3" },
+      { key: "moss_lane_ch4", hookKey: "moss_lane_hook4" },
+    ],
+    repeatChapters: [
+      { key: "moss_lane_repeat1", hookKey: "moss_lane_hook4" },
+      { key: "moss_lane_repeat2" },
+    ],
   },
   {
     id: "seed_hollow",
     recommendedTalents: ["plantKnowledge", "curiosity"],
     durations: ["laterToday", "tomorrow", "fewDays"],
-    minCreatures: 3,
+    minCreatures: EXPEDITION_TEAM_SIZE,
     discoveryIds: ["seed_hollow_seed", "seed_hollow_root", "seed_hollow_keepsake"],
-    extraStoryKey: "seed_hollow_plant",
+    chapters: [
+      { key: "seed_hollow_ch1", hookKey: "seed_hollow_hook1" },
+      { key: "seed_hollow_ch2", hookKey: "seed_hollow_hook2" },
+      { key: "seed_hollow_ch3", hookKey: "seed_hollow_hook3" },
+    ],
+    repeatChapters: [
+      { key: "seed_hollow_repeat1", hookKey: "seed_hollow_hook3" },
+      { key: "seed_hollow_repeat2" },
+    ],
   },
 ];
 

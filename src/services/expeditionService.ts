@@ -5,9 +5,17 @@ import type { DurationKey } from "@/constants/expeditions";
 
 export type ExpeditionStatus = "active" | "ready" | "welcomed" | "cancelled";
 
+export interface StoryCast {
+  lead: AchievementKey;
+  scout: AchievementKey | null;
+  anchor: AchievementKey | null;
+}
+
 export interface FrozenOutcome {
-  storyKey: string;
-  extraStoryKey: string | null;
+  chapterKey: string;
+  extraChapterKey: string | null;
+  hookKey: string | null;
+  cast: StoryCast;
   discoveryIds: string[];
   talentMatches: string[];
   observations: { achievementKey: AchievementKey; firstVisit: boolean }[];

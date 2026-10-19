@@ -11,6 +11,9 @@ export type ExpeditionFamily =
 
 export type DurationKey = "instant" | "laterToday" | "tomorrow" | "fewDays";
 
+/** Every expedition leaves with exactly this many creatures. */
+export const EXPEDITION_TEAM_SIZE = 3;
+
 export const EXPEDITION_DURATIONS: Record<DurationKey, { hours: number; bondPoints: number }> = {
   instant: { hours: 0, bondPoints: 20 },
   laterToday: { hours: 8, bondPoints: 24 },
@@ -62,7 +65,7 @@ export const EXPEDITION_DESTINATIONS: ExpeditionDestination[] = [
     family: "nearby",
     recommendedTalents: ["curiosity"],
     durations: ["instant"],
-    minCreatures: 1,
+    minCreatures: EXPEDITION_TEAM_SIZE,
     discoveryIds: ["first_outing_journal", "first_outing_pebble"],
     instant: true,
   },
@@ -71,7 +74,7 @@ export const EXPEDITION_DESTINATIONS: ExpeditionDestination[] = [
     family: "nearby",
     recommendedTalents: ["observation", "navigation"],
     durations: ["laterToday", "tomorrow", "fewDays"],
-    minCreatures: 3,
+    minCreatures: EXPEDITION_TEAM_SIZE,
     discoveryIds: ["moss_lane_map", "moss_lane_dew", "moss_lane_keepsake"],
   },
   {
@@ -79,7 +82,7 @@ export const EXPEDITION_DESTINATIONS: ExpeditionDestination[] = [
     family: "plantLife",
     recommendedTalents: ["plantKnowledge", "curiosity"],
     durations: ["laterToday", "tomorrow", "fewDays"],
-    minCreatures: 3,
+    minCreatures: EXPEDITION_TEAM_SIZE,
     discoveryIds: ["seed_hollow_seed", "seed_hollow_root", "seed_hollow_keepsake"],
   },
 ];

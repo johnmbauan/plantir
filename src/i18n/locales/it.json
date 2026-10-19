@@ -808,11 +808,11 @@
     "noFailureNote": "Ogni missione va a buon fine. I talenti cambiano il racconto, non l'esito.",
     "mapBusy": "C'è già una squadra in missione.",
     "mapBusyHint": "Tornano prima di poterne mandare un'altra.",
-    "selectTeam": "Scegli da uno a tre compagni",
+    "selectTeam": "Scegli tre compagni",
     "recommendedTalents": "Utili qui",
     "durationLabel": "Quando tornano?",
     "depart": "Falli partire",
-    "mapLocked": "Sblocca altre creature per aprire sentieri più lunghi.",
+    "mapLocked": "Le missioni si aprono quando in giardino ci sono tre creature.",
     "stepTrail": "Scegli un sentiero",
     "teamPicked": "{{count}} su 3",
     "searchCreatures": "Cerca per nome o talento",
@@ -823,8 +823,8 @@
     "newToTrail": "Prima volta",
     "helpfulMark": "Utile",
     "noCreatureMatch": "Nessuna creatura corrisponde alla ricerca.",
-    "pickCompanion": "Scegli almeno un compagno.",
-    "teamFull": "La squadra è piena.",
+    "teamIncomplete_one": "Manca un compagno.",
+    "teamIncomplete_other": "Mancano {{count}} compagni.",
     "bondLevels": {
       "1": "Nuovo arrivo",
       "2": "Di casa",
@@ -867,7 +867,7 @@
       "steps": {
         "send": {
           "title": "Manda una squadra",
-          "body": "Tocca {{send}} in alto. Scegli un sentiero, quando devono tornare e da una a tre creature. Tornano sempre: le missioni non falliscono. Portano una storia e, a volte, un tesoro."
+          "body": "Tocca {{send}} in alto. Scegli un sentiero, quando devono tornare e le tre creature che partono. Tornano sempre: le missioni non falliscono. Portano una storia e, a volte, un tesoro."
         },
         "timing": {
           "title": "Una missione alla volta",
@@ -893,7 +893,7 @@
       "keepsakes": "Tesori",
       "memories": "Ricordi",
       "complete": "Hai trovato le scoperte principali",
-      "hint": "Su questo sentiero c'è ancora qualcosa.",
+      "openThreads": "Cosa resta là fuori",
       "unvisited": "Ancora da esplorare",
       "foundOf": "{{found}} su {{total}}",
       "withTeam": "Con {{names}}",
@@ -928,11 +928,29 @@
       }
     },
     "stories": {
-      "first_outing": "Sono restati vicini a casa e hanno portato un sasso liscio, ancora tiepido.",
-      "moss_lane": "Hanno seguito la riga verde del muschio, finché si è aperta su una radura senza nome.",
-      "moss_lane_observation": "Qualcuno ha visto un secondo sentiero sotto il primo, disegnato dalla rugiada.",
-      "seed_hollow": "In una cavità della sponda c'erano semi che non appartenevano a nessuna pianta del giardino.",
-      "seed_hollow_plant": "Li hanno ordinati secondo come volevano crescere, non secondo l'aspetto."
+      "first_outing_ch1": "Il cancello del giardino era aperto, e i vasi erano a pochi passi, ancora in vista. {{lead}} non aveva finito la frase, quella in cui diceva che sarebbero andati solo fino al primo angolo, e {{scout}} era già dall'altra parte, un piede sul sentiero. {{anchor}} si girava ogni due passi. Non verso il sentiero: verso i vasi, come se potessero decidere di andarsene da soli.\n\nSi sono fermati lì, dove il sentiero smette di essere casa. L'erba davanti era un po' più alta, e non c'era altro da vedere. {{lead}} ha aperto il diario su una pagina bianca e ha scritto proprio quello: il cancello, i vasi, l'erba più alta, il punto in cui finisce il giardino. La pagina non era più bianca. È la prima del diario.",
+      "first_outing_hook1": "Sul palo destro del cancello, all'altezza delle mani, c'è un sassolino grigio ancora tiepido. Nessuno l'ha preso.",
+      "first_outing_ch2": "Sul palo destro del cancello, all'altezza delle mani, c'era un sassolino grigio. Non era incastrato: stava posato in piano, ed era tiepido, come se chi lo aveva messo avesse appena tolto le dita.\n\n{{anchor}} ha detto che quel sasso aveva già un posto, e che il posto era il palo. {{scout}} lo teneva lo stesso, con tutte e due le mani, attento a non farlo cadere nell'erba. {{lead}} ha guardato il palo, adesso vuoto, e ha lasciato che {{scout}} lo portasse a casa. Tra i vasi sono rientrati più vicini di come erano usciti.",
+      "first_outing_hook2": "Oltre il cancello il muschio non cresce a chiazze. Parte in una riga sola, troppo dritta per essere venuta su da sola.",
+      "first_outing_repeat1": "Sono usciti di nuovo dal cancello del giardino e hanno rifatto lo stesso bordo, con i vasi ancora in vista. Prima di rientrare, {{lead}} ha chiesto di vedere il sassolino. {{scout}} ha aperto le mani. Era ancora tiepido.",
+      "moss_lane_ch1": "Il vicolo del muschio comincia pochi passi dopo il cancello del giardino. Le pietre del sentiero sono verdi, e il verde non è a macchie: è una riga sola, che passa da una pietra all'altra come se qualcuno l'avesse tirata con un dito.\n\n{{scout}} ha visto la riga prima che gli altri dicessero di sì, e si è incamminato. Quando {{lead}} ha alzato gli occhi, {{scout}} era già avanti, verso una radura dove il vicolo si allarga. {{anchor}} non ha fatto un altro passo finché non ha sentito la voce di {{scout}} tornare indietro. {{lead}} ha chiamato. {{scout}} ha risposto, e nella radura qualcosa che stava zitto ad ascoltare ha smesso, di colpo. Sono tornati uno accanto all'altro. La riga di muschio è venuta con loro, copiata su una foglia umida e stesa bene, così il disegno non si perdeva per strada.",
+      "moss_lane_hook1": "La riga di muschio non finisce nella radura. Continua tra le pietre, troppo dritta per essere cresciuta da sola.",
+      "moss_lane_ch2": "Sono tornati nel vicolo di giorno, quando il sole entra di taglio tra le pietre. Volevano capire se una riga di muschio così dritta può venire per caso.\n\nPer pochi minuti, sotto il muschio, la rugiada disegna un secondo sentiero. Non torna verso il giardino: va dalla parte opposta. {{scout}} voleva seguirlo subito, finché si vedeva. {{lead}} ha detto di copiarlo prima sul foglio. Ha avuto ragione solo a metà. La rugiada si è asciugata con lo schizzo ancora da finire. {{anchor}} non ha detto se copiare era la scelta giusta, ma è rimasto accanto a {{lead}} per tutta la strada del ritorno.",
+      "moss_lane_hook2": "Il sentiero di rugiada non porta a casa. Continua, verso un pezzo di valle che non ha ancora un nome.",
+      "moss_lane_ch3": "Hanno seguito la rugiada fino in fondo al vicolo. Si ferma davanti a una pietra piatta. Intorno alla pietra c'era un nastro verde, annodato stretto, dello stesso colore del muschio.\n\n{{anchor}} ha detto piano che il nastro era di qualcuno, e che doveva restare sulla pietra. {{scout}} lo aveva già slegato, e lo teneva come si tiene una cosa che si è deciso di portare via in un secondo. {{lead}} ha lasciato che {{scout}} lo portasse, e dove c'era il nastro ha messo una foglia pressata. Uno scambio così si fa una volta sola. Sulla strada verso il giardino hanno parlato poco.",
+      "moss_lane_hook3": "Quando si sono voltati, il nodo sulla pietra era stato rifatto. Più avanti, nel vicolo, un altro nastro verde aspettava tra le pietre.",
+      "moss_lane_ch4": "Questa volta hanno seguito la riga di muschio fino all'ultima pietra del vicolo. Il muschio è tagliato corto, pietra per pietra, e qualcuno lo tiene così da prima che il giardino esistesse.\n\nPer tutta la strada verso casa {{lead}} ha cercato di metterlo a posto: il sentiero di cui erano così orgogliosi non l'avevano trovato loro. Qualcuno se ne occupa. All'ultima pietra {{anchor}} ha lasciato lo schizzo piegato, in vista, come si lascia un biglietto a una persona che non si è mai incontrata.",
+      "moss_lane_hook4": "Nessuno è uscito a incontrarli. Il muschio continua dove finisce la luce, e chi lo taglia lavora di notte.",
+      "moss_lane_repeat1": "Il nastro verde sulla pietra in fondo al vicolo del muschio era stato rifatto da poco, forse mentre loro stavano lì a guardare. Nessuno ha chiesto chi fosse stato. {{scout}} ha contato i nodi. Adesso sono undici, e {{scout}} li sa tutti.",
+      "moss_lane_repeat2": "Nel vicolo non c'era niente di nuovo, tranne il ramo che l'altra volta aveva fatto inciampare {{anchor}}. Qualcuno lo aveva spostato di lato e appoggiato con cura a una pietra. {{lead}} ha detto grazie a voce alta, agli alberi, e lo pensava.",
+      "seed_hollow_ch1": "Poco fuori dal giardino c'è un avvallamento riparato dal vento. Lo chiamano la conca. I semi ci rotolano quando il vento ha finito con loro, e si fermano contro la sponda di terra.\n\n{{scout}} è sceso per primo. È risalito con tutte e due le mani piene di semi piccoli e scuri, che non somigliavano a nessuna pianta dei vasi. {{lead}} li ha fatti posare su una pietra piatta, per guardarli uno alla volta. {{anchor}} li ha contati ad alta voce, e li ha ricontati prima di partire, così a casa il numero restava quello.",
+      "seed_hollow_hook1": "Sotto la sponda della conca c'è una radice che scende più in fondo di quanto la conca sia larga. Non è delle piante che crescono sopra.",
+      "seed_hollow_ch2": "Sotto la sponda della conca la terra è smossa, e da lì escono delle radici. Sono più grosse di quelle delle piante di sopra, e scendono più in fondo di quanto la conca sia larga.\n\n{{lead}} ha copiato sul foglio il loro percorso, una curva dopo l'altra. {{scout}} voleva staccarne un pezzo e portarlo a casa, per guardarlo da vicino. {{anchor}} ha tenuto fermo il foglio e ha detto di no, piano. La radice è rimasta dov'era.",
+      "seed_hollow_hook2": "Dove la sponda della conca gira c'è un pezzo di legno consumato liscio, come se qualcuno ci si fosse seduto ad aspettare.",
+      "seed_hollow_ch3": "Dove la sponda della conca gira, incastrato tra due radici, c'era un pezzo di legno levigato. Qualcuno lo aveva scavato fino a farne un ciondolo, con un buco per un filo. La mano che lo aveva fatto non era del giardino.\n\n{{anchor}} ha detto di lasciarlo lì, tra le radici. {{scout}} lo aveva già appeso a un rametto, per vedere come stava. Stava bene. {{lead}} ha lasciato che {{scout}} lo portasse a casa, e nel punto dov'era il legno ha messo uno dei semi della conca.",
+      "seed_hollow_hook3": "Chi usava la conca non ha finito. I semi continuano ad arrivare, anche nei giorni in cui il vento è fermo.",
+      "seed_hollow_repeat1": "Nella conca, dall'ultima volta, si erano raccolti altri semi. {{scout}} li ha messi in fila secondo il verso in cui sembravano voler crescere. {{anchor}} ha tenuto da parte quelli che non c'entravano con gli altri, per guardarli con calma a casa.",
+      "seed_hollow_repeat2": "A casa, il ciondolo di legno che {{scout}} aveva portato dalla conca era girato dall'altra parte. Nessuno dice di averlo toccato."
     },
     "discoveries": {
       "first_outing_journal": "Prima pagina del diario",
@@ -943,6 +961,16 @@
       "seed_hollow_seed": "Seme sconosciuto",
       "seed_hollow_root": "Traccia di radice",
       "seed_hollow_keepsake": "Ciondolo di legno cavo"
+    },
+    "threads": {
+      "first_outing_journal": "La prima pagina del diario è ancora bianca.",
+      "first_outing_pebble": "Sul palo destro del cancello c'è un sassolino che resta tiepido, e nessuno l'ha ancora preso.",
+      "moss_lane_map": "Nel vicolo del muschio il verde corre in una riga, e nessuno l'ha ancora disegnata.",
+      "moss_lane_dew": "Sotto il muschio, per pochi minuti al giorno, la rugiada disegna un secondo sentiero. Nessuno è ancora passato all'ora giusta.",
+      "moss_lane_keepsake": "In fondo al vicolo una pietra piatta ha un nastro verde annodato intorno, e qualcuno l'ha legato.",
+      "seed_hollow_seed": "Nella conca poco fuori dal giardino i semi continuano a raccogliersi, e non somigliano a nessuna pianta dei vasi.",
+      "seed_hollow_root": "Sotto la sponda della conca una radice scende più in fondo di quanto la conca sia larga.",
+      "seed_hollow_keepsake": "Dove la sponda della conca gira, un legno è stato levigato da mani che non sono del giardino."
     },
     "bondReasons": {
       "expedition": "Tornati da {{destination}}",

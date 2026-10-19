@@ -21,6 +21,26 @@ const sprout: EarnedAchievement = {
   unlocked_at: "2026-09-24T00:00:00Z",
 };
 
+const mushroom: EarnedAchievement = {
+  ...sprout,
+  key: "stalking_fern_legally",
+  name: "First Sensor",
+  garden_element: "sensor_mushroom",
+  sort_order: 2,
+};
+
+const vine: EarnedAchievement = {
+  ...sprout,
+  key: "matchmaker_of_moisture",
+  name: "Sensor Linked",
+  garden_element: "vine_link",
+  sort_order: 3,
+};
+
+/** Expeditions need three creatures, so the page is tested with a full roster. */
+const roster = [sprout, mushroom, vine];
+const rosterKeys = roster.map((item) => item.key);
+
 let sanctuaryState: {
   bonds: { achievement_key: string; bond_points: number; bond_level: number; updated_at: string }[];
   openExpedition: null | {
@@ -32,8 +52,9 @@ let sanctuaryState: {
     returns_at: string;
     status: string;
     outcome: null | {
-      storyKey: string;
-      extraStoryKey: string | null;
+      chapterKey: string;
+      extraChapterKey: string | null;
+      hookKey: string | null;
       discoveryIds: string[];
       talentMatches: string[];
       observations: [];
@@ -47,9 +68,9 @@ let sanctuaryState: {
 vi.mock("@/components/Garden/useGardenState", () => ({
   useGardenState: () => ({
     loading: false,
-    allDefinitions: [sprout],
-    earned: [sprout],
-    earnedCount: 1,
+    allDefinitions: roster,
+    earned: roster,
+    earnedCount: roster.length,
     tier: GARDEN_TIERS[1],
     newlyUnlockedKeys: [],
     refresh,
@@ -114,8 +135,9 @@ function readyOuting() {
     returns_at: "2026-09-24T00:00:00Z",
     status: "ready",
     outcome: {
-      storyKey: "first_outing",
-      extraStoryKey: null,
+      chapterKey: "first_outing_ch1",
+      extraChapterKey: null,
+      hookKey: "first_outing_hook1",
       discoveryIds: [],
       talentMatches: [],
       observations: [] as [],
@@ -135,6 +157,12 @@ function activeOuting() {
     status: "active",
     outcome: null,
   };
+}
+
+async function pickTeam(user: ReturnType<typeof userEvent.setup>) {
+  for (const name of [/Brin/, /Morel/, /Liana/]) {
+    await user.click(screen.getByRole("button", { name }));
+  }
 }
 
 describe("GardenPage", () => {
@@ -168,10 +196,10 @@ describe("GardenPage", () => {
     await user.click(screen.getByRole("button", { name: "Close" }));
     await user.click(screen.getByRole("button", { name: "Send an expedition" }));
     expect(screen.getByText("Every expedition succeeds. Team talents change the story, not the outcome.")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: /Brin/ }));
+    await pickTeam(user);
     await user.click(screen.getByRole("button", { name: "Send them out" }));
     await waitFor(() => {
-      expect(departExpedition).toHaveBeenCalledWith("first_outing", "instant", ["hello_my_name_is"]);
+      expect(departExpedition).toHaveBeenCalledWith("first_outing", "instant", rosterKeys);
     });
   });
 
@@ -180,7 +208,7 @@ describe("GardenPage", () => {
     const user = userEvent.setup();
     renderWithProviders(<GardenPage />);
     await user.click(screen.getByRole("button", { name: "Send an expedition" }));
-    await user.click(screen.getByRole("button", { name: /Brin/ }));
+    await pickTeam(user);
     await user.click(screen.getByRole("button", { name: "Send them out" }));
     await waitFor(() => {
       expect(notificationsShow).toHaveBeenCalledWith(expect.objectContaining({ message: "busy" }));
@@ -286,7 +314,7 @@ describe("GardenPage", () => {
     await user.click(screen.getByRole("button", { name: "Send the first expedition" }));
     await waitFor(() => {
       expect(markIntroCompleted).toHaveBeenCalled();
-      expect(departExpedition).toHaveBeenCalledWith("first_outing", "instant", ["hello_my_name_is"]);
+      expect(departExpedition).toHaveBeenCalledWith("first_outing", "instant", rosterKeys);
     });
   });
 

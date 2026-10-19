@@ -29,7 +29,7 @@ describe("ExpeditionJournal", () => {
     expect(screen.getAllByText("Nearby trails").length).toBeGreaterThan(0);
   });
 
-  it("lists complete, hinted, and family destinations", async () => {
+  it("lists complete destinations, open threads, and families", async () => {
     const onClose = vi.fn();
     const user = userEvent.setup();
     renderWithProviders(
@@ -44,7 +44,10 @@ describe("ExpeditionJournal", () => {
     );
     expect(screen.getAllByText("Sanctuary path").length).toBeGreaterThan(0);
     expect(screen.getByText("Main discoveries found")).toBeInTheDocument();
-    expect(screen.getByText("There is still something waiting on this trail.")).toBeInTheDocument();
+    expect(screen.getByText("Still out there")).toBeInTheDocument();
+    expect(
+      screen.getByText("On Moss Lane the green runs in a line, and nobody has drawn it yet."),
+    ).toBeInTheDocument();
     expect(screen.getByText("Plant-life routes")).toBeInTheDocument();
     expect(screen.getByText("First journal page")).toBeInTheDocument();
     expect(screen.getByText("Warm pebble")).toBeInTheDocument();
