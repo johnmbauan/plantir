@@ -11,7 +11,7 @@
 The garden becomes a peaceful creature sanctuary built around two connected systems:
 
 1. **Permanent creature bonds:** every achievement creature develops a lasting relationship with the user. Bond progress only moves forward and unlocks personality, stories, animations, and habitat details.
-2. **Creature expeditions:** users send teams of one to three unlocked creatures on asynchronous journeys. The creatures always return safely with bond progress and discoveries.
+2. **Creature expeditions:** users send teams of three unlocked creatures on asynchronous journeys. The creatures always return safely with bond progress and discoveries.
 
 The experience must create anticipation and attachment without creating obligation. It rewards users for returning, but never punishes them for being away.
 
@@ -136,7 +136,7 @@ The complete loop is:
 2. An achievement unlocks a creature.
 3. The user meets the creature and learns its first personality detail.
 4. The user selects an expedition destination.
-5. The user chooses one to three creatures for the team.
+5. The user chooses the three creatures for the team.
 6. The expedition progresses without further input.
 7. The user returns whenever convenient.
 8. The team returns with a story, guaranteed discovery, and bond progress.
@@ -325,7 +325,7 @@ An expedition consists of:
 - A short narrative premise.
 - A selectable duration.
 - One to three recommended talents.
-- A team of one to three creatures.
+- A team of three creatures.
 - A guaranteed discovery category.
 - Optional story branches based on team composition.
 

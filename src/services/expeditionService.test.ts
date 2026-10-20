@@ -54,7 +54,7 @@ describe("expeditionService", () => {
   });
 
   it("cancels, welcomes, and marks intro", async () => {
-    mockInvoke.mockResolvedValue({ data: { storyKey: "moss_lane" }, error: null });
+    mockInvoke.mockResolvedValue({ data: { chapterKey: "moss_lane_ch1" }, error: null });
     await cancelExpedition("e1");
     await welcomeExpedition("e1");
     await markIntroCompleted();

@@ -2,6 +2,7 @@ import { Button, Group, Paper, Progress, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { destinationById, EXPEDITION_DESTINATIONS } from "@/constants/expeditions";
 import type { UserDiscovery, UserExpedition } from "@/services/expeditionService";
+import { expeditionStory, storyParagraphs } from "./expeditionStory";
 import "./ExpeditionJournal.css";
 
 interface Props {
@@ -103,7 +104,8 @@ export default function ExpeditionJournal({ expeditions, discoveries, onClose }:
           </Text>
           <div className="expedition-journal__trails">
             {EXPEDITION_DESTINATIONS.map((destination) => {
-              const foundCount = destination.discoveryIds.filter((id) => found.has(id)).length;
+              const missing = destination.discoveryIds.filter((id) => !found.has(id));
+              const foundCount = destination.discoveryIds.length - missing.length;
               const total = destination.discoveryIds.length;
               const complete = total > 0 && foundCount === total;
               const started = visitedIds.has(destination.id);
@@ -127,13 +129,20 @@ export default function ExpeditionJournal({ expeditions, discoveries, onClose }:
                     <Text size="xs">
                       {t(`garden.destinations.${destination.id}.premise`)}
                     </Text>
-                    <Text size="xs" c="dimmed">
-                      {complete
-                        ? t("garden.journal.complete")
-                        : started
-                          ? t("garden.journal.hint")
-                          : t(`garden.families.${destination.family}`)}
-                    </Text>
+                    {complete ? (
+                      <Text size="xs" c="dimmed">{t("garden.journal.complete")}</Text>
+                    ) : started ? (
+                      <>
+                        <Text size="xs" c="dimmed">{t("garden.journal.openThreads")}</Text>
+                        <ul className="expedition-journal__threads">
+                          {missing.map((id) => (
+                            <li key={id}>{t(`garden.threads.${id}`)}</li>
+                          ))}
+                        </ul>
+                      </>
+                    ) : (
+                      <Text size="xs" c="dimmed">{t(`garden.families.${destination.family}`)}</Text>
+                    )}
                     {!started && (
                       <Text size="xs" c="dimmed">{t("garden.journal.unvisited")}</Text>
                     )}
@@ -169,8 +178,7 @@ function StoryCard({
   const { t } = useTranslation();
   const names = expedition.team.map((key) => t(`garden.creatures.${key}.name`)).join(", ");
   const date = new Date(expedition.returns_at).toLocaleDateString(locale);
-  const storyKey = expedition.outcome?.storyKey ?? expedition.destination_id;
-  const extraStoryKey = expedition.outcome?.extraStoryKey;
+  const story = expeditionStory(expedition, t);
 
   return (
     <article className={`expedition-journal__story${latest ? " expedition-journal__story--latest" : ""}`}>
@@ -182,9 +190,18 @@ function StoryCard({
         <Text size="xs" c="dimmed">
           {t("garden.journal.withTeam", { names })} · {date}
         </Text>
-        <Text size="sm">{t(`garden.stories.${storyKey}`)}</Text>
-        {extraStoryKey && (
-          <Text size="sm">{t(`garden.stories.${extraStoryKey}`)}</Text>
+        {story && (
+          <Stack gap="xs">
+            {storyParagraphs(story.story).map((paragraph, index) => (
+              <Text size="sm" key={`story-${index}`}>{paragraph}</Text>
+            ))}
+            {story.extra && storyParagraphs(story.extra).map((paragraph, index) => (
+              <Text size="sm" key={`extra-${index}`}>{paragraph}</Text>
+            ))}
+            {story.hook && (
+              <Text size="sm" className="expedition-journal__story-hook">{story.hook}</Text>
+            )}
+          </Stack>
         )}
       </Stack>
     </article>

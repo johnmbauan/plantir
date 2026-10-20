@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { AchievementKey } from "@/constants/achievements";
 import {
   availableDestinations,
+  EXPEDITION_TEAM_SIZE,
   type DurationKey,
   type ExpeditionDestination,
 } from "@/constants/expeditions";
@@ -56,7 +57,7 @@ export default function ExpeditionMap({
   function toggle(key: AchievementKey) {
     setTeam((current) => {
       if (current.includes(key)) return current.filter((item) => item !== key);
-      if (current.length >= 3) return current;
+      if (current.length >= EXPEDITION_TEAM_SIZE) return current;
       return [...current, key];
     });
   }
@@ -66,7 +67,7 @@ export default function ExpeditionMap({
     setDuration(next.durations[0]);
   }
 
-  const canDepart = Boolean(destination && team.length >= 1 && duration);
+  const canDepart = Boolean(destination && team.length === EXPEDITION_TEAM_SIZE && duration);
   const party = team
     .map((key) => earned.find((item) => item.key === key))
     .filter((item): item is EarnedAchievement => Boolean(item));
@@ -145,7 +146,7 @@ export default function ExpeditionMap({
                 );
               })}
             </div>
-            {earned.length < 3 && (
+            {earned.length < EXPEDITION_TEAM_SIZE && (
               <Text size="sm" c="dimmed">{t("garden.mapLocked")}</Text>
             )}
           </section>
@@ -198,7 +199,7 @@ export default function ExpeditionMap({
 
         <div className="expedition-map__footer">
           <div className="expedition-map__party" aria-label={t("garden.selectTeam")}>
-            {[0, 1, 2].map((index) => {
+            {Array.from({ length: EXPEDITION_TEAM_SIZE }, (_, index) => index).map((index) => {
               const member = party[index];
               return (
                 <span
@@ -210,7 +211,9 @@ export default function ExpeditionMap({
               );
             })}
             <Text size="sm" c="dimmed">
-              {team.length === 0 ? t("garden.pickCompanion") : team.length >= 3 ? t("garden.teamFull") : t("garden.teamPicked", { count: team.length })}
+              {team.length === EXPEDITION_TEAM_SIZE
+                ? t("garden.teamPicked", { count: team.length })
+                : t("garden.teamIncomplete", { count: EXPEDITION_TEAM_SIZE - team.length })}
             </Text>
           </div>
           <Button

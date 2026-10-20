@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import IconSearch from "@/components/icons/IconSearch";
 import type { AchievementKey } from "@/constants/achievements";
 import { creatureTalents, type CreatureTalent } from "@/constants/creatures";
-import type { ExpeditionDestination } from "@/constants/expeditions";
+import { EXPEDITION_TEAM_SIZE, type ExpeditionDestination } from "@/constants/expeditions";
 import type { EarnedAchievement } from "@/services/achievementService";
 import { matchesAnySearchField } from "@/utils/search";
 import { GardenSprite } from "./GardenSprites";
@@ -29,7 +29,7 @@ export default function ExpeditionCreaturePicker({
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<TeamFilter>("all");
-  const full = team.length >= 3;
+  const full = team.length >= EXPEDITION_TEAM_SIZE;
 
   const visible = useMemo(() => {
     const recommended = new Set(destination.recommendedTalents);
