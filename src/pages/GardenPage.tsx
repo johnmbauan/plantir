@@ -209,18 +209,16 @@ export default function GardenPage() {
       />
 
       {selectedKey && selectedDefinition && selectedEarned && sanctuary.state && (
-        <Box mt="md">
-          <CreatureProfile
-            creatureKey={selectedKey}
-            definition={selectedDefinition}
-            earned={selectedEarned}
-            bond={sanctuary.state.bonds.find((row) => row.achievement_key === selectedKey) ?? null}
-            events={sanctuary.state.events.filter((row) => row.achievement_key === selectedKey)}
-            discoveries={sanctuary.state.discoveries}
-            history={expeditionsForCreature(sanctuary.state.expeditions, selectedKey)}
-            onClose={() => setSelectedKey(null)}
-          />
-        </Box>
+        <CreatureProfile
+          creatureKey={selectedKey}
+          definition={selectedDefinition}
+          earned={selectedEarned}
+          bond={sanctuary.state.bonds.find((row) => row.achievement_key === selectedKey) ?? null}
+          events={sanctuary.state.events.filter((row) => row.achievement_key === selectedKey)}
+          discoveries={sanctuary.state.discoveries}
+          history={expeditionsForCreature(sanctuary.state.expeditions, selectedKey)}
+          onClose={() => setSelectedKey(null)}
+        />
       )}
 
     </Box>

@@ -1,5 +1,5 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
-import { IconQuestionMark } from "@tabler/icons-react";
+import { IconInfoCircle } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
 interface Props {
@@ -12,13 +12,14 @@ export default function MissionHelpButton({ onClick }: Props) {
   return (
     <Tooltip label={t("garden.openHelp")}>
       <ActionIcon
-        variant="subtle"
+        variant="light"
         color="gray"
+        radius="xl"
         aria-label={t("garden.openHelp")}
         onClick={onClick}
         style={{ color: "var(--green-700)" }}
       >
-        <IconQuestionMark size={20} />
+        <IconInfoCircle size={18} />
       </ActionIcon>
     </Tooltip>
   );
