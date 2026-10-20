@@ -242,7 +242,7 @@ describe('SettingsPage', () => {
       expect(notifications.show).toHaveBeenCalledWith(
         expect.objectContaining({
           title: 'Lingua aggiornata',
-          message: "La lingua dell'interfaccia è stata cambiata in italiano.",
+          message: "La lingua dell'interfaccia è stata impostata su italiano.",
         }),
       );
     });

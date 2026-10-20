@@ -65,8 +65,8 @@ describe('formatNotificationCopy', () => {
       await i18n.changeLanguage('it');
 
       expect(formatNotificationCopy(wateringNotification())).toEqual({
-        title: 'Monstera ha bisogno di acqua',
-        body: 'Umidità: 18%',
+        title: "Monstera ha bisogno d'acqua",
+        body: 'Umidità rilevata: 18%',
       });
     });
   });
@@ -155,7 +155,7 @@ describe('formatNotificationCopy', () => {
         }),
       ).toEqual({
         title: 'Prima pianta',
-        body: 'Crea la tua prima pianta.',
+        body: 'Aggiungi la tua prima pianta.',
       });
     });
   });

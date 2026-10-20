@@ -122,12 +122,12 @@ describe("LandingPage", () => {
 
     expect(
       await screen.findByRole("heading", {
-        name: "Te ne prendi cura, senza indovinare come e quando.",
+        name: "Prenditene cura, senza andare a tentativi.",
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Un sensore nella terra misura l'umidità, senza una centralina, senza stare accanto alla pianta; serve solo il Wi-Fi. Ti avvisa quando è ora di annaffiare, anche se sei fuori casa.",
+        "Basta tirare a indovinare. Un sensore nel terreno misura l'umidità collegandosi direttamente al Wi-Fi: non serve nessuna centralina e non devi controllare la pianta di persona. Ti avvisa quando è il momento di annaffiare, anche quando sei fuori casa.",
       ),
     ).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Ne vuoi uno? Scrivici" })).toHaveLength(2);

@@ -21,11 +21,11 @@ describe('achievementCopy', () => {
 
     expect(achievementCopy('hello_my_name_is')).toEqual({
       name: 'Prima pianta',
-      description: 'Crea la tua prima pianta.',
+      description: 'Aggiungi la tua prima pianta.',
     });
     expect(achievementCopy('back_from_the_mulch').name).toBe('Sensore di nuovo online');
-    expect(achievementCopy('cloud_oracle').name).toBe('Città del meteo impostata');
-    expect(achievementCopy('the_comeback_kid').name).toBe('Recuperata dopo la siccità');
+    expect(achievementCopy('cloud_oracle').name).toBe('Meteo configurato');
+    expect(achievementCopy('the_comeback_kid').name).toBe('Salvataggio in extremis');
     expect(achievementCopy('dirt_whisperer_initiate').name).toBe('Sensore calibrato');
   });
 
