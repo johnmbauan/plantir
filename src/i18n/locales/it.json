@@ -1,1383 +1,1383 @@
 {
-  "validation": {
-    "required": "Questo campo è obbligatorio.",
-    "emailInvalid": "Inserisci un indirizzo email valido."
-  },
-  "common": {
-    "brand": "Plantir",
-    "cancel": "Annulla",
-    "save": "Salva",
-    "saved": "Salvato",
-    "delete": "Elimina",
-    "deleted": "Eliminato",
-    "done": "Fatto",
-    "close": "Chiudi",
-    "next": "Avanti",
-    "back": "Indietro",
-    "go": "Vai",
-    "error": "Errore",
-    "saving": "Salvataggio...",
-    "optional": "Opzionale",
-    "none": "Nessuno",
-    "unknown": "Sconosciuto",
-    "discardUnsavedChanges": "Scartare le modifiche non salvate?",
-    "emDash": "—"
-  },
-  "errors": {
-    "unknown": "Si è verificato un errore sconosciuto"
-  },
-  "nav": {
-    "homeAria": "Home di Plantir",
-    "dashboard": "Dashboard",
-    "plantsCenter": "Centro piante",
-    "garden": "Giardino",
-    "settings": "Impostazioni",
-    "admin": "Admin",
-    "toggleNavigation": "Apri o chiudi navigazione"
-  },
-  "landing": {
-    "hero": {
-      "title": "Te ne prendi cura, senza indovinare come e quando.",
-      "subtitle": "Un sensore nella terra misura l'umidità, senza una centralina, senza stare accanto alla pianta; serve solo il Wi-Fi. Ti avvisa quando è ora di annaffiare, anche se sei fuori casa."
+    "validation": {
+      "required": "Questo campo è obbligatorio.",
+      "emailInvalid": "Inserisci un indirizzo email valido."
     },
-    "contact": {
-      "cta": "Ne vuoi uno? Scrivici",
-      "subject": "Vorrei un Plantir",
-      "aria": "Scrivi a {{email}}",
-      "eyebrow": "Parliamone",
-      "title": "Se vuoi un sensore, scrivici.",
-      "lead": "Niente moduli: una mail. Raccontaci delle tue piante."
+    "common": {
+      "brand": "Plantir",
+      "cancel": "Annulla",
+      "save": "Salva",
+      "saved": "Salvato",
+      "delete": "Elimina",
+      "deleted": "Eliminato",
+      "done": "Fatto",
+      "close": "Chiudi",
+      "next": "Avanti",
+      "back": "Indietro",
+      "go": "Vai",
+      "error": "Errore",
+      "saving": "Salvataggio in corso…",
+      "optional": "Facoltativo",
+      "none": "Nessuno",
+      "unknown": "Sconosciuto",
+      "discardUnsavedChanges": "Scartare le modifiche non salvate?",
+      "emDash": "—"
     },
-    "photo": {
-      "alt": "Foto di esempio: un sensore Plantir in un vaso",
-      "notify": "Il pothos ha bisogno di acqua"
+    "errors": {
+      "unknown": "Si è verificato un errore sconosciuto"
     },
-    "highlights": {
-      "aria": "Perché Plantir",
-      "eyebrow": "Perché aiuta",
-      "title": "Tre cose che cambiano come te ne prendi cura.",
-      "moisture": {
-        "title": "Basta indovinare quando annaffiare",
-        "body": "La sonda legge il terreno: annaffi solo quando la pianta ne ha davvero bisogno, non quando la superficie sembra asciutta."
+    "nav": {
+      "homeAria": "Home di Plantir",
+      "dashboard": "Dashboard",
+      "plantsCenter": "Centro piante",
+      "garden": "Giardino",
+      "settings": "Impostazioni",
+      "admin": "Admin",
+      "toggleNavigation": "Apri o chiudi il menu di navigazione"
+    },
+    "landing": {
+      "hero": {
+        "title": "Prenditene cura, senza andare a tentativi.",
+        "subtitle": "Basta tirare a indovinare. Un sensore nel terreno misura l'umidità collegandosi direttamente al Wi-Fi: non serve nessuna centralina e non devi controllare la pianta di persona. Ti avvisa quando è il momento di annaffiare, anche quando sei fuori casa."
       },
-      "wifi": {
-        "title": "Niente centralina. Basta il Wi-Fi.",
-        "body": "Ogni sensore si collega da solo. Una pianta o tutto il davanzale. Continua a funzionare quando non sei nella stanza e quando non sei a casa."
+      "contact": {
+        "cta": "Ne vuoi uno? Scrivici",
+        "subject": "Vorrei un Plantir",
+        "aria": "Scrivi a {{email}}",
+        "eyebrow": "Contattaci",
+        "title": "Se vuoi un sensore, scrivici.",
+        "lead": "Niente moduli da compilare, basta un'email. Parlaci delle tue piante."
       },
-      "weather": {
-        "title": "In casa, in terrazzo o in giardino",
-        "body": "Lo usi dentro o fuori. Se è prevista pioggia, le piante all'aperto possono aspettare."
-      }
-    },
-    "household": {
-      "aria": "Avvisi per la famiglia",
-      "eyebrow": "Quando sei via",
-      "title": "Chi è a casa può annaffiare per te.",
-      "body": "Gli avvisi possono arrivare in un gruppo Telegram di famiglia: la chat che usate già. Il pothos ha sete; chi è in casa prende l'annaffiatoio.",
-      "messageFrom": "Plantir",
-      "messageText": "Il pothos ha bisogno di acqua."
-    },
-    "setup": {
-      "aria": "Come si inizia",
-      "eyebrow": "Dalla scatola all'avviso",
-      "title": "Registra, nel vaso, fatto.",
-      "lead": "Tre passi. Poi guarda il terreno al posto tuo.",
-      "steps": {
-        "register": {
-          "title": "Registra il sensore nella web app Plantir",
-          "body": "Apri Plantir e aggiungi il nuovo sensore. Ci vogliono circa tre minuti."
+      "photo": {
+        "alt": "Foto di esempio: un sensore Plantir in un vaso",
+        "notify": "Il pothos ha bisogno d'acqua"
+      },
+      "highlights": {
+        "aria": "Perché scegliere Plantir",
+        "eyebrow": "Perché è utile",
+        "title": "Tre aspetti che cambiano il modo in cui te ne prendi cura.",
+        "moisture": {
+          "title": "Basta tirare a indovinare quando annaffiare",
+          "body": "La sonda misura l'umidità nel terreno: annaffi solo quando la pianta ne ha davvero bisogno, non quando la superficie sembra asciutta."
         },
-        "pot": {
-          "title": "Mettilo nel vaso",
-          "body": "Infila la sonda vicino alla base della pianta, tutta nella terra"
+        "wifi": {
+          "title": "Niente centralina. Basta il tuo Wi-Fi.",
+          "body": "Ogni sensore si connette in autonomia, per una sola pianta o per un intero davanzale. Continua a funzionare anche quando sei in un'altra stanza o fuori casa."
         },
-        "alert": {
-          "title": "Ricevi l'avviso",
-          "body": "Quando serve annaffiare, lo sai nell'app, per email o su Telegram."
+        "weather": {
+          "title": "In casa, sul balcone o in giardino",
+          "body": "Usalo dentro o fuori. Se è prevista pioggia, le piante all'aperto possono aspettare."
         }
       },
-      "battery": "Batteria ricaricabile. Bastano poche ricariche all'anno."
-    },
-    "language": {
-      "label": "Lingua",
-      "it": "Italiano",
-      "en": "English"
-    }
-  },
-  "userMenu": {
-    "accountMenuAria": "Menu account",
-    "yourProfileAlt": "Il tuo profilo",
-    "profile": "Profilo",
-    "settings": "Impostazioni",
-    "onboarding": "Inizia",
-    "signOut": "Esci"
-  },
-  "auth": {
-    "login": {
-      "subtitle": "Accedi per gestire le tue piante",
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Accedi",
-      "forgotPassword": "Password dimenticata?"
-    },
-    "forgotPassword": {
-      "subtitle": "Inserisci la tua email e ti invieremo un link di reimpostazione della password.",
-      "subtitleSubmitted": "Controlla la tua email per il link di reimpostazione della password.",
-      "submittedHint": "Se esiste un account per quell'email, riceverai a breve un link. Il link scade tra 1 ora.",
-      "email": "Email",
-      "sendResetLink": "Invia link di reimpostazione password",
-      "backToSignIn": "Torna all'accesso"
-    },
-    "resetPassword": {
-      "subtitle": "Scegli una nuova password. Usa almeno 8 caratteri con una lettera maiuscola e un numero.",
-      "newPassword": "Nuova password",
-      "confirmNewPassword": "Conferma nuova password",
-      "submit": "Reimposta password",
-      "passwordsDoNotMatch": "Le password non coincidono.",
-      "recoveryExpired": "Link di recupero scaduto o non valido.",
-      "passwordUpdated": "Password aggiornata. Accedi con la nuova password."
-    },
-    "setPassword": {
-      "subtitle": "Imposta la password per completare la configurazione dell'account. Usa almeno 8 caratteri con una lettera maiuscola e un numero.",
-      "password": "Password",
-      "confirmPassword": "Conferma password",
-      "submit": "Imposta password",
-      "passwordsDoNotMatch": "Le password non coincidono.",
-      "inviteExpired": "Link di invito scaduto o non valido."
-    },
-    "passwordRequirements": "La password deve avere almeno 8 caratteri e includere una lettera maiuscola e un numero."
-  },
-  "dashboard": {
-    "empty": {
-      "noPlantsTitle": "Nessuna pianta",
-      "noPlantsDescription": "Inizia creando la tua prima pianta nel Centro piante.",
-      "addFirstPlant": "Aggiungi prima pianta",
-      "noMatchTitle": "Nessuna pianta corrisponde ai filtri",
-      "noMatchDescription": "Prova a cancellare ricerca e filtri per vedere tutte le piante.",
-      "resetFilters": "Reimposta filtri"
-    },
-    "realtimeUnavailable": {
-      "title": "Aggiornamenti in tempo reale non disponibili",
-      "message": "Gli aggiornamenti live non sono temporaneamente disponibili. Puoi comunque usare l'aggiornamento manuale."
-    },
-    "refreshAria": "Aggiorna dashboard"
-  },
-  "plantFilter": {
-    "healthy": "in salute",
-    "needWatering": "da annaffiare",
-    "offline": "offline",
-    "needRecharge": "da ricaricare",
-    "searchPlantsPlaceholder": "Cerca piante…",
-    "searchPlantsAria": "Cerca piante",
-    "searchDevicesPlaceholder": "Cerca per seriale o pianta…",
-    "searchDevicesAria": "Cerca sensori",
-    "clearSearchAria": "Cancella ricerca",
-    "sortAria": "Ordina piante",
-    "sortHumidityLow": "Umidità (più bassa prima)",
-    "sortHumidityHigh": "Umidità (più alta prima)",
-    "sortLastSeen": "Ultima lettura (più recente prima)",
-    "sortName": "Nome (A-Z)"
-  },
-  "plantStatus": {
-    "healthy": "In salute",
-    "needsWater": "Serve acqua",
-    "offline": "Offline",
-    "needsRecharge": "Serve ricarica"
-  },
-  "humidityBar": {
-    "minThreshold": "min {{threshold}}%"
-  },
-  "plantLeaderboard": {
-    "noPlantsFound": "Nessuna pianta trovata.",
-    "outdoorPlant": "Pianta da esterno",
-    "removeSnooze": "Rimuovi silenziamento",
-    "snoozedWithTime": "Silenziata · {{timeLeft}}",
-    "expiring": "in scadenza",
-    "hoursLeft": "{{hours}}h rimaste",
-    "minutesLeft": "{{minutes}}m rimasti"
-  },
-  "time": {
-    "justNow": "adesso",
-    "minutesAgo": "{{count}}m fa",
-    "hoursAgo": "{{count}}h fa",
-    "daysAgo": "{{count}}g fa",
-    "seconds": "{{count}}s",
-    "minutes": "{{count}}min",
-    "minutesAndSeconds": "{{minutes}}min {{seconds}}s",
-    "hours": "{{count}}h",
-    "hoursAndMinutes": "{{hours}}h {{minutes}}min",
-    "customInterval": "Personalizzato…"
-  },
-  "onboarding": {
-    "title": "Inizia con Plantir",
-    "progress": "{{completed}} di {{total}} passaggi completati. Segui la guida per monitorare le tue piante.",
-    "dismissAria": "Chiudi onboarding",
-    "skip": "Salta per ora",
-    "complete": {
-      "title": "Congratulazioni",
-      "message": "Sei pronto per prenderti cura delle tue piante. Ricordati di assegnare il sensore alla pianta (se non già fatto) e di infilarlo vicino alla base della pianta, tutta nella terra"
-    },
-    "steps": {
-      "plants": {
-        "label": "Aggiungi la tua prima pianta",
-        "description": "Dalle un nome e, se vuoi, una foto."
+      "household": {
+        "aria": "Avvisi per tutta la casa",
+        "eyebrow": "Quando sei via",
+        "title": "Chi è a casa può annaffiare al posto tuo.",
+        "body": "Gli avvisi possono arrivare nel gruppo Telegram di famiglia, la chat che usate già tutti i giorni. Il pothos ha sete? Chi è in casa prende l'annaffiatoio.",
+        "messageFrom": "Plantir",
+        "messageText": "Il pothos ha bisogno d'acqua."
       },
-      "devices": {
-        "label": "Registra il tuo primo sensore",
-        "description": "Usa la procedura guidata per collegare un sensore Plantir ad una pianta."
+      "setup": {
+        "aria": "Come iniziare",
+        "eyebrow": "Dalla scatola al primo avviso",
+        "title": "Registralo, mettilo nel vaso, fatto.",
+        "lead": "Tre semplici passaggi, poi tiene d'occhio il terreno al posto tuo.",
+        "steps": {
+          "register": {
+            "title": "Registra il sensore nella web app Plantir",
+            "body": "Apri Plantir e aggiungi il nuovo sensore. Bastano circa tre minuti."
+          },
+          "pot": {
+            "title": "Mettilo nel vaso",
+            "body": "Inserisci la sonda fino in fondo nel terreno, vicino alla base della pianta."
+          },
+          "alert": {
+            "title": "Ricevi il promemoria",
+            "body": "Quando è il momento di annaffiare, ricevi una notifica nell'app, via email o su Telegram."
+          }
+        },
+        "battery": "Batteria ricaricabile. Bastano poche ricariche all'anno."
       },
-      "location": {
-        "label": "Imposta la tua posizione",
-        "description": "Scegli la tua città così le piante da esterno ricevono avvisi di annaffiatura basati sulla pioggia."
+      "language": {
+        "label": "Lingua",
+        "it": "Italiano",
+        "en": "English"
+      }
+    },
+    "userMenu": {
+      "accountMenuAria": "Menu account",
+      "yourProfileAlt": "Il tuo profilo",
+      "profile": "Profilo",
+      "settings": "Impostazioni",
+      "onboarding": "Guida iniziale",
+      "signOut": "Esci"
+    },
+    "auth": {
+      "login": {
+        "subtitle": "Accedi per gestire le tue piante",
+        "email": "Email",
+        "password": "Password",
+        "signIn": "Accedi",
+        "forgotPassword": "Password dimenticata?"
+      },
+      "forgotPassword": {
+        "subtitle": "Inserisci la tua email e ti invieremo un link per reimpostare la password.",
+        "subtitleSubmitted": "Controlla la posta: ti abbiamo inviato un link per reimpostare la password.",
+        "submittedHint": "Se l'indirizzo email è associato a un account, riceverai il link a breve. Il link scadrà tra un'ora.",
+        "email": "Email",
+        "sendResetLink": "Invia link di recupero",
+        "backToSignIn": "Torna all'accesso"
+      },
+      "resetPassword": {
+        "subtitle": "Scegli una nuova password. Usa almeno 8 caratteri, tra cui una lettera maiuscola e un numero.",
+        "newPassword": "Nuova password",
+        "confirmNewPassword": "Conferma nuova password",
+        "submit": "Reimposta password",
+        "passwordsDoNotMatch": "Le password non coincidono.",
+        "recoveryExpired": "Il link di recupero è scaduto o non è valido.",
+        "passwordUpdated": "Password aggiornata. Accedi con la nuova password."
+      },
+      "setPassword": {
+        "subtitle": "Imposta una password per completare la configurazione dell'account. Usa almeno 8 caratteri, tra cui una lettera maiuscola e un numero.",
+        "password": "Password",
+        "confirmPassword": "Conferma password",
+        "submit": "Imposta password",
+        "passwordsDoNotMatch": "Le password non coincidono.",
+        "inviteExpired": "Il link di invito è scaduto o non è valido."
+      },
+      "passwordRequirements": "La password deve contenere almeno 8 caratteri e includere almeno una lettera maiuscola e un numero."
+    },
+    "dashboard": {
+      "empty": {
+        "noPlantsTitle": "Ancora nessuna pianta",
+        "noPlantsDescription": "Inizia aggiungendo la tua prima pianta nel Centro piante.",
+        "addFirstPlant": "Aggiungi la prima pianta",
+        "noMatchTitle": "Nessuna pianta corrisponde ai filtri",
+        "noMatchDescription": "Prova a reimpostare la ricerca e i filtri per vedere tutte le piante.",
+        "resetFilters": "Reimposta filtri"
+      },
+      "realtimeUnavailable": {
+        "title": "Aggiornamenti in tempo reale non disponibili",
+        "message": "Gli aggiornamenti in tempo reale sono temporaneamente non disponibili. Puoi comunque aggiornare la pagina manualmente."
+      },
+      "refreshAria": "Aggiorna dashboard"
+    },
+    "plantFilter": {
+      "healthy": "in salute",
+      "needWatering": "da annaffiare",
+      "offline": "offline",
+      "needRecharge": "da ricaricare",
+      "searchPlantsPlaceholder": "Cerca piante…",
+      "searchPlantsAria": "Cerca piante",
+      "searchDevicesPlaceholder": "Cerca per numero di serie o pianta…",
+      "searchDevicesAria": "Cerca sensori",
+      "clearSearchAria": "Cancella ricerca",
+      "sortAria": "Ordina piante",
+      "sortHumidityLow": "Umidità (dalla più bassa)",
+      "sortHumidityHigh": "Umidità (dalla più alta)",
+      "sortLastSeen": "Ultima lettura (dalla più recente)",
+      "sortName": "Nome (A-Z)"
+    },
+    "plantStatus": {
+      "healthy": "In salute",
+      "needsWater": "Da annaffiare",
+      "offline": "Offline",
+      "needsRecharge": "Da ricaricare"
+    },
+    "humidityBar": {
+      "minThreshold": "min {{threshold}}%"
+    },
+    "plantLeaderboard": {
+      "noPlantsFound": "Nessuna pianta trovata.",
+      "outdoorPlant": "Pianta da esterno",
+      "removeSnooze": "Riattiva avvisi",
+      "snoozedWithTime": "Avvisi sospesi · {{timeLeft}}",
+      "expiring": "in scadenza",
+      "hoursLeft": "{{hours}}h rimaste",
+      "minutesLeft": "{{minutes}}m rimasti"
+    },
+    "time": {
+      "justNow": "adesso",
+      "minutesAgo": "{{count}}m fa",
+      "hoursAgo": "{{count}}h fa",
+      "daysAgo": "{{count}}g fa",
+      "seconds": "{{count}}s",
+      "minutes": "{{count}}min",
+      "minutesAndSeconds": "{{minutes}}min {{seconds}}s",
+      "hours": "{{count}}h",
+      "hoursAndMinutes": "{{hours}}h {{minutes}}min",
+      "customInterval": "Personalizzato…"
+    },
+    "onboarding": {
+      "title": "Inizia con Plantir",
+      "progress": "{{completed}} di {{total}} passaggi completati. Segui la guida per iniziare a monitorare le tue piante.",
+      "dismissAria": "Chiudi guida iniziale",
+      "skip": "Salta per ora",
+      "complete": {
+        "title": "Congratulazioni!",
+        "message": "Tutto pronto per prenderti cura delle tue piante. Ricordati di associare il sensore alla pianta (se non l'hai già fatto) e di inserirlo fino in fondo nel terreno, vicino alla base della pianta."
+      },
+      "steps": {
+        "plants": {
+          "label": "Aggiungi la tua prima pianta",
+          "description": "Dalle un nome e, se vuoi, aggiungi una foto."
+        },
+        "devices": {
+          "label": "Registra il tuo primo sensore",
+          "description": "Usa la procedura guidata per associare un sensore Plantir al tuo account."
+        },
+        "location": {
+          "label": "Imposta la tua posizione",
+          "description": "Indica la tua città per tenere conto della pioggia negli avvisi di annaffiatura per le piante da esterno."
+        },
+        "notifications": {
+          "label": "Controlla le impostazioni di notifica",
+          "description": "Scegli quando ricevere gli avvisi di annaffiatura e di disconnessione nell'app o via email."
+        }
+      }
+    },
+    "notifications": {
+      "bellAria": "Notifiche",
+      "title": "Notifiche",
+      "markAllAsRead": "Segna tutte come lette",
+      "empty": "Nessuna nuova notifica",
+      "rainExpected": "È prevista pioggia: potrebbe non essere necessario annaffiare.",
+      "snooze24h": "Posticipa di 24h",
+      "snooze48h": "Posticipa di 48h",
+      "snoozed": {
+        "title": "Avvisi sospesi",
+        "message": "Promemoria di annaffiatura per {{plantName}} sospesi per {{hours}}h"
+      },
+      "alerts": {
+        "wateringTitle": "{{plantName}} ha bisogno d'acqua",
+        "wateringBody": "Umidità rilevata: {{humidity}}%",
+        "lastReading": "ultima lettura {{time}}",
+        "neverSeen": "nessun dato ricevuto",
+        "offlineTitleSingle": "{{plantName}} è offline",
+        "offlineTitleMulti": "{{count}} sensori offline",
+        "offlineBodyIntro": "Le seguenti piante non inviano dati da troppo tempo:"
+      }
+    },
+    "settings": {
+      "title": "Impostazioni",
+      "language": {
+        "title": "Lingua",
+        "it": "IT",
+        "en": "EN",
+        "saved": {
+          "title": "Lingua aggiornata",
+          "message": "La lingua dell'interfaccia è stata impostata su italiano."
+        }
       },
       "notifications": {
-        "label": "Controlla le impostazioni di notifica",
-        "description": "Scegli quando ricevere avvisi di annaffiatura e offline nell'app o via email."
-      }
-    }
-  },
-  "notifications": {
-    "bellAria": "Notifiche",
-    "title": "Notifiche",
-    "markAllAsRead": "Segna tutte come lette",
-    "empty": "Nessuna nuova notifica",
-    "rainExpected": "Pioggia prevista: l'annaffiatura potrebbe non essere necessaria.",
-    "snooze24h": "Silenzia 24h",
-    "snooze48h": "Silenzia 48h",
-    "snoozed": {
-      "title": "Silenziato",
-      "message": "Promemoria di annaffiatura per {{plantName}} silenziati per {{hours}}h"
-    },
-    "alerts": {
-      "wateringTitle": "{{plantName}} ha bisogno di acqua",
-      "wateringBody": "Umidità: {{humidity}}%",
-      "lastReading": "ultima lettura {{time}}",
-      "neverSeen": "mai rilevato",
-      "offlineTitleSingle": "{{plantName}} è offline",
-      "offlineTitleMulti": "{{count}} sensori offline",
-      "offlineBodyIntro": "Le seguenti piante non inviano dati da troppo tempo:"
-    }
-  },
-  "settings": {
-    "title": "Impostazioni",
-    "language": {
-      "title": "Lingua",
-      "it": "IT",
-      "en": "EN",
+        "title": "Notifiche",
+        "description": "Ricevi promemoria per l'annaffiatura, avvisi di sensore offline e novità del giardino nell'app, via email o su Telegram.",
+        "expeditions": "Rientro dalle missioni via email o Telegram",
+        "expeditionsDescription": "Gli avvisi nell'app restano sempre attivi. Questa opzione invia anche un'email o un messaggio su Telegram quando la squadra rientra.",
+        "inApp": "Notifiche nell'app",
+        "email": "Notifiche via email",
+        "emailDescription": "Invieremo un riepilogo giornaliero a {{email}}.",
+        "emailDescriptionMissing": "Invieremo un riepilogo giornaliero all'indirizzo email del tuo account.",
+        "scheduleTitle": "Programmazione",
+        "scheduleDescription": "Gli avvisi giornalieri vengono inviati all'orario scelto, in base al tuo fuso orario.",
+        "notificationTime": "Orario di invio",
+        "timezone": "Fuso orario"
+      },
+      "telegram": {
+        "title": "Telegram",
+        "description": "Ricevi gli avvisi anche su Telegram, oltre che nell'app.",
+        "optionalBadge": "Facoltativo",
+        "chatIdLabel": "Chat ID di Telegram",
+        "chatIdPlaceholder": "es. 123456789",
+        "chatIdDescription": "Lascia vuoto questo campo se preferisci ricevere gli avvisi solo nell'app o via email."
+      },
+      "footerHint": "Le modifiche vengono applicate a tutti i tuoi sensori.",
+      "save": "Salva",
       "saved": {
-        "title": "Lingua aggiornata",
-        "message": "La lingua dell'interfaccia è stata cambiata in italiano."
+        "title": "Salvato",
+        "message": "Impostazioni di notifica aggiornate."
       }
     },
-    "notifications": {
-      "title": "Notifiche",
-      "description": "Ricevi promemoria di annaffiatura, avvisi offline e sblocchi del giardino nell'app, via email o su Telegram.",
-      "expeditions": "Avvisi via email o Telegram quando tornano dalla missione",
-      "expeditionsDescription": "Gli avvisi nell'app restano attivi. Qui si aggiunge solo un messaggio via email o Telegram quando la squadra torna.",
-      "inApp": "Notifiche in-app",
-      "email": "Notifiche email",
-      "emailDescription": "Un riepilogo giornaliero viene inviato a {{email}}.",
-      "emailDescriptionMissing": "Un riepilogo giornaliero viene inviato all'email del tuo account.",
-      "scheduleTitle": "Programmazione",
-      "scheduleDescription": "Gli avvisi giornalieri vengono inviati all'ora scelta nel tuo fuso orario.",
-      "notificationTime": "Orario notifica",
-      "timezone": "Fuso orario"
+    "telegramSetup": {
+      "accordionTitle": "Come configurare le notifiche su Telegram",
+      "step1Title": "Trova il tuo Chat ID",
+      "step1Body": "Apri Telegram e cerca <link>@userinfobot</link>. Tocca <bold>Avvia</bold>: il bot ti risponderà subito con il tuo Chat ID numerico (es. 123456789).",
+      "step1Start": "Avvia",
+      "step2Title": "Avvia una chat con il bot di Plantir",
+      "step2Body": "Cerca <link>@PlantirAlert_bot</link> su Telegram e tocca <bold>Avvia</bold>. Questo passaggio è necessario per autorizzare il bot a inviarti messaggi.",
+      "step3Title": "Inserisci il Chat ID qui sotto e verifica",
+      "step3Body": "Incolla il codice ottenuto al Passaggio 1 nel campo Chat ID di Telegram. Sotto il campo comparirà il nome del tuo account: verifica che corrisponda alla persona o al gruppo corretto, poi scegli l'orario che preferisci e salva.",
+      "webTipTitle": "Suggerimento",
+      "webTipBody": "Copiare il Chat ID è più comodo da computer: apri <web>Telegram Web</web>, avvia @userinfobot e copia il numero.",
+      "groupTitle": "Vuoi far arrivare gli avvisi a più persone? Usa un gruppo",
+      "groupBody": "Avvia una chat con <userinfobot>@userinfobot</userinfobot> e seleziona uno dei tuoi gruppi quando richiesto: il bot ti risponderà con il Chat ID del gruppo (un numero preceduto dal segno meno, es. -1001234567890). Aggiungi quindi <link>@PlantirAlert_bot</link> al gruppo per consentirgli di inviare messaggi. Infine, incolla l'ID del gruppo nel campo qui sotto (vedrai comparire il nome del gruppo per conferma) e tutti i partecipanti riceveranno gli avvisi."
     },
-    "telegram": {
-      "title": "Telegram",
-      "description": "Ricevi avvisi su Telegram oltre che nell'app.",
-      "optionalBadge": "Opzionale",
-      "chatIdLabel": "Chat ID Telegram",
-      "chatIdPlaceholder": "es. 123456789",
-      "chatIdDescription": "Lascia vuoto se vuoi ricevere gli avvisi solo nell'app o via email."
-    },
-    "footerHint": "Le modifiche valgono per tutti i tuoi sensori.",
-    "save": "Salva",
-    "saved": {
-      "title": "Salvato",
-      "message": "Impostazioni di notifica aggiornate."
-    }
-  },
-  "telegramSetup": {
-    "accordionTitle": "Come configurare le notifiche Telegram",
-    "step1Title": "Trova il tuo Chat ID",
-    "step1Body": "Apri Telegram e cerca <link>@userinfobot</link>. Tocca <bold>Avvia Bot</bold>: risponderà subito con il tuo Chat ID numerico (es. 123456789).",
-    "step1Start": "Start",
-    "step2Title": "Avvia una conversazione con il bot Plantir",
-    "step2Body": "Cerca <link>@PlantirAlert_bot</link> su Telegram e tocca <bold>Avvia Bot</bold>. Serve affinché Telegram permetta al bot di inviarti messaggi.",
-    "step3Title": "Inserisci il Chat ID e verifica",
-    "step3Body": "Incolla il numero del Passaggio 1 nel campo Chat ID Telegram. Il nome del tuo account apparirà sotto il campo: assicurati che sia la persona o il gruppo corretto, poi scegli l'orario preferito e salva.",
-    "webTipTitle": "Suggerimento",
-    "webTipBody": "Copiare il Chat ID è più facile da un browser. Apri <web>Telegram Web</web>, avvia @userinfobot da lì e copia il numero.",
-    "groupTitle": "Vuoi ricevere gli avvisi su più persone? Usa un gruppo",
-    "groupBody": "Avvia una conversazione con <userinfobot>@userinfobot</userinfobot> e scegli uno dei tuoi gruppi; il bot risponderà con il Chat ID del gruppo (un numero negativo, es. -1001234567890). Poi aggiungi <link>@PlantirAlert_bot</link> al gruppo in modo che possa inviare messaggi lì. Incolla l'ID del gruppo nel campo qui sotto (il nome del gruppo apparirà per conferma) e tutti i membri del gruppo riceveranno gli avvisi."
-  },
-  "telegramChatId": {
-    "verifying": "Verifica in corso…",
-    "typePersonal": "Account personale ·",
-    "typeGroup": "Gruppo ·",
-    "errorNotFound": "Chat ID non trovato. Assicurati di aver avviato prima il bot Plantir.",
-    "errorBotNotInChat": "Il bot Plantir non è in questo gruppo. Aggiungi prima @PlantirAlert_bot al gruppo.",
-    "errorGeneric": "Impossibile verificare il Chat ID. Controlla il numero e riprova."
-  },
-  "profile": {
-    "title": "Profilo",
-    "subtitle": "Imposta come appari in Plantir.",
-    "nickname": "Soprannome",
-    "nicknamePlaceholder": "Come possiamo chiamarti?",
-    "nicknameOptional": "Opzionale",
-    "email": "Email",
-    "emailDescription": "Gestita dall'amministratore del tuo account.",
-    "save": "Salva",
-    "saved": {
-      "title": "Salvato",
-      "message": "Profilo aggiornato."
-    },
-    "avatar": {
-      "fileAria": "File foto profilo",
-      "alt": "Avatar del profilo",
-      "viewAria": "Visualizza foto profilo",
-      "editAria": "Modifica foto profilo",
-      "upload": "Carica",
-      "uploadPhoto": "Carica foto",
-      "replacePhoto": "Sostituisci foto",
-      "removePhoto": "Rimuovi foto",
-      "modalTitle": "Foto profilo",
-      "enlargedAlt": "Foto profilo ingrandita"
-    }
-  },
-  "plantsCenter": {
-    "title": "Centro piante",
-    "tabs": {
-      "plants": "Piante",
-      "devices": "Sensori"
-    }
-  },
-  "plantsTab": {
-    "columns": {
-      "name": "Nome",
-      "status": "Stato",
-      "moisture": "Umidità",
-      "assignedDevice": "Sensore assegnato",
-      "actions": "Azioni"
-    },
-    "addPlant": "Aggiungi pianta",
-    "emptyTitle": "Nessuna pianta",
-    "emptyDescription": "Aggiungi una pianta per iniziare a monitorarne l'umidità. Dalle un nome e, se vuoi, una foto.",
-    "addFirstPlant": "Aggiungi la tua prima pianta",
-    "noSearchMatch": "Nessuna pianta corrisponde alla ricerca.",
-    "assign": "Assegna",
-    "editPlant": "Modifica pianta",
-    "deletePlant": "Elimina pianta",
-    "outdoorPlant": "Pianta da esterno"
-  },
-  "plantForm": {
-    "addTitle": "Aggiungi pianta",
-    "editTitle": "Modifica pianta",
-    "name": "Nome",
-    "nameDescription": "Dai a questa pianta un nome che riconosci subito.",
-    "namePlaceholder": "es. Ficus",
-    "outdoorLabel": "Pianta da esterno",
-    "outdoorDescription": "Abilita se la piante è all'esterno e riceve acqua piovana",
-    "potHeight": "Altezza vaso",
-    "potHeightAria": "Altezza vaso",
-    "potHeightWhyAria": "Perché l'altezza del vaso conta per le letture di umidità",
-    "potHeightDescription": "Opzionale: migliora come l'umidità viene interpretata nei vasi più alti.",
-    "speciesSectionTitle": "Specie (opzionale)",
-    "speciesSectionDescription": "Aggiungere la specie aiuta a sbloccare indicazioni di cura più accurate.",
-    "photoSectionTitle": "Foto",
-    "photoSectionDescription": "Scegli la foto della pianta.",
-    "nameRequired": "Il nome della pianta è obbligatorio",
-    "addSubmit": "Aggiungi pianta",
-    "saveSubmit": "Salva modifiche",
-    "createdMessage": "Pianta creata correttamente",
-    "updatedMessage": "Pianta aggiornata correttamente"
-  },
-  "potDepth": {
-    "tooltip": "Nei vasi più alti, la superficie può asciugarsi prima del terreno più in basso. Plantir usa l'altezza del vaso per darti letture di umidità e avvisi di annaffiatura più affidabili.",
-    "notSure": "Non so / salta",
-    "compact": "≤ 15 cm",
-    "small": "15–25 cm",
-    "medium": "25–40 cm",
-    "large": "40–60 cm",
-    "deep": "> 60 cm",
-    "inGround": "In terra"
-  },
-  "species": {
-    "selectAria": "Specie della pianta (opzionale)",
-    "placeholder": "Inizia a digitare la specie...",
-    "typeAtLeast2": "Digita almeno 2 caratteri",
-    "searching": "Ricerca...",
-    "noMatches": "Nessun risultato",
-    "searchingSpecies": "Ricerca specie...",
-    "loadingDetails": "Caricamento dettagli specie...",
-    "careGuidanceBadge": "Guida alla cura",
-    "scientificName": "Nome scientifico: {{name}}",
-    "speciesImageAlt": "Immagine della specie",
-    "recommendedSoilMoisture": "Umidità del suolo consigliata",
-    "recommendedTemperature": "Temperatura consigliata",
-    "viewCareGuidance": "Vedi guida alla cura",
-    "soil": "Terreno:",
-    "sunlight": "Luce solare:",
-    "watering": "Annaffiatura:",
-    "fertilization": "Concimazione:",
-    "pruning": "Potatura:",
-    "clearSpecies": "Non è la specie giusta",
-    "useSpeciesPhoto": "Usa foto della specie",
-    "useCustomPhoto": "Usa foto personalizzata",
-    "plantPreviewAlt": "Anteprima pianta",
-    "photoFileAria": "File foto pianta",
-    "uploadCustomPhoto": "Carica foto personalizzata",
-    "replaceCustomPhoto": "Sostituisci foto personalizzata",
-    "usingSpeciesPhoto": "Usando la foto della specie",
-    "translationLoading": "Traduzione della guida alla cura…"
-  },
-  "plantDelete": {
-    "title": "Elimina pianta",
-    "confirm": "Sei sicuro di voler eliminare <bold>{{name}}</bold>?",
-    "unassignWarning": "Eventuali sensori attualmente assegnati a questa pianta verranno scollegati.",
-    "success": {
-      "title": "Eliminata",
-      "message": "Pianta eliminata correttamente"
-    }
-  },
-  "plantDetail": {
-    "editPlant": "Modifica pianta",
-    "editDevice": "Modifica sensore",
-    "viewFullSizeAria": "Visualizza foto a dimensione intera di {{name}}",
-    "fullSizeAria": "Foto a dimensione intera di {{name}}",
-    "closeFullSizeAria": "Chiudi foto a dimensione intera",
-    "currentStatus": "Stato attuale",
-    "humidity": "Umidità",
-    "noReading": "Nessuna lettura",
-    "lastWatered": "Ultima annaffiatura",
-    "noDevice": "Nessun sensore",
-    "battery": "Batteria",
-    "reportingInterval": "Intervallo di invio",
-    "connectDeviceTitle": "Collega un sensore per tracciare la cronologia",
-    "connectDeviceBody": "Assegna un sensore a questa pianta per raccogliere umidità, batteria e cronologia delle misurazioni.",
-    "measurementHistory": "Cronologia misurazioni",
-    "range7d": "7 giorni",
-    "range14d": "14 giorni",
-    "range30d": "30 giorni",
-    "range90d": "90 giorni",
-    "humidityTrend": "Andamento umidità",
-    "batteryTrend": "Andamento batteria"
-  },
-  "historyChart": {
-    "empty": "{{title}}: nessuna misurazione in questo intervallo.",
-    "headerStats": "Ultimo {{latest}} · Min {{min}} · Max {{max}}"
-  },
-  "devicesTab": {
-    "columns": {
-      "serialNumber": "Numero di serie",
-      "plant": "Pianta",
-      "interval": "Intervallo",
-      "actions": "Azioni"
-    },
-    "addManually": "Aggiungi manualmente",
-    "registerNewDevice": "Registra nuovo sensore",
-    "emptyTitle": "Nessun sensore",
-    "emptyDescription": "Registra un sensore Plantir con la procedura guidata, oppure aggiungi un sensore manualmente se hai già il numero di serie.",
-    "registerFirstDevice": "Registra il tuo primo sensore",
-    "noSearchMatch": "Nessun sensore corrisponde alla ricerca.",
-    "unassigned": "Non assegnato",
-    "calibrationRecommended": "Calibrazione consigliata",
-    "calibrateSensor": "Calibra sensore",
-    "calibrateSensorRequired": "Calibra sensore",
-    "editDevice": "Modifica sensore",
-    "deleteDevice": "Elimina sensore"
-  },
-  "deviceDelete": {
-    "title": "Elimina sensore",
-    "confirm": "Sei sicuro di voler eliminare il sensore <bold>{{serialNumber}}</bold>?",
-    "warning": "Anche la configurazione del sensore e tutte le misurazioni verranno rimosse.",
-    "success": {
-      "title": "Eliminato",
-      "message": "Sensore eliminato correttamente"
-    }
-  },
-  "deviceForm": {
-    "createdTitle": "Sensore creato",
-    "editTitle": "Modifica sensore",
-    "addTitle": "Aggiungi sensore manualmente",
-    "manualIntro": "Nella maggior parte dei casi usa Registra nuovo sensore. L'aggiunta manuale è per casi avanzati quando hai già un numero di serie.",
-    "assignment": "Assegnazione",
-    "serialNumber": "Numero di serie",
-    "serialPlaceholder": "es. SN-001",
-    "serialRequired": "Il numero di serie è obbligatorio",
-    "humiditySensor": "Sensore di umidità",
-    "plant": "Pianta",
-    "plantPlaceholder": "Seleziona una pianta",
-    "clearPlantAria": "Rimuovi pianta",
-    "plantsWithDeviceDisabled": "Le piante che hanno già un sensore assegnato sono disabilitate.",
-    "deviceAssigned": "sensore assegnato",
-    "wateringAlerts": "Avvisi di annaffiatura",
-    "alertWhenBelow": "Avvisa quando l'umidità scende sotto questo valore",
-    "suggestedFromSpecies": "Consigliato dalla specie: {{threshold}}%",
-    "thresholdRangeError": "La soglia deve essere tra 0 e 100",
-    "reportingInterval": "Intervallo di invio",
-    "reportingIntervalDescription": "Quanto spesso il sensore si attiva e invia dati. Frequenze più alte consumano la batteria più in fretta.",
-    "recommended": "Consigliato",
-    "customInterval": "Intervallo personalizzato (secondi)",
-    "customIntervalDescription": "Per i test puoi impostare un intervallo breve (es. 10–60 secondi). Valori più bassi consumano più batteria.",
-    "intervalMinError": "L'intervallo deve essere di almeno 1 secondo",
-    "shortIntervalWarning": "Intervalli brevi consumano la batteria più in fretta.",
-    "calibration": "Calibrazione",
-    "airDry": "Aria (secco):",
-    "waterWet": "Acqua (bagnato):",
-    "recalibrateSensor": "Ricalibra sensore",
-    "addSubmit": "Aggiungi sensore",
-    "saveSubmit": "Salva modifiche",
-    "updatedMessage": "Sensore aggiornato correttamente",
-    "calibratePrompt": "Calibra il sensore per letture accurate.",
-    "calibrateNow": "Calibra ora"
-  },
-  "registrationWizard": {
-    "title": "Registra nuovo sensore",
-    "steps": {
-      "prepare": "Preparazione",
-      "setupCode": "Codice di setup",
-      "connect": "Connessione",
-      "waiting": "In attesa"
-    },
-    "prepare": {
-      "title": "Preparazione",
-      "pcRecommendation": "Per la migliore esperienza, ti consigliamo di completare questa configurazione da un PC o laptop.",
-      "intro": "Questa procedura ti guida nella registrazione di un sensore di umidità Plantir e nell'assegnazione ad una pianta.",
-      "assignPlant": "Assegna a una pianta (opzionale)",
-      "assignPlantPlaceholder": "Puoi assegnare una pianta ora o più tardi"
-    },
-    "setupCode": {
-      "title": "Codice di setup",
-      "intro": "Copia questo codice di setup. Lo incollerai nel portale Wi-Fi del sensore nei passaggi successivi.",
-      "generating": "Generazione codice di setup…",
-      "copy": "Copia codice di setup",
-      "copied": "Copiato",
-      "expiresAt": "Scade alle {{time}}",
-      "generate": "Genera codice di setup"
-    },
-    "connect": {
-      "title": "Connettiti all'hotspot del sensore",
-      "copyCodeFirst": "Assicurati di aver copiato il codice di setup del passaggio precedente.",
-      "openCap": "Ruota leggermente il coperchio del sensore in senso antiorario, poi tiralo verso l'alto.",
-      "pressRestart": "Premi il pulsante <bold>RESTART</bold> sul lato del sensore. Dopo averlo premuto, il chip all'interno del sensore Plantir accenderà un LED verde tre volte di fila. Il sensore aprirà poi un hotspot Wi-Fi chiamato <bold>Plantir-Device-Setup</bold>.",
-      "connectHotspot": "Sul telefono o computer, connettiti all'hotspot <bold>Plantir-Device-Setup</bold>. Si aprirà automaticamente un portale: dovrebbe assomigliare a questo:",
-      "portalHomeAlt": "Schermata home del portale Wi-Fi",
-      "configureWifi": "Tocca <bold>Configure WiFi</bold>, poi seleziona la tua rete domestica, inserisci la password.",
-      "portalConfigureAlt": "Schermata di configurazione del portale Wi-Fi",
-      "waitPortalClose": "Incolla il codice di setup nel campo <bold>Plantir Setup</bold> e tocca <bold>Save</bold>. Attendi che il portale <bold>Plantir-Device-Setup</bold> si chiuda automaticamente.",
-      "iveConnected": "Ho connesso il sensore"
-    },
-    "waiting": {
-      "title": "In attesa della registrazione",
-      "body": "In attesa che il sensore si registri… Tieni il portale aperto finché il sensore non si connette al Wi-Fi.",
-      "stillWaitingTitle": "Ancora in attesa",
-      "stillWaitingBody": "Non abbiamo ancora rilevato la registrazione. Controlla che il codice di setup sia stato incollato correttamente e che il sensore si sia unito al Wi-Fi.",
-      "keepWaiting": "Continua ad attendere",
-      "regenerateCode": "Genera un nuovo codice di setup",
-      "ownedByAnother": "Questo sensore è già registrato su un altro account. Se pensi che sia tuo, contatta l'assistenza.",
-      "registrationFailed": "Registrazione non riuscita. Riprova o contatta l'assistenza."
-    },
-    "completed": {
-      "title": "Sensore registrato correttamente",
-      "serialNumberLabel": "Numero di serie:",
-      "body": "Il sensore è registrato e inizierà a inviare letture a breve.",
-      "skipForNow": "Salta per ora",
-      "calibrateSensor": "Calibra sensore"
-    }
-  },
-  "calibrationWizard": {
-    "title": "Calibra sensore",
-    "closeAria": "Chiudi procedura di calibrazione",
-    "steps": {
-      "prepare": "Preparazione",
-      "wakeDevice": "Riattiva sensore",
-      "dryReading": "Lettura sensore secco",
-      "wetReading": "Lettura sensore bagnato"
-    },
-    "startCalibration": "Avvia calibrazione",
-    "prepare": {
-      "title": "Prima di iniziare",
-      "intro": "La calibrazione insegna al sensore cosa significa \"completamente secco\" e \"completamente bagnato\", così può darti letture accurate dell'umidità del suolo.",
-      "youllNeed": "Ti serviranno:",
-      "needDevice": "Il tuo sensore Plantir",
-      "needWater": "Un bicchiere pieno d'acqua",
-      "duration": "Il processo dura circa 1 minuto."
-    },
-    "wake": {
-      "title": "Riattiva il sensore",
-      "instructions": "Ruota leggermente il coperchio in senso antiorario, poi tiralo verso l'alto. Premi il pulsante <bold>Restart</bold> sul sensore Plantir per riattivarlo. Dopo averlo premuto, il chip all'interno accenderà un LED verde tre volte di fila. Poi rimetti il coperchio.",
-      "timeout": "Nessuna lettura ricevuta. Assicurati di aver premuto il pulsante di riavvio e che il sensore si sia connesso al Wi-Fi.",
-      "tryAgain": "Riprova",
-      "waiting": "In attesa che il sensore si connetta…"
-    },
-    "dry": {
-      "title": "Lettura sensore secco",
-      "instructions": "Tieni l'asta nera del sensore all'aria aperta, lontano da terra o acqua. Mantieni la posizione mentre acquisiamo una lettura stabile.",
-      "timeout": "Nessuna lettura ricevuta. Assicurati di aver premuto il pulsante di riavvio e che il sensore si sia connesso al Wi-Fi.",
-      "rejected": "Assicurati che l'asta nera del sensore sia all'aria aperta, lontano da terra o acqua, poi resta fermo.",
-      "waiting": "In attesa di una lettura…"
-    },
-    "wet": {
-      "title": "Lettura sensore bagnato",
-      "instructions": "Abbassa delicatamente il sensore nel bicchiere d'acqua fino alla linea orizzontale bianca sull'asta. Tieni il sensore fermo a questa profondità mentre acquisiamo una lettura stabile.",
-      "guideAlt": "Sensore immerso in acqua fino alla linea orizzontale bianca",
-      "timeout": "Nessuna lettura ricevuta. Assicurati che il sensore sia immerso correttamente e che il sensore sia ancora connesso.",
-      "restart": "Riavvia calibrazione",
-      "saving": "Salvataggio calibrazione…",
-      "rejected": "Assicurati che la punta del sensore sia immersa in acqua fino alla linea orizzontale bianca, senza immergere il resto del sensore.",
-      "waiting": "In attesa di una lettura…"
-    },
-    "expired": {
-      "message": "La finestra di calibrazione del sensore è terminata dopo 2 minuti. Riavvia la calibrazione per riprovare.",
-      "restart": "Riavvia calibrazione"
-    },
-    "countdownHint": "Il sensore invia una lettura ogni 10 secondi",
-    "complete": {
-      "title": "Sensore calibrato!",
-      "body": "Rimetti il sensore nel vaso. Farà una lettura tra circa 2 minuti.",
-      "placement": "Infila la sonda vicino alla base della pianta, tutta nella terra"
-    },
-    "saveErrorTitle": "Errore nel salvataggio della calibrazione"
-  },
-  "weather": {
-    "forecastTitle": "Previsioni meteo",
-    "changeCityAria": "Cambia città",
-    "cancelCityChangeAria": "Annulla cambio città",
-    "locationSetupHint": "Imposta la tua città così Plantir può includere le previsioni di pioggia negli avvisi di annaffiatura per le piante da esterno.",
-    "introHint": "Scegli la tua città per vedere le previsioni.",
-    "searchPlaceholder": "Cerca una città per vedere le previsioni…",
-    "searchAria": "Cerca città per le previsioni meteo",
-    "noCitiesFound": "Nessuna città trovata. Prova un altro nome.",
-    "couldNotLoadForecast": "Impossibile caricare le previsioni.",
-    "today": "Oggi",
-    "tomorrow": "Domani",
-    "conditions": {
-      "clear": "Sereno",
-      "partlyCloudy": "Parzialmente nuvoloso",
-      "overcast": "Coperto",
-      "foggy": "Nebbia",
-      "drizzle": "Pioggerella",
-      "rain": "Pioggia",
-      "snow": "Neve",
-      "showers": "Rovesci",
-      "storm": "Temporale",
-      "unknown": "Sconosciuto"
-    }
-  },
-  "garden": {
-    "title": "Il tuo giardino",
-    "tierCaption": "{{name}}: {{tagline}}",
-    "footer": "Continua a prenderti cura delle piante per far crescere il giardino.",
-    "sceneAria": "Il tuo giardino in crescita",
-    "notYetUnlocked": "Non ancora sbloccato",
-    "mysteryName": "???",
-    "mysteryBadgeAria": "Badge misterioso: {{description}}",
-    "tiers": {
-      "seedPacket": {
-        "name": "Bustina di semi",
-        "tagline": "Terreno vuoto. Possibilità. Un sassolino solitario."
-      },
-      "firstPots": {
-        "name": "Primi vasi",
-        "tagline": "Sta succedendo qualcosa di verde."
-      },
-      "greenfingers": {
-        "name": "Pollice verde",
-        "tagline": "Il tuo giardino sta prendendo personalità."
-      },
-      "secretGarden": {
-        "name": "Giardino segreto",
-        "tagline": "Rampicanti, traliccio e orgoglio silenzioso."
-      },
-      "littleForest": {
-        "name": "Piccola foresta",
-        "tagline": "Le foglie si sono prese il cielo."
-      }
-    },
-    "unlockToast": {
-      "singleSuffix": "Tocca per aprire il tuo giardino.",
-      "multiTitle": "Il tuo giardino è cresciuto",
-      "multiMessage": "{{count}} nuovi badge sbloccati: tocca per aprire il tuo giardino."
-    },
-    "achievements": {
-      "hello_my_name_is": {
-        "name": "Prima pianta",
-        "description": "Crea la tua prima pianta."
-      },
-      "stalking_fern_legally": {
-        "name": "Primo sensore",
-        "description": "Registra il tuo primo sensore."
-      },
-      "matchmaker_of_moisture": {
-        "name": "Sensore collegato",
-        "description": "Collega un sensore a una pianta."
-      },
-      "dirt_whisperer_initiate": {
-        "name": "Sensore calibrato",
-        "description": "Completa la calibrazione di un sensore."
-      },
-      "plant_texted_back": {
-        "name": "Notifiche pronte",
-        "description": "Salva le impostazioni di notifica o collega Telegram."
-      },
-      "fully_rooted_not_emotionally": {
-        "name": "Configurazione completa",
-        "description": "Pianta, sensore collegato e calibrazione: configurazione completa."
-      },
-      "hydration_hero": {
-        "name": "Annaffiata in tempo",
-        "description": "Annaffia una pianta entro 48 ore da un avviso di annaffiatura."
-      },
-      "back_from_the_mulch": {
-        "name": "Sensore di nuovo online",
-        "description": "Riporta online una pianta offline."
-      },
-      "juice_box_refiller": {
-        "name": "Batteria ricaricata",
-        "description": "Ricarica un sensore dopo la batteria scarica."
-      },
-      "all_green_no_envy": {
-        "name": "Due piante in salute",
-        "description": "Almeno due piante monitorate, tutte in salute insieme."
-      },
-      "accidental_collector": {
-        "name": "Quattro piante",
-        "description": "Possiedi 4 piante."
-      },
-      "latin_name_dropper": {
-        "name": "Specie assegnata",
-        "description": "Assegna una specie a una pianta."
-      },
-      "influencer_garden": {
-        "name": "Tre foto di piante",
-        "description": "Aggiungi foto a 3 piante."
-      },
-      "cloud_oracle": {
-        "name": "Città del meteo impostata",
-        "description": "Imposta la città per il meteo."
-      },
-      "face_of_the_garden": {
-        "name": "Profilo completo",
-        "description": "Imposta un soprannome e una foto profilo."
-      },
-      "seven_days_without_drama": {
-        "name": "Sette giorni in salute",
-        "description": "Mantieni tutte le piante monitorate in salute per 7 giorni di fila."
-      },
-      "photosynthesis_stan": {
-        "name": "Trenta giorni in salute",
-        "description": "Mantieni tutte le piante monitorate in salute per 30 giorni di fila."
-      },
-      "the_comeback_kid": {
-        "name": "Recuperata dopo la siccità",
-        "description": "Riporta una pianta in salute dopo 3 o più giorni di siccità."
-      },
-      "inbox_compost": {
-        "name": "Posta svuotata",
-        "description": "Segna tutte le notifiche come lette."
-      },
-      "time_traveler": {
-        "name": "Storico mensile aperto",
-        "description": "Apri il grafico storico a 30 giorni di una pianta."
-      },
-      "midnight_mulcher": {
-        "name": "Visita all'ora degli avvisi",
-        "description": "Apri la dashboard vicino all'ora degli avvisi giornalieri."
-      }
-    },
-    "travelMarkerAria": "{{name}} è in viaggio. Apri lo stato della missione.",
-    "travelingName": "{{name}} sta esplorando",
-    "travelingDescription": "Questo angolo è vuoto finché non tornano.",
-    "openJournal": "Diario",
-    "openMap": "Manda in missione",
-    "openHelp": "Come funzionano le missioni",
-    "expeditionStatus": "Missione in corso",
-    "expeditionReady": "Sono tornati e hanno portato qualcosa di curioso.",
-    "cancelExpedition": "Richiama la squadra",
-    "cancelConfirm": "Tornano sani e salvi. Non ci saranno scoperte e il legame non cresce.",
-    "confirmCancel": "Richiama la squadra",
-    "keepGoing": "Lasciali continuare",
-    "welcomeReturn": "Accoglili a casa",
-    "skipReturn": "Salta",
-    "returnsAt": "Tornano il {{time}}",
-    "returnsToday": "Tornano oggi alle {{time}}",
-    "returnsTomorrow": "Tornano domani alle {{time}}",
-    "missionTeam": "Squadra in missione",
-    "noFailureNote": "Ogni missione va a buon fine. I talenti cambiano il racconto, non l'esito.",
-    "mapBusy": "C'è già una squadra in missione.",
-    "mapBusyHint": "Tornano prima di poterne mandare un'altra.",
-    "selectTeam": "Scegli tre compagni",
-    "recommendedTalents": "Utili qui",
-    "durationLabel": "Quando tornano?",
-    "depart": "Falli partire",
-    "mapLocked": "Le missioni si aprono quando in giardino ci sono tre creature.",
-    "stepTrail": "Scegli un sentiero",
-    "teamPicked": "{{count}} su 3",
-    "searchCreatures": "Cerca per nome o talento",
-    "searchCreaturesAria": "Cerca un compagno",
-    "filterAll": "Tutte",
-    "filterHelpful": "Utili qui",
-    "filterNew": "Nuove qui",
-    "newToTrail": "Prima volta",
-    "helpfulMark": "Utile",
-    "noCreatureMatch": "Nessuna creatura corrisponde alla ricerca.",
-    "teamIncomplete_one": "Manca un compagno.",
-    "teamIncomplete_other": "Mancano {{count}} compagni.",
-    "bondLevels": {
-      "1": "Nuovo arrivo",
-      "2": "Di casa",
-      "3": "Di fiducia",
-      "4": "Compagno",
-      "5": "Amico del giardino"
-    },
-    "talents": {
-      "navigation": "Orientamento",
-      "weatherSense": "Senso del meteo",
-      "plantKnowledge": "Conoscenza delle piante",
-      "nightSight": "Vista notturna",
-      "recovery": "Ripresa",
-      "observation": "Osservazione",
-      "photography": "Fotografia",
-      "communication": "Comunicazione",
-      "curiosity": "Curiosità",
-      "resourcefulness": "Intraprendenza"
+    "telegramChatId": {
+      "verifying": "Verifica in corso…",
+      "typePersonal": "Account personale ·",
+      "typeGroup": "Gruppo ·",
+      "errorNotFound": "Chat ID non trovato. Assicurati di aver prima avviato la chat con il bot di Plantir.",
+      "errorBotNotInChat": "Il bot di Plantir non fa parte di questo gruppo. Aggiungi prima @PlantirAlert_bot al gruppo.",
+      "errorGeneric": "Impossibile verificare il Chat ID. Controlla il numero e riprova."
     },
     "profile": {
-      "sectionHelp": "Informazioni: {{title}}",
-      "origin": "Origine",
-      "originLead": "Questa creatura è arrivata quando hai completato questo traguardo.",
-      "originLine": "{{name}}, {{date}}",
-      "bond": "Legame",
-      "bondHelp": "Il legame cresce quando questa creatura torna da una missione e, un po', ogni volta che ti prendi cura delle piante.",
-      "bondNext": "Prossimo livello: {{label}}",
-      "bondPoints": "{{points}} / {{needed}}",
-      "maxBond": "Il legame è al massimo.",
-      "talents": "Talenti",
-      "talentsLead": "In missione queste capacità cambiano la storia che riportano a casa. Non cambiano l'esito: ogni missione riesce.",
-      "memories": "Ricordi",
-      "memoriesLead": "Un ricordo nuovo compare ogni volta che il legame sale di un livello, a partire dal secondo.",
-      "memoriesLocked": "Ancora nessuno. Il primo compare a {{label}}.",
-      "personalExpedition": "Missione",
-      "personalHelp": "Quando il legame arriva a {{label}}, il quarto livello, si apre una missione che può guidare solo questa creatura. Mandala dal pulsante in alto in questa pagina.",
-      "personalLocked": "Non ancora aperta.",
-      "personalOpen": "Aperta. Mandala dal pulsante in alto.",
-      "outings": "Uscite",
-      "outingsLead": "Ogni uscita compare una volta: il sentiero, i tesori trovati e se il legame è cresciuto.",
-      "outingUntitled": "Un'uscita",
-      "outingBond": "Il legame è cresciuto.",
-      "outingEmpty": "Ancora nessuna uscita."
-    },
-    "intro": {
-      "stepCount": "{{current}} di {{total}}",
-      "startOuting": "Manda la prima missione",
-      "skip": "Ora no",
-      "continue": "Continua",
-      "done": "Ho capito",
-      "steps": {
-        "send": {
-          "title": "Manda una squadra",
-          "body": "Tocca {{send}} in alto. Scegli un sentiero, quando devono tornare e le tre creature che partono. Tornano sempre: le missioni non falliscono. Portano una storia e, a volte, un tesoro."
-        },
-        "timing": {
-          "title": "Una missione alla volta",
-          "body": "Puoi avere una sola squadra fuori. Mentre sono via, la fascia in cima a questa pagina indica dove sono andati e quando rientrano. {{cancel}} li fa tornare subito, ma a mani vuote."
-        },
-        "bond": {
-          "title": "Il legame",
-          "body": "Ogni creatura ha un legame con te: un'amicizia a cinque livelli. Lo vedi toccando la creatura nel giardino: si apre la sua scheda, con il legame in alto sotto il nome. Cresce quando tornano da una missione, e un po' anche quando curi le piante. Non scende se resti lontano."
-        },
-        "journal": {
-          "title": "Il diario",
-          "body": "Storie e tesori finiscono in {{journal}}, il bottone in alto in questa pagina. Aprilo per rileggere quello che hanno trovato."
-        }
+      "title": "Profilo",
+      "subtitle": "Scegli come mostrarti su Plantir.",
+      "nickname": "Soprannome",
+      "nicknamePlaceholder": "Come vuoi che ti chiamiamo?",
+      "nicknameOptional": "Facoltativo",
+      "email": "Email",
+      "emailDescription": "Gestita dall'amministratore del tuo account.",
+      "save": "Salva",
+      "saved": {
+        "title": "Salvato",
+        "message": "Profilo aggiornato."
+      },
+      "avatar": {
+        "fileAria": "File foto profilo",
+        "alt": "Avatar del profilo",
+        "viewAria": "Visualizza foto profilo",
+        "editAria": "Modifica foto profilo",
+        "upload": "Carica",
+        "uploadPhoto": "Carica foto",
+        "replacePhoto": "Sostituisci foto",
+        "removePhoto": "Rimuovi foto",
+        "modalTitle": "Foto profilo",
+        "enlargedAlt": "Foto profilo ingrandita"
       }
     },
-    "journal": {
-      "title": "Diario delle missioni",
-      "lead": "Qui restano le tracce delle uscite: le storie che hanno riportato, i tesori trovati e i sentieri che avete iniziato a conoscere.",
-      "empty": "Qui si raccolgono i viaggi e le scoperte.",
-      "emptyHint": "Manda una squadra. Al primo ritorno si apre la prima pagina.",
-      "destinations": "Sentieri",
-      "stories": "Storie",
-      "keepsakes": "Tesori",
-      "memories": "Ricordi",
-      "complete": "Hai trovato le scoperte principali",
-      "openThreads": "Cosa resta là fuori",
-      "unvisited": "Ancora da esplorare",
-      "foundOf": "{{found}} su {{total}}",
-      "withTeam": "Con {{names}}",
-      "latestStory": "Ultimo ritorno"
-    },
-    "durations": {
-      "instant": "Subito",
-      "laterToday": "Entro oggi",
-      "tomorrow": "Domani",
-      "fewDays": "Tra qualche giorno"
-    },
-    "families": {
-      "nearby": "Sentieri qui intorno",
-      "plantLife": "Tra le piante",
-      "weather": "Sotto il cielo",
-      "recovery": "Percorsi di ripresa",
-      "nocturnal": "Percorsi notturni",
-      "archive": "Tra i ricordi"
-    },
-    "destinations": {
-      "first_outing": {
-        "name": "Sentiero di casa",
-        "premise": "La prima passeggiata sul bordo del giardino, appena abbastanza lontana da vedere qualcosa di nuovo."
-      },
-      "moss_lane": {
-        "name": "Vicolo del muschio",
-        "premise": "Un sentiero tranquillo di pietre umide e luce verde bassa, giusto per imparare a muoversi insieme."
-      },
-      "seed_hollow": {
-        "name": "Conca dei semi",
-        "premise": "Una nicchia al riparo, dove i semi strani si raccolgono quando il vento ha finito di spingerli."
+    "plantsCenter": {
+      "title": "Centro piante",
+      "tabs": {
+        "plants": "Piante",
+        "devices": "Sensori"
       }
     },
-    "stories": {
-      "first_outing_ch1": "Il cancello del giardino era aperto, e i vasi erano a pochi passi, ancora in vista. {{lead}} non aveva finito la frase, quella in cui diceva che sarebbero andati solo fino al primo angolo, e {{scout}} era già dall'altra parte, un piede sul sentiero. {{anchor}} si girava ogni due passi. Non verso il sentiero: verso i vasi, come se potessero decidere di andarsene da soli.\n\nSi sono fermati lì, dove il sentiero smette di essere casa. L'erba davanti era un po' più alta, e non c'era altro da vedere. {{lead}} ha aperto il diario su una pagina bianca e ha scritto proprio quello: il cancello, i vasi, l'erba più alta, il punto in cui finisce il giardino. La pagina non era più bianca. È la prima del diario.",
-      "first_outing_hook1": "Sul palo destro del cancello, all'altezza delle mani, c'è un sassolino grigio ancora tiepido. Nessuno l'ha preso.",
-      "first_outing_ch2": "Sul palo destro del cancello, all'altezza delle mani, c'era un sassolino grigio. Non era incastrato: stava posato in piano, ed era tiepido, come se chi lo aveva messo avesse appena tolto le dita.\n\n{{anchor}} ha detto che quel sasso aveva già un posto, e che il posto era il palo. {{scout}} lo teneva lo stesso, con tutte e due le mani, attento a non farlo cadere nell'erba. {{lead}} ha guardato il palo, adesso vuoto, e ha lasciato che {{scout}} lo portasse a casa. Tra i vasi sono rientrati più vicini di come erano usciti.",
-      "first_outing_hook2": "Oltre il cancello il muschio non cresce a chiazze. Parte in una riga sola, troppo dritta per essere venuta su da sola.",
-      "first_outing_repeat1": "Sono usciti di nuovo dal cancello del giardino e hanno rifatto lo stesso bordo, con i vasi ancora in vista. Prima di rientrare, {{lead}} ha chiesto di vedere il sassolino. {{scout}} ha aperto le mani. Era ancora tiepido.",
-      "moss_lane_ch1": "Il vicolo del muschio comincia pochi passi dopo il cancello del giardino. Le pietre del sentiero sono verdi, e il verde non è a macchie: è una riga sola, che passa da una pietra all'altra come se qualcuno l'avesse tirata con un dito.\n\n{{scout}} ha visto la riga prima che gli altri dicessero di sì, e si è incamminato. Quando {{lead}} ha alzato gli occhi, {{scout}} era già avanti, verso una radura dove il vicolo si allarga. {{anchor}} non ha fatto un altro passo finché non ha sentito la voce di {{scout}} tornare indietro. {{lead}} ha chiamato. {{scout}} ha risposto, e nella radura qualcosa che stava zitto ad ascoltare ha smesso, di colpo. Sono tornati uno accanto all'altro. La riga di muschio è venuta con loro, copiata su una foglia umida e stesa bene, così il disegno non si perdeva per strada.",
-      "moss_lane_hook1": "La riga di muschio non finisce nella radura. Continua tra le pietre, troppo dritta per essere cresciuta da sola.",
-      "moss_lane_ch2": "Sono tornati nel vicolo di giorno, quando il sole entra di taglio tra le pietre. Volevano capire se una riga di muschio così dritta può venire per caso.\n\nPer pochi minuti, sotto il muschio, la rugiada disegna un secondo sentiero. Non torna verso il giardino: va dalla parte opposta. {{scout}} voleva seguirlo subito, finché si vedeva. {{lead}} ha detto di copiarlo prima sul foglio. Ha avuto ragione solo a metà. La rugiada si è asciugata con lo schizzo ancora da finire. {{anchor}} non ha detto se copiare era la scelta giusta, ma è rimasto accanto a {{lead}} per tutta la strada del ritorno.",
-      "moss_lane_hook2": "Il sentiero di rugiada non porta a casa. Continua, verso un pezzo di valle che non ha ancora un nome.",
-      "moss_lane_ch3": "Hanno seguito la rugiada fino in fondo al vicolo. Si ferma davanti a una pietra piatta. Intorno alla pietra c'era un nastro verde, annodato stretto, dello stesso colore del muschio.\n\n{{anchor}} ha detto piano che il nastro era di qualcuno, e che doveva restare sulla pietra. {{scout}} lo aveva già slegato, e lo teneva come si tiene una cosa che si è deciso di portare via in un secondo. {{lead}} ha lasciato che {{scout}} lo portasse, e dove c'era il nastro ha messo una foglia pressata. Uno scambio così si fa una volta sola. Sulla strada verso il giardino hanno parlato poco.",
-      "moss_lane_hook3": "Quando si sono voltati, il nodo sulla pietra era stato rifatto. Più avanti, nel vicolo, un altro nastro verde aspettava tra le pietre.",
-      "moss_lane_ch4": "Questa volta hanno seguito la riga di muschio fino all'ultima pietra del vicolo. Il muschio è tagliato corto, pietra per pietra, e qualcuno lo tiene così da prima che il giardino esistesse.\n\nPer tutta la strada verso casa {{lead}} ha cercato di metterlo a posto: il sentiero di cui erano così orgogliosi non l'avevano trovato loro. Qualcuno se ne occupa. All'ultima pietra {{anchor}} ha lasciato lo schizzo piegato, in vista, come si lascia un biglietto a una persona che non si è mai incontrata.",
-      "moss_lane_hook4": "Nessuno è uscito a incontrarli. Il muschio continua dove finisce la luce, e chi lo taglia lavora di notte.",
-      "moss_lane_repeat1": "Il nastro verde sulla pietra in fondo al vicolo del muschio era stato rifatto da poco, forse mentre loro stavano lì a guardare. Nessuno ha chiesto chi fosse stato. {{scout}} ha contato i nodi. Adesso sono undici, e {{scout}} li sa tutti.",
-      "moss_lane_repeat2": "Nel vicolo non c'era niente di nuovo, tranne il ramo che l'altra volta aveva fatto inciampare {{anchor}}. Qualcuno lo aveva spostato di lato e appoggiato con cura a una pietra. {{lead}} ha detto grazie a voce alta, agli alberi, e lo pensava.",
-      "seed_hollow_ch1": "Poco fuori dal giardino c'è un avvallamento riparato dal vento. Lo chiamano la conca. I semi ci rotolano quando il vento ha finito con loro, e si fermano contro la sponda di terra.\n\n{{scout}} è sceso per primo. È risalito con tutte e due le mani piene di semi piccoli e scuri, che non somigliavano a nessuna pianta dei vasi. {{lead}} li ha fatti posare su una pietra piatta, per guardarli uno alla volta. {{anchor}} li ha contati ad alta voce, e li ha ricontati prima di partire, così a casa il numero restava quello.",
-      "seed_hollow_hook1": "Sotto la sponda della conca c'è una radice che scende più in fondo di quanto la conca sia larga. Non è delle piante che crescono sopra.",
-      "seed_hollow_ch2": "Sotto la sponda della conca la terra è smossa, e da lì escono delle radici. Sono più grosse di quelle delle piante di sopra, e scendono più in fondo di quanto la conca sia larga.\n\n{{lead}} ha copiato sul foglio il loro percorso, una curva dopo l'altra. {{scout}} voleva staccarne un pezzo e portarlo a casa, per guardarlo da vicino. {{anchor}} ha tenuto fermo il foglio e ha detto di no, piano. La radice è rimasta dov'era.",
-      "seed_hollow_hook2": "Dove la sponda della conca gira c'è un pezzo di legno consumato liscio, come se qualcuno ci si fosse seduto ad aspettare.",
-      "seed_hollow_ch3": "Dove la sponda della conca gira, incastrato tra due radici, c'era un pezzo di legno levigato. Qualcuno lo aveva scavato fino a farne un ciondolo, con un buco per un filo. La mano che lo aveva fatto non era del giardino.\n\n{{anchor}} ha detto di lasciarlo lì, tra le radici. {{scout}} lo aveva già appeso a un rametto, per vedere come stava. Stava bene. {{lead}} ha lasciato che {{scout}} lo portasse a casa, e nel punto dov'era il legno ha messo uno dei semi della conca.",
-      "seed_hollow_hook3": "Chi usava la conca non ha finito. I semi continuano ad arrivare, anche nei giorni in cui il vento è fermo.",
-      "seed_hollow_repeat1": "Nella conca, dall'ultima volta, si erano raccolti altri semi. {{scout}} li ha messi in fila secondo il verso in cui sembravano voler crescere. {{anchor}} ha tenuto da parte quelli che non c'entravano con gli altri, per guardarli con calma a casa.",
-      "seed_hollow_repeat2": "A casa, il ciondolo di legno che {{scout}} aveva portato dalla conca era girato dall'altra parte. Nessuno dice di averlo toccato."
+    "plantsTab": {
+      "columns": {
+        "name": "Nome",
+        "status": "Stato",
+        "moisture": "Umidità",
+        "assignedDevice": "Sensore associato",
+        "actions": "Azioni"
+      },
+      "addPlant": "Aggiungi pianta",
+      "emptyTitle": "Ancora nessuna pianta",
+      "emptyDescription": "Aggiungi una pianta per iniziare a monitorarne l'umidità. Dalle un nome e, se vuoi, una foto.",
+      "addFirstPlant": "Aggiungi la tua prima pianta",
+      "noSearchMatch": "Nessuna pianta corrisponde alla ricerca.",
+      "assign": "Associa",
+      "editPlant": "Modifica pianta",
+      "deletePlant": "Elimina pianta",
+      "outdoorPlant": "Pianta da esterno"
     },
-    "discoveries": {
-      "first_outing_journal": "Prima pagina del diario",
-      "first_outing_pebble": "Sasso tiepido",
-      "moss_lane_map": "Schizzo macchiato di muschio",
-      "moss_lane_dew": "Appunto sul sentiero di rugiada",
-      "moss_lane_keepsake": "Nastro verde, morbido",
-      "seed_hollow_seed": "Seme sconosciuto",
-      "seed_hollow_root": "Traccia di radice",
-      "seed_hollow_keepsake": "Ciondolo di legno cavo"
+    "plantForm": {
+      "addTitle": "Aggiungi pianta",
+      "editTitle": "Modifica pianta",
+      "name": "Nome",
+      "nameDescription": "Dai a questa pianta un nome facile da riconoscere.",
+      "namePlaceholder": "es. Ficus",
+      "outdoorLabel": "Pianta da esterno",
+      "outdoorDescription": "Attiva questa opzione se la pianta si trova all'esterno ed è esposta alla pioggia.",
+      "potHeight": "Altezza del vaso",
+      "potHeightAria": "Altezza del vaso",
+      "potHeightWhyAria": "Perché l'altezza del vaso è importante per le letture dell'umidità",
+      "potHeightDescription": "Facoltativo: aiuta a interpretare con maggiore precisione l'umidità nei vasi più alti.",
+      "speciesSectionTitle": "Specie (facoltativo)",
+      "speciesSectionDescription": "Indicare la specie permette di ricevere consigli di cura più precisi.",
+      "photoSectionTitle": "Foto",
+      "photoSectionDescription": "Usa la foto associata alla specie oppure carica una tua immagine.",
+      "nameRequired": "Il nome della pianta è obbligatorio",
+      "addSubmit": "Aggiungi pianta",
+      "saveSubmit": "Salva modifiche",
+      "createdMessage": "Pianta aggiunta correttamente",
+      "updatedMessage": "Pianta aggiornata correttamente"
     },
-    "threads": {
-      "first_outing_journal": "La prima pagina del diario è ancora bianca.",
-      "first_outing_pebble": "Sul palo destro del cancello c'è un sassolino che resta tiepido, e nessuno l'ha ancora preso.",
-      "moss_lane_map": "Nel vicolo del muschio il verde corre in una riga, e nessuno l'ha ancora disegnata.",
-      "moss_lane_dew": "Sotto il muschio, per pochi minuti al giorno, la rugiada disegna un secondo sentiero. Nessuno è ancora passato all'ora giusta.",
-      "moss_lane_keepsake": "In fondo al vicolo una pietra piatta ha un nastro verde annodato intorno, e qualcuno l'ha legato.",
-      "seed_hollow_seed": "Nella conca poco fuori dal giardino i semi continuano a raccogliersi, e non somigliano a nessuna pianta dei vasi.",
-      "seed_hollow_root": "Sotto la sponda della conca una radice scende più in fondo di quanto la conca sia larga.",
-      "seed_hollow_keepsake": "Dove la sponda della conca gira, un legno è stato levigato da mani che non sono del giardino."
+    "potDepth": {
+      "tooltip": "Nei vasi più alti, la superficie può asciugarsi prima rispetto al terriccio in profondità. Plantir tiene conto dell'altezza del vaso per offrirti letture dell'umidità e avvisi di annaffiatura più affidabili.",
+      "notSure": "Non lo so / salta",
+      "compact": "≤ 15 cm",
+      "small": "15–25 cm",
+      "medium": "25–40 cm",
+      "large": "40–60 cm",
+      "deep": "> 60 cm",
+      "inGround": "In piena terra"
     },
-    "bondReasons": {
-      "expedition": "Il legame è cresciuto dopo un'uscita.",
-      "care_plant": "Il legame è cresciuto perché hai aggiunto una pianta nuova.",
-      "care_device": "Il legame è cresciuto perché hai registrato un sensore.",
-      "care_link": "Il legame è cresciuto perché hai collegato una pianta a un sensore.",
-      "care_calibration": "Il legame è cresciuto perché hai calibrato un sensore.",
-      "care_watering": "Il legame è cresciuto perché hai annaffiato in tempo dopo un avviso.",
-      "care_offline": "Il legame è cresciuto perché un sensore è tornato online.",
-      "care_battery": "Il legame è cresciuto perché hai ricaricato una batteria scarica.",
-      "care_healthy": "Il legame è cresciuto perché le piante con un sensore sono rimaste in salute.",
-      "care_species": "Il legame è cresciuto perché hai indicato la specie di una pianta.",
-      "care_photo": "Il legame è cresciuto perché hai aggiunto la foto di una pianta.",
-      "care_weather": "Il legame è cresciuto perché hai scelto la città per il meteo.",
-      "care_notifications": "Il legame è cresciuto perché hai salvato le impostazioni delle notifiche.",
-      "care_inbox": "Il legame è cresciuto perché hai svuotato la posta.",
-      "care_history": "Il legame è cresciuto perché hai aperto lo storico di una pianta.",
-      "care_profile": "Il legame è cresciuto perché hai completato il profilo del giardino.",
-      "care_comeback": "Il legame è cresciuto perché una pianta si è ripresa dopo una lunga siccità.",
-      "milestone": "Il legame è cresciuto perché il giardino ha raggiunto un nuovo traguardo."
+    "species": {
+      "selectAria": "Specie della pianta (facoltativo)",
+      "placeholder": "Inizia a digitare la specie…",
+      "typeAtLeast2": "Digita almeno 2 caratteri",
+      "searching": "Ricerca in corso…",
+      "noMatches": "Nessun risultato",
+      "searchingSpecies": "Ricerca specie in corso…",
+      "loadingDetails": "Caricamento dettagli della specie…",
+      "careGuidanceBadge": "Guida alla cura",
+      "scientificName": "Nome scientifico: {{name}}",
+      "speciesImageAlt": "Immagine della specie",
+      "recommendedSoilMoisture": "Umidità del terreno consigliata",
+      "recommendedTemperature": "Temperatura consigliata",
+      "viewCareGuidance": "Vedi guida alla cura",
+      "soil": "Terreno:",
+      "sunlight": "Esposizione solare:",
+      "watering": "Annaffiatura:",
+      "fertilization": "Concimazione:",
+      "pruning": "Potatura:",
+      "clearSpecies": "Non è la specie giusta",
+      "useSpeciesPhoto": "Usa foto della specie",
+      "useCustomPhoto": "Usa foto personalizzata",
+      "plantPreviewAlt": "Anteprima pianta",
+      "photoFileAria": "File foto pianta",
+      "uploadCustomPhoto": "Carica foto personalizzata",
+      "replaceCustomPhoto": "Sostituisci foto personalizzata",
+      "usingSpeciesPhoto": "Foto della specie in uso",
+      "translationLoading": "Traduzione della guida alla cura in corso…"
     },
-    "notifications": {
-      "returnedTitle": "Tornati dalla missione",
-      "returnedBody": "Sono tornati e hanno portato qualcosa di curioso.",
-      "bondTitle": "{{name}} ha raggiunto {{level}}",
-      "bondBody": "C'è un nuovo ricordo nel suo profilo.",
-      "personalTitle": "Si è aperta una missione personale",
-      "personalBody": "{{name}} può partire per una storia tutta sua."
-    },
-    "creatures": {
-      "hello_my_name_is": {
-        "name": "Brin",
-        "intro": "Un piccolo germoglio che nota ogni foglia nuova.",
-        "personality": "Entusiasta, gentile e sempre il primo a sbirciare dietro l'angolo.",
-        "depart": "Brin corre al cancello con entrambe le foglie alzate.",
-        "return": "Brin torna un po' più alto di come lo ricordi.",
-        "memories": {
-          "1": "Brin si è seduto nel primo vaso e ha deciso che quella era casa.",
-          "2": "Ha imparato i giorni dell'annaffiatura dal suono dell'annaffiatoio.",
-          "3": "Ha iniziato a lasciare sentierini di sassi, così nessuno si perde.",
-          "4": "Ora saluta le piante nuove prima che gli altri se ne accorgano."
-        }
-      },
-      "stalking_fern_legally": {
-        "name": "Morel",
-        "intro": "Un fungo esploratore che ascolta attraverso la terra.",
-        "personality": "Silenzioso, preciso e felice di restare fermo a lungo.",
-        "depart": "Morel inclina il cappello una volta e entra nell'ombra.",
-        "return": "Morel torna con la terra ancora umida sui piedi.",
-        "memories": {
-          "1": "Morel ha trovato il primo sensore e l'ha trattato come un vicino nuovo.",
-          "2": "Ha imparato a distinguere una lettura vera da una nervosa.",
-          "3": "Ha iniziato a mappare i sentieri più silenziosi tra i vasi.",
-          "4": "Ora aspetta al bordo di casa, finché la squadra non è pronta."
-        }
-      },
-      "matchmaker_of_moisture": {
-        "name": "Liana",
-        "intro": "Un rampicante che ama la compagnia e le presentazioni fatte bene.",
-        "personality": "Calda, chiacchierona e brava a unire i capi sciolti.",
-        "depart": "Liana lascia un saluto avvolto intorno al palo del cancello.",
-        "return": "Liana torna e ha già iniziato a raccontare.",
-        "memories": {
-          "1": "Liana ha imparato che due cose possono stare insieme senza essere uguali.",
-          "2": "Controlla ancora che ogni sentiero abbia qualcuno che lo percorra."
-        }
-      },
-      "dirt_whisperer_initiate": {
-        "name": "Peek",
-        "intro": "Un esploratore curioso, con una lente per guardare più da vicino.",
-        "personality": "Attento, felice dei dettagli, mai di fretta.",
-        "depart": "Peek pulisce la lente e annuisce.",
-        "return": "Peek torna strizzando gli occhi su qualcosa nel palmo.",
-        "memories": {
-          "1": "Peek ha passato un pomeriggio a guardare l'acqua diventare un numero.",
-          "2": "Tiene una lista di cose che si vedono solo se aspetti."
-        }
-      },
-      "plant_texted_back": {
-        "name": "Chime",
-        "intro": "Un fiore a campanella che preferisce toccarti la spalla piuttosto che alzare la voce.",
-        "personality": "Premuroso, musicale e un po' formale.",
-        "depart": "Chime suona una volta, piano, e se ne va.",
-        "return": "Chime torna con una nota nuova, più bassa.",
-        "memories": {
-          "1": "Chime ha imparato la differenza tra un messaggio utile e uno rumoroso.",
-          "2": "Preferisce ancora un suono chiaro a un pugno di allarmi."
-        }
-      },
-      "fully_rooted_not_emotionally": {
-        "name": "Knoll",
-        "intro": "Un guardiano saldo, a cui piace quando le cose sono finite per bene.",
-        "personality": "Stabile, pratico e orgoglioso quando basta una volta sola.",
-        "depart": "Knoll controlla il cancello due volte, poi parte.",
-        "return": "Knoll torna e si siede come se il posto fosse rimasto caldo.",
-        "memories": {
-          "1": "Knoll ha segnato il giorno in cui il giardino è sembrato completo.",
-          "2": "Cammina ancora il perimetro quando cambia la luce."
-        }
-      },
-      "hydration_hero": {
-        "name": "Rill",
-        "intro": "Un compagno d'acqua che arriva proprio quando serve.",
-        "personality": "Gentile, senza fronzoli e poco amico del dramma.",
-        "depart": "Rill versa un po' d'acqua sul sentiero e la segue.",
-        "return": "Rill torna con l'odore della pioggia sulla terra asciutta.",
-        "memories": {
-          "1": "Rill ha imparato che la bevuta migliore è quella che arriva in tempo.",
-          "2": "Ha iniziato a portare una goccia di riserva per chi sembra assetato.",
-          "3": "Per lui una settimana tranquilla vale più di qualsiasi salvataggio.",
-          "4": "Ora insegna alle nuove creature quando è abbastanza."
-        }
-      },
-      "back_from_the_mulch": {
-        "name": "Wisp",
-        "intro": "Un'orchidea chiara che trova ciò che è diventato silenzioso.",
-        "personality": "Parla piano, non molla e si spaventa di rado.",
-        "depart": "Wisp si assottiglia nell'aria e sparisce.",
-        "return": "Wisp si raccoglie di nuovo al bordo di casa.",
-        "memories": {
-          "1": "Wisp è rimasta con un sensore muto, finché non ha parlato di nuovo.",
-          "2": "Preferisce ancora i sentieri notturni, anche a mezzogiorno."
-        }
-      },
-      "juice_box_refiller": {
-        "name": "Volt",
-        "intro": "Un coleottero luminoso che nota quando qualcosa sta per finire.",
-        "personality": "Svelto, utile e affezionato a una buona scintilla.",
-        "depart": "Volt fa clic e sfreccia sul sentiero.",
-        "return": "Volt torna un po' più luminoso di prima.",
-        "memories": {
-          "1": "Volt ha imparato la differenza tra stanco e vuoto.",
-          "2": "Vigila su chi ha bisogno di riposo, non di una spinta."
-        }
-      },
-      "all_green_no_envy": {
-        "name": "Twinleaf",
-        "intro": "Due trifogli che rifiutano di essere contati come uno solo.",
-        "personality": "Giocose, abbinate e inaspettatamente sagge.",
-        "depart": "Partono al passo, poi lo rompono apposta.",
-        "return": "Tornano discutendo su chi ha visto per primo la cosa interessante.",
-        "memories": {
-          "1": "Twinleaf ha deciso che due piante in salute erano già un giardino.",
-          "2": "Controllano ancora che nessuno prosperi da solo."
-        }
-      },
-      "accidental_collector": {
-        "name": "Pottle",
-        "intro": "Una felce in vaso che trova sempre posto per un altro.",
-        "personality": "Allegra, un po' disordinata e generosa di spazio.",
-        "depart": "Pottle mette in borsa tre cose e non ne usa nessuna.",
-        "return": "Pottle torna con una quarta cosa che non voleva portare.",
-        "memories": {
-          "1": "Pottle ha smesso di contare dopo la quarta pianta e ha iniziato a sistemare.",
-          "2": "Fa ancora spazio prima che qualcuno lo chieda."
-        }
-      },
-      "latin_name_dropper": {
-        "name": "Quill",
-        "intro": "Uno scriba dei cartellini, a cui piace un nome vero.",
-        "personality": "Studioso, gentile e un po' pignolo.",
-        "depart": "Quill si mette un'etichetta di riserva dietro l'orecchio.",
-        "return": "Quill torna con l'inchiostro umido e un sorriso attento.",
-        "memories": {
-          "1": "Quill ha scritto il primo nome di specie come se fosse un benvenuto.",
-          "2": "Rifiuta ancora di indovinare, se si può andare a cercare."
-        }
-      },
-      "influencer_garden": {
-        "name": "Lumen",
-        "intro": "Un girasole con un occhio paziente per la luce.",
-        "personality": "Caldo, visivo e poco interessato alle pose.",
-        "depart": "Lumen si gira verso il sentiero come se fosse il sole.",
-        "return": "Lumen torna con un'immagine che nessuno ha chiesto e che tutti vogliono.",
-        "memories": {
-          "1": "Lumen ha imparato che una pianta sembra più se stessa dopo la terza foto.",
-          "2": "Aspetta ancora la luce vera, non la più forte."
-        }
-      },
-      "cloud_oracle": {
-        "name": "Nimbus",
-        "intro": "Una nuvoletta del meteo che preferisce le previsioni alle sorprese.",
-        "personality": "Pensierosa, portata a vagare e di rado in errore sulla pioggia.",
-        "depart": "Nimbus si abbassa all'altezza delle siepi e scivola via.",
-        "return": "Nimbus torna un tono più scura o più chiara, a seconda.",
-        "memories": {
-          "1": "Nimbus ha imparato prima il nome della città, poi il suo tempo.",
-          "2": "Rifiuta ancora di dare fretta a una nuvola."
-        }
-      },
-      "face_of_the_garden": {
-        "name": "Still",
-        "intro": "Una creatura dello stagno: i riflessi li vuole scelti, non a caso.",
-        "personality": "Calma, precisa e discretamente affezionata ai volti.",
-        "depart": "Still lascia un anello sull'acqua e lo segue fuori.",
-        "return": "Still torna e la superficie si ferma come se non fosse mai partita.",
-        "memories": {
-          "1": "Still ha tenuto il primo ritratto finché non è sembrato quello giusto.",
-          "2": "Preferisce ancora un soprannome detto ad alta voce a uno scritto."
-        }
-      },
-      "seven_days_without_drama": {
-        "name": "Halo",
-        "intro": "Una ghirlanda che misura il tempo in settimane tranquille.",
-        "personality": "Paziente, cerimoniale e poco impressionata dall'urgenza.",
-        "depart": "Halo rotola una volta e segue il sentiero come un cerchio.",
-        "return": "Halo torna un po' più verde di quando è partita.",
-        "memories": {
-          "1": "Halo ha contato sette giorni calmi e ha deciso che quella era già una magia.",
-          "2": "Preferisce ancora una settimana senza incidenti a qualsiasi salvataggio."
-        }
-      },
-      "photosynthesis_stan": {
-        "name": "Solara",
-        "intro": "Una creatura del sole a cui piace una luce lunga e uniforme.",
-        "personality": "Generosa, lenta e fedele ai giorni ordinari.",
-        "depart": "Solara si alza un poco e tira dietro una macchia calda sul sentiero.",
-        "return": "Solara torna come se fosse stata sopra di voi per tutto il tempo.",
-        "memories": {
-          "1": "Solara è restata trenta giorni e non ha mai chiesto un grazie.",
-          "2": "Tratta ancora un mese in salute come la storia migliore."
-        }
-      },
-      "the_comeback_kid": {
-        "name": "Cinder",
-        "intro": "Una felce che ricorda la siccità senza farne uno spettacolo.",
-        "personality": "Tenace, di umorismo secco e cauta con la speranza.",
-        "depart": "Cinder scuote la polvere vecchia dalle fronde e parte.",
-        "return": "Cinder torna più verde in punta.",
-        "memories": {
-          "1": "Cinder ha aspettato tre giorni asciutti e poi ha bevuto senza lamentele.",
-          "2": "Non accetta che qualcuno chiami la ripresa una vittoria sulla cura."
-        }
-      },
-      "inbox_compost": {
-        "name": "Muck",
-        "intro": "Un goloso del compost, che trasforma gli avanzi in qualcosa di utile.",
-        "personality": "Diretto, spiritoso e sorprendentemente ordinato.",
-        "depart": "Muck fa un rutto educato di saluto.",
-        "return": "Muck torna più leggero e orgoglioso.",
-        "memories": {
-          "1": "Muck ha svuotato un'intera posta e l'ha chiamata pranzo.",
-          "2": "Preferisce ancora un mucchio onesto a dieci note dimenticate."
-        }
-      },
-      "time_traveler": {
-        "name": "Drift",
-        "intro": "Una foglia clessidra a cui piace guardare indietro senza restare bloccata.",
-        "personality": "Riflessiva, precisa e un po' nostalgica.",
-        "depart": "Drift si capovolge e inizia a camminare.",
-        "return": "Drift torna con la sabbia sistemata in un disegno nuovo.",
-        "memories": {
-          "1": "Drift ha aperto trenta giorni di storia e non ha distolto lo sguardo.",
-          "2": "Tratta ancora un grafico lungo come una specie di mappa."
-        }
-      },
-      "midnight_mulcher": {
-        "name": "Umbra",
-        "intro": "Un fungo della luna che fa la veglia tarda.",
-        "personality": "Notturno, leale e indifferente agli orari strani.",
-        "depart": "Umbra aspetta la luce più fioca, poi scivola via.",
-        "return": "Umbra torna con l'odore dell'aria notturna.",
-        "memories": {
-          "1": "Umbra ha imparato l'ora degli avvisi e l'ha trattata come un invito fisso.",
-          "2": "Preferisce ancora arrivare quando il giardino è in silenzio."
-        }
+    "plantDelete": {
+      "title": "Elimina pianta",
+      "confirm": "Vuoi davvero eliminare <bold>{{name}}</bold>?",
+      "unassignWarning": "Eventuali sensori attualmente associati a questa pianta verranno scollegati.",
+      "success": {
+        "title": "Eliminata",
+        "message": "Pianta eliminata correttamente"
       }
-    }
-  },
-  "sortable": {
-    "sortBy": "Ordina per {{label}}"
-  },
-  "admin": {
-    "title": "Portale Admin",
-    "refresh": "Aggiorna",
-    "filtersLoadError": "Errore nel caricamento dei filtri",
-    "tabs": {
-      "devices": "Sensori",
-      "logs": "Log",
-      "firmware": "Firmware"
     },
-    "filters": {
-      "allDevices": "Tutti i sensori",
-      "allOwners": "Tutti i proprietari",
-      "allPlants": "Tutte le piante",
-      "allLevels": "Tutti i livelli"
+    "plantDetail": {
+      "editPlant": "Modifica pianta",
+      "editDevice": "Modifica sensore",
+      "viewFullSizeAria": "Visualizza foto a schermo intero di {{name}}",
+      "fullSizeAria": "Foto a schermo intero di {{name}}",
+      "closeFullSizeAria": "Chiudi foto a schermo intero",
+      "currentStatus": "Stato attuale",
+      "humidity": "Umidità",
+      "noReading": "Nessuna lettura",
+      "lastWatered": "Ultima annaffiatura",
+      "noDevice": "Nessun sensore",
+      "battery": "Batteria",
+      "reportingInterval": "Intervallo di invio",
+      "connectDeviceTitle": "Collega un sensore per registrare lo storico",
+      "connectDeviceBody": "Associa un sensore a questa pianta per monitorare umidità, livello della batteria e storico delle misurazioni.",
+      "measurementHistory": "Storico delle misurazioni",
+      "range7d": "7 giorni",
+      "range14d": "14 giorni",
+      "range30d": "30 giorni",
+      "range90d": "90 giorni",
+      "humidityTrend": "Andamento dell'umidità",
+      "batteryTrend": "Andamento della batteria"
     },
-    "pagination": {
-      "loading": "Caricamento…",
-      "showing": "Visualizzati {{start}}–{{end}} di {{total}}"
+    "historyChart": {
+      "empty": "{{title}}: nessuna misurazione in questo periodo.",
+      "headerStats": "Ultimo {{latest}} · Min {{min}} · Max {{max}}"
     },
-    "devices": {
-      "title": "Tutti i sensori",
-      "refreshLabel": "Aggiorna sensori",
-      "noMatch": "Nessun sensore corrisponde ai filtri.",
-      "noneRegistered": "Nessun sensore registrato.",
-      "loadError": "Errore nel caricamento dei sensori",
+    "devicesTab": {
       "columns": {
         "serialNumber": "Numero di serie",
-        "owner": "Proprietario",
         "plant": "Pianta",
-        "type": "Tipo",
-        "humidity": "Umidità",
-        "battery": "Batteria",
-        "lastSeen": "Ultimo contatto",
-        "firmware": "Firmware"
-      }
-    },
-    "logs": {
-      "title": "Log dei sensori",
-      "refreshLabel": "Aggiorna log",
-      "noMatch": "Nessun log corrisponde ai filtri.",
-      "noneFound": "Nessun log trovato.",
-      "loadError": "Errore nel caricamento dei log",
-      "levelError": "Errore",
-      "levelWarning": "Avviso",
-      "levelInfo": "Info",
-      "columns": {
-        "timestamp": "Data e ora",
-        "serial": "Seriale",
-        "level": "Livello",
-        "message": "Messaggio"
-      }
-    },
-    "firmware": {
-      "title": "Rilasci firmware",
-      "description": "Il caricamento mette in staging una build. Assegna ai sensori pilota, poi pubblica sul canale fleet.",
-      "refreshLabel": "Aggiorna rilasci firmware",
-      "fleetChannels": "Canali fleet",
-      "noPublishedRelease": "Nessun rilascio pubblicato",
-      "noReleasesYet": "Nessun rilascio firmware ancora. Carica un file .bin per mettere in staging la prima build.",
-      "channelRelease": "OTA v{{version}} · {{semver}}{{label}}",
-      "colBoard": "Board",
-      "colOta": "OTA",
-      "colSemver": "SemVer",
-      "colLabel": "Etichetta",
-      "colCreated": "Creato",
-      "colStatus": "Stato",
-      "colActions": "Azioni",
-      "statusFleet": "Fleet",
-      "statusStaged": "In staging",
-      "publish": "Pubblica",
-      "assign": "Assegna",
-      "clearOverrides": "Rimuovi override",
-      "publishedTitle": "Pubblicato sul fleet",
-      "publishedMessage": "Il canale {{board}} ora punta a OTA v{{version}} ({{semver}}).",
-      "publishFailedTitle": "Pubblicazione fallita",
-      "clearedTitle": "Override rimossi",
-      "clearedMessage": "Override pilota rimossi per {{board}} OTA v{{version}} ({{semver}}).",
-      "clearFailedTitle": "Rimozione fallita",
-      "unknownError": "Errore sconosciuto",
-      "upload": {
-        "missingFieldsTitle": "Campi mancanti",
-        "missingFieldsMessage": "Board, versione OTA (≥ 1), SemVer e un file .bin sono obbligatori.",
-        "invalidSemverTitle": "SemVer non valido",
-        "invalidSemverMessage": "Usa MAJOR.MINOR.PATCH (es. 1.2.0 o 1.2.0-beta.1).",
-        "stagedTitle": "Rilascio in staging",
-        "stagedMessage": "{{board}} OTA v{{version}} ({{semver}}) caricato. Pubblica o assegna come passo successivo.",
-        "failedTitle": "Caricamento fallito",
-        "thisBoard": "questa board",
-        "currentVersion": "Versione attuale per {{board}}: {{version}}",
-        "noReleases": "Nessun rilascio per {{board}} ancora",
-        "nextOta": "Prossima versione OTA",
-        "semverTooltip": "Etichetta di versione leggibile mostrata in Admin (es. 1.2.0). I sensori usano la versione OTA, non questa.",
-        "semverAria": "Cos'è SemVer?",
-        "description": "Descrizione (opzionale)",
-        "binary": "Binario firmware",
-        "binaryPlaceholder": "Seleziona il file .bin esportato da Arduino IDE",
-        "binaryAria": "File binario firmware",
-        "submit": "Carica rilascio"
+        "interval": "Intervallo",
+        "actions": "Azioni"
       },
-      "assignModal": {
-        "title": "Assegna OTA v{{version}} · {{semver}} ({{board}})",
-        "titleFallback": "Assegna firmware",
-        "description": "I sensori selezionati riceveranno questo rilascio al prossimo risveglio, anche se il canale fleet punta altrove.",
-        "loadFailed": "Caricamento sensori fallito",
-        "assignedTitle": "Override assegnato",
-        "assignedMessage_one": "OTA v{{version}} ({{semver}}) fissato su {{count}} sensore.",
-        "assignedMessage_other": "OTA v{{version}} ({{semver}}) fissato su {{count}} sensori.",
-        "failedTitle": "Assegnazione fallita",
-        "loading": "Caricamento sensori…",
-        "empty": "Nessun sensore trovato per questa board.",
-        "reported": " · riportato v{{version}}",
-        "hasOverride": " · ha override",
-        "assignTo_one": "Assegna a {{count}} sensore",
-        "assignTo_other": "Assegna a {{count}} sensori"
+      "addManually": "Aggiungi manualmente",
+      "registerNewDevice": "Registra nuovo sensore",
+      "emptyTitle": "Ancora nessun sensore",
+      "emptyDescription": "Registra un sensore Plantir con la procedura guidata, oppure aggiungilo manualmente se conosci già il numero di serie.",
+      "registerFirstDevice": "Registra il tuo primo sensore",
+      "noSearchMatch": "Nessun sensore corrisponde alla ricerca.",
+      "unassigned": "Non associato",
+      "calibrationRecommended": "Calibrazione consigliata",
+      "calibrateSensor": "Calibra sensore",
+      "calibrateSensorRequired": "Calibra sensore",
+      "editDevice": "Modifica sensore",
+      "deleteDevice": "Elimina sensore"
+    },
+    "deviceDelete": {
+      "title": "Elimina sensore",
+      "confirm": "Vuoi davvero eliminare il sensore <bold>{{serialNumber}}</bold>?",
+      "warning": "Verranno rimosse anche la configurazione del sensore e tutte le relative misurazioni.",
+      "success": {
+        "title": "Eliminato",
+        "message": "Sensore eliminato correttamente"
       }
     },
-    "device": {
-      "unassigned": "Non assegnato",
-      "overrideCleared": "Override rimosso",
-      "overrideClearedMessage": "{{serial}} seguirà il canale fleet.",
-      "clearFailed": "Rimozione fallita",
-      "unknownError": "Errore sconosciuto",
-      "clear": "Rimuovi",
-      "overrideVersion": "Override v{{version}}"
+    "deviceForm": {
+      "createdTitle": "Sensore aggiunto",
+      "editTitle": "Modifica sensore",
+      "addTitle": "Aggiungi sensore manualmente",
+      "manualIntro": "Nella maggior parte dei casi è consigliabile usare «Registra nuovo sensore». L'aggiunta manuale è pensata per configurazioni avanzate, quando disponi già del numero di serie.",
+      "assignment": "Associazione",
+      "serialNumber": "Numero di serie",
+      "serialPlaceholder": "es. SN-001",
+      "serialRequired": "Il numero di serie è obbligatorio",
+      "humiditySensor": "Sensore di umidità",
+      "plant": "Pianta",
+      "plantPlaceholder": "Seleziona una pianta",
+      "clearPlantAria": "Scollega pianta",
+      "plantsWithDeviceDisabled": "Le piante già associate a un sensore non sono selezionabili.",
+      "deviceAssigned": "sensore associato",
+      "wateringAlerts": "Avvisi di annaffiatura",
+      "alertWhenBelow": "Avvisa quando l'umidità scende sotto questa soglia",
+      "suggestedFromSpecies": "Consigliato per questa specie: {{threshold}}%",
+      "thresholdRangeError": "La soglia deve essere compresa tra 0 e 100",
+      "reportingInterval": "Intervallo di invio",
+      "reportingIntervalDescription": "Indica ogni quanto il sensore si attiva per inviare i dati. Invii più frequenti consumano la batteria più rapidamente.",
+      "recommended": "Consigliato",
+      "customInterval": "Intervallo personalizzato (secondi)",
+      "customIntervalDescription": "Per eseguire dei test puoi impostare un intervallo breve (es. 10–60 secondi). Valori più bassi consumano più batteria.",
+      "intervalMinError": "L'intervallo deve essere di almeno 1 secondo",
+      "shortIntervalWarning": "Intervalli ravvicinati consumano la batteria più rapidamente.",
+      "calibration": "Calibrazione",
+      "airDry": "Aria (asciutto):",
+      "waterWet": "Acqua (bagnato):",
+      "recalibrateSensor": "Ricalibra sensore",
+      "addSubmit": "Aggiungi sensore",
+      "saveSubmit": "Salva modifiche",
+      "updatedMessage": "Sensore aggiornato correttamente",
+      "calibratePrompt": "Calibra il sensore per ottenere misurazioni accurate.",
+      "calibrateNow": "Calibra ora"
+    },
+    "registrationWizard": {
+      "title": "Registra nuovo sensore",
+      "steps": {
+        "prepare": "Preparazione",
+        "setupCode": "Codice di configurazione",
+        "connect": "Connessione",
+        "waiting": "In attesa"
+      },
+      "prepare": {
+        "title": "Preparazione",
+        "pcRecommendation": "Per comodità, ti consigliamo di completare questa configurazione da un computer.",
+        "intro": "Questa procedura guidata ti aiuterà a registrare un sensore di umidità Plantir e ad associarlo al tuo account.",
+        "assignPlant": "Associa a una pianta (facoltativo)",
+        "assignPlantPlaceholder": "Puoi associare una pianta ora o in un secondo momento"
+      },
+      "setupCode": {
+        "title": "Codice di configurazione",
+        "intro": "Copia questo codice: dovrai incollarlo nel portale Wi-Fi del sensore nei passaggi successivi.",
+        "generating": "Generazione del codice in corso…",
+        "copy": "Copia codice",
+        "copied": "Copiato",
+        "expiresAt": "Scade alle {{time}}",
+        "generate": "Genera codice"
+      },
+      "connect": {
+        "title": "Connettiti all'hotspot del sensore",
+        "copyCodeFirst": "Assicurati di aver copiato il codice di configurazione del passaggio precedente.",
+        "openCap": "Ruota leggermente il coperchio del sensore in senso antiorario, poi sfilalo verso l'alto.",
+        "pressRestart": "Premi il pulsante <bold>RESTART</bold> sul lato del sensore: il LED verde all'interno lampeggerà tre volte. Il sensore attiverà quindi una rete Wi-Fi chiamata <bold>Plantir-Device-Setup</bold>.",
+        "connectHotspot": "Dal telefono o dal computer, connettiti alla rete Wi-Fi <bold>Plantir-Device-Setup</bold>. Si aprirà automaticamente una pagina di configurazione simile a questa:",
+        "portalHomeAlt": "Schermata principale del portale Wi-Fi",
+        "configureWifi": "Tocca <bold>Configure WiFi</bold>, seleziona la tua rete Wi-Fi di casa e inserisci la password.",
+        "portalConfigureAlt": "Schermata di configurazione della rete nel portale Wi-Fi",
+        "waitPortalClose": "Incolla il codice di configurazione nel campo <bold>Plantir Setup</bold> e tocca <bold>Save</bold>. Attendi che la finestra <bold>Plantir-Device-Setup</bold> si chiuda automaticamente.",
+        "iveConnected": "Ho connesso il sensore"
+      },
+      "waiting": {
+        "title": "In attesa della registrazione",
+        "body": "Registrazione del sensore in corso… Tieni aperta la pagina finché il sensore non si connette al Wi-Fi.",
+        "stillWaitingTitle": "Ancora in attesa",
+        "stillWaitingBody": "Non abbiamo ancora rilevato il sensore. Verifica di aver incollato correttamente il codice di configurazione e che il sensore sia connesso alla rete Wi-Fi.",
+        "keepWaiting": "Continua ad attendere",
+        "regenerateCode": "Genera un nuovo codice",
+        "ownedByAnother": "Questo sensore è già associato a un altro account. Se ritieni si tratti di un errore, contatta l'assistenza.",
+        "registrationFailed": "Registrazione non riuscita. Riprova o contatta l'assistenza."
+      },
+      "completed": {
+        "title": "Sensore registrato correttamente",
+        "serialNumberLabel": "Numero di serie:",
+        "body": "Il sensore è stato registrato e inizierà a inviare dati a breve.",
+        "skipForNow": "Salta per ora",
+        "calibrateSensor": "Calibra sensore"
+      }
+    },
+    "calibrationWizard": {
+      "title": "Calibra sensore",
+      "closeAria": "Chiudi procedura di calibrazione",
+      "steps": {
+        "prepare": "Preparazione",
+        "wakeDevice": "Riattivazione",
+        "dryReading": "Lettura a secco",
+        "wetReading": "Lettura in acqua"
+      },
+      "startCalibration": "Avvia calibrazione",
+      "prepare": {
+        "title": "Prima di iniziare",
+        "intro": "La calibrazione permette al sensore di riconoscere i valori di «completamente asciutto» e «completamente bagnato», così da fornirti misurazioni accurate dell'umidità del terreno.",
+        "youllNeed": "Ti serviranno:",
+        "needDevice": "Il tuo sensore Plantir",
+        "needWater": "Un bicchiere pieno d'acqua",
+        "duration": "L'operazione richiede circa un minuto."
+      },
+      "wake": {
+        "title": "Riattiva il sensore",
+        "instructions": "Ruota leggermente il coperchio in senso antiorario e sfilalo verso l'alto. Premi il pulsante <bold>Restart</bold> sul sensore Plantir per riattivarlo: il LED verde all'interno lampeggerà tre volte. Infine, richiudi il coperchio.",
+        "timeout": "Nessuna lettura ricevuta. Assicurati di aver premuto il pulsante Restart e che il sensore sia connesso al Wi-Fi.",
+        "tryAgain": "Riprova",
+        "waiting": "In attesa di connessione dal sensore…"
+      },
+      "dry": {
+        "title": "Lettura a secco",
+        "instructions": "Tieni l'asta nera del sensore sollevata in aria, lontano da terra o acqua. Mantieni il sensore fermo mentre acquisiamo una lettura stabile.",
+        "timeout": "Nessuna lettura ricevuta. Assicurati di aver premuto il pulsante Restart e che il sensore sia connesso al Wi-Fi.",
+        "rejected": "Assicurati che l'asta nera del sensore sia ben asciutta e lontana da terra o acqua, poi tienila ferma.",
+        "waiting": "Acquisizione della lettura in corso…"
+      },
+      "wet": {
+        "title": "Lettura in acqua",
+        "instructions": "Immergi delicatamente il sensore nel bicchiere d'acqua fino alla linea bianca orizzontale sull'asta. Tienilo fermo a questa profondità mentre acquisiamo una lettura stabile.",
+        "guideAlt": "Sensore immerso nell'acqua fino alla linea bianca orizzontale",
+        "timeout": "Nessuna lettura ricevuta. Assicurati che il sensore sia immerso correttamente e che sia ancora connesso.",
+        "restart": "Riavvia calibrazione",
+        "saving": "Salvataggio calibrazione in corso…",
+        "rejected": "Assicurati di immergere la punta del sensore nell'acqua esattamente fino alla linea bianca orizzontale, senza bagnare la parte superiore.",
+        "waiting": "Acquisizione della lettura in corso…"
+      },
+      "expired": {
+        "message": "Il tempo massimo per la calibrazione (2 minuti) è scaduto. Riavvia la procedura per riprovare.",
+        "restart": "Riavvia calibrazione"
+      },
+      "countdownHint": "Il sensore invia una lettura ogni 10 secondi",
+      "complete": {
+        "title": "Sensore calibrato!",
+        "body": "Rimetti il sensore nel vaso. Effettuerà la prima lettura tra circa 2 minuti.",
+        "placement": "Inserisci la sonda fino in fondo nel terreno, vicino alla base della pianta."
+      },
+      "saveErrorTitle": "Errore durante il salvataggio della calibrazione"
+    },
+    "weather": {
+      "forecastTitle": "Previsioni meteo",
+      "changeCityAria": "Cambia città",
+      "cancelCityChangeAria": "Annulla cambio città",
+      "locationSetupHint": "Imposta la tua città per permettere a Plantir di tenere conto delle previsioni di pioggia negli avvisi per le piante da esterno.",
+      "introHint": "Scegli una città per vedere le previsioni dei prossimi giorni.",
+      "searchPlaceholder": "Cerca una città per vedere le previsioni…",
+      "searchAria": "Cerca città per le previsioni meteo",
+      "noCitiesFound": "Nessuna città trovata. Prova con un altro nome.",
+      "couldNotLoadForecast": "Impossibile caricare le previsioni meteo.",
+      "today": "Oggi",
+      "tomorrow": "Domani",
+      "conditions": {
+        "clear": "Sereno",
+        "partlyCloudy": "Parzialmente nuvoloso",
+        "overcast": "Coperto",
+        "foggy": "Nebbia",
+        "drizzle": "Pioviggine",
+        "rain": "Pioggia",
+        "snow": "Neve",
+        "showers": "Rovesci",
+        "storm": "Temporale",
+        "unknown": "Non disponibile"
+      }
+    },
+    "garden": {
+      "title": "Il tuo giardino",
+      "tierCaption": "{{name}}: {{tagline}}",
+      "footer": "Continua a prenderti cura delle tue piante per far crescere il giardino.",
+      "sceneAria": "Il tuo giardino che cresce",
+      "notYetUnlocked": "Non ancora sbloccato",
+      "mysteryName": "???",
+      "mysteryBadgeAria": "Traguardo misterioso: {{description}}",
+      "tiers": {
+        "seedPacket": {
+          "name": "Bustina di semi",
+          "tagline": "Terra nuda, tante possibilità e un sassolino solitario."
+        },
+        "firstPots": {
+          "name": "Primi vasi",
+          "tagline": "Qualcosa di verde inizia a spuntare."
+        },
+        "greenfingers": {
+          "name": "Pollice verde",
+          "tagline": "Il tuo giardino comincia ad avere carattere."
+        },
+        "secretGarden": {
+          "name": "Giardino segreto",
+          "tagline": "Rampicanti, un traliccio e una silenziosa soddisfazione."
+        },
+        "littleForest": {
+          "name": "Piccola foresta",
+          "tagline": "Le chiome hanno conquistato la scena."
+        }
+      },
+      "unlockToast": {
+        "singleSuffix": "Tocca per aprire il tuo giardino.",
+        "multiTitle": "Il tuo giardino è cresciuto",
+        "multiMessage": "{{count}} nuovi traguardi sbloccati: tocca per aprire il tuo giardino."
+      },
+      "achievements": {
+        "hello_my_name_is": {
+          "name": "Prima pianta",
+          "description": "Aggiungi la tua prima pianta."
+        },
+        "stalking_fern_legally": {
+          "name": "Primo sensore",
+          "description": "Registra il tuo primo sensore."
+        },
+        "matchmaker_of_moisture": {
+          "name": "Sensore collegato",
+          "description": "Associa un sensore a una pianta."
+        },
+        "dirt_whisperer_initiate": {
+          "name": "Sensore calibrato",
+          "description": "Completa la calibrazione di un sensore."
+        },
+        "plant_texted_back": {
+          "name": "Notifiche attive",
+          "description": "Salva le impostazioni di notifica o collega Telegram."
+        },
+        "fully_rooted_not_emotionally": {
+          "name": "Configurazione completa",
+          "description": "Pianta aggiunta, sensore associato e calibrato: tutto è pronto."
+        },
+        "hydration_hero": {
+          "name": "Annaffiata puntuale",
+          "description": "Annaffia una pianta entro 48 ore dalla ricezione dell'avviso."
+        },
+        "back_from_the_mulch": {
+          "name": "Sensore di nuovo online",
+          "description": "Riporta online il sensore di una pianta disconnessa."
+        },
+        "juice_box_refiller": {
+          "name": "Batteria ricaricata",
+          "description": "Ricarica un sensore con la batteria scarica."
+        },
+        "all_green_no_envy": {
+          "name": "Due piante in salute",
+          "description": "Mantieni in salute contemporaneamente almeno due piante monitorate."
+        },
+        "accidental_collector": {
+          "name": "Quattro piante",
+          "description": "Raggiungi 4 piante registrate."
+        },
+        "latin_name_dropper": {
+          "name": "Specie indicata",
+          "description": "Assegna la specie botanica a una pianta."
+        },
+        "influencer_garden": {
+          "name": "Tre foto di piante",
+          "description": "Aggiungi una foto a 3 piante."
+        },
+        "cloud_oracle": {
+          "name": "Meteo configurato",
+          "description": "Imposta la tua città per le previsioni meteo."
+        },
+        "face_of_the_garden": {
+          "name": "Profilo completo",
+          "description": "Imposta un soprannome e una foto profilo."
+        },
+        "seven_days_without_drama": {
+          "name": "Sette giorni in salute",
+          "description": "Mantieni in salute tutte le piante monitorate per 7 giorni consecutivi."
+        },
+        "photosynthesis_stan": {
+          "name": "Trenta giorni in salute",
+          "description": "Mantieni in salute tutte le piante monitorate per 30 giorni consecutivi."
+        },
+        "the_comeback_kid": {
+          "name": "Salvataggio in extremis",
+          "description": "Riporta in salute una pianta rimasta a secco per almeno 3 giorni."
+        },
+        "inbox_compost": {
+          "name": "Notifiche azzerate",
+          "description": "Segna tutte le notifiche come lette."
+        },
+        "time_traveler": {
+          "name": "Storico mensile consultato",
+          "description": "Consulta il grafico dello storico a 30 giorni di una pianta."
+        },
+        "midnight_mulcher": {
+          "name": "Controllo puntuale",
+          "description": "Apri la dashboard intorno all'orario previsto per gli avvisi giornalieri."
+        }
+      },
+      "travelMarkerAria": "{{name}} è in viaggio. Apri lo stato della missione.",
+      "travelingName": "{{name}} è in esplorazione",
+      "travelingDescription": "Questo angolo resterà vuoto fino al rientro della squadra.",
+      "openJournal": "Diario",
+      "openMap": "Manda in missione",
+      "openHelp": "Come funzionano le missioni",
+      "expeditionStatus": "Missione in corso",
+      "expeditionReady": "Gli esploratori sono tornati e hanno portato qualcosa di insolito.",
+      "cancelExpedition": "Richiama la squadra",
+      "cancelConfirm": "Torneranno sani e salvi, ma non porteranno scoperte e il legame non aumenterà.",
+      "confirmCancel": "Richiama la squadra",
+      "keepGoing": "Lasciali proseguire",
+      "welcomeReturn": "Accoglili a casa",
+      "skipReturn": "Salta",
+      "returnsAt": "Rientro previsto: {{time}}",
+      "returnsToday": "Tornano oggi alle {{time}}",
+      "returnsTomorrow": "Tornano domani alle {{time}}",
+      "missionTeam": "Squadra in missione",
+      "noFailureNote": "Ogni missione va a buon fine. I talenti della squadra cambiano il racconto, non l'esito.",
+      "mapBusy": "C'è già una squadra in missione.",
+      "mapBusyHint": "Attendi il loro rientro prima di far partire un'altra squadra.",
+      "selectTeam": "Scegli tre compagni",
+      "recommendedTalents": "Talenti utili qui",
+      "durationLabel": "Quando devono tornare?",
+      "depart": "Falli partire",
+      "mapLocked": "Le missioni si sbloccano quando nel giardino vivono almeno tre creature.",
+      "stepTrail": "Scegli un sentiero",
+      "teamPicked": "{{count}} su 3",
+      "searchCreatures": "Cerca per nome o talento",
+      "searchCreaturesAria": "Cerca un compagno",
+      "filterAll": "Tutti",
+      "filterHelpful": "Utili qui",
+      "filterNew": "Mai stati qui",
+      "newToTrail": "Prima volta",
+      "helpfulMark": "Utile",
+      "noCreatureMatch": "Nessun compagno corrisponde alla ricerca.",
+      "teamIncomplete_one": "Manca ancora un compagno.",
+      "teamIncomplete_other": "Mancano ancora {{count}} compagni.",
+      "bondLevels": {
+        "1": "Nuovo arrivo",
+        "2": "Di casa",
+        "3": "Di fiducia",
+        "4": "Compagno",
+        "5": "Custode del giardino"
+      },
+      "talents": {
+        "navigation": "Orientamento",
+        "weatherSense": "Senso del meteo",
+        "plantKnowledge": "Conoscenza botanica",
+        "nightSight": "Vista notturna",
+        "recovery": "Recupero",
+        "observation": "Osservazione",
+        "photography": "Fotografia",
+        "communication": "Comunicazione",
+        "curiosity": "Curiosità",
+        "resourcefulness": "Intraprendenza"
+      },
+      "profile": {
+        "sectionHelp": "Informazioni: {{title}}",
+        "origin": "Origine",
+        "originLead": "Questa creatura è arrivata quando hai raggiunto questo traguardo.",
+        "originLine": "{{name}}, {{date}}",
+        "bond": "Legame",
+        "bondHelp": "Il legame cresce quando questa creatura torna da una missione e, un po' alla volta, ogni volta che ti prendi cura delle tue piante.",
+        "bondNext": "Prossimo livello: {{label}}",
+        "bondPoints": "{{points}} / {{needed}}",
+        "maxBond": "Il vostro legame ha raggiunto il livello massimo.",
+        "talents": "Talenti",
+        "talentsLead": "Durante una missione, queste doti cambiano la storia che la squadra riporta a casa, ma non l'esito: ogni missione va sempre a buon fine.",
+        "memories": "Ricordi",
+        "memoriesLead": "Sblocchi un nuovo ricordo ogni volta che il legame sale di livello, a partire dal secondo.",
+        "memoriesLocked": "Ancora nessun ricordo. Il primo si sblocca al livello «{{label}}».",
+        "personalExpedition": "Missione speciale",
+        "personalHelp": "Quando il legame raggiunge il quarto livello («{{label}}»), si sblocca una missione che solo questa creatura può guidare. Puoi avviarla dal pulsante in alto in questa pagina.",
+        "personalLocked": "Non ancora sbloccata.",
+        "personalOpen": "Disponibile. Avviala dal pulsante in alto.",
+        "outings": "Esplorazioni",
+        "outingsLead": "Qui trovi il registro di ogni uscita: il sentiero percorso, i tesori trovati e i progressi nel legame.",
+        "outingUntitled": "Un'esplorazione",
+        "outingBond": "Il legame è cresciuto.",
+        "outingEmpty": "Ancora nessuna esplorazione."
+      },
+      "intro": {
+        "stepCount": "{{current}} di {{total}}",
+        "startOuting": "Avvia la prima missione",
+        "skip": "Non ora",
+        "continue": "Continua",
+        "done": "Ho capito",
+        "steps": {
+          "send": {
+            "title": "Fai partire una squadra",
+            "body": "Tocca {{send}} in alto. Scegli un sentiero, la durata dell'uscita e le tre creature che partiranno. Tornano sempre sane e salve: le missioni non possono fallire e portano con sé una storia e, a volte, un piccolo tesoro."
+          },
+          "timing": {
+            "title": "Una missione alla volta",
+            "body": "Puoi mandare in esplorazione una sola squadra alla volta. Mentre sono in viaggio, il riquadro in alto in questa pagina ti mostra dove sono diretti e quando rientreranno. Con {{cancel}} li fai tornare subito a casa, ma a mani vuote."
+          },
+          "bond": {
+            "title": "Il legame",
+            "body": "Ogni creatura sviluppa un legame con te, articolato su cinque livelli di amicizia. Tocca una creatura nel giardino per aprire la sua scheda: troverai il livello del legame in alto, sotto il nome. Cresce al rientro da ogni missione e quando ti prendi cura delle piante, e non diminuisce mai se ti assenti."
+          },
+          "journal": {
+            "title": "Il diario",
+            "body": "I racconti e i tesori raccolti vengono custoditi in {{journal}}, accessibile dal pulsante in alto in questa pagina. Aprilo quando vuoi per rileggere le loro scoperte."
+          }
+        }
+      },
+      "journal": {
+        "title": "Diario delle missioni",
+        "lead": "Qui restano impresse le tracce di ogni esplorazione: le storie riportate a casa, i tesori raccolti e i sentieri che avete imparato a conoscere.",
+        "empty": "I racconti di viaggio e le scoperte verranno raccolti qui.",
+        "emptyHint": "Fai partire una squadra: al primo rientro si scriverà la prima pagina.",
+        "destinations": "Sentieri",
+        "stories": "Storie",
+        "keepsakes": "Tesori",
+        "memories": "Ricordi",
+        "complete": "Scoperte principali completate",
+        "openThreads": "Misteri ancora aperti",
+        "unvisited": "Ancora inesplorato",
+        "foundOf": "{{found}} su {{total}}",
+        "withTeam": "Con {{names}}",
+        "latestStory": "Ultimo rientro"
+      },
+      "durations": {
+        "instant": "Subito",
+        "laterToday": "Più tardi oggi",
+        "tomorrow": "Domani",
+        "fewDays": "Tra qualche giorno"
+      },
+      "families": {
+        "nearby": "Sentieri vicini",
+        "plantLife": "Tra la vegetazione",
+        "weather": "Sotto il cielo",
+        "recovery": "Sentieri della ripresa",
+        "nocturnal": "Sentieri notturni",
+        "archive": "Sentieri della memoria"
+      },
+      "destinations": {
+        "first_outing": {
+          "name": "Sentiero di casa",
+          "premise": "Una prima passeggiata ai margini del giardino, quel tanto che basta per scorgere qualcosa di nuovo."
+        },
+        "moss_lane": {
+          "name": "Vicolo del muschio",
+          "premise": "Un sentiero silenzioso di pietre umide e riflessi verdi, perfetto per imparare a muoversi insieme."
+        },
+        "seed_hollow": {
+          "name": "Conca dei semi",
+          "premise": "Un avvallamento riparato dove si raccolgono semi insoliti, posati lì dal vento."
+        }
+      },
+      "stories": {
+        "first_outing_ch1": "Il cancello del giardino era aperto e i vasi distavano appena pochi passi, ancora ben visibili. {{lead}} non aveva ancora finito di dire che sarebbero arrivati solo fino alla prima curva, che già {{scout}} era dall'altra parte, con un piede sul sentiero. {{anchor}} continuava a voltarsi ogni due passi. Non verso il sentiero, ma verso i vasi, come se potessero decidere di andarsene per conto loro.\n\nSi sono fermati lì, dove il sentiero smette di essere casa. Più avanti l'erba era un po' più alta e non c'era molto altro da vedere. {{lead}} ha aperto il diario su una pagina bianca e ha annotato esattamente questo: il cancello, i vasi, l'erba più alta, il confine del giardino. La pagina non era più bianca: è diventata la prima del diario.",
+        "first_outing_hook1": "Sul pilastro destro del cancello, ad altezza d'occhio, c'è un sassolino grigio ancora tiepido. Nessuno l'ha raccolto.",
+        "first_outing_ch2": "Sul pilastro destro del cancello, ad altezza di mano, c'era un piccolo sasso grigio. Non era incastrato: poggiava in piano ed era tiepido, come se chi l'aveva posato lì avesse appena tolto le dita.\n\n{{anchor}} ha detto che quel sasso aveva già un suo posto, ed era proprio quel pilastro. {{scout}} l'ha preso comunque tra le mani, facendo attenzione a non lasciarlo cadere nell'erba. {{lead}} ha guardato il pilastro ormai vuoto e ha lasciato che {{scout}} lo portasse a casa. Sono rientrati tra i vasi camminando più vicini di quando erano usciti.",
+        "first_outing_hook2": "Oltre il cancello il muschio non cresce a chiazze: forma una linea continua, troppo dritta per essere cresciuta per caso.",
+        "first_outing_repeat1": "Sono usciti di nuovo dal cancello e hanno ripercorso lo stesso tratto lungo il confine, tenendo i vasi sempre a portata di sguardo. Prima di rientrare, {{lead}} ha chiesto di vedere il sassolino. {{scout}} ha schiuso le mani: era ancora tiepido.",
+        "moss_lane_ch1": "Il vicolo del muschio comincia pochi passi oltre il cancello del giardino. Le pietre del sentiero sono verdi, ma il muschio non cresce a chiazze: disegna un'unica linea continua che corre da una pietra all'altra, come tracciata col dito.\n\n{{scout}} ha notato la traccia prima ancora che gli altri dicessero di sì, e si è incamminato. Quando {{lead}} ha alzato lo sguardo, {{scout}} era già parecchio avanti, vicino a una radura dove il vicolo si apre. {{anchor}} si è rifiutato di fare un altro passo finché non ha sentito la voce di {{scout}} rispondere dal sentiero. {{lead}} ha chiamato; {{scout}} ha risposto e, nella radura, qualcosa che era rimasto in ascolto si è zittito di colpo. Sono tornati a casa fianco a fianco, portando con sé il disegno della linea di muschio, ricalcato su una foglia umida tenuta ben stesa durante il ritorno.",
+        "moss_lane_hook1": "La linea di muschio non finisce nella radura: prosegue tra le pietre, troppo dritta per essere nata da sola.",
+        "moss_lane_ch2": "Sono tornati nel vicolo in pieno giorno, quando il sole filtra di taglio tra le pietre. Volevano capire se una striscia di muschio così dritta potesse davvero nascere per caso.\n\nPer pochi minuti, sotto il muschio, la rugiada disegna un secondo sentiero che non riporta verso il giardino, ma punta nella direzione opposta. {{scout}} voleva seguirlo subito, prima che svanisse. {{lead}} ha insistito per ricopiarlo prima sul diario, ma aveva ragione solo a metà: la rugiada è evaporata prima che lo schizzo fosse completato. {{anchor}} non ha commentato la scelta di {{lead}}, ma gli è rimasto accanto per tutta la strada del ritorno.",
+        "moss_lane_hook2": "Il sentiero di rugiada non riporta a casa: prosegue verso un angolo della valle che non ha ancora un nome.",
+        "moss_lane_ch3": "Hanno seguito la traccia di rugiada fino in fondo al vicolo, dove il sentiero si interrompe davanti a una pietra piatta. Attorno alla pietra era annodato ben stretto un nastro verde, dello stesso colore del muschio.\n\n{{anchor}} ha mormorato che quel nastro doveva appartenere a qualcuno ed era meglio lasciarlo dov'era. Ma {{scout}} lo aveva già slegato e lo stringeva tra le mani con la cura di chi ha deciso in un istante di tenerlo per sé. {{lead}} gli ha permesso di portarlo a casa, lasciando al posto del nastro una foglia pressata: uno scambio del genere si può fare una volta sola. Sulla via del ritorno hanno parlato pochissimo.",
+        "moss_lane_hook3": "Quando si sono voltati indietro, il nodo sulla pietra era riapparso. Più avanti, lungo il vicolo, un altro nastro verde spuntava tra le pietre.",
+        "moss_lane_ch4": "Questa volta hanno seguito la striscia di muschio fino all'ultima pietra del vicolo. Il muschio è rasato corto, pietra dopo pietra: qualcuno se ne prende cura da prima ancora che il giardino esistesse.\n\nPer tutta la strada del ritorno {{lead}} ha cercato di farsene una ragione: quel sentiero che erano così fieri di aver scoperto non erano stati i primi a trovarlo. Qualcuno lo custodisce. Sull'ultima pietra {{anchor}} ha lasciato in bella vista il loro schizzo ripiegato, proprio come si lascia un biglietto a qualcuno che non si è mai incontrato.",
+        "moss_lane_hook4": "Nessuno è uscito allo scoperto. Il muschio prosegue oltre il limite dell'ombra, e chi lo cura lavora di notte.",
+        "moss_lane_repeat1": "Il nastro verde sulla pietra in fondo al vicolo era stato annodato di nuovo da poco, forse proprio mentre loro erano lì a guardare. Nessuno si è chiesto chi fosse stato. {{scout}} ha contato i nodi: ora sono undici, e li conosce tutti a memoria.",
+        "moss_lane_repeat2": "Lungo il vicolo non c'era nulla di nuovo, se non il ramo in cui {{anchor}} aveva inciampato la volta precedente: qualcuno lo aveva spostato da parte e appoggiato con cura contro una pietra. {{lead}} ha ringraziato gli alberi a voce alta, e lo pensava davvero.",
+        "seed_hollow_ch1": "Appena fuori dal giardino c'è un avvallamento riparato dal vento, che tutti chiamano la conca. I semi finiscono lì dentro quando il vento smette di trasportarli, fermandosi contro il bordo di terra.\n\n{{scout}} è sceso per primo ed è risalito con entrambe le mani colme di piccoli semi scuri, diversi da qualsiasi pianta coltivata nei vasi. {{lead}} li ha fatti disporre su una pietra piatta per esaminarli uno per uno. {{anchor}} li ha contati ad alta voce, e poi li ha ricontati prima di ripartire, per assicurarsi che arrivassero tutti a casa.",
+        "seed_hollow_hook1": "Sotto il bordo della conca corre una radice che scende più in profondità di quanto la conca stessa sia larga. Non appartiene alle piante che crescono lì sopra.",
+        "seed_hollow_ch2": "Sotto il bordo della conca il terreno è smosso e lascia intravedere delle radici: sono molto più spesse di quelle delle piante in superficie e scendono più in profondità di quanto la conca sia larga.\n\n{{lead}} ne ha ricopiato l'intreccio sul diario, curva dopo curva. {{scout}} avrebbe voluto staccarne un pezzetto per studiarlo da vicino a casa, ma {{anchor}} ha tenuto fermo il foglio e ha detto pacatamente di no. La radice è rimasta al suo posto.",
+        "seed_hollow_hook2": "Nel punto in cui il bordo della conca curva, c'è un pezzo di legno levigato dal tempo, come se qualcuno fosse solito sedervisi in attesa.",
+        "seed_hollow_ch3": "Nel punto in cui la sponda della conca curva, incastrato tra due radici, c'era un pezzetto di legno levigato. Qualcuno lo aveva intagliato e svuotato per farne un ciondolo, con un piccolo foro per far passare un filo. Di sicuro non era opera di qualcuno del giardino.\n\n{{anchor}} ha suggerito di lasciarlo lì tra le radici, ma {{scout}} lo aveva già appeso a un rametto per vedere l'effetto che faceva. Stava proprio bene. {{lead}} ha acconsentito a portarlo a casa e, nel punto esatto in cui si trovava il legno, ha posato uno dei semi raccolti nella conca.",
+        "seed_hollow_hook3": "Chi frequentava la conca non ha smesso di farlo: continuano ad arrivare semi nuovi, persino nei giorni senza vento.",
+        "seed_hollow_repeat1": "Dall'ultima visita si erano accumulati altri semi sul fondo della conca. {{scout}} li ha messi in fila seguendo la direzione in cui sembravano voler germogliare, mentre {{anchor}} ha messo da parte quelli più insoliti per esaminarli con calma a casa.",
+        "seed_hollow_repeat2": "Una volta a casa, il ciondolo di legno che {{scout}} aveva trovato nella conca era girato dal lato opposto. Nessuno ammette di averlo toccato."
+      },
+      "discoveries": {
+        "first_outing_journal": "Prima pagina del diario",
+        "first_outing_pebble": "Sassolino tiepido",
+        "moss_lane_map": "Schizzo macchiato di muschio",
+        "moss_lane_dew": "Appunto sul sentiero di rugiada",
+        "moss_lane_keepsake": "Morbido nastro verde",
+        "seed_hollow_seed": "Seme sconosciuto",
+        "seed_hollow_root": "Ricalco di radice",
+        "seed_hollow_keepsake": "Ciondolo in legno cavo"
+      },
+      "threads": {
+        "first_outing_journal": "La prima pagina del diario è ancora bianca.",
+        "first_outing_pebble": "Sul pilastro destro del cancello c'è un sassolino grigio sempre tiepido, che nessuno ha ancora raccolto.",
+        "moss_lane_map": "Nel vicolo del muschio il verde traccia una linea perfetta, e nessuno l'ha ancora ricopiata.",
+        "moss_lane_dew": "Sotto il muschio, per pochi minuti al giorno, la rugiada disegna un secondo sentiero. Nessuno è ancora passato di lì all'ora giusta.",
+        "moss_lane_keepsake": "In fondo al vicolo c'è una pietra piatta con un nastro verde annodato intorno da qualcuno.",
+        "seed_hollow_seed": "Nella conca appena fuori dal giardino continuano a raccogliersi semi che non assomigliano a nessuna pianta dei vasi.",
+        "seed_hollow_root": "Sotto la sponda della conca scende una radice più profonda di quanto la conca stessa sia larga.",
+        "seed_hollow_keepsake": "Dove la sponda della conca curva, c'è un pezzo di legno levigato da mani estranee al giardino."
+      },
+      "bondReasons": {
+        "expedition": "Il legame è cresciuto al rientro da un'esplorazione.",
+        "care_plant": "Il legame è cresciuto perché hai aggiunto una nuova pianta.",
+        "care_device": "Il legame è cresciuto perché hai registrato un sensore.",
+        "care_link": "Il legame è cresciuto perché hai associato una pianta a un sensore.",
+        "care_calibration": "Il legame è cresciuto perché hai calibrato un sensore.",
+        "care_watering": "Il legame è cresciuto perché hai annaffiato puntualmente dopo un avviso.",
+        "care_offline": "Il legame è cresciuto perché un sensore è tornato online.",
+        "care_battery": "Il legame è cresciuto perché hai ricaricato una batteria scarica.",
+        "care_healthy": "Il legame è cresciuto perché le piante monitorate sono rimaste in salute.",
+        "care_species": "Il legame è cresciuto perché hai indicato la specie di una pianta.",
+        "care_photo": "Il legame è cresciuto perché hai aggiunto la foto di una pianta.",
+        "care_weather": "Il legame è cresciuto perché hai impostato la città per il meteo.",
+        "care_notifications": "Il legame è cresciuto perché hai salvato le preferenze di notifica.",
+        "care_inbox": "Il legame è cresciuto perché hai segnato tutte le notifiche come lette.",
+        "care_history": "Il legame è cresciuto perché hai consultato lo storico di una pianta.",
+        "care_profile": "Il legame è cresciuto perché hai completato il tuo profilo.",
+        "care_comeback": "Il legame è cresciuto perché una pianta si è ripresa dopo una lunga siccità.",
+        "milestone": "Il legame è cresciuto perché il giardino ha raggiunto un nuovo traguardo."
+      },
+      "notifications": {
+        "returnedTitle": "Squadra rientrata",
+        "returnedBody": "I tuoi esploratori sono tornati e hanno portato qualcosa di insolito.",
+        "bondTitle": "{{name}} ha raggiunto il livello «{{level}}»",
+        "bondBody": "Un nuovo ricordo ti aspetta nel suo profilo.",
+        "personalTitle": "Nuova missione speciale disponibile",
+        "personalBody": "{{name}} è pronto a guidare un'avventura tutta sua."
+      },
+      "creatures": {
+        "hello_my_name_is": {
+          "name": "Brin",
+          "intro": "Un piccolo germoglio che nota subito ogni foglia nuova.",
+          "personality": "Entusiasta, gentile e sempre il primo a sbirciare dietro l'angolo.",
+          "depart": "Brin trotterella fino al cancello con entrambe le foglioline alzate.",
+          "return": "Brin torna un po' più alto di come lo ricordavi.",
+          "memories": {
+            "1": "Brin si è accomodato nel primo vaso e ha deciso che quella sarebbe stata casa sua.",
+            "2": "Ha imparato a riconoscere i giorni di annaffiatura dal rumore dell'annaffiatoio.",
+            "3": "Ha iniziato a lasciare piccole scie di sassolini perché nessuno si perda nel giardino.",
+            "4": "Ora dà il benvenuto alle nuove piante prima ancora che chiunque altro le noti."
+          }
+        },
+        "stalking_fern_legally": {
+          "name": "Morel",
+          "intro": "Un funghetto esploratore che ascolta attraverso il terreno.",
+          "personality": "Silenzioso, preciso e amante della quiete assoluta.",
+          "depart": "Morel inclina il cappello in un cenno ed entra nell'ombra.",
+          "return": "Morel torna con i piedi ancora sporchi di terra umida.",
+          "memories": {
+            "1": "Morel ha scoperto il primo sensore e l'ha accolto come un nuovo vicino di casa.",
+            "2": "Ha imparato a distinguere una lettura attendibile da uno sbalzo passeggero.",
+            "3": "Ha iniziato a tracciare i passaggi più silenziosi tra un vaso e l'altro.",
+            "4": "Ora attende pazientemente ai margini del giardino finché la squadra non è pronta a partire."
+          }
+        },
+        "matchmaker_of_moisture": {
+          "name": "Liana",
+          "intro": "Una pianta rampicante che ama la buona compagnia e le presentazioni fatte come si deve.",
+          "personality": "Solare, chiacchierona e bravissima a creare legami.",
+          "depart": "Liana avvolge un saluto attorno al pilastro del cancello prima di uscire.",
+          "return": "Liana torna che ha già iniziato a raccontare l'avventura.",
+          "memories": {
+            "1": "Liana ha capito che due cose possono stare benissimo insieme anche senza essere uguali.",
+            "2": "Si assicura sempre che nessun sentiero resti senza qualcuno che lo percorra."
+          }
+        },
+        "dirt_whisperer_initiate": {
+          "name": "Peek",
+          "intro": "Un esploratore curioso, munito di lente per osservare tutto da vicino.",
+          "personality": "Attento, incantato dai dettagli e mai di fretta.",
+          "depart": "Peek pulisce la lente e fa un cenno d'intesa.",
+          "return": "Peek rientra socchiudendo gli occhi per studiare qualcosa che stringe nel palmo.",
+          "memories": {
+            "1": "Peek ha trascorso un intero pomeriggio a osservare l'acqua trasformarsi in un numero.",
+            "2": "Tiene un elenco di tutte le cose che si mostrano solo a chi sa aspettare."
+          }
+        },
+        "plant_texted_back": {
+          "name": "Chime",
+          "intro": "Una campanula che preferisce toccarti delicatamente la spalla piuttosto che alzare la voce.",
+          "personality": "Premuroso, musicale e leggermente formale.",
+          "depart": "Chime emette un singolo tintinnio lieve e si incammina.",
+          "return": "Chime torna intonando una nota nuova, più sommessa.",
+          "memories": {
+            "1": "Chime ha imparato la differenza tra un avviso utile e un rumore fastidioso.",
+            "2": "Continua a preferire un solo suono limpido a una raffica di allarmi."
+          }
+        },
+        "fully_rooted_not_emotionally": {
+          "name": "Knoll",
+          "intro": "Un guardiano solido, che apprezza i lavori portati a termine a regola d'arte.",
+          "personality": "Affidabile, concreto e fiero delle cose fatte bene al primo colpo.",
+          "depart": "Knoll controlla il cancello due volte, poi si mette in marcia.",
+          "return": "Knoll rientra e riprende posto come se non si fosse mai alzato.",
+          "memories": {
+            "1": "Knoll ha preso nota del giorno esatto in cui il giardino è sembrato davvero completo.",
+            "2": "Percorre ancora il perimetro ogni volta che cambia la luce."
+          }
+        },
+        "hydration_hero": {
+          "name": "Rill",
+          "intro": "Un compagno d'acqua che arriva sempre al momento giusto.",
+          "personality": "Gentile, concreto e allergico ai drammi.",
+          "depart": "Rill versa un filo d'acqua sul sentiero e ne segue la traccia.",
+          "return": "Rill torna portando con sé il profumo della pioggia sulla terra asciutta.",
+          "memories": {
+            "1": "Rill ha capito che l'acqua migliore è quella che arriva al momento giusto.",
+            "2": "Ha preso l'abitudine di portare con sé una goccia di scorta per chiunque sembri assetato.",
+            "3": "Per lui una settimana tranquilla e in salute vale molto più di un salvataggio all'ultimo minuto.",
+            "4": "Ora insegna ai nuovi arrivati a capire quando l'acqua basta."
+          }
+        },
+        "back_from_the_mulch": {
+          "name": "Wisp",
+          "intro": "Una delicata orchidea capace di ritrovare ciò che è rimasto in silenzio.",
+          "personality": "Pacata, tenace e difficile da spaventare.",
+          "depart": "Wisp si dissolve leggera nell'aria e scompare.",
+          "return": "Wisp riappare silenziosamente ai margini del giardino.",
+          "memories": {
+            "1": "Wisp ha vegliato accanto a un sensore muto finché non ha ripreso a trasmettere.",
+            "2": "Continua a preferire i sentieri notturni, persino a mezzogiorno."
+          }
+        },
+        "juice_box_refiller": {
+          "name": "Volt",
+          "intro": "Un coleottero luminoso che si accorge subito quando le energie stanno per finire.",
+          "personality": "Scattante, premuroso e amante delle buone scintille.",
+          "depart": "Volt fa uno scatto e sfreccia lungo il sentiero.",
+          "return": "Volt torna brillando un po' più intensamente di prima.",
+          "memories": {
+            "1": "Volt ha imparato la differenza tra essere stanchi ed essere scarichi.",
+            "2": "Veglia su chi ha bisogno di riposare anziché essere spronato."
+          }
+        },
+        "all_green_no_envy": {
+          "name": "Twinleaf",
+          "intro": "Due trifogli inseparabili che si rifiutano di essere contati come uno solo.",
+          "personality": "Giocosi, affiatati e inaspettatamente saggi.",
+          "depart": "Partono marciando all'unisono, per poi perdere il passo di proposito.",
+          "return": "Tornano bisticciando su chi dei due abbia notato per primo la scoperta più interessante.",
+          "memories": {
+            "1": "I Twinleaf hanno decretato che due piante in salute bastano già a fare un giardino.",
+            "2": "Si assicurano sempre che nessuno cresca in solitudine."
+          }
+        },
+        "accidental_collector": {
+          "name": "Pottle",
+          "intro": "Una felce in vaso che riesce sempre a trovare spazio per una pianta in più.",
+          "personality": "Allegra, un po' disordinata e sempre ospitale.",
+          "depart": "Pottle mette nello zaino tre oggetti che poi non usa mai.",
+          "return": "Pottle torna con un quarto oggetto che non aveva previsto di raccogliere.",
+          "memories": {
+            "1": "Dopo la quarta pianta, Pottle ha smesso di contare ed è passata a riorganizzare gli spazi.",
+            "2": "Fa sempre posto per i nuovi arrivati prima ancora che qualcuno glielo chieda."
+          }
+        },
+        "latin_name_dropper": {
+          "name": "Quill",
+          "intro": "Uno scriba dei cartellini botanici, amante dei nomi precisi.",
+          "personality": "Studioso, cordiale e piacevolmente pignolo.",
+          "depart": "Quill infila un'etichetta di riserva dietro l'orecchio e si avvia.",
+          "return": "Quill torna con l'inchiostro ancora fresco e un sorriso soddisfatto.",
+          "memories": {
+            "1": "Quill ha calligrafato il primo nome di specie come se fosse un cartello di benvenuto.",
+            "2": "Si rifiuta categoricamente di tirare a indovinare quando basta fare una ricerca."
+          }
+        },
+        "influencer_garden": {
+          "name": "Lumen",
+          "intro": "Un girasole con un occhio paziente per la luce giusta.",
+          "personality": "Solare, attento ai dettagli visivi e poco interessato alle pose.",
+          "depart": "Lumen si volta verso il sentiero come se stesse seguendo il sole.",
+          "return": "Lumen torna con uno scatto che nessuno aveva chiesto, ma che tutti vorrebbero.",
+          "memories": {
+            "1": "Lumen ha capito che una pianta mostra la sua vera natura solo dopo la terza fotografia.",
+            "2": "Sa sempre aspettare la luce più sincera, non necessariamente la più forte."
+          }
+        },
+        "cloud_oracle": {
+          "name": "Nimbus",
+          "intro": "Una nuvoletta meteorologa che preferisce le previsioni alle sorprese.",
+          "personality": "Riflessiva, incline a vagare e quasi infallibile quando si parla di pioggia.",
+          "depart": "Nimbus si abbassa all'altezza delle siepi e scivola via.",
+          "return": "Nimbus torna di una sfumatura più chiara o più scura, a seconda del tempo.",
+          "memories": {
+            "1": "Nimbus ha imparato prima il nome della città e subito dopo il ritmo del suo cielo.",
+            "2": "Si rifiuta ancora di mettere fretta alle nuvole."
+          }
+        },
+        "face_of_the_garden": {
+          "name": "Still",
+          "intro": "Una creatura dello stagno che ama i riflessi scelti con cura, mai casuali.",
+          "personality": "Calma, meticolosa e silenziosamente affezionata ai volti.",
+          "depart": "Still lascia un cerchio sull'acqua e ne segue l'onda verso l'esterno.",
+          "return": "Still torna e il pelo dell'acqua si placa, come se non se ne fosse mai andata.",
+          "memories": {
+            "1": "Still ha custodito il primo ritratto finché non è sembrato davvero quello giusto.",
+            "2": "Continua a preferire un soprannome pronunciato a voce alta a uno soltanto scritto."
+          }
+        },
+        "seven_days_without_drama": {
+          "name": "Halo",
+          "intro": "Una ghirlanda vivente che misura il tempo in settimane di quiete.",
+          "personality": "Paziente, solenne e del tutto indifferente alla fretta.",
+          "depart": "Halo compie una capriola e rotola lungo il sentiero come un cerchio.",
+          "return": "Halo torna con le fronde un po' più verdi di quando è partita.",
+          "memories": {
+            "1": "Halo ha contato sette giorni sereni di fila e ha deciso che era già una piccola magia.",
+            "2": "Preferisce di gran lunga una settimana senza imprevisti a qualsiasi salvataggio eroico."
+          }
+        },
+        "photosynthesis_stan": {
+          "name": "Solara",
+          "intro": "Una creatura solare che ama la luce lunga e costante.",
+          "personality": "Generosa, pacata e affezionata alla bellezza dei giorni ordinari.",
+          "depart": "Solara si solleva leggermente da terra, trascinando dietro di sé una scia di tepore lungo il sentiero.",
+          "return": "Solara rientra come se avesse vegliato su di voi dall'alto per tutto il tempo.",
+          "memories": {
+            "1": "Solara è rimasta accanto alle piante per trenta giorni senza mai chiedere un grazie.",
+            "2": "Considera ancora un mese intero in salute come la storia più bella da raccontare."
+          }
+        },
+        "the_comeback_kid": {
+          "name": "Cinder",
+          "intro": "Una felce che conosce bene la siccità, ma non ne fa un dramma.",
+          "personality": "Tenace, dall'ironia pungente e cauta nell'illudersi.",
+          "depart": "Cinder scuote via la polvere dalle fronde e si mette in cammino.",
+          "return": "Cinder torna con le punte delle foglie più verdi.",
+          "memories": {
+            "1": "Cinder ha resistito a tre giorni di arsura, per poi bere senza fare una piega.",
+            "2": "Non permette a nessuno di spacciare una ripresa in extremis per una vittoria sulla cura costante."
+          }
+        },
+        "inbox_compost": {
+          "name": "Muck",
+          "intro": "Un divoratore di compost che trasforma gli scarti in qualcosa di prezioso.",
+          "personality": "Schietto, spiritoso e sorprendentemente ordinato.",
+          "depart": "Muck saluta con un piccolo rutto educato e parte.",
+          "return": "Muck torna più leggero e visibilmente soddisfatto.",
+          "memories": {
+            "1": "Muck ha ripulito tutte le notifiche in un colpo solo e l'ha chiamato pranzo.",
+            "2": "Preferisce sempre un mucchietto ordinato a dieci avvisi dimenticati."
+          }
+        },
+        "time_traveler": {
+          "name": "Drift",
+          "intro": "Una foglia-clessidra che ama guardare al passato senza rimanerci intrappolata.",
+          "personality": "Riflessiva, precisa e con una vena di dolce nostalgia.",
+          "depart": "Drift si capovolge su se stessa e si incammina.",
+          "return": "Drift torna con la sabbia posata in un disegno tutto nuovo.",
+          "memories": {
+            "1": "Drift ha osservato trenta giorni di storico senza mai distogliere lo sguardo.",
+            "2": "Continua a leggere i grafici di lungo periodo come se fossero mappe del tesoro."
+          }
+        },
+        "midnight_mulcher": {
+          "name": "Umbra",
+          "intro": "Un fungo lunare che monta la guardia a tarda notte.",
+          "personality": "Notturno, leale e perfettamente a suo agio negli orari più insoliti.",
+          "depart": "Umbra attende che la luce si affievolisca, poi scivola via nel buio.",
+          "return": "Umbra torna portando con sé il profumo fresco dell'aria notturna.",
+          "memories": {
+            "1": "Umbra ha memorizzato l'orario degli avvisi e lo considera un appuntamento fisso.",
+            "2": "Preferisce ancora farsi vivo quando tutto il giardino riposa in silenzio."
+          }
+        }
+      }
+    },
+    "sortable": {
+      "sortBy": "Ordina per {{label}}"
+    },
+    "admin": {
+      "title": "Portale Admin",
+      "refresh": "Aggiorna",
+      "filtersLoadError": "Errore nel caricamento dei filtri",
+      "tabs": {
+        "devices": "Sensori",
+        "logs": "Log",
+        "firmware": "Firmware"
+      },
+      "filters": {
+        "allDevices": "Tutti i sensori",
+        "allOwners": "Tutti i proprietari",
+        "allPlants": "Tutte le piante",
+        "allLevels": "Tutti i livelli"
+      },
+      "pagination": {
+        "loading": "Caricamento in corso…",
+        "showing": "Visualizzati {{start}}–{{end}} di {{total}}"
+      },
+      "devices": {
+        "title": "Tutti i sensori",
+        "refreshLabel": "Aggiorna sensori",
+        "noMatch": "Nessun sensore corrisponde ai filtri selezionati.",
+        "noneRegistered": "Nessun sensore registrato.",
+        "loadError": "Errore nel caricamento dei sensori",
+        "columns": {
+          "serialNumber": "Numero di serie",
+          "owner": "Proprietario",
+          "plant": "Pianta",
+          "type": "Tipo",
+          "humidity": "Umidità",
+          "battery": "Batteria",
+          "lastSeen": "Ultimo contatto",
+          "firmware": "Firmware"
+        }
+      },
+      "logs": {
+        "title": "Log dei sensori",
+        "refreshLabel": "Aggiorna log",
+        "noMatch": "Nessun log corrisponde ai filtri selezionati.",
+        "noneFound": "Nessun log trovato.",
+        "loadError": "Errore nel caricamento dei log",
+        "levelError": "Errore",
+        "levelWarning": "Avviso",
+        "levelInfo": "Info",
+        "columns": {
+          "timestamp": "Data e ora",
+          "serial": "Seriale",
+          "level": "Livello",
+          "message": "Messaggio"
+        }
+      },
+      "firmware": {
+        "title": "Versioni firmware",
+        "description": "Carica una build per metterla in staging, assegnala ai sensori pilota e infine pubblicala sul canale fleet.",
+        "refreshLabel": "Aggiorna versioni firmware",
+        "fleetChannels": "Canali fleet",
+        "noPublishedRelease": "Nessuna versione pubblicata",
+        "noReleasesYet": "Ancora nessuna versione firmware. Carica un file .bin per mettere in staging la prima build.",
+        "channelRelease": "OTA v{{version}} · {{semver}}{{label}}",
+        "colBoard": "Scheda",
+        "colOta": "OTA",
+        "colSemver": "SemVer",
+        "colLabel": "Etichetta",
+        "colCreated": "Data creazione",
+        "colStatus": "Stato",
+        "colActions": "Azioni",
+        "statusFleet": "Fleet",
+        "statusStaged": "In staging",
+        "publish": "Pubblica",
+        "assign": "Assegna",
+        "clearOverrides": "Rimuovi override",
+        "publishedTitle": "Pubblicato sul canale fleet",
+        "publishedMessage": "Il canale {{board}} punta ora alla versione OTA v{{version}} ({{semver}}).",
+        "publishFailedTitle": "Pubblicazione non riuscita",
+        "clearedTitle": "Override rimossi",
+        "clearedMessage": "Gli override pilota per {{board}} OTA v{{version}} ({{semver}}) sono stati rimossi.",
+        "clearFailedTitle": "Rimozione non riuscita",
+        "unknownError": "Errore sconosciuto",
+        "upload": {
+          "missingFieldsTitle": "Campi obbligatori mancanti",
+          "missingFieldsMessage": "Scheda, versione OTA (≥ 1), SemVer e file .bin sono obbligatori.",
+          "invalidSemverTitle": "Formato SemVer non valido",
+          "invalidSemverMessage": "Usa il formato MAJOR.MINOR.PATCH (es. 1.2.0 o 1.2.0-beta.1).",
+          "stagedTitle": "Versione in staging",
+          "stagedMessage": "{{board}} OTA v{{version}} ({{semver}}) caricata. Ora puoi pubblicarla o assegnarla ai sensori.",
+          "failedTitle": "Caricamento non riuscito",
+          "thisBoard": "questa scheda",
+          "currentVersion": "Versione attuale per {{board}}: {{version}}",
+          "noReleases": "Ancora nessuna versione per {{board}}",
+          "nextOta": "Prossima versione OTA",
+          "semverTooltip": "Etichetta di versione leggibile mostrata nel portale Admin (es. 1.2.0). I sensori utilizzano il numero di versione OTA, non questa etichetta.",
+          "semverAria": "Cos'è SemVer?",
+          "description": "Descrizione (facoltativo)",
+          "binary": "File binario firmware",
+          "binaryPlaceholder": "Seleziona il file .bin esportato da Arduino IDE",
+          "binaryAria": "File binario del firmware",
+          "submit": "Carica versione"
+        },
+        "assignModal": {
+          "title": "Assegna OTA v{{version}} · {{semver}} ({{board}})",
+          "titleFallback": "Assegna firmware",
+          "description": "I sensori selezionati installeranno questa versione OTA al prossimo risveglio, anche se il canale fleet punta a una versione diversa.",
+          "loadFailed": "Impossibile caricare i sensori",
+          "assignedTitle": "Override applicato",
+          "assignedMessage_one": "Versione OTA v{{version}} ({{semver}}) fissata su {{count}} sensore.",
+          "assignedMessage_other": "Versione OTA v{{version}} ({{semver}}) fissata su {{count}} sensori.",
+          "failedTitle": "Assegnazione non riuscita",
+          "loading": "Caricamento sensori in corso…",
+          "empty": "Nessun sensore trovato per questa scheda.",
+          "reported": " · rilevata v{{version}}",
+          "hasOverride": " · con override",
+          "assignTo_one": "Assegna a {{count}} sensore",
+          "assignTo_other": "Assegna a {{count}} sensori"
+        }
+      },
+      "device": {
+        "unassigned": "Non associato",
+        "overrideCleared": "Override rimosso",
+        "overrideClearedMessage": "{{serial}} seguirà ora il canale fleet.",
+        "clearFailed": "Rimozione non riuscita",
+        "unknownError": "Errore sconosciuto",
+        "clear": "Rimuovi",
+        "overrideVersion": "Override v{{version}}"
+      }
     }
   }
-}
