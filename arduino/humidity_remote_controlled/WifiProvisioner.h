@@ -11,8 +11,8 @@
 //   - pairingToken is non-empty if a new pairing bundle was submitted, or if
 //     a previous unpaired token is still stored for retry after RESTART.
 //
-// Returns false if WiFi failed to connect or credentials are missing. Caller
-// should deep-sleep until RESTART rather than auto-retrying.
+// Returns false if WiFi failed to connect or credentials are missing.
+// A scheduled wake with saved credentials does not open the setup portal.
 bool connectAndProvision(AppConfig& appConfig, String& pairingToken);
 
 // Exposed for use as the WiFiManager reset callback.

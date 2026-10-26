@@ -3,6 +3,7 @@
 #include "DeviceIdentity.h"
 #include "LedFeedback.h"
 #include "StorageManager.h"
+#include <WiFi.h>
 #include <WiFiManager.h>
 
 // Accepts:
@@ -128,7 +129,22 @@ bool connectAndProvision(AppConfig& appConfig, String& pairingToken) {
   );
   wifiManager.addParameter(&setupBundleParameter);
 
+  const bool hasSavedServerCredentials =
+    !appConfig.serverUrl.isEmpty() && !appConfig.apiKey.isEmpty();
+  const bool openConfigPortal = factoryResetRequested || !hasSavedServerCredentials;
+  if (!openConfigPortal) {
+    // A routine wake must not spend 10 minutes as an access point after a
+    // failed join. Try the saved network only.
+    wifiManager.setEnableConfigPortal(false);
+    Serial.println("Joining saved Wi-Fi without opening the setup portal.");
+  }
+
   const bool connectedToWifi = wifiManager.autoConnect("Plantir-Device-Setup");
+
+  if (!openConfigPortal && WiFi.status() != WL_CONNECTED) {
+    Serial.println("Failed to connect to Wi-Fi 😭");
+    return false;
+  }
 
   const String setupBundle = String(setupBundleParameter.getValue());
   if (!setupBundle.isEmpty()) {

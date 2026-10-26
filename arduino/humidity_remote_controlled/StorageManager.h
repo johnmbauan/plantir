@@ -23,3 +23,14 @@ void clearPairingToken();
 bool registrationRestartUsed();
 void markRegistrationRestartUsed();
 void clearRegistrationRestartFlag();
+
+// Last sleepDurationSeconds from a successful device_wake_sync. Used to arm
+// the timer after an operational failure. Falls back to DEFAULT_SLEEP_DURATION.
+void saveLastSleepDurationSeconds(int sleepDurationSeconds);
+int loadLastSleepDurationSeconds();
+
+// One short note saved when a failure cannot be posted (Wi-Fi down). Sent and
+// cleared on the next wake that reaches the server.
+void savePendingDeviceLog(const String& message);
+String loadPendingDeviceLog();
+void clearPendingDeviceLog();

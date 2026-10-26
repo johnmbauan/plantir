@@ -19,4 +19,4 @@ void sendBatteryReading(int deviceId, const AppConfig& appConfig);
 bool registerDevice(const String& pairingToken, const AppConfig& appConfig);
 void sendCalibrationReading(int rawAdcValue, int deviceId, const AppConfig& appConfig);
 void clearCalibrationMode(int deviceId, const AppConfig& appConfig);
-void sendDeviceLog(const String& level, const String& message, const AppConfig& appConfig);
+bool sendDeviceLog(const String& level, const String& message, const AppConfig& appConfig);

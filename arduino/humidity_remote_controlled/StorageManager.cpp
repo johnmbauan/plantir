@@ -1,4 +1,5 @@
 #include "StorageManager.h"
+#include "Config.h"
 #include <Preferences.h>
 
 AppConfig loadConfig() {
@@ -67,5 +68,44 @@ void clearRegistrationRestartFlag() {
   Preferences preferences;
   preferences.begin("app", false);
   preferences.remove("regReset");
+  preferences.end();
+}
+
+void saveLastSleepDurationSeconds(int sleepDurationSeconds) {
+  if (sleepDurationSeconds <= 0) return;
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.putInt("sleepSecs", sleepDurationSeconds);
+  preferences.end();
+}
+
+int loadLastSleepDurationSeconds() {
+  Preferences preferences;
+  preferences.begin("app", true);
+  const int savedSleepDurationSeconds = preferences.getInt("sleepSecs", 0);
+  preferences.end();
+  if (savedSleepDurationSeconds <= 0) return DEFAULT_SLEEP_DURATION;
+  return savedSleepDurationSeconds;
+}
+
+void savePendingDeviceLog(const String& message) {
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.putString("failNote", message);
+  preferences.end();
+}
+
+String loadPendingDeviceLog() {
+  Preferences preferences;
+  preferences.begin("app", true);
+  const String pendingDeviceLog = preferences.getString("failNote", "");
+  preferences.end();
+  return pendingDeviceLog;
+}
+
+void clearPendingDeviceLog() {
+  Preferences preferences;
+  preferences.begin("app", false);
+  preferences.remove("failNote");
   preferences.end();
 }

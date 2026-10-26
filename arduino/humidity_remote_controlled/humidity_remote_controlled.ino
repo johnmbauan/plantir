@@ -8,6 +8,9 @@
 #include "SensorRunner.h"
 #include "CalibrationRunner.h"
 
+#include <WiFi.h>
+#include <esp_wifi.h>
+
 #if defined(CONFIG_IDF_TARGET_ESP32C6)
 #include "driver/gpio.h"
 #endif
@@ -22,23 +25,50 @@ static void cutSensorPower() {
 #endif
 }
 
-// Logs the reason to Serial (and to the server when config is available), powers
-// off the sensor, and deep-sleeps with no wake timer. Only RESTART (or power
-// cycle) brings the device back — avoids draining the battery with auto-retries.
+static void stopWifiRadio() {
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
+  esp_wifi_stop();
+}
+
 // Default arg keeps Arduino from auto-prototyping this (which would drop [[noreturn]]).
-[[noreturn]] static void goToSleep(
-  const String& reason,
-  const AppConfig* appConfig = nullptr
-) {
-  Serial.println("[ERROR] " + reason);
-  if (appConfig != nullptr) {
-    sendDeviceLog("error", reason, *appConfig);
-  }
-  Serial.println("Press RESTART to try again.");
+[[noreturn]] static void enterDeepSleep(int sleepDurationSeconds, bool unusedArduinoPrototypeGuard = false) {
+  (void)unusedArduinoPrototypeGuard;
   cutSensorPower();
   bootLedOff();
+  stopWifiRadio();
+  if (sleepDurationSeconds > 0) {
+    esp_sleep_enable_timer_wakeup(sleepDurationSeconds * uS_TO_S_FACTOR);
+  }
   Serial.flush();
   esp_deep_sleep_start();
+}
+
+// Logs the reason to Serial. Posts it when Wi-Fi is up; otherwise stores it
+// for the next successful join. Operational failures (retryOnTimer) sleep for
+// the last known interval. Devices with no server credentials sleep until
+// RESTART. Default args keep Arduino from auto-prototyping this (which would
+// drop [[noreturn]]).
+[[noreturn]] static void goToSleep(
+  const String& reason,
+  const AppConfig* appConfig = nullptr,
+  bool retryOnTimer = false
+) {
+  Serial.println("[ERROR] " + reason);
+  bool loggedToServer = false;
+  if (appConfig != nullptr && WiFi.status() == WL_CONNECTED) {
+    loggedToServer = sendDeviceLog("error", reason, *appConfig);
+  }
+  if (retryOnTimer && !loggedToServer) {
+    savePendingDeviceLog(reason);
+  }
+  if (retryOnTimer) {
+    const int sleepDurationSeconds = loadLastSleepDurationSeconds();
+    Serial.println("Retrying in " + String(sleepDurationSeconds) + " seconds...");
+    enterDeepSleep(sleepDurationSeconds);
+  }
+  Serial.println("Press RESTART to try again.");
+  enterDeepSleep(0);
 }
 
 void setup() {
@@ -64,7 +94,20 @@ void setup() {
   AppConfig appConfig;
   String pairingToken;
   if (!connectAndProvision(appConfig, pairingToken)) {
-    goToSleep("WiFi or provisioning failed.");
+    const bool hasCredentials =
+      !appConfig.serverUrl.isEmpty() && !appConfig.apiKey.isEmpty();
+    goToSleep(
+      "WiFi or provisioning failed.",
+      hasCredentials ? &appConfig : nullptr,
+      hasCredentials
+    );
+  }
+
+  const String pendingFailureNote = loadPendingDeviceLog();
+  if (pendingFailureNote.length() > 0) {
+    if (sendDeviceLog("error", pendingFailureNote, appConfig)) {
+      clearPendingDeviceLog();
+    }
   }
 
   auto deviceSyncPayloadLooksValid = [](const DynamicJsonDocument& deviceSyncPayload) {
@@ -88,12 +131,14 @@ void setup() {
       ESP.restart();
     }
 
-    // Keep pairing token so RESTART can still retry without re-opening the portal.
+    // Incomplete pairing is attended: keep the token and wait for RESTART.
+    // A registered device with a failed sync retries on the next timer wake.
     goToSleep(
       pairingToken.isEmpty()
         ? "No remote configuration found for this device."
         : "Device not registered yet. Press RESTART to retry.",
-      &appConfig
+      &appConfig,
+      pairingToken.isEmpty()
     );
   }
 
@@ -103,6 +148,9 @@ void setup() {
 
   // Confirm the running image before deep sleep so OTA rollback does not undo it.
   markFirmwareValid();
+  saveLastSleepDurationSeconds(
+    deviceSyncPayload["sleepDurationSeconds"] | DEFAULT_SLEEP_DURATION
+  );
 
   const FirmwareTarget firmwareTarget = firmwareTargetFromSyncPayload(deviceSyncPayload);
   if (firmwareTarget.valid
@@ -129,7 +177,7 @@ void setup() {
     // Re-sync so measureAndSendHumidityReadings uses the newly saved airValue/waterValue.
     deviceSyncPayload = fetchDeviceSyncPayload(appConfig);
     if (!deviceSyncPayloadLooksValid(deviceSyncPayload)) {
-      goToSleep("Failed to re-fetch config after calibration.", &appConfig);
+      goToSleep("Failed to re-fetch config after calibration.", &appConfig, true);
     }
   }
 
@@ -137,14 +185,9 @@ void setup() {
   measureAndSendHumidityReadings(deviceSyncPayload, appConfig);
 
   const int sleepDurationSeconds = deviceSyncPayload["sleepDurationSeconds"] | DEFAULT_SLEEP_DURATION;
+  saveLastSleepDurationSeconds(sleepDurationSeconds);
   Serial.println("Entering in deep sleep for " + String(sleepDurationSeconds) + " seconds... 😴");
-
-  // Power off the sensor before sleeping to avoid draining the battery.
-  cutSensorPower();
-  bootLedOff();
-  esp_sleep_enable_timer_wakeup(sleepDurationSeconds * uS_TO_S_FACTOR);
-  Serial.flush();
-  esp_deep_sleep_start();
+  enterDeepSleep(sleepDurationSeconds);
 }
 
 void loop() {

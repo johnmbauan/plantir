@@ -124,6 +124,11 @@ void sendHumidityReading(float humidityPercent, int deviceId, const AppConfig& a
     Serial.println("Humidity sent successfully ✅");
   } else {
     Serial.println("Failed to send humidity 😖. HTTP error: " + String(httpStatusCode));
+    sendDeviceLog(
+      "error",
+      "Failed to send humidity. HTTP error: " + String(httpStatusCode),
+      appConfig
+    );
   }
 }
 
@@ -196,7 +201,7 @@ bool registerDevice(const String& pairingToken, const AppConfig& appConfig) {
   return false;
 }
 
-void sendDeviceLog(const String& level, const String& message, const AppConfig& appConfig) {
+bool sendDeviceLog(const String& level, const String& message, const AppConfig& appConfig) {
   // Use ArduinoJson so special characters in message are escaped.
   DynamicJsonDocument logPayloadJson(512);
   logPayloadJson["serialNumber"] = getDeviceId();
@@ -212,7 +217,8 @@ void sendDeviceLog(const String& level, const String& message, const AppConfig& 
   );
   if (httpStatusCode == HTTP_CODE_CREATED) {
     Serial.println("Device log sent ✅ [" + level + "] " + message);
-  } else {
-    Serial.println("Failed to send device log. HTTP error: " + String(httpStatusCode));
+    return true;
   }
+  Serial.println("Failed to send device log. HTTP error: " + String(httpStatusCode));
+  return false;
 }
